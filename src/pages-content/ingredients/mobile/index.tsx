@@ -1,0 +1,125 @@
+"use client";
+import {ReactNode} from "react";
+import {Box, CardContent, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import {MobileList} from "@/src/components/mobile-list";
+import {ImagePreview} from "@/src/components/image-preview";
+import {useTranslate} from "@/src/contexts/translation-context";
+import {Ingredient} from "../types";
+import {Form} from "../components/form";
+import {AddStockModal} from "../components/add-stock-drawer";
+import {StockChangeModal} from "../components/stock-change-modal";
+import {MobileViewProps} from "./types";
+import {flexGenerator} from "@/src/utils/flex-generator";
+import SyncAltIcon from "@mui/icons-material/SyncAlt";
+
+export function MobileView(props: MobileViewProps) {
+  const {ingredients} = props;
+  const {translate} = useTranslate();
+  const theme = useTheme();
+
+  function renderRow(item: Ingredient, actions: ReactNode) {
+    return (
+      <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
+        <Box sx={{display: "flex", gap: 2}}>
+          <ImagePreview url={item.image} alt={item.name} width={64} height={64} borderRadius={1} />
+          <Box sx={{...flexGenerator('c'), minWidth: 0}}>
+            <Typography variant="subtitle1" fontWeight={600} noWrap>
+              {item.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" noWrap>
+              {item.description || "-"}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary"}}
+            >
+              {`${translate("ingredients.fields.stock")}: ${Number(item.stock).toLocaleString("pt-BR")}`}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary"}}
+            >
+              {`${translate("ingredients.fields.minStock")}: ${Number(item.min_stock || 0).toLocaleString("pt-BR")} ${ingredients.unitOfMeasures[item.unit_of_measure as keyof typeof ingredients.unitOfMeasures].label}`}
+            </Typography>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: 1,
+            marginTop: 1,
+            paddingTop: 1,
+            borderTop: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Tooltip title={translate("ingredients.stockChange.title")}>
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                ingredients.handleStockChange(item);
+              }}
+            >
+              <SyncAltIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          {actions}
+        </Box>
+      </CardContent>
+    );
+  }
+
+  return (
+    <Box sx={{display: "flex", flexDirection: "column", height: "100%", position: "relative"}}>
+      <MobileList<Ingredient>
+        key={ingredients.tableKey}
+        title="ingredients.title"
+        apiRoute="/api/ingredient/paginated-list"
+        renderRow={renderRow}
+        onView={ingredients.handleView}
+        onEdit={ingredients.handleEdit}
+        onDelete={ingredients.handleDelete}
+      />
+
+      <Fab
+        color="secondary"
+        size="small"
+        onClick={ingredients.openStockModal}
+        sx={{
+          position: "fixed",
+          bottom: 20,
+          left: 20,
+          zIndex: 20,
+        }}
+      >
+        <Inventory2OutlinedIcon sx={{color: "white"}} />
+      </Fab>
+
+      <Fab
+        color="primary"
+        size="small"
+        onClick={ingredients.handleCreate}
+        sx={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          zIndex: 20,
+        }}
+      >
+        <AddIcon sx={{color: "white"}} />
+      </Fab>
+
+      <Form ingredients={ingredients} imageSize={150} />
+      <AddStockModal ingredients={ingredients} />
+      <StockChangeModal
+        item={ingredients.stockChangeItem}
+        onClose={ingredients.closeStockChangeModal}
+        onSuccess={ingredients.refreshTable}
+      />
+    </Box>
+  );
+}

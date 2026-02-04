@@ -1,0 +1,55 @@
+"use client";
+import {Button} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import {DataTable} from "@/src/components/data-table";
+import {ScreenCard} from "@/src/components/screen-card";
+import {useTranslate} from "@/src/contexts/translation-context";
+import {Package} from "../types";
+import {Form} from "../components/form";
+import {AddStockModal} from "../components/add-stock-drawer";
+import {CostHistoryModal} from "../components/cost-history-modal";
+import {StockChangeModal} from "../components/stock-change-modal";
+import {StockHistoryModal} from "../components/stock-history-modal";
+import {DesktopViewProps} from "./types";
+
+export function DesktopView(props: DesktopViewProps) {
+  const {packages} = props;
+  const {translate} = useTranslate();
+
+  return (
+    <>
+      <ScreenCard title="packages.title" includeButtonFunction={packages.handleCreate}>
+        <DataTable<Package>
+          key={packages.tableKey}
+          apiRoute="/api/package/paginated-list"
+          columns={packages.generateConfig()}
+          footerLeftContent={
+            <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={packages.openStockModal}>
+              {translate("packages.addStock")}
+            </Button>
+          }
+        />
+      </ScreenCard>
+
+      <Form packages={packages} imageSize={200} />
+      <AddStockModal packages={packages} />
+      {packages.costHistoryPackage && (
+        <CostHistoryModal
+          open={!!packages.costHistoryPackage}
+          onClose={packages.closeCostHistory}
+          packageId={packages.costHistoryPackage.id}
+          packageName={packages.costHistoryPackage.name}
+        />
+      )}
+      <StockChangeModal item={packages.stockChangeItem} onClose={packages.closeStockChangeModal} onSuccess={packages.refreshTable} />
+      {packages.stockHistoryItem && (
+        <StockHistoryModal
+          open={!!packages.stockHistoryItem}
+          onClose={packages.closeStockHistoryModal}
+          packageId={packages.stockHistoryItem.id}
+          packageName={packages.stockHistoryItem.name}
+        />
+      )}
+    </>
+  );
+}
