@@ -77,7 +77,7 @@ export function DesktopView(props: DesktopViewProps) {
                 src="/assets/icon.png"
                 width={48}
                 height={48}
-                onClick={() => layout.handleNavigate("/intranet/home")}
+                onClick={() => layout.handleNavigate("/home")}
                 style={{cursor: "pointer"}}
               />
               <Typography

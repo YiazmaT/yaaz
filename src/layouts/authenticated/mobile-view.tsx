@@ -31,7 +31,7 @@ export function MobileView(props: MobileViewProps) {
               alt={process.env.NEXT_PUBLIC_COMPANY_NAME!}
               src="/assets/icon.png"
               sx={{width: 32, height: 32, cursor: "pointer"}}
-              onClick={() => layout.handleNavigate("/intranet/home")}
+              onClick={() => layout.handleNavigate("/home")}
             />
             <Typography sx={{color: layout.theme.palette.primary.main, fontWeight: 600}}>{process.env.NEXT_PUBLIC_COMPANY_NAME}</Typography>
           </Box>
@@ -51,7 +51,7 @@ export function MobileView(props: MobileViewProps) {
                 src="/assets/icon.png"
                 sx={{width: 32, height: 32, cursor: "pointer"}}
                 onClick={() => {
-                  layout.handleNavigate("/intranet/home");
+                  layout.handleNavigate("/home");
                   layout.handleMobileMenuToggle();
                 }}
               />

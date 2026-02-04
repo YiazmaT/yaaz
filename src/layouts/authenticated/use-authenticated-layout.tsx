@@ -11,11 +11,11 @@ import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import TakeoutDiningOutlinedIcon from "@mui/icons-material/TakeoutDiningOutlined";
 
 const menuItems: MenuItem[] = [
-  {name: "global.sales", route: "/intranet/sales", icon: <AttachMoneyIcon />},
-  {name: "global.products", route: "/intranet/products", icon: <BakeryDiningOutlinedIcon />},
-  {name: "global.ingredients", route: "/intranet/ingredients", icon: <CategoryOutlinedIcon />},
-  {name: "global.packages", route: "/intranet/packages", icon: <TakeoutDiningOutlinedIcon />},
-  {name: "global.reports", route: "/intranet/reports", icon: <ReceiptOutlinedIcon />},
+  {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
+  {name: "global.products", route: "/products", icon: <BakeryDiningOutlinedIcon />},
+  {name: "global.ingredients", route: "/ingredients", icon: <CategoryOutlinedIcon />},
+  {name: "global.packages", route: "/packages", icon: <TakeoutDiningOutlinedIcon />},
+  {name: "global.reports", route: "/reports", icon: <ReceiptOutlinedIcon />},
 ];
 
 export function useAuthenticatedLayout() {

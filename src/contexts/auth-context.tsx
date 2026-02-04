@@ -18,13 +18,13 @@ export function AuthContextProvider(props: PropsWithChildren) {
     });
     if (response) {
       resetSessionExpiredFlag();
-      navigate("/intranet/home");
+      navigate("/home");
     }
   }
 
   async function logout() {
     await api.fetch("POST", "/api/logout");
-    navigate("/intranet/login");
+    navigate("/login");
   }
 
   return <AuthContext.Provider value={{login, logout}}>{props.children}</AuthContext.Provider>;
