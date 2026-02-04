@@ -1,4 +1,4 @@
-This is a bakery ERP underconstruction.
+This is a generic ERP for small business underconstruction.
 
 FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 

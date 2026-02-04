@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "pub-3d83aa328a754ef480a222990fc09240.r2.dev",
       },
+      //yaaz
+      {
+        protocol: "https",
+        hostname: "https://pub-97580840637e4132a8480aa54c5a043c.r2.dev",
+      },
     ],
   },
 };

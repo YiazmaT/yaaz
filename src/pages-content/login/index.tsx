@@ -73,8 +73,22 @@ export function LoginScreen() {
           <form onSubmit={handleSubmit(submit)}>
             <Grid container spacing={1}>
               <Grid size={12} sx={{...flexGenerator("c.center.center")}}>
-                <Box sx={{...flexGenerator("c.center.center"), backgroundColor: primaryColor, borderRadius: "100%", width: 300, height: 300}}>
-                  <Image alt={process.env.NEXT_PUBLIC_COMPANY_NAME!} src="/assets/banner.png" width={200} height={200} />
+                <Box
+                    sx={{
+                      ...flexGenerator("c.center.center"),
+                      borderRadius: "100%",
+                      width: 300,
+                      height: 300,
+                      border: "2px solid transparent",
+                      backgroundImage: {
+                        xs: "none",
+                        md: `linear-gradient(white, white), linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                      },
+                      backgroundOrigin: "border-box",
+                      backgroundClip: "padding-box, border-box",
+                    }}
+                  >
+                  <Image alt={process.env.NEXT_PUBLIC_COMPANY_NAME!} src="/assets/icon.png" width={200} height={200} />
                 </Box>
               </Grid>
               <FormTextInput fieldName="login" label="global.email" grid size={12} />
