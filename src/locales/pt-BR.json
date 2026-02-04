@@ -25,6 +25,7 @@
     "pix": "Pix",
     "stock": "Estoque",
     "reports": "Relatórios",
+    "tenants": "Empresas",
     "unity": "Unidade",
     "packages": "Embalagens",
     "total": "Total",
@@ -304,6 +305,26 @@
       "thu": "Qui",
       "fri": "Sex",
       "sat": "Sáb"
+    }
+  },
+  "tenants": {
+    "title": "Empresas",
+    "createTitle": "Incluir Empresa",
+    "editTitle": "Editar Empresa",
+    "detailsTitle": "Visualizar Empresa",
+    "createSuccess": "Empresa criada com sucesso!",
+    "updateSuccess": "Empresa atualizada com sucesso!",
+    "deleteSuccess": "Empresa excluída com sucesso!",
+    "deleteConfirm": "Tem certeza que deseja excluir esta empresa?",
+    "errors": {
+      "hasUsers": "Esta empresa possui usuários e não pode ser excluída."
+    },
+    "fields": {
+      "name": "Nome",
+      "logo": "Logo",
+      "primaryColor": "Cor Primária",
+      "secondaryColor": "Cor Secundária",
+      "creationDate": "Data de Criação"
     }
   },
   "reports": {
