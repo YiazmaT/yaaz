@@ -62,9 +62,12 @@ enum PackageStockChangeReason {
 }
 
 model Tenant {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String
-  creation_date DateTime @default(now())
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String
+  creation_date   DateTime @default(now())
+  logo            String?
+  primary_color   String?
+  secondary_color String?
 
   instagram_posts          InstagramPost[]
   users                    User[]
