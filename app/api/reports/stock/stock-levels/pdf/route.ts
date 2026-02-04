@@ -1,6 +1,7 @@
 import {authenticateRequest} from "@/src/lib/auth";
 import {logCritical, logGet, LogModule, LogSource} from "@/src/lib/logger";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
+import {getTenant} from "@/src/lib/tenant";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/reports/stock/stock-levels/pdf";
@@ -22,6 +23,7 @@ export async function GET(req: NextRequest) {
   if (auth.error) return auth.error;
 
   try {
+    const tenant = await getTenant(auth.tenant_id);
     const {searchParams} = new URL(req.url);
     const dataStr = searchParams.get("data") || "[]";
     const generatedAt = searchParams.get("generatedAt") || "";
@@ -67,7 +69,7 @@ export async function GET(req: NextRequest) {
       </table>
     `;
 
-    const html = generatePdfHtml({title: "Níveis de Estoque", content, generatedAt});
+    const html = generatePdfHtml({title: "Níveis de Estoque", content, generatedAt, tenant});
 
     logGet({module: LogModule.REPORTS, source: LogSource.API, userId: auth.user!.id, tenantId: auth.tenant_id, content: {type, belowMinimumOnly}, route: ROUTE});
 

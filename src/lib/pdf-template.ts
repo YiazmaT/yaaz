@@ -1,23 +1,29 @@
 import moment from "moment";
+import {Tenant} from "../pages-content/tenants/types";
 
-const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || "#1976d2";
-const COMPANY_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME || "Padaria";
-const LOGO_URL = "/assets/icon.png";
+const DEFAULT_PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR ?? "#A20103";
+const DEFAULT_COMPANY_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME ?? "YaaZ";
+const DEFAULT_LOGO_URL = "/assets/icon.png";
 
 interface PdfTemplateProps {
   title: string;
   content: string;
   generatedAt: string;
+  tenant: Tenant | null;
 }
 
 export function generatePdfHtml(props: PdfTemplateProps): string {
+  const primaryColor = props.tenant?.primary_color || DEFAULT_PRIMARY_COLOR;
+  const companyName = props.tenant?.name || DEFAULT_COMPANY_NAME;
+  const logoUrl = props.tenant?.logo || DEFAULT_LOGO_URL;
+
   return `
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${props.title} - ${COMPANY_NAME}</title>
+  <title>${props.title} - ${companyName}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; padding: 20px; color: #333; }
@@ -39,7 +45,7 @@ export function generatePdfHtml(props: PdfTemplateProps): string {
     .status-low td { background-color: #fff3e0; }
     .footer { margin-top: 30px; text-align: center; font-size: 10px; color: #999; }
     @media print { body { padding: 0; } .no-print { display: none; } }
-    .print-button { position: fixed; top: 10px; right: 10px; padding: 10px 20px; background-color: ${PRIMARY_COLOR}; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .print-button { position: fixed; top: 10px; right: 10px; padding: 10px 20px; background-color: ${primaryColor}; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
     .print-button:hover { opacity: 0.9; }
   </style>
 </head>
@@ -47,9 +53,9 @@ export function generatePdfHtml(props: PdfTemplateProps): string {
   <button class="print-button no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
 
   <div class="header">
-    <img src="${LOGO_URL}" alt="Logo" class="header-logo" />
+    <img src="${logoUrl}" alt="Logo" class="header-logo" />
     <div class="header-info">
-      <h1>${COMPANY_NAME}</h1>
+      <h1>${companyName}</h1>
       <p class="date">Gerado em: ${moment(props.generatedAt).format("DD/MM/YYYY HH:mm")}</p>
     </div>
   </div>

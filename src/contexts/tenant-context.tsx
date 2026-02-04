@@ -1,6 +1,6 @@
 "use client";
 import {PropsWithChildren, createContext, useContext, useState} from "react";
-import {Tenant} from "../@types/tenant";
+import {Tenant} from "../pages-content/tenants/types";
 
 interface TenantContextValue {
   tenant: Tenant | null;

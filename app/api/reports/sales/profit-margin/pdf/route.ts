@@ -1,6 +1,7 @@
 import {authenticateRequest} from "@/src/lib/auth";
 import {logCritical, logGet, LogModule, LogSource} from "@/src/lib/logger";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
+import {getTenant} from "@/src/lib/tenant";
 import {formatCurrency} from "@/src/utils/format-currency";
 import {NextRequest, NextResponse} from "next/server";
 import moment from "moment";
@@ -12,6 +13,7 @@ export async function GET(req: NextRequest) {
   if (auth.error) return auth.error;
 
   try {
+    const tenant = await getTenant(auth.tenant_id);
     const {searchParams} = new URL(req.url);
     const dataStr = searchParams.get("data") || "[]";
     const generatedAt = searchParams.get("generatedAt") || "";
@@ -77,7 +79,7 @@ export async function GET(req: NextRequest) {
       </table>
     `;
 
-    const html = generatePdfHtml({title: "Margem de Lucro", content, generatedAt});
+    const html = generatePdfHtml({title: "Margem de Lucro", content, generatedAt, tenant});
 
     logGet({module: LogModule.REPORTS, source: LogSource.API, userId: auth.user!.id, tenantId: auth.tenant_id, content: {dateFrom, dateTo}, route: ROUTE});
 
