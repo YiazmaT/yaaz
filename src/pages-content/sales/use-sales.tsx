@@ -7,11 +7,12 @@ import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {PackageCompositionItem} from "@/src/components/packages-selector/types";
 import {Sale, ItemSale} from "./types";
 import {SaleFormValues, useSaleFormConfig} from "./form-config";
 import {useSalesTableConfig} from "./desktop/table-config";
-import {CreateSaleResponse, ProductStockWarning, PackageStockWarning} from "./dto";
+import {CreateSaleResponse, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "./dto";
 import {SalesFilters} from "./components/filters/types";
 
 export function useSales() {
@@ -25,6 +26,7 @@ export function useSales() {
   const {translate} = useTranslate();
   const api = useApi();
   const toast = useToaster();
+  const formatCurrency = useFormatCurrency();
 
   function StockWarningsList(props: {productWarnings: ProductStockWarning[]; packageWarnings: PackageStockWarning[]}) {
     return (
@@ -67,6 +69,36 @@ export function useSales() {
     );
   }
 
+  function PriceChangeWarningsList(props: {warnings: PriceChangeWarning[]; originalTotal: string; newTotal: string}) {
+    return (
+      <Box sx={{width: "100%", mt: 2}}>
+        <Typography variant="subtitle2" fontWeight={600} sx={{mb: 1}}>
+          {translate("sales.priceChangeWarning.products")}
+        </Typography>
+        {props.warnings.map((item) => (
+          <Box key={item.productId} sx={{display: "flex", justifyContent: "space-between", py: 0.5, borderBottom: "1px solid #eee"}}>
+            <Typography variant="body2" fontWeight={500}>
+              {item.productName}
+            </Typography>
+            <Typography variant="body2" color="warning.main">
+              {formatCurrency(item.originalPrice)} → {formatCurrency(item.currentPrice)}
+            </Typography>
+          </Box>
+        ))}
+        <Box sx={{mt: 2, p: 1.5, backgroundColor: "grey.100", borderRadius: 1}}>
+          <Box sx={{display: "flex", justifyContent: "space-between", mb: 0.5}}>
+            <Typography variant="body2">{translate("sales.priceChangeWarning.originalTotal")}</Typography>
+            <Typography variant="body2" fontWeight={600}>{formatCurrency(props.originalTotal)}</Typography>
+          </Box>
+          <Box sx={{display: "flex", justifyContent: "space-between"}}>
+            <Typography variant="body2">{translate("sales.priceChangeWarning.newTotal")}</Typography>
+            <Typography variant="body2" fontWeight={600} color="warning.main">{formatCurrency(props.newTotal)}</Typography>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
   const {
     control,
     handleSubmit,
@@ -94,7 +126,10 @@ export function useSales() {
   }
 
   function recalculateTotal(currentItems: ItemSale[]) {
-    const itemsTotal = currentItems.reduce((acc, item) => acc.plus(new Decimal(item.product.price).times(item.quantity)), new Decimal(0));
+    const itemsTotal = currentItems.reduce((acc, item) => {
+      const price = item.unit_price || item.product.price.toString();
+      return acc.plus(new Decimal(price).times(item.quantity));
+    }, new Decimal(0));
     setValue("total", itemsTotal.toString());
   }
 
@@ -124,11 +159,12 @@ export function useSales() {
       return;
     }
 
-    const cleanItems: {product_id: string; quantity: number}[] = [];
+    const cleanItems: {product_id: string; quantity: number; unit_price: string}[] = [];
     for (let i = 0; i < data.items.length; i++) {
       cleanItems.push({
         product_id: String(data.items[i].product.id),
         quantity: Number(data.items[i].quantity),
+        unit_price: data.items[i].unit_price || data.items[i].product.price.toString(),
       });
     }
 
@@ -149,21 +185,46 @@ export function useSales() {
     };
 
     if (formType === "edit" && selectedId) {
-      const result = await api.fetch<CreateSaleResponse>("PUT", "/api/sale/update", {
-        body: {...body, id: selectedId},
-      });
+      async function submitUpdate(updateBody: typeof body & {id: string; updatePrices?: boolean}) {
+        const result = await api.fetch<CreateSaleResponse>("PUT", "/api/sale/update", {body: updateBody});
 
-      if (result?.success) {
-        toast.successToast("sales.updateSuccess");
-        reset();
-        closeDrawer();
-        setTableKey((prev) => prev + 1);
-      } else {
+        if (result?.success) {
+          toast.successToast("sales.updateSuccess");
+          reset();
+          closeDrawer();
+          setTableKey((prev) => prev + 1);
+          return true;
+        }
+
+        const hasPriceWarnings = result?.priceChangeWarnings && result.priceChangeWarnings.length > 0;
+        if (hasPriceWarnings) {
+          const originalTotal = data.items.reduce((acc, item) => {
+            const price = item.unit_price || item.product.price.toString();
+            return acc.plus(new Decimal(price).times(item.quantity));
+          }, new Decimal(0));
+          const newTotal = data.items.reduce((acc, item) => {
+            return acc.plus(new Decimal(item.product.price).times(item.quantity));
+          }, new Decimal(0));
+
+          showConfirmModal({
+            title: "sales.priceChangeWarning.title",
+            message: "sales.priceChangeWarning.message",
+            content: (
+              <PriceChangeWarningsList
+                warnings={result.priceChangeWarnings!}
+                originalTotal={originalTotal.toString()}
+                newTotal={newTotal.toString()}
+              />
+            ),
+            onConfirm: () => submitUpdate({...updateBody, updatePrices: true}),
+            onCancel: () => submitUpdate({...updateBody, updatePrices: false}),
+          });
+          return false;
+        }
+
         const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
         const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
-
         if (hasProductWarnings || hasPackageWarnings) {
-          const forceBody = {...body, id: selectedId, force: true};
           showConfirmModal({
             message: "sales.negativeStockWarning",
             content: (
@@ -173,17 +234,16 @@ export function useSales() {
               />
             ),
             onConfirm: async () => {
-              const forceResult = await api.fetch<CreateSaleResponse>("PUT", "/api/sale/update", {body: forceBody});
-              if (forceResult?.success) {
-                toast.successToast("sales.updateSuccess");
-                reset();
-                closeDrawer();
-                setTableKey((prev) => prev + 1);
-              }
+              await submitUpdate({...updateBody, force: true});
             },
           });
+          return false;
         }
+
+        return false;
       }
+
+      await submitUpdate({...body, id: selectedId});
     } else {
       const result = await api.fetch<CreateSaleResponse>("POST", "/api/sale/create", {body});
 

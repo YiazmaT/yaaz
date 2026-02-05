@@ -35,7 +35,13 @@ export function Form(props: FormProps) {
               <Divider />
             </Grid>
 
-            <ProductsSelector value={sales.items} onChange={sales.setItems} disabled={isDetails} incrementOnDuplicate />
+            <ProductsSelector
+              value={sales.items}
+              onChange={sales.setItems}
+              disabled={isDetails}
+              incrementOnDuplicate
+              priceChangeText={translate("sales.priceChangeWarning.originalPriceWas")}
+            />
 
             <Grid size={12}>
               <Divider />

@@ -34,15 +34,26 @@ export async function POST(req: NextRequest) {
     const stockWarnings: ProductStockWarning[] = [];
     const packageWarnings: PackageStockWarning[] = [];
 
+    const productsMap = new Map<string, {id: string; name: string; stock: number; price: string}>();
+
     if (hasItems) {
       const productIds = items.map((item) => item.product_id);
       const products = await prisma.product.findMany({
         where: {id: {in: productIds}, tenant_id: auth.tenant_id},
-        select: {id: true, name: true, stock: true},
+        select: {id: true, name: true, stock: true, price: true},
       });
 
+      for (const product of products) {
+        productsMap.set(product.id, {
+          id: product.id,
+          name: product.name,
+          stock: product.stock,
+          price: product.price.toString(),
+        });
+      }
+
       for (const item of items) {
-        const product = products.find((p) => p.id === item.product_id);
+        const product = productsMap.get(item.product_id);
         if (product) {
           const currentStock = new Decimal(product.stock);
           const resultingStock = currentStock.minus(item.quantity);
@@ -105,6 +116,7 @@ export async function POST(req: NextRequest) {
                   tenant_id: auth.tenant_id,
                   product_id: item.product_id,
                   quantity: item.quantity,
+                  unit_price: productsMap.get(item.product_id)?.price || "0",
                 })),
               }
             : undefined,

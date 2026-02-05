@@ -326,6 +326,7 @@ model SaleItem {
   sale_id    String  @db.Uuid
   product_id String  @db.Uuid
   quantity   Int
+  unit_price Decimal @db.Decimal
   tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   sale       Sale    @relation(fields: [sale_id], references: [id], onDelete: Cascade)
   product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)

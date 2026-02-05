@@ -3,6 +3,7 @@ import {Product} from "@/src/pages-content/products/types";
 export interface ProductItem {
   product: Product;
   quantity: number;
+  unit_price?: string;
 }
 
 export interface ProductsSelectorProps {
@@ -10,6 +11,7 @@ export interface ProductsSelectorProps {
   onChange: (items: ProductItem[]) => void;
   disabled?: boolean;
   incrementOnDuplicate?: boolean;
+  priceChangeText?: string;
 }
 
 export interface ProductRowProps {
@@ -18,4 +20,5 @@ export interface ProductRowProps {
   handleRemove: (productId: string) => void;
   disabled?: boolean;
   formatCurrency: (value: number | string | null | undefined, maxDecimals?: number) => string;
+  priceChangeText?: string;
 }

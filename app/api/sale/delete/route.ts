@@ -25,7 +25,10 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
     }
 
-    const sale = await prisma.sale.findUnique({where: {id, tenant_id: auth.tenant_id}});
+    const sale = await prisma.sale.findUnique({
+      where: {id, tenant_id: auth.tenant_id},
+      include: {items: true, packages: true},
+    });
 
     if (!sale) {
       logError({
@@ -40,7 +43,23 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 404});
     }
 
-    await prisma.sale.delete({where: {id}});
+    await prisma.$transaction(async (tx) => {
+      for (const item of sale.items) {
+        await tx.product.update({
+          where: {id: item.product_id},
+          data: {stock: {increment: item.quantity}},
+        });
+      }
+
+      for (const pkg of sale.packages) {
+        await tx.package.update({
+          where: {id: pkg.package_id},
+          data: {stock: {increment: pkg.quantity}},
+        });
+      }
+
+      await tx.sale.delete({where: {id}});
+    });
 
     logDelete({module: LogModule.SALE, source: LogSource.API, content: sale, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
 

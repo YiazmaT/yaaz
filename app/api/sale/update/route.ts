@@ -3,7 +3,7 @@ import {authenticateRequest} from "@/src/lib/auth";
 import {calculateApproximateCost} from "@/src/lib/calculate-sale-cost";
 import {logCritical, logError, LogModule, LogSource, logUpdate} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {UpdateSaleDto, ProductStockWarning, PackageStockWarning} from "@/src/pages-content/sales/dto";
+import {UpdateSaleDto, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "@/src/pages-content/sales/dto";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/sale/update";
@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body: UpdateSaleDto = await req.json();
-    const {id, payment_method, total, items, packages, force} = body;
+    const {id, payment_method, total, items, packages, force, updatePrices} = body;
 
     const hasItems = items && items.length > 0;
     const hasPackages = packages && packages.length > 0;
@@ -99,6 +99,35 @@ export async function PUT(req: NextRequest) {
 
     const stockWarnings: ProductStockWarning[] = [];
     const packageWarnings: PackageStockWarning[] = [];
+    const priceChangeWarnings: PriceChangeWarning[] = [];
+
+    const productsMap = new Map<string, {id: string; name: string; price: string}>();
+    if (hasItems) {
+      const productIds = items.map((item) => item.product_id);
+      const products = await prisma.product.findMany({
+        where: {id: {in: productIds}, tenant_id: auth.tenant_id},
+        select: {id: true, name: true, price: true},
+      });
+      for (const product of products) {
+        productsMap.set(product.id, {id: product.id, name: product.name, price: product.price.toString()});
+      }
+
+      for (const item of items) {
+        const product = productsMap.get(item.product_id);
+        if (product && item.unit_price !== product.price) {
+          priceChangeWarnings.push({
+            productId: product.id,
+            productName: product.name,
+            originalPrice: item.unit_price,
+            currentPrice: product.price,
+          });
+        }
+      }
+
+      if (priceChangeWarnings.length > 0 && updatePrices === undefined) {
+        return NextResponse.json({success: false, priceChangeWarnings}, {status: 200});
+      }
+    }
 
     const productIdsToCheck = productStockChanges.filter((p) => p.change < 0).map((p) => p.productId);
     if (productIdsToCheck.length > 0) {
@@ -161,6 +190,16 @@ export async function PUT(req: NextRequest) {
 
     const approximateCost = await calculateApproximateCost(items || [], packages || [], auth.tenant_id);
 
+    let finalTotal = total;
+    if (updatePrices && hasItems) {
+      finalTotal = items
+        .reduce((acc, item) => {
+          const price = productsMap.get(item.product_id)?.price || item.unit_price;
+          return acc.plus(new Decimal(price).times(item.quantity));
+        }, new Decimal(0))
+        .toString();
+    }
+
     const sale = await prisma.$transaction(async (tx) => {
       await tx.saleItem.deleteMany({where: {sale_id: id}});
       await tx.salePackage.deleteMany({where: {sale_id: id}});
@@ -169,7 +208,7 @@ export async function PUT(req: NextRequest) {
         where: {id},
         data: {
           payment_method: payment_method as any,
-          total,
+          total: finalTotal,
           approximate_cost: approximateCost,
           last_edit_date: new Date(),
           last_editor_id: auth.user!.id,
@@ -179,6 +218,7 @@ export async function PUT(req: NextRequest) {
                   tenant_id: auth.tenant_id,
                   product_id: item.product_id,
                   quantity: item.quantity,
+                  unit_price: updatePrices ? productsMap.get(item.product_id)?.price || item.unit_price : item.unit_price,
                 })),
               }
             : undefined,

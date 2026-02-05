@@ -43,9 +43,13 @@ export function ConfirmModalContextProvider(props: PropsWithChildren) {
   }
 
   function close() {
-    defaultModalValues.onCancel?.();
     setShowModal(false);
     setModalValues(defaultModalValues);
+  }
+
+  function cancel() {
+    modalValues.onCancel?.();
+    close();
   }
 
   function confirm() {
@@ -93,7 +97,7 @@ export function ConfirmModalContextProvider(props: PropsWithChildren) {
               {translate("global.confirm")}
             </Button>
             {!modalValues.hideCancel && (
-              <Button onClick={close} variant="outlined" sx={{marginRight: 5}}>
+              <Button onClick={cancel} variant="outlined" sx={{marginRight: 5}}>
                 {translate("global.cancel")}
               </Button>
             )}

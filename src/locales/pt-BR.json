@@ -283,6 +283,16 @@
       "items": "📦 Produtos",
       "packages": "🎁 Embalagens",
       "noItems": "Nenhum item"
+    },
+    "priceChangeWarning": {
+      "title": "Preços Alterados",
+      "message": "Alguns produtos tiveram seus preços alterados desde esta venda. Clique em 'Confirmar' para atualizar os preços, ou 'Cancelar' para manter os preços originais.",
+      "products": "Produtos com preço alterado",
+      "updatePrices": "Atualizar preços",
+      "keepOriginal": "Manter original",
+      "originalPriceWas": "Preço original da venda:",
+      "originalTotal": "Total com preços originais",
+      "newTotal": "Total com preços atuais"
     }
   },
   "dashboard": {

@@ -1,5 +1,5 @@
 "use client";
-import {Box, Grid, IconButton, Tooltip, Typography, useMediaQuery, useTheme} from "@mui/material";
+import {Box, Grid, IconButton, Tooltip, Typography, useMediaQuery, useTheme, Alert} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {IntegerInput} from "@/src/components/form-fields/integer-input";
@@ -10,6 +10,8 @@ import {ProductsSelectorProps, ProductRowProps} from "./types";
 
 function ProductRowMobile(props: ProductRowProps) {
   const theme = useTheme();
+  const hasPriceChanged = props.item.unit_price && props.item.unit_price !== props.item.product.price.toString();
+
   return (
     <Box
       sx={{
@@ -19,7 +21,7 @@ function ProductRowMobile(props: ProductRowProps) {
         padding: 1.5,
         borderRadius: 1,
         backgroundColor: theme.palette.grey[100],
-        border: `1px solid ${theme.palette.grey[300]}`,
+        border: `1px solid ${hasPriceChanged ? theme.palette.warning.main : theme.palette.grey[300]}`,
       }}
     >
       <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
@@ -52,6 +54,11 @@ function ProductRowMobile(props: ProductRowProps) {
           </Typography>
         </Box>
       </Box>
+      {hasPriceChanged && (
+        <Alert severity="warning" sx={{py: 0.5, alignItems: "center"}}>
+          {props.priceChangeText} {props.formatCurrency(props.item.unit_price)}
+        </Alert>
+      )}
     </Box>
   );
 }
@@ -67,52 +74,61 @@ function DropdownOption(props: {image?: string | null; name: string}) {
 
 function ProductRowDesktop(props: ProductRowProps) {
   const theme = useTheme();
+  const hasPriceChanged = props.item.unit_price && props.item.unit_price !== props.item.product.price.toString();
+
   return (
     <Box
       sx={{
         display: "flex",
-        alignItems: "center",
-        gap: 1.5,
+        flexDirection: "column",
+        gap: 1,
         padding: 1.5,
         borderRadius: 1,
         backgroundColor: theme.palette.grey[100],
-        border: `1px solid ${theme.palette.grey[300]}`,
+        border: `1px solid ${hasPriceChanged ? theme.palette.warning.main : theme.palette.grey[300]}`,
       }}
     >
-      <Box sx={{width: 200}}>
-        <IntegerInput
-          value={props.item.quantity}
-          onChange={(quantity) => props.handleQuantityChange(props.item.product.id, quantity)}
-          disabled={props.disabled}
-          label="products.fields.quantity"
-          fullWidth
-        />
-      </Box>
+      <Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
+        <Box sx={{width: 200}}>
+          <IntegerInput
+            value={props.item.quantity}
+            onChange={(quantity) => props.handleQuantityChange(props.item.product.id, quantity)}
+            disabled={props.disabled}
+            label="products.fields.quantity"
+            fullWidth
+          />
+        </Box>
 
-      <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
+        <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
 
-      <Box sx={{flex: 1, minWidth: 0}}>
-        <Tooltip title={props.item.product.name} placement="top">
-          <Typography variant="body2" fontWeight={600} noWrap>
-            {props.item.product.name}
+        <Box sx={{flex: 1, minWidth: 0}}>
+          <Tooltip title={props.item.product.name} placement="top">
+            <Typography variant="body2" fontWeight={600} noWrap>
+              {props.item.product.name}
+            </Typography>
+          </Tooltip>
+          <Typography variant="caption" color="text.secondary">
+            {props.formatCurrency(Number(props.item.product.price))}
           </Typography>
-        </Tooltip>
-        <Typography variant="caption" color="text.secondary">
-          {props.formatCurrency(Number(props.item.product.price))}
-        </Typography>
-      </Box>
+        </Box>
 
-      {!props.disabled && (
-        <IconButton size="small" onClick={() => props.handleRemove(props.item.product.id)} color="error">
-          <DeleteIcon fontSize="small" />
-        </IconButton>
+        {!props.disabled && (
+          <IconButton size="small" onClick={() => props.handleRemove(props.item.product.id)} color="error">
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        )}
+      </Box>
+      {hasPriceChanged && (
+        <Alert severity="warning" sx={{py: 0.5, alignItems: "center"}}>
+          {props.priceChangeText} {props.formatCurrency(props.item.unit_price)}
+        </Alert>
       )}
     </Box>
   );
 }
 
 export function ProductsSelector(props: ProductsSelectorProps) {
-  const {value, onChange, disabled, incrementOnDuplicate} = props;
+  const {value, onChange, disabled, incrementOnDuplicate, priceChangeText} = props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const formatCurrency = useFormatCurrency();
@@ -130,12 +146,13 @@ export function ProductsSelector(props: ProductsSelectorProps) {
       displayLandingPage: product.displayLandingPage,
     };
 
-    const existingIndex = value.findIndex((item) => item.product.id === cleanProduct.id);
+    const existingItem = value.find((item) => item.product.id === cleanProduct.id);
 
-    if (existingIndex >= 0) {
+    if (existingItem) {
       if (incrementOnDuplicate) {
-        const newItems = [...value];
-        newItems[existingIndex].quantity += 1;
+        const newItems = value.map((item) =>
+          item.product.id === cleanProduct.id ? {...item, quantity: item.quantity + 1} : item,
+        );
         onChange(newItems);
       }
       return;
@@ -177,6 +194,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
                 handleRemove={handleRemove}
                 item={item}
                 formatCurrency={formatCurrency}
+                priceChangeText={priceChangeText}
               />
             ) : (
               <ProductRowDesktop
@@ -186,6 +204,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
                 handleRemove={handleRemove}
                 item={item}
                 formatCurrency={formatCurrency}
+                priceChangeText={priceChangeText}
               />
             ),
           )}

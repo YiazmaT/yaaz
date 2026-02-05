@@ -1,6 +1,7 @@
 export interface SaleItemDto {
   product_id: string;
   quantity: number;
+  unit_price: string;
 }
 
 export interface SalePackageDto {
@@ -18,6 +19,7 @@ export interface CreateSaleDto {
 
 export interface UpdateSaleDto extends CreateSaleDto {
   id: string;
+  updatePrices?: boolean;
 }
 
 export interface DeleteSaleDto {
@@ -40,9 +42,17 @@ export interface PackageStockWarning {
   resultingStock: number;
 }
 
+export interface PriceChangeWarning {
+  productId: string;
+  productName: string;
+  originalPrice: string;
+  currentPrice: string;
+}
+
 export interface CreateSaleResponse {
   success: boolean;
   sale?: any;
   stockWarnings?: ProductStockWarning[];
   packageWarnings?: PackageStockWarning[];
+  priceChangeWarnings?: PriceChangeWarning[];
 }
