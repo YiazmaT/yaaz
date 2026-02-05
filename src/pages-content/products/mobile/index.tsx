@@ -32,16 +32,14 @@ export function MobileView(props: MobileViewProps) {
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
         <Box sx={{display: "flex", gap: 2}}>
-          <ImagePreview url={item.image} alt={item.name} width={64} height={64} borderRadius={1} />
+          <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5}}>
+            <ImagePreview url={item.image} alt={item.name} width={64} height={64} borderRadius={1} />
+            {!item.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
+          </Box>
           <Box sx={{flex: 1, minWidth: 0, ...flexGenerator("c")}}>
-            <Box sx={{...flexGenerator("r.sb.c")}}>
-              <Box sx={{display: "flex", alignItems: "center", gap: 0.5}}>
-                {!item.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
-                <Typography variant="subtitle1" fontWeight={600} noWrap>
-                  {item.name}
-                </Typography>
-              </Box>
-            </Box>
+            <Typography variant="subtitle1" fontWeight={600} sx={{wordBreak: "break-word"}}>
+              {item.name}
+            </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
               {item.description || "-"}
             </Typography>
