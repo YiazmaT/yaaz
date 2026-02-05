@@ -1,5 +1,4 @@
 import {Box, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
-import Image from "next/image";
 import Link from "next/link";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -73,13 +72,12 @@ export function DesktopView(props: DesktopViewProps) {
                 transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
-              <Image
-                alt={process.env.NEXT_PUBLIC_COMPANY_NAME!}
-                src="/assets/icon.png"
-                width={48}
-                height={48}
+              <Box
+                component="img"
+                alt={layout.tenantName}
+                src={layout.tenantLogo}
+                sx={{width: 48, height: 48, cursor: "pointer", objectFit: "contain"}}
                 onClick={() => layout.handleNavigate("/home")}
-                style={{cursor: "pointer"}}
               />
               <Typography
                 sx={{
@@ -93,7 +91,7 @@ export function DesktopView(props: DesktopViewProps) {
                   fontWeight: 600,
                 }}
               >
-                {process.env.NEXT_PUBLIC_COMPANY_NAME}
+                {layout.tenantName}
               </Typography>
             </Box>
             <Divider sx={{marginTop: "16px", marginBottom: "16px", flexShrink: 0}} />

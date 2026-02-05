@@ -1,14 +1,18 @@
 "use client";
 import {Box, CircularProgress, useTheme} from "@mui/material";
-import Image from "next/image";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {LoaderProps} from "./types";
+
+const DEFAULT_LOGO = "/assets/icon.png";
 
 export function Loader(props: LoaderProps) {
   const theme = useTheme();
+  const {tenant} = useTenant();
   const primaryColor = theme.palette.primary.main;
   const secondaryColor = theme.palette.secondary.main;
   const size = props.size ?? 80;
   const iconSize = Math.round(size * 0.6);
+  const logo = tenant?.logo || DEFAULT_LOGO;
 
   return (
     <Box
@@ -20,7 +24,12 @@ export function Loader(props: LoaderProps) {
         ...props.sx,
       }}
     >
-      <Image src="/assets/icon.png" alt="" width={iconSize} height={iconSize} style={{borderRadius: "100%"}} />
+      <Box
+        component="img"
+        src={logo}
+        alt=""
+        sx={{width: iconSize, height: iconSize, borderRadius: "100%", objectFit: "contain"}}
+      />
       <svg width={0} height={0}>
         <defs>
           <linearGradient id="loader_gradient" x1="0%" y1="0%" x2="0%" y2="100%">

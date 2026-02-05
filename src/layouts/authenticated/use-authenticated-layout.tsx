@@ -3,6 +3,7 @@ import {useTheme} from "@mui/material";
 import {useNavigate} from "@/src/hooks/use-navigate";
 import {useAuth} from "@/src/contexts/auth-context";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {MenuItem} from "./types";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import BakeryDiningOutlinedIcon from "@mui/icons-material/BakeryDiningOutlined";
@@ -18,13 +19,20 @@ const menuItems: MenuItem[] = [
   {name: "global.reports", route: "/reports", icon: <ReceiptOutlinedIcon />},
 ];
 
+const DEFAULT_LOGO = "/assets/icon.png";
+const DEFAULT_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME || "";
+
 export function useAuthenticatedLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const {logout} = useAuth();
+  const {tenant} = useTenant();
   const {navigate} = useNavigate();
   const {translate} = useTranslate();
   const theme = useTheme();
+
+  const tenantLogo = tenant?.logo || DEFAULT_LOGO;
+  const tenantName = tenant?.name || DEFAULT_NAME;
 
   function toggleCollapse() {
     setIsCollapsed(!isCollapsed);
@@ -54,6 +62,8 @@ export function useAuthenticatedLayout() {
     menuItems,
     theme,
     translate,
+    tenantLogo,
+    tenantName,
     toggleCollapse,
     handleMobileMenuToggle,
     handleNavigate,

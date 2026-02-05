@@ -29,12 +29,12 @@ export function MobileView(props: MobileViewProps) {
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             <Box
               component="img"
-              alt={process.env.NEXT_PUBLIC_COMPANY_NAME!}
-              src="/assets/icon.png"
-              sx={{width: 32, height: 32, cursor: "pointer"}}
+              alt={layout.tenantName}
+              src={layout.tenantLogo}
+              sx={{width: 32, height: 32, cursor: "pointer", objectFit: "contain"}}
               onClick={() => layout.handleNavigate("/home")}
             />
-            <Typography sx={{color: layout.theme.palette.primary.main, fontWeight: 600}}>{process.env.NEXT_PUBLIC_COMPANY_NAME}</Typography>
+            <Typography sx={{color: layout.theme.palette.primary.main, fontWeight: 600}}>{layout.tenantName}</Typography>
           </Box>
           <IconButton onClick={layout.handleMobileMenuToggle} sx={{color: layout.theme.palette.primary.main}}>
             <MenuIcon />
@@ -48,9 +48,9 @@ export function MobileView(props: MobileViewProps) {
             <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
               <Box
                 component="img"
-                alt={process.env.NEXT_PUBLIC_COMPANY_NAME!}
-                src="/assets/icon.png"
-                sx={{width: 32, height: 32, cursor: "pointer"}}
+                alt={layout.tenantName}
+                src={layout.tenantLogo}
+                sx={{width: 32, height: 32, cursor: "pointer", objectFit: "contain"}}
                 onClick={() => {
                   layout.handleNavigate("/home");
                   layout.handleMobileMenuToggle();
