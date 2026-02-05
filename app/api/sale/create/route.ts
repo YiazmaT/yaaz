@@ -1,7 +1,6 @@
 import Decimal from "decimal.js";
 import {authenticateRequest} from "@/src/lib/auth";
 import {calculateApproximateCost} from "@/src/lib/calculate-sale-cost";
-import {notifyNewSale} from "@/src/lib/discord";
 import {logCritical, logError, LogModule, LogSource, logCreate} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {CreateSaleDto, ProductStockWarning, PackageStockWarning} from "@/src/pages-content/sales/dto";
@@ -152,27 +151,6 @@ export async function POST(req: NextRequest) {
       }
 
       return newSale;
-    });
-
-    const paymentMethodLabels: Record<string, string> = {
-      credit: "Crédito",
-      debit: "Débito",
-      pix: "Pix",
-      cash: "Dinheiro",
-      iFood: "iFood",
-    };
-
-    notifyNewSale({
-      total: Number(sale.total),
-      items: sale.items.map((item) => ({
-        product: {name: item.product.name, price: String(item.product.price)},
-        quantity: item.quantity,
-      })),
-      packages: sale.packages.map((pkg) => ({
-        package: {name: pkg.package.name},
-        quantity: pkg.quantity,
-      })),
-      paymentMethod: paymentMethodLabels[payment_method] || payment_method,
     });
 
     logCreate({module: LogModule.SALE, source: LogSource.API, content: sale, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});

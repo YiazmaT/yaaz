@@ -3,30 +3,34 @@ import {useEffect, useState} from "react";
 import {Box, Card, CardContent, CircularProgress, Typography} from "@mui/material";
 import TodayIcon from "@mui/icons-material/Today";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {useApi} from "@/src/hooks/use-api";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {TodaySalesResponse} from "../dto";
 
-const timeZone = process.env.TIME_ZONE ?? "America/Sao_Paulo";
 export function TodaySalesCard() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<TodaySalesResponse | null>(null);
   const {translate} = useTranslate();
+  const {tenant} = useTenant();
   const api = useApi();
+  const timeZone = tenant?.time_zone;
+  const formatCurrency = useFormatCurrency();
 
   const today = new Date();
   const todayFormatted = `${today.getDate().toString().padStart(2, "0")}/${(today.getMonth() + 1).toString().padStart(2, "0")}`;
 
   useEffect(() => {
+    if (!timeZone) return;
     async function fetchData() {
-      const result = await api.fetch<TodaySalesResponse>("GET", `/api/dashboard/sales/today?timezone=${encodeURIComponent(timeZone)}`);
+      const result = await api.fetch<TodaySalesResponse>("GET", `/api/dashboard/sales/today?timezone=${encodeURIComponent(timeZone!)}`);
       if (result) {
         setData(result);
       }
       setLoading(false);
     }
     fetchData();
-  }, []);
+  }, [timeZone]);
 
   return (
     <Card sx={{height: "100%"}}>

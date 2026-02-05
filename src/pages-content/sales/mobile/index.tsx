@@ -4,7 +4,7 @@ import {Box, CardContent, Chip, Fab, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Sale} from "../types";
 import {Form} from "../components/form";
 import {MobileViewProps} from "./types";
@@ -13,8 +13,9 @@ import {useSalesConstants} from "../constants";
 export function MobileView(props: MobileViewProps) {
   const {sales} = props;
   const {translate} = useTranslate();
-  const theme = useTheme();
   const {payment_methods} = useSalesConstants();
+  const theme = useTheme();
+  const formatCurrency = useFormatCurrency();
 
   function renderRow(item: Sale, actions: ReactNode) {
     return (

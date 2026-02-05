@@ -8,17 +8,18 @@ import ClearIcon from "@mui/icons-material/Clear";
 import {DatePicker} from "@/src/components/form-fields/date-picker";
 import {CurrencyInput} from "@/src/components/form-fields/currency-input";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {SalesFiltersProps, SalesFilterFormValues} from "./types";
 import {useSalesFilterFormConfig} from "./form-config";
 import moment from "moment";
-
-const timeZone = process.env.TIME_ZONE ?? "America/Sao_Paulo";
 
 export function SalesFilters(props: SalesFiltersProps) {
   const [expanded, setExpanded] = useState(false);
   const [filtersApplied, setFiltersApplied] = useState(false);
   const {translate} = useTranslate();
+  const {tenant} = useTenant();
   const {schema, defaultValues} = useSalesFilterFormConfig();
+  const timeZone = tenant?.time_zone;
   const today = moment().format("YYYY-MM-DD");
 
   const {

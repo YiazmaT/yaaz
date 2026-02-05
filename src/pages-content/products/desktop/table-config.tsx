@@ -1,7 +1,7 @@
 import {Box, useTheme} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn, TableButton} from "@/src/components/data-columns";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Product} from "../types";
 import StarIcon from "@mui/icons-material/Star";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
@@ -12,6 +12,7 @@ import {ProductTableConfigProps} from "./types";
 export function useProductsTableConfig(props: ProductTableConfigProps) {
   const {translate} = useTranslate();
   const theme = useTheme();
+  const formatCurrency = useFormatCurrency();
 
   function generateConfig(): DataTableColumn<Product>[] {
     return [

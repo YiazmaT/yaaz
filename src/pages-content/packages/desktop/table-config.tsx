@@ -1,7 +1,7 @@
 import {Box, Chip, useTheme} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn, TableButton} from "@/src/components/data-columns";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Package, PackageType} from "../types";
 import {usePackagesConstants} from "../constants";
 import {PackagesTableConfigProps} from "./types";
@@ -9,9 +9,10 @@ import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import {useTranslate} from "@/src/contexts/translation-context";
 
 export function usePackagesTableConfig(props: PackagesTableConfigProps) {
-  const theme = useTheme();
-  const {typeOfPackage} = usePackagesConstants();
   const {translate} = useTranslate();
+  const {typeOfPackage} = usePackagesConstants();
+  const theme = useTheme();
+  const formatCurrency = useFormatCurrency();
 
   function generateConfig(): DataTableColumn<Package>[] {
     return [

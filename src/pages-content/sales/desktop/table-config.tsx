@@ -1,7 +1,7 @@
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
 import {TableConfigProps} from "@/src/@types/global-types";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Sale} from "../types";
 import {useSalesConstants} from "../constants";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -9,6 +9,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 export function useSalesTableConfig(props: TableConfigProps<Sale>) {
   const {payment_methods} = useSalesConstants();
   const {translate} = useTranslate();
+  const formatCurrency = useFormatCurrency();
 
   function generateConfig(): DataTableColumn<Sale>[] {
     return [

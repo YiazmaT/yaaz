@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {LineChart} from "@mui/x-charts/LineChart";
 import {useApi} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {CostHistoryModalProps, CostHistoryResponse} from "./types";
 
@@ -14,10 +14,11 @@ export function CostHistoryModal(props: CostHistoryModalProps) {
   const [dates, setDates] = useState<Date[]>([]);
   const [prices, setPrices] = useState<number[]>([]);
   const {translate} = useTranslate();
-  const theme = useTheme();
-  const primaryColor = theme.palette.primary.main;
-  const fetchedRef = useRef<string | null>(null);
   const api = useApi();
+  const theme = useTheme();
+  const formatCurrency = useFormatCurrency();
+  const fetchedRef = useRef<string | null>(null);
+  const primaryColor = theme.palette.primary.main;
 
   useEffect(() => {
     if (props.open && props.packageId && fetchedRef.current !== props.packageId) {

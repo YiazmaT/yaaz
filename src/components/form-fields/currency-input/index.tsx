@@ -3,7 +3,7 @@ import {Controller} from "react-hook-form";
 import {CurrencyInputProps, FormCurrencyInputProps} from "./types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormContext} from "@/src/contexts/form-context";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 
 function parseToString(inputValue: string): string {
   const digits = inputValue.replace(/\D/g, "");
@@ -13,6 +13,7 @@ function parseToString(inputValue: string): string {
 
 export function CurrencyInput(props: CurrencyInputProps) {
   const {translate} = useTranslate();
+  const formatCurrency = useFormatCurrency();
   const value = props.value ?? "0";
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {

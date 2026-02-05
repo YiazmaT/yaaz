@@ -4,29 +4,33 @@ import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@m
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import {BarChart} from "@mui/x-charts/BarChart";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {useApi} from "@/src/hooks/use-api";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {SemestralSalesResponse} from "../dto";
 
-const timeZone = process.env.TIME_ZONE ?? "America/Sao_Paulo";
 export function SemestralSalesCard() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<SemestralSalesResponse | null>(null);
   const {translate} = useTranslate();
-  const theme = useTheme();
-  const primaryColor = theme.palette.primary.main;
+  const {tenant} = useTenant();
   const api = useApi();
+  const theme = useTheme();
+  const timeZone = tenant?.time_zone;
+  const formatCurrency = useFormatCurrency();
+  const primaryColor = theme.palette.primary.main;
 
   useEffect(() => {
+    if (!timeZone) return;
     async function fetchData() {
-      const result = await api.fetch<SemestralSalesResponse>("GET", `/api/dashboard/sales/semestral?timezone=${encodeURIComponent(timeZone)}`);
+      const result = await api.fetch<SemestralSalesResponse>("GET", `/api/dashboard/sales/semestral?timezone=${encodeURIComponent(timeZone!)}`);
       if (result) {
         setData(result);
       }
       setLoading(false);
     }
     fetchData();
-  }, []);
+  }, [timeZone]);
 
   const labels = data?.months.map((m) => m.label) || [];
   const values = data?.months.map((m) => m.total) || [];

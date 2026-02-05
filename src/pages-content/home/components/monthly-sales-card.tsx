@@ -4,32 +4,36 @@ import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@m
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import {LineChart} from "@mui/x-charts/LineChart";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {useApi} from "@/src/hooks/use-api";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {MonthlySalesResponse} from "../dto";
 
-const timeZone = process.env.TIME_ZONE ?? "America/Sao_Paulo";
 export function MonthlySalesCard() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<MonthlySalesResponse | null>(null);
   const {translate} = useTranslate();
+  const {tenant} = useTenant();
   const theme = useTheme();
-  const primaryColor = theme.palette.primary.main;
   const api = useApi();
+  const timeZone = tenant?.time_zone;
+  const formatCurrency = useFormatCurrency();
+  const primaryColor = theme.palette.primary.main;
 
   const currentMonth = new Date().toLocaleString("pt-BR", {month: "long"});
   const currentMonthCapitalized = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
 
   useEffect(() => {
+    if (!timeZone) return;
     async function fetchData() {
-      const result = await api.fetch<MonthlySalesResponse>("GET", `/api/dashboard/sales/monthly?timezone=${encodeURIComponent(timeZone)}`);
+      const result = await api.fetch<MonthlySalesResponse>("GET", `/api/dashboard/sales/monthly?timezone=${encodeURIComponent(timeZone!)}`);
       if (result) {
         setData(result);
       }
       setLoading(false);
     }
     fetchData();
-  }, []);
+  }, [timeZone]);
 
   const days = data?.days.map((d) => d.day) || [];
   const values = data?.days.map((d) => d.total) || [];

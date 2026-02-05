@@ -3,8 +3,15 @@ import {cookies} from "next/headers";
 import {NextResponse} from "next/server";
 import {prisma} from "./prisma";
 import {logCritical, logError, LogModule, LogSource} from "./logger";
+import {Tenant} from "@/src/pages-content/tenants/types";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
+
+interface JwtPayload {
+  id: string;
+  tenant_id: string;
+  tenant: Tenant;
+}
 
 export async function authenticateRequest(module: LogModule, route?: string) {
   const Cookies = await cookies();
@@ -17,7 +24,7 @@ export async function authenticateRequest(module: LogModule, route?: string) {
   }
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as {id: string; tenant_id: string};
+    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
     const user = await prisma.user.findUnique({
       where: {id: payload.id},
@@ -27,7 +34,7 @@ export async function authenticateRequest(module: LogModule, route?: string) {
       return {error: response, token};
     }
 
-    return {user, tenant_id: user.tenant_id};
+    return {user, tenant_id: user.tenant_id, tenant: payload.tenant};
   } catch (error) {
     logCritical({module, source: LogSource.API, route, error});
     return {error: response, token};

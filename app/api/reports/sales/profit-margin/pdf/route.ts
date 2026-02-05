@@ -1,7 +1,6 @@
 import {authenticateRequest} from "@/src/lib/auth";
 import {logCritical, logGet, LogModule, LogSource} from "@/src/lib/logger";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
-import {getTenant} from "@/src/lib/tenant";
 import {formatCurrency} from "@/src/utils/format-currency";
 import {NextRequest, NextResponse} from "next/server";
 import moment from "moment";
@@ -13,14 +12,13 @@ export async function GET(req: NextRequest) {
   if (auth.error) return auth.error;
 
   try {
-    const tenant = await getTenant(auth.tenant_id);
     const {searchParams} = new URL(req.url);
     const dataStr = searchParams.get("data") || "[]";
     const generatedAt = searchParams.get("generatedAt") || "";
     const dateFrom = searchParams.get("dateFrom") || "";
     const dateTo = searchParams.get("dateTo") || "";
-
     const data = JSON.parse(dataStr);
+    const currency = auth.tenant.currency_type;
 
     const rows = data
       .map(
@@ -28,9 +26,9 @@ export async function GET(req: NextRequest) {
       <tr>
         <td>${row.productName}</td>
         <td class="right">${row.quantitySold}</td>
-        <td class="right">${formatCurrency(row.revenue)}</td>
-        <td class="right">${formatCurrency(row.cost)}</td>
-        <td class="right">${formatCurrency(row.profit)}</td>
+        <td class="right">${formatCurrency(row.revenue, 2, currency)}</td>
+        <td class="right">${formatCurrency(row.cost, 2, currency)}</td>
+        <td class="right">${formatCurrency(row.profit, 2, currency)}</td>
         <td class="right">${row.marginPercent}%</td>
       </tr>
     `
@@ -70,16 +68,16 @@ export async function GET(req: NextRequest) {
           <tr class="total-row">
             <td><strong>Total</strong></td>
             <td class="right"><strong>${totals.quantitySold}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.revenue)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.cost)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.profit)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.revenue, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.cost, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.profit, 2, currency)}</strong></td>
             <td class="right"><strong>${avgMargin}%</strong></td>
           </tr>
         </tfoot>
       </table>
     `;
 
-    const html = generatePdfHtml({title: "Margem de Lucro", content, generatedAt, tenant});
+    const html = generatePdfHtml({title: "Margem de Lucro", content, generatedAt, tenant: auth.tenant});
 
     logGet({module: LogModule.REPORTS, source: LogSource.API, userId: auth.user!.id, tenantId: auth.tenant_id, content: {dateFrom, dateTo}, route: ROUTE});
 

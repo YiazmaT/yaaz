@@ -8,7 +8,7 @@ import StarOutlineIcon from "@mui/icons-material/StarOutline";
 import {MobileList} from "@/src/components/mobile-list";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {Product} from "../types";
 import {Form} from "../components/form";
@@ -22,6 +22,7 @@ export function MobileView(props: MobileViewProps) {
   const {products} = props;
   const {translate} = useTranslate();
   const theme = useTheme();
+  const formatCurrency = useFormatCurrency();
   const stockDrawerRef = useRef<AddStockDrawerRef>(null);
 
   function renderRow(item: Product, actions: ReactNode) {

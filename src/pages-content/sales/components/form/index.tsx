@@ -4,7 +4,7 @@ import {FormRadioGroup} from "@/src/components/form-fields/radio-group";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {ProductsSelector} from "@/src/components/products-selector";
 import {PackagesSelector} from "@/src/components/packages-selector";
 import {PackageType} from "@/src/pages-content/packages/types";
@@ -15,6 +15,7 @@ export function Form(props: FormProps) {
   const {sales} = props;
   const {translate} = useTranslate();
   const {payment_methods} = useSalesConstants();
+  const formatCurrency = useFormatCurrency();
   const isDetails = sales.formType === "details";
 
   const paymentMethodOptions = Object.values(payment_methods);

@@ -1,7 +1,7 @@
 import {Box, useTheme} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn, TableButton} from "@/src/components/data-columns";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Ingredient} from "../types";
 import {useIngredientsConstants} from "../constants";
 import {IngredientsTableConfigProps} from "./types";
@@ -9,9 +9,10 @@ import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import {useTranslate} from "@/src/contexts/translation-context";
 
 export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
+  const {translate} = useTranslate();
   const {unitOfMeasures} = useIngredientsConstants();
   const theme = useTheme();
-  const {translate} = useTranslate();
+  const formatCurrency = useFormatCurrency();
 
   function generateConfig(): DataTableColumn<Ingredient>[] {
     return [

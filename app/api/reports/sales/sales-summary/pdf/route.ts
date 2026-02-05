@@ -1,7 +1,6 @@
 import {authenticateRequest} from "@/src/lib/auth";
 import {logCritical, logGet, LogModule, LogSource} from "@/src/lib/logger";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
-import {getTenant} from "@/src/lib/tenant";
 import {formatCurrency} from "@/src/utils/format-currency";
 import {NextRequest, NextResponse} from "next/server";
 import moment from "moment";
@@ -13,30 +12,29 @@ export async function GET(req: NextRequest) {
   if (auth.error) return auth.error;
 
   try {
-    const tenant = await getTenant(auth.tenant_id);
     const {searchParams} = new URL(req.url);
     const dataStr = searchParams.get("data") || "[]";
     const generatedAt = searchParams.get("generatedAt") || "";
     const dateFrom = searchParams.get("dateFrom") || "";
     const dateTo = searchParams.get("dateTo") || "";
-
     const data = JSON.parse(dataStr);
+    const currency = auth.tenant.currency_type;
 
     const rows = data
       .map(
         (row: any) => `
       <tr>
         <td>${moment(row.date).format("DD/MM/YYYY")}</td>
-        <td class="right">${formatCurrency(row.totalSales)}</td>
+        <td class="right">${formatCurrency(row.totalSales, 2, currency)}</td>
         <td class="right">${row.transactionCount}</td>
-        <td class="right">${formatCurrency(row.averageTicket)}</td>
-        <td class="right">${formatCurrency(row.cash)}</td>
-        <td class="right">${formatCurrency(row.credit)}</td>
-        <td class="right">${formatCurrency(row.debit)}</td>
-        <td class="right">${formatCurrency(row.pix)}</td>
-        <td class="right">${formatCurrency(row.iFood)}</td>
+        <td class="right">${formatCurrency(row.averageTicket, 2, currency)}</td>
+        <td class="right">${formatCurrency(row.cash, 2, currency)}</td>
+        <td class="right">${formatCurrency(row.credit, 2, currency)}</td>
+        <td class="right">${formatCurrency(row.debit, 2, currency)}</td>
+        <td class="right">${formatCurrency(row.pix, 2, currency)}</td>
+        <td class="right">${formatCurrency(row.iFood, 2, currency)}</td>
       </tr>
-    `
+    `,
       )
       .join("");
 
@@ -50,7 +48,7 @@ export async function GET(req: NextRequest) {
         pix: acc.pix + parseFloat(row.pix),
         iFood: acc.iFood + parseFloat(row.iFood),
       }),
-      {totalSales: 0, transactionCount: 0, cash: 0, credit: 0, debit: 0, pix: 0, iFood: 0}
+      {totalSales: 0, transactionCount: 0, cash: 0, credit: 0, debit: 0, pix: 0, iFood: 0},
     );
 
     const content = `
@@ -76,22 +74,29 @@ export async function GET(req: NextRequest) {
         <tfoot>
           <tr class="total-row">
             <td><strong>Total</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.totalSales)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.totalSales, 2, currency)}</strong></td>
             <td class="right"><strong>${totals.transactionCount}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.transactionCount > 0 ? totals.totalSales / totals.transactionCount : 0)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.cash)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.credit)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.debit)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.pix)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.iFood)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.transactionCount > 0 ? totals.totalSales / totals.transactionCount : 0, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.cash, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.credit, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.debit, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.pix, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.iFood, 2, currency)}</strong></td>
           </tr>
         </tfoot>
       </table>
     `;
 
-    const html = generatePdfHtml({title: "Resumo de Vendas", content, generatedAt, tenant});
+    const html = generatePdfHtml({title: "Resumo de Vendas", content, generatedAt, tenant: auth.tenant});
 
-    logGet({module: LogModule.REPORTS, source: LogSource.API, userId: auth.user!.id, tenantId: auth.tenant_id, content: {dateFrom, dateTo}, route: ROUTE});
+    logGet({
+      module: LogModule.REPORTS,
+      source: LogSource.API,
+      userId: auth.user!.id,
+      tenantId: auth.tenant_id,
+      content: {dateFrom, dateTo},
+      route: ROUTE,
+    });
 
     return new NextResponse(html, {
       status: 200,

@@ -17,4 +17,5 @@ export interface ProductRowProps {
   handleQuantityChange: (productId: string, quantity: number) => void;
   handleRemove: (productId: string) => void;
   disabled?: boolean;
+  formatCurrency: (value: number | string | null | undefined, maxDecimals?: number) => string;
 }

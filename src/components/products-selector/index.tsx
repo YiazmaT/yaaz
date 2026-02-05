@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {IntegerInput} from "@/src/components/form-fields/integer-input";
 import {ImagePreview} from "@/src/components/image-preview";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Product} from "@/src/pages-content/products/types";
 import {ProductsSelectorProps, ProductRowProps} from "./types";
 
@@ -48,7 +48,7 @@ function ProductRowMobile(props: ProductRowProps) {
             </Typography>
           </Tooltip>
           <Typography variant="caption" color="text.secondary">
-            {formatCurrency(Number(props.item.product.price))}
+            {props.formatCurrency(Number(props.item.product.price))}
           </Typography>
         </Box>
       </Box>
@@ -98,7 +98,7 @@ function ProductRowDesktop(props: ProductRowProps) {
           </Typography>
         </Tooltip>
         <Typography variant="caption" color="text.secondary">
-          {formatCurrency(Number(props.item.product.price))}
+          {props.formatCurrency(Number(props.item.product.price))}
         </Typography>
       </Box>
 
@@ -115,6 +115,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
   const {value, onChange, disabled, incrementOnDuplicate} = props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const formatCurrency = useFormatCurrency();
 
   function handleAddProduct(product: Product | null) {
     if (!product) return;
@@ -175,6 +176,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
                 handleQuantityChange={handleQuantityChange}
                 handleRemove={handleRemove}
                 item={item}
+                formatCurrency={formatCurrency}
               />
             ) : (
               <ProductRowDesktop
@@ -183,6 +185,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
                 handleQuantityChange={handleQuantityChange}
                 handleRemove={handleRemove}
                 item={item}
+                formatCurrency={formatCurrency}
               />
             ),
           )}

@@ -4,11 +4,12 @@ import {Box, Button, Card, CardContent, Paper, Table, TableBody, TableCell, Tabl
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import moment from "moment";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {SalesSummaryResultProps} from "./types";
 
 export function SalesSummaryResult(props: SalesSummaryResultProps) {
   const {translate} = useTranslate();
+  const formatCurrency = useFormatCurrency();
 
   const totals = useMemo(() => {
     return props.data.reduce(

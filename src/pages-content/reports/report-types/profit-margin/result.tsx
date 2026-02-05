@@ -2,11 +2,12 @@
 import {Box, Button, Card, CardContent, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {formatCurrency} from "@/src/utils/format-currency";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {ProfitMarginResultProps} from "./types";
 
 export function ProfitMarginResult(props: ProfitMarginResultProps) {
   const {translate} = useTranslate();
+  const formatCurrency = useFormatCurrency();
 
   function handleDownloadPdf() {
     const params = new URLSearchParams();
