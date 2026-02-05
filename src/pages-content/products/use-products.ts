@@ -141,6 +141,11 @@ export function useProducts() {
   }
 
   function handleDelete(row: Product) {
+    if (row.stock !== 0) {
+      toast.errorToast("products.errors.cannotDeleteWithStock");
+      return;
+    }
+
     showConfirmModal({
       message: "products.deleteConfirm",
       onConfirm: async () => {
@@ -149,6 +154,24 @@ export function useProducts() {
           onSuccess: () => {
             toast.successToast("products.deleteSuccess");
             setTableKey((prev) => prev + 1);
+          },
+          onError: (error) => {
+            if (error === "products.errors.inUseBySales") {
+              showConfirmModal({
+                message: "products.deactivateInstead",
+                onConfirm: async () => {
+                  await api.fetch("PUT", "/api/product/toggle-active", {
+                    body: {id: row.id},
+                    onSuccess: () => {
+                      toast.successToast("products.deactivateSuccess");
+                      setTableKey((prev) => prev + 1);
+                    },
+                  });
+                },
+              });
+              return true;
+            }
+            return false;
           },
         });
       },
@@ -200,6 +223,11 @@ export function useProducts() {
   }
 
   function handleToggleActive(row: Product) {
+    if (row.active && row.stock !== 0) {
+      toast.errorToast("products.errors.cannotDeactivateWithStock");
+      return;
+    }
+
     const messageKey = row.active ? "products.deactivateConfirm" : "products.activateConfirm";
     const successKey = row.active ? "products.deactivateSuccess" : "products.activateSuccess";
 

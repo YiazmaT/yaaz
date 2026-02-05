@@ -193,6 +193,7 @@
     "negativeStockWarningGeneral": "Alguns itens ficarão com estoque negativo. Deseja continuar?",
     "inactive": "Inativo",
     "deactivateConfirm": "Tem certeza que deseja desativar este produto?",
+    "deactivateInstead": "Este produto possui vendas vinculadas e não pode ser excluído. Deseja desativá-lo?",
     "activateConfirm": "Tem certeza que deseja ativar este produto?",
     "deactivateSuccess": "Produto desativado com sucesso!",
     "activateSuccess": "Produto ativado com sucesso!",
@@ -210,7 +211,9 @@
       "inUseBySales": "Este produto está sendo usado em vendas e não pode ser excluído.",
       "quantityMustBeGreaterThanZero": "Todos os itens devem ter quantidade maior que zero.",
       "landingPageLimitReached": "Limite máximo de {{maxLandingPageProducts}} produtos na página inicial atingido.",
-      "zeroQuantity": "Insumos e embalagens devem ter quantidade maior que zero."
+      "zeroQuantity": "Insumos e embalagens devem ter quantidade maior que zero.",
+      "cannotDeactivateWithStock": "Não é possível desativar um produto com estoque. Ajuste o estoque para zero antes de desativar.",
+      "cannotDeleteWithStock": "Não é possível excluir um produto com estoque. Ajuste o estoque para zero antes de excluir."
     },
     "landingPage": {
       "addConfirm": "Deseja exibir este produto na página inicial?",

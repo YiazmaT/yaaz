@@ -39,6 +39,19 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({error: "api.errors.dataNotFound"}, {status: 404});
     }
 
+    if (existingProduct.active && existingProduct.stock !== 0) {
+      logError({
+        module: LogModule.PRODUCT,
+        source: LogSource.API,
+        message: "Cannot deactivate product with stock",
+        content: {id, stock: existingProduct.stock},
+        route: ROUTE,
+        userId: auth.user!.id,
+        tenantId: auth.tenant_id,
+      });
+      return NextResponse.json({error: "products.errors.cannotDeactivateWithStock"}, {status: 400});
+    }
+
     const product = await prisma.product.update({
       where: {id},
       data: {

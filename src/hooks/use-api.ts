@@ -7,6 +7,7 @@ interface useApiOptions<T> {
   body?: Record<string, any>;
   formData?: FormData;
   onSuccess?: (response: T) => void;
+  onError?: (error: string) => boolean;
   hideLoader?: boolean;
 }
 
@@ -57,8 +58,14 @@ export function useApi() {
 
     try {
       const errorBody = await response.json();
+      const errorKey = errorBody.error || "api.errors.somethingWentWrong";
+
+      if (options?.onError?.(errorKey)) {
+        return undefined;
+      }
+
       confirmModal.show({
-        message: errorBody.error || "api.errors.somethingWentWrong",
+        message: errorKey,
         hideCancel: true,
       });
     } catch {

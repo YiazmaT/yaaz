@@ -44,6 +44,19 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 404});
     }
 
+    if (product.stock !== 0) {
+      logError({
+        module: LogModule.PRODUCT,
+        source: LogSource.API,
+        message: "Cannot delete product with stock",
+        content: {id, name: product.name, stock: product.stock},
+        route: ROUTE,
+        userId: auth.user!.id,
+        tenantId: auth.tenant_id,
+      });
+      return NextResponse.json({error: "products.errors.cannotDeleteWithStock"}, {status: 400});
+    }
+
     if (product.sale_items.length > 0) {
       logError({
         module: LogModule.PRODUCT,
