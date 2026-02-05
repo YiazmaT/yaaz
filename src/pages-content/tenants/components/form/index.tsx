@@ -24,6 +24,8 @@ export function Form(props: FormProps) {
             <FormTextInput fieldName="name" label="tenants.fields.name" />
             <FormTextInput fieldName="primary_color" label="tenants.fields.primaryColor" />
             <FormTextInput fieldName="secondary_color" label="tenants.fields.secondaryColor" />
+            <FormTextInput fieldName="time_zone" label="tenants.fields.timeZone" />
+            <FormTextInput fieldName="currency_type" label="tenants.fields.currencyType" />
             {tenants.formType !== "details" && (
               <Grid size={12}>
                 <Button variant="contained" type="submit" fullWidth>

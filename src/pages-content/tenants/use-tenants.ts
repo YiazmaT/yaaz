@@ -37,6 +37,8 @@ export function useTenants() {
     formData.append("name", data.name);
     formData.append("primary_color", data.primary_color || "");
     formData.append("secondary_color", data.secondary_color || "");
+    formData.append("time_zone", data.time_zone);
+    formData.append("currency_type", data.currency_type);
 
     if (data.logo instanceof File) {
       formData.append("logo", data.logo);
@@ -83,6 +85,8 @@ export function useTenants() {
       logo: row.logo,
       primary_color: row.primary_color || "",
       secondary_color: row.secondary_color || "",
+      time_zone: row.time_zone,
+      currency_type: row.currency_type,
     });
   }
 

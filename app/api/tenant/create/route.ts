@@ -15,9 +15,11 @@ export async function POST(req: NextRequest) {
     const name = formData.get("name") as string;
     const primary_color = formData.get("primary_color") as string | null;
     const secondary_color = formData.get("secondary_color") as string | null;
+    const time_zone = formData.get("time_zone") as string;
+    const currency_type = formData.get("currency_type") as string;
     const logo = formData.get("logo") as File | null;
 
-    if (!name) {
+    if (!name || !time_zone || !currency_type) {
       logError({module: LogModule.TENANT, source: LogSource.API, message: "api.errors.missingRequiredFields", route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
       return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
     }
@@ -41,6 +43,8 @@ export async function POST(req: NextRequest) {
         logo: logoUrl,
         primary_color: primary_color || null,
         secondary_color: secondary_color || null,
+        time_zone,
+        currency_type,
       },
     });
 

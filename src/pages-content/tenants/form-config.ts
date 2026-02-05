@@ -7,6 +7,8 @@ export interface TenantFormValues {
   logo: ImageInputValue;
   primary_color: string;
   secondary_color: string;
+  time_zone: string;
+  currency_type: string;
 }
 
 export function useTenantFormConfig() {
@@ -14,6 +16,8 @@ export function useTenantFormConfig() {
 
   const schema = yup.object().shape({
     name: yup.string().required().label(translate("tenants.fields.name")),
+    time_zone: yup.string().required().label(translate("tenants.fields.timeZone")),
+    currency_type: yup.string().required().label(translate("tenants.fields.currencyType")),
   });
 
   const defaultValues: TenantFormValues = {
@@ -21,6 +25,8 @@ export function useTenantFormConfig() {
     logo: null,
     primary_color: "",
     secondary_color: "",
+    time_zone: "America/Sao_Paulo",
+    currency_type: "R$",
   };
 
   return {

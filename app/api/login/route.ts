@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const {email, password} = await req.json();
     const user = await prisma.user.findFirst({
       where: {login: email.trim().toLowerCase()},
-      include: {tenant: {select: {id: true, name: true, logo: true, primary_color: true, secondary_color: true}}},
+      include: {tenant: {select: {id: true, name: true, logo: true, primary_color: true, secondary_color: true, time_zone: true, currency_type: true}}},
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {

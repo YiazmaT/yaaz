@@ -68,6 +68,8 @@ model Tenant {
   logo            String?
   primary_color   String?
   secondary_color String?
+  time_zone       String   @default("America/Sao_Paulo")
+  currency_type   String   @default("R$")
 
   instagram_posts          InstagramPost[]
   users                    User[]
