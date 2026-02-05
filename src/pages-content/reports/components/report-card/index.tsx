@@ -1,13 +1,13 @@
-import {Box, Button, Card, CardContent, Typography} from "@mui/material";
+"use client";
+import {Box, Button, Card, CardContent, Typography, useTheme} from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {SmallLoader} from "@/src/components/small-loader";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {primaryColor} from "@/src/theme";
-import {blackOrWhite} from "@/src/utils/black-or-white";
 import {ReportCardProps} from "./types";
 
 export function ReportCard(props: ReportCardProps) {
   const {translate} = useTranslate();
+  const theme = useTheme();
 
   return (
     <Card
@@ -30,7 +30,7 @@ export function ReportCard(props: ReportCardProps) {
             variant="contained"
             onClick={props.onGenerate}
             disabled={props.isGenerating}
-            startIcon={props.isGenerating ? <SmallLoader size={20} /> : <PlayArrowIcon sx={{color: blackOrWhite(primaryColor)}} />}
+            startIcon={props.isGenerating ? <SmallLoader size={20} /> : <PlayArrowIcon sx={{color: theme.palette.primary.contrastText}} />}
           >
             {translate("reports.generate")}
           </Button>

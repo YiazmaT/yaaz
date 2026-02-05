@@ -11,7 +11,7 @@ const AuthContext = createContext({
 });
 
 export function AuthContextProvider(props: PropsWithChildren) {
-  const {setTenant} = useTenant();
+  const {setTenant, clearTenant} = useTenant();
   const {navigate} = useNavigate();
   const api = useApi();
 
@@ -28,7 +28,7 @@ export function AuthContextProvider(props: PropsWithChildren) {
 
   async function logout() {
     await api.fetch("POST", "/api/logout");
-    setTenant(null);
+    clearTenant();
     navigate("/login");
   }
 

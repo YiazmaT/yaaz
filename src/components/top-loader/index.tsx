@@ -1,7 +1,11 @@
-import {primaryColor} from "@/src/theme";
+"use client";
+import {useTheme} from "@mui/material";
 import NextTopLoader from "nextjs-toploader";
 
 export function TopLoader() {
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
+
   return (
     <NextTopLoader
       color={primaryColor}

@@ -2,70 +2,66 @@ import {createTheme, PaletteOptions} from "@mui/material";
 import {alpha, ThemeOptions} from "@mui/material/styles";
 import {blackOrWhite} from "../utils/black-or-white";
 
-export const primaryColor = process.env.NEXT_PUBLIC_PRIMARY_COLOR!;
-export const secondaryColor = process.env.NEXT_PUBLIC_SECONDARY_COLOR!;
+const DEFAULT_PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || "#A20103";
+const DEFAULT_SECONDARY_COLOR = process.env.NEXT_PUBLIC_SECONDARY_COLOR || "#060606";
 
-export const theme = {
-  fontSize: {
-    tiny: 14,
-    small: 16,
-    default: 18,
-    large: 20,
-    big: 22,
-  },
-  colors: {
-    primary: primaryColor,
-    secondary: secondaryColor,
-    error: "#E24C4C",
-  },
-};
+export function getDefaultColors() {
+  return {
+    primary: DEFAULT_PRIMARY_COLOR,
+    secondary: DEFAULT_SECONDARY_COLOR,
+  };
+}
 
-export const themeMaterial = createTheme({
-  palette: {
-    primary: {
-      main: primaryColor,
-      light: alpha(primaryColor, 0.5),
-      dark: alpha(primaryColor, 0.9),
-      contrastText: blackOrWhite(primaryColor),
-    },
-    secondary: {
-      main: secondaryColor,
-      light: alpha(secondaryColor, 0.5),
-      dark: alpha(secondaryColor, 0.9),
-      contrastText: blackOrWhite(secondaryColor),
-    },
-    divider: "#BDBDBD",
-  } as PaletteOptions,
-  components: {
-    MuiTypography: {
-      styleOverrides: {
-        root: {
-          color: "#000000",
+export function createTenantTheme(primary: string, secondary: string) {
+  return createTheme({
+    palette: {
+      primary: {
+        main: primary,
+        light: alpha(primary, 0.5),
+        dark: alpha(primary, 0.9),
+        contrastText: blackOrWhite(primary),
+      },
+      secondary: {
+        main: secondary,
+        light: alpha(secondary, 0.5),
+        dark: alpha(secondary, 0.9),
+        contrastText: blackOrWhite(secondary),
+      },
+      divider: "#BDBDBD",
+    } as PaletteOptions,
+    components: {
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            color: "#000000",
+          },
+        },
+      },
+      MuiSvgIcon: {
+        styleOverrides: {
+          root: {
+            color: primary,
+          },
+        },
+      },
+      MuiFormHelperText: {
+        styleOverrides: {
+          root: {
+            color: "#D32F2F",
+          },
         },
       },
     },
-    MuiSvgIcon: {
-      styleOverrides: {
-        root: {
-          color: primaryColor,
-        },
-      },
-    },
-    MuiFormHelperText: {
-      styleOverrides: {
-        root: {
-          color: "#D32F2F",
-        },
-      },
-    },
-  },
-} as ThemeOptions);
+  } as ThemeOptions);
+}
 
-export const globalStyles = {
-  body: {
-    backgroundColor: "#ffffff",
-  },
-  ".MuiButton-root:hover, .MuiListItem-root:hover, .MuiIconButton-root:hover": {
-    backgroundColor: alpha(primaryColor, 0.3),
-  },
-};
+export function createGlobalStyles(primary: string) {
+  return {
+    body: {
+      backgroundColor: "#ffffff",
+    },
+    ".MuiButton-root:hover, .MuiListItem-root:hover, .MuiIconButton-root:hover": {
+      backgroundColor: alpha(primary, 0.3),
+    },
+  };
+}

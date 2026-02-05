@@ -1,19 +1,20 @@
 "use client";
 import {useEffect, useState} from "react";
-import {Box, Card, CardContent, CircularProgress, Typography} from "@mui/material";
+import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@mui/material";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import {BarChart} from "@mui/x-charts/BarChart";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
 import {formatCurrency} from "@/src/utils/format-currency";
 import {SemestralSalesResponse} from "../dto";
-import {primaryColor} from "@/src/theme";
 
 const timeZone = process.env.TIME_ZONE ?? "America/Sao_Paulo";
 export function SemestralSalesCard() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<SemestralSalesResponse | null>(null);
   const {translate} = useTranslate();
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
   const api = useApi();
 
   useEffect(() => {

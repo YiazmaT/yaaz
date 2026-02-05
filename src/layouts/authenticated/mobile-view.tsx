@@ -15,6 +15,7 @@ import {
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import Link from "next/link";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {MobileViewProps} from "./types";
 
@@ -78,7 +79,7 @@ export function MobileView(props: MobileViewProps) {
                   border: `1px solid ${layout.theme.palette.divider}`,
                 }}
               >
-                <ListItemButton onClick={() => layout.handleMobileNavigate(item.route)}>
+                <ListItemButton component={Link} href={item.route} onClick={layout.handleMobileMenuToggle}>
                   <ListItemIcon sx={{minWidth: 40}}>{item.icon}</ListItemIcon>
                   <ListItemText primary={layout.translate(item.name)} />
                 </ListItemButton>

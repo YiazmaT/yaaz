@@ -1,19 +1,20 @@
 "use client";
 import {useEffect, useState} from "react";
-import {Box, Card, CardContent, CircularProgress, Typography} from "@mui/material";
+import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import {LineChart} from "@mui/x-charts/LineChart";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
 import {formatCurrency} from "@/src/utils/format-currency";
 import {MonthlySalesResponse} from "../dto";
-import {primaryColor} from "@/src/theme";
 
 const timeZone = process.env.TIME_ZONE ?? "America/Sao_Paulo";
 export function MonthlySalesCard() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<MonthlySalesResponse | null>(null);
   const {translate} = useTranslate();
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
   const api = useApi();
 
   const currentMonth = new Date().toLocaleString("pt-BR", {month: "long"});

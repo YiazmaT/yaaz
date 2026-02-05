@@ -1,12 +1,11 @@
 "use client";
 import {useEffect, useRef, useState} from "react";
-import {Box, Dialog, DialogContent, DialogTitle, IconButton, Skeleton, Typography, alpha} from "@mui/material";
+import {Box, Dialog, DialogContent, DialogTitle, IconButton, Skeleton, Typography, alpha, useTheme} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {LineChart} from "@mui/x-charts/LineChart";
 import {useApi} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {formatCurrency} from "@/src/utils/format-currency";
-import {primaryColor} from "@/src/theme";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {CostHistoryModalProps, CostHistoryResponse} from "./types";
 
@@ -15,6 +14,8 @@ export function CostHistoryModal(props: CostHistoryModalProps) {
   const [dates, setDates] = useState<Date[]>([]);
   const [prices, setPrices] = useState<number[]>([]);
   const {translate} = useTranslate();
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
   const fetchedRef = useRef<string | null>(null);
   const api = useApi();
 

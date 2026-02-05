@@ -1,5 +1,5 @@
 "use client";
-import {Box, Button, Grid} from "@mui/material";
+import {Box, Button, Grid, useTheme} from "@mui/material";
 import {useLoginFormConfig} from "./form-config";
 import Cookies from "js-cookie";
 import Image from "next/image";
@@ -12,13 +12,15 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {CheckBox} from "@/src/components/form-fields/check-box";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {flexGenerator} from "@/src/utils/flex-generator";
-import {primaryColor, secondaryColor} from "@/src/theme";
 
 export function LoginScreen() {
   const [saveMe, setSaveMe] = useState(true);
   const {login} = useAuth();
   const {translate} = useTranslate();
   const {defaultValues, schema} = useLoginFormConfig();
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
+  const secondaryColor = theme.palette.secondary.main;
 
   const {
     control,

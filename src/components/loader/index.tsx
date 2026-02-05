@@ -1,10 +1,12 @@
 "use client";
-import {Box, CircularProgress} from "@mui/material";
+import {Box, CircularProgress, useTheme} from "@mui/material";
 import Image from "next/image";
-import {primaryColor, secondaryColor} from "@/src/theme";
 import {LoaderProps} from "./types";
 
 export function Loader(props: LoaderProps) {
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
+  const secondaryColor = theme.palette.secondary.main;
   const size = props.size ?? 80;
   const iconSize = Math.round(size * 0.6);
 

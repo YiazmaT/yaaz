@@ -1,5 +1,6 @@
 import {Box, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {flexGenerator} from "@/src/utils/flex-generator";
@@ -117,14 +118,14 @@ export function DesktopView(props: DesktopViewProps) {
                 key={item.route}
               >
                 <ListItemButton
+                  component={Link}
+                  href={item.route}
                   sx={{
                     ...flexGenerator("r.center.center"),
                     height: "48px",
                     paddingLeft: 2,
                     paddingRight: 2,
                   }}
-                  onClick={() => layout.handleNavigate(item.route)}
-                  href={item.route}
                 >
                   <ListItemIcon
                     sx={{

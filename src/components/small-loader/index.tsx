@@ -1,12 +1,11 @@
 "use client";
-import {Box, CircularProgress} from "@mui/material";
-import {primaryColor, secondaryColor} from "@/src/theme";
-
-interface SmallLoaderProps {
-  size?: number;
-}
+import {Box, CircularProgress, useTheme} from "@mui/material";
+import {SmallLoaderProps} from "./types";
 
 export function SmallLoader(props: SmallLoaderProps) {
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
+  const secondaryColor = theme.palette.secondary.main;
   const size = props.size ?? 20;
 
   return (
