@@ -28,7 +28,7 @@ export async function DELETE(req: NextRequest) {
 
     const pkg = await prisma.package.findUnique({
       where: {id, tenant_id: auth.tenant_id},
-      include: {products: {take: 1}},
+      include: {products: {take: 1}, sales: {take: 1}},
     });
 
     if (!pkg) {
@@ -55,6 +55,19 @@ export async function DELETE(req: NextRequest) {
         tenantId: auth.tenant_id,
       });
       return NextResponse.json({error: "packages.errors.inUseByProducts"}, {status: 400});
+    }
+
+    if (pkg.sales.length > 0) {
+      logError({
+        module: LogModule.PACKAGE,
+        source: LogSource.API,
+        message: "Package is in use by sales",
+        content: pkg,
+        route: ROUTE,
+        userId: auth.user!.id,
+        tenantId: auth.tenant_id,
+      });
+      return NextResponse.json({error: "packages.errors.inUseBySales"}, {status: 400});
     }
 
     if (pkg.image) {

@@ -126,6 +126,7 @@
     },
     "errors": {
       "inUseByProducts": "Esta embalagem está sendo usada em produtos e não pode ser excluída.",
+      "inUseBySales": "Esta embalagem está sendo usada em vendas e não pode ser excluída.",
       "quantityMustBeGreaterThanZero": "Todos os itens devem ter quantidade maior que zero."
     },
     "fields": {
