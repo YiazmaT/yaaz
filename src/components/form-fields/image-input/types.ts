@@ -9,6 +9,7 @@ export interface ImageInputProps {
   error?: string;
   imageSize?: number;
   disabled?: boolean;
+  maxFileSizeMB?: number;
 }
 
 export interface FormImageInputProps extends Omit<FormInputProps, "additionalOnChange">, ImageInputProps {

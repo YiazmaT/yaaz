@@ -9,9 +9,11 @@ import {flexGenerator} from "@/src/utils/flex-generator";
 
 export function ImageInput(props: ImageInputProps) {
   const [preview, setPreview] = useState<string | null>(null);
+  const [sizeError, setSizeError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const {translate} = useTranslate();
   const size = props.imageSize ?? 150;
+  const maxFileSizeMB = props.maxFileSizeMB ?? 5;
 
   useEffect(() => {
     if (props.value instanceof File) {
@@ -32,6 +34,15 @@ export function ImageInput(props: ImageInputProps) {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
+    if (file) {
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (fileSizeMB > maxFileSizeMB) {
+        setSizeError(translate("global.errors.fileTooLarge").replace("{{maxSize}}", maxFileSizeMB.toString()));
+        e.target.value = "";
+        return;
+      }
+      setSizeError(null);
+    }
     props.onChange?.(file);
   }
 
@@ -49,8 +60,8 @@ export function ImageInput(props: ImageInputProps) {
         sx={{
           width: size,
           height: size,
-          border: props.error ? "2px dashed error.main" : "2px dashed",
-          borderColor: props.error ? "error.main" : "grey.400",
+          border: props.error || sizeError ? "2px dashed error.main" : "2px dashed",
+          borderColor: props.error || sizeError ? "error.main" : "grey.400",
           borderRadius: 2,
           cursor: props.disabled ? "default" : "pointer",
           overflow: "hidden",
@@ -58,7 +69,7 @@ export function ImageInput(props: ImageInputProps) {
           ...flexGenerator("c.center.center"),
           ...(!props.disabled && {
             "&:hover": {
-              borderColor: props.error ? "error.main" : "primary.main",
+              borderColor: props.error || sizeError ? "error.main" : "primary.main",
               backgroundColor: "action.hover",
             },
           }),
@@ -86,8 +97,8 @@ export function ImageInput(props: ImageInputProps) {
           </Box>
         )}
       </Box>
-      {props.error && (
-        <FormHelperText error>{props.error}</FormHelperText>
+      {(props.error || sizeError) && (
+        <FormHelperText error>{sizeError || props.error}</FormHelperText>
       )}
     </Box>
   );

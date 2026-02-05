@@ -36,7 +36,8 @@
       "delete": "Excluir"
     },
     "errors": {
-      "invalidEmail": "E-mail inválido"
+      "invalidEmail": "E-mail inválido",
+      "fileTooLarge": "Arquivo muito grande. Tamanho máximo: {{maxSize}}MB"
     }
   },
   "api": {
