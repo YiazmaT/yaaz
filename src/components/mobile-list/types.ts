@@ -13,6 +13,7 @@ export interface MobileListProps<T = any> {
   onDelete?: (row: T) => void;
   hideSearch?: boolean;
   filters?: Record<string, string | undefined>;
+  headerContent?: ReactNode;
 }
 
 export interface MobileListActionsProps<T = any> {

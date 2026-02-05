@@ -80,9 +80,10 @@ export function MobileList<T = any>(props: MobileListProps<T>) {
           backgroundColor: "white",
         }}
       >
-        <Typography variant="h6" fontWeight={600} color="primary" sx={{marginBottom: props.hideSearch ? 0 : 1}}>
+        <Typography variant="h6" fontWeight={600} color="primary" sx={{marginBottom: props.hideSearch && !props.headerContent ? 0 : 1}}>
           {translate(props.title)}
         </Typography>
+        {props.headerContent}
         {!props.hideSearch && <SearchInput onSearch={handleSearch} fullWidth />}
       </Box>
 

@@ -41,11 +41,6 @@ export function MobileView(props: MobileViewProps) {
                   {item.name}
                 </Typography>
               </Box>
-              {item.displayLandingPage ? (
-                <StarIcon sx={{color: "warning.main", fontSize: 18}} />
-              ) : (
-                <StarOutlineIcon sx={{color: "grey.400", fontSize: 18}} />
-              )}
             </Box>
             <Typography variant="body2" color="text.secondary" noWrap>
               {item.description || "-"}
@@ -134,9 +129,6 @@ export function MobileView(props: MobileViewProps) {
 
   return (
     <Box sx={{display: "flex", flexDirection: "column", height: "100%", position: "relative"}}>
-      <Box sx={{px: 2, pt: 2}}>
-        <ProductsFiltersComponent onFilterChange={products.handleFilterChange} />
-      </Box>
       <MobileList<Product>
         key={products.tableKey}
         title="products.title"
@@ -147,6 +139,7 @@ export function MobileView(props: MobileViewProps) {
         hideEdit={(row) => !row.active}
         onDelete={products.handleDelete}
         filters={products.filters.showInactives ? {showInactives: "true"} : undefined}
+        headerContent={<ProductsFiltersComponent onFilterChange={products.handleFilterChange} />}
       />
 
       <Fab
