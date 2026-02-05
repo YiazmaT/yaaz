@@ -36,7 +36,7 @@ export function MobileListActions<T = any>(props: MobileListActionsProps<T>) {
           <VisibilityOutlinedIcon fontSize="small" />
         </IconButton>
       )}
-      {props.onEdit && (
+      {props.onEdit && !props.hideEdit && (
         <IconButton size="small" onClick={handleEdit} sx={{color: theme.palette.warning.main}}>
           <EditOutlinedIcon fontSize="small" />
         </IconButton>

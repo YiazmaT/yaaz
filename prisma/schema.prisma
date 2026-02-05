@@ -252,6 +252,7 @@ model Product {
   stock                Int                  @default(0)
   min_stock            Int                  @default(0)
   display_landing_page Boolean              @default(false)
+  active               Boolean              @default(true)
   tenant               Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   composition          ProductIngredient[]
   packages             ProductPackage[]

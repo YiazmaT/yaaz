@@ -1,4 +1,4 @@
-import {Box, useTheme} from "@mui/material";
+import {Box, Chip, useTheme} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn, TableButton} from "@/src/components/data-columns";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
@@ -6,6 +6,8 @@ import {Product} from "../types";
 import StarIcon from "@mui/icons-material/Star";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {ProductTableConfigProps} from "./types";
 
@@ -26,6 +28,12 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
         field: "name",
         headerKey: "products.fields.name",
         width: "30%",
+        render: (row) => (
+          <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+            {!row.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
+            {row.name}
+          </Box>
+        ),
       },
       {
         field: "description",
@@ -83,12 +91,14 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
             row={row}
             onView={props.onView}
             onEdit={props.onEdit}
+            hideEdit={(r) => !r.active}
             onDelete={props.onDelete}
             customActions={[
               {
                 icon: () => <SyncAltIcon fontSize="small" />,
                 tooltip: () => translate("products.stockChange.title"),
                 onClick: props.onStockChange,
+                hidden: (r) => !r.active,
               },
               {
                 icon: (r) =>
@@ -99,6 +109,17 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
                   ),
                 tooltip: (r) => translate(r.displayLandingPage ? "products.landingPage.tooltipRemove" : "products.landingPage.tooltipAdd"),
                 onClick: props.onToggleLandingPage,
+                hidden: (r) => !r.active,
+              },
+              {
+                icon: (r) =>
+                  r.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                  ),
+                tooltip: (r) => translate(r.active ? "products.tooltipDeactivate" : "products.tooltipActivate"),
+                onClick: props.onToggleActive,
               },
             ]}
           />

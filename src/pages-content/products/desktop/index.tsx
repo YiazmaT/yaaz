@@ -1,6 +1,6 @@
 "use client";
 import {useRef} from "react";
-import {Button} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {DataTable} from "@/src/components/data-table";
 import {ScreenCard} from "@/src/components/screen-card";
@@ -11,6 +11,7 @@ import {AddStockDrawer} from "../components/add-stock-drawer";
 import {AddStockDrawerRef} from "../components/add-stock-drawer/types";
 import {StockChangeModal} from "../components/stock-change-modal";
 import {StockHistoryModal} from "../components/stock-history-modal";
+import {ProductsFiltersComponent} from "../components/filters";
 import {DesktopViewProps} from "./types";
 
 export function DesktopView(props: DesktopViewProps) {
@@ -21,16 +22,22 @@ export function DesktopView(props: DesktopViewProps) {
   return (
     <>
       <ScreenCard title="products.title" includeButtonFunction={products.handleCreate}>
-        <DataTable<Product>
-          key={products.tableKey}
-          apiRoute="/api/product/paginated-list"
-          columns={products.generateConfig()}
-          footerLeftContent={
-            <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={() => stockDrawerRef.current?.open()}>
-              {translate("products.addStock")}
-            </Button>
-          }
-        />
+        <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
+          <ProductsFiltersComponent onFilterChange={products.handleFilterChange} />
+          <Box sx={{flex: 1, minHeight: 0}}>
+            <DataTable<Product>
+              key={products.tableKey}
+              apiRoute="/api/product/paginated-list"
+              columns={products.generateConfig()}
+              filters={products.filters.showInactives ? {showInactives: "true"} : undefined}
+              footerLeftContent={
+                <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={() => stockDrawerRef.current?.open()}>
+                  {translate("products.addStock")}
+                </Button>
+              }
+            />
+          </Box>
+        </Box>
       </ScreenCard>
 
       <Form products={products} imageSize={200} />

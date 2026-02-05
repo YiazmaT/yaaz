@@ -72,7 +72,7 @@ export function DataTable<T = any>(props: DataTableProps<T>) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.06)",
+        boxShadow: "none",
         borderRadius: 2,
         overflow: "hidden",
       }}

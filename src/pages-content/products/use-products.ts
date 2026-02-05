@@ -4,7 +4,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
-import {CompositionItem, PackageCompositionItem, Product} from "./types";
+import {CompositionItem, PackageCompositionItem, Product, ProductsFilters} from "./types";
 import {ProductFormValues, useProductFormConfig} from "./form-config";
 import {useProductsTableConfig} from "./desktop/table-config";
 
@@ -15,6 +15,7 @@ export function useProducts() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stockChangeItem, setStockChangeItem] = useState<Product | null>(null);
   const [stockHistoryItem, setStockHistoryItem] = useState<Product | null>(null);
+  const [filters, setFilters] = useState<ProductsFilters>({});
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useProductFormConfig();
   const api = useApi();
@@ -51,6 +52,7 @@ export function useProducts() {
     onToggleLandingPage: (row: Product) => handleToggleLandingPage(row),
     onStockChange: (row: Product) => handleStockChange(row),
     onStockHistoryClick: (row: Product) => setStockHistoryItem(row),
+    onToggleActive: (row: Product) => handleToggleActive(row),
   });
 
   async function submit(data: ProductFormValues) {
@@ -197,6 +199,28 @@ export function useProducts() {
     setStockHistoryItem(null);
   }
 
+  function handleToggleActive(row: Product) {
+    const messageKey = row.active ? "products.deactivateConfirm" : "products.activateConfirm";
+    const successKey = row.active ? "products.deactivateSuccess" : "products.activateSuccess";
+
+    showConfirmModal({
+      message: messageKey,
+      onConfirm: async () => {
+        await api.fetch("PUT", "/api/product/toggle-active", {
+          body: {id: row.id},
+          onSuccess: () => {
+            toast.successToast(successKey);
+            setTableKey((prev) => prev + 1);
+          },
+        });
+      },
+    });
+  }
+
+  function handleFilterChange(newFilters: ProductsFilters) {
+    setFilters(newFilters);
+  }
+
   return {
     tableKey,
     formType,
@@ -222,5 +246,8 @@ export function useProducts() {
     closeStockChangeModal,
     stockHistoryItem,
     closeStockHistoryModal,
+    filters,
+    handleFilterChange,
+    handleToggleActive,
   };
 }

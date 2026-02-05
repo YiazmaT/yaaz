@@ -144,6 +144,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
       image: product.image ?? null,
       stock: product.stock,
       displayLandingPage: product.displayLandingPage,
+      active: product.active,
     };
 
     const existingItem = value.find((item) => item.product.id === cleanProduct.id);

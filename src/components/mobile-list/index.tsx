@@ -22,16 +22,20 @@ export function MobileList<T = any>(props: MobileListProps<T>) {
 
   useEffect(() => {
     fetchData();
-  }, [page, rowsPerPage, search]);
+  }, [page, rowsPerPage, search, props.filters]);
 
   async function fetchData() {
     setLoading(true);
     const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
-    const result = await api.fetch<ApiResponse<T>>(
-      "GET",
-      `${props.apiRoute}?page=${page + 1}&limit=${rowsPerPage}${searchParam}`,
-      {hideLoader: true},
-    );
+    const filterParams = props.filters
+      ? Object.entries(props.filters)
+          .filter(([, value]) => value !== undefined && value !== "")
+          .map(([key, value]) => `&${key}=${encodeURIComponent(value!)}`)
+          .join("")
+      : "";
+    const result = await api.fetch<ApiResponse<T>>("GET", `${props.apiRoute}?page=${page + 1}&limit=${rowsPerPage}${searchParam}${filterParams}`, {
+      hideLoader: true,
+    });
     if (result) {
       setData(result.data);
       setTotal(result.total);
@@ -63,7 +67,7 @@ export function MobileList<T = any>(props: MobileListProps<T>) {
   }
 
   function renderActions(row: T) {
-    return <MobileListActions row={row} onView={props.onView} onEdit={props.onEdit} onDelete={props.onDelete} />;
+    return <MobileListActions row={row} onView={props.onView} onEdit={props.onEdit} hideEdit={props.hideEdit?.(row)} onDelete={props.onDelete} />;
   }
 
   return (

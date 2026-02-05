@@ -6,9 +6,12 @@ import {ActionsColumnProps} from "./types";
 export function ActionsColumn<T>(props: ActionsColumnProps<T>) {
   const {translate} = useTranslate();
 
+  const showEdit = props.onEdit && !props.hideEdit?.(props.row);
+
   return (
     <Box sx={{display: "flex", gap: 0.5}}>
       {props.customActions?.map((action, index) => {
+        if (action.hidden?.(props.row)) return null;
         const icon = typeof action.icon === "function" ? action.icon(props.row) : action.icon;
         const tooltip = typeof action.tooltip === "function" ? action.tooltip(props.row) : action.tooltip;
         return (
@@ -26,7 +29,7 @@ export function ActionsColumn<T>(props: ActionsColumnProps<T>) {
           </IconButton>
         </Tooltip>
       )}
-      {props.onEdit && (
+      {showEdit && (
         <Tooltip title={translate("global.actions.edit")}>
           <IconButton size="small" onClick={() => props.onEdit?.(props.row)}>
             <Edit fontSize="small" />

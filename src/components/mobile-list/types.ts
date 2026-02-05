@@ -9,14 +9,17 @@ export interface MobileListProps<T = any> {
   onRowClick?: (row: T) => void;
   onView?: (row: T) => void;
   onEdit?: (row: T) => void;
+  hideEdit?: (row: T) => boolean;
   onDelete?: (row: T) => void;
   hideSearch?: boolean;
+  filters?: Record<string, string | undefined>;
 }
 
 export interface MobileListActionsProps<T = any> {
   row: T;
   onView?: (row: T) => void;
   onEdit?: (row: T) => void;
+  hideEdit?: boolean;
   onDelete?: (row: T) => void;
 }
 

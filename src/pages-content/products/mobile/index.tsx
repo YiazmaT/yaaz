@@ -1,6 +1,6 @@
 "use client";
 import {ReactNode, useRef} from "react";
-import {Box, CardContent, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
+import {Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import StarIcon from "@mui/icons-material/Star";
@@ -15,8 +15,11 @@ import {Form} from "../components/form";
 import {AddStockDrawer} from "../components/add-stock-drawer";
 import {AddStockDrawerRef} from "../components/add-stock-drawer/types";
 import {StockChangeModal} from "../components/stock-change-modal";
+import {ProductsFiltersComponent} from "../components/filters";
 import {MobileViewProps} from "./types";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 
 export function MobileView(props: MobileViewProps) {
   const {products} = props;
@@ -32,9 +35,12 @@ export function MobileView(props: MobileViewProps) {
           <ImagePreview url={item.image} alt={item.name} width={64} height={64} borderRadius={1} />
           <Box sx={{flex: 1, minWidth: 0, ...flexGenerator("c")}}>
             <Box sx={{...flexGenerator("r.sb.c")}}>
-              <Typography variant="subtitle1" fontWeight={600} noWrap>
-                {item.name}
-              </Typography>
+              <Box sx={{display: "flex", alignItems: "center", gap: 0.5}}>
+                {!item.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
+                <Typography variant="subtitle1" fontWeight={600} noWrap>
+                  {item.name}
+                </Typography>
+              </Box>
               {item.displayLandingPage ? (
                 <StarIcon sx={{color: "warning.main", fontSize: 18}} />
               ) : (
@@ -75,29 +81,48 @@ export function MobileView(props: MobileViewProps) {
             borderTop: `1px solid ${theme.palette.divider}`,
           }}
         >
-          <Tooltip title={translate("products.stockChange.title")}>
+          {item.active && (
+            <Tooltip title={translate("products.stockChange.title")}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  products.handleStockChange(item);
+                }}
+              >
+                <SyncAltIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+          {item.active && (
+            <Tooltip title={translate(item.displayLandingPage ? "products.landingPage.tooltipRemove" : "products.landingPage.tooltipAdd")}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  products.handleToggleLandingPage(item);
+                }}
+              >
+                {item.displayLandingPage ? (
+                  <StarIcon sx={{color: "warning.main"}} fontSize="small" />
+                ) : (
+                  <StarOutlineIcon sx={{color: "grey.400"}} fontSize="small" />
+                )}
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title={translate(item.active ? "products.tooltipDeactivate" : "products.tooltipActivate")}>
             <IconButton
               size="small"
               onClick={(e) => {
                 e.stopPropagation();
-                products.handleStockChange(item);
+                products.handleToggleActive(item);
               }}
             >
-              <SyncAltIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={translate(item.displayLandingPage ? "products.landingPage.tooltipRemove" : "products.landingPage.tooltipAdd")}>
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                products.handleToggleLandingPage(item);
-              }}
-            >
-              {item.displayLandingPage ? (
-                <StarIcon sx={{color: "warning.main"}} fontSize="small" />
+              {item.active ? (
+                <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
               ) : (
-                <StarOutlineIcon sx={{color: "grey.400"}} fontSize="small" />
+                <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
               )}
             </IconButton>
           </Tooltip>
@@ -109,6 +134,9 @@ export function MobileView(props: MobileViewProps) {
 
   return (
     <Box sx={{display: "flex", flexDirection: "column", height: "100%", position: "relative"}}>
+      <Box sx={{px: 2, pt: 2}}>
+        <ProductsFiltersComponent onFilterChange={products.handleFilterChange} />
+      </Box>
       <MobileList<Product>
         key={products.tableKey}
         title="products.title"
@@ -116,7 +144,9 @@ export function MobileView(props: MobileViewProps) {
         renderRow={renderRow}
         onView={products.handleView}
         onEdit={products.handleEdit}
+        hideEdit={(row) => !row.active}
         onDelete={products.handleDelete}
+        filters={products.filters.showInactives ? {showInactives: "true"} : undefined}
       />
 
       <Fab

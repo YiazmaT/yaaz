@@ -25,4 +25,9 @@ export interface Product {
   packages?: PackageCompositionItem[];
   approximateCost?: number;
   displayLandingPage: boolean;
+  active: boolean;
+}
+
+export interface ProductsFilters {
+  showInactives?: boolean;
 }

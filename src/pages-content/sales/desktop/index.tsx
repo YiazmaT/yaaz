@@ -1,4 +1,5 @@
 "use client";
+import {Box} from "@mui/material";
 import {DataTable} from "@/src/components/data-table";
 import {ScreenCard} from "@/src/components/screen-card";
 import {Sale} from "../types";
@@ -12,14 +13,18 @@ export function DesktopView(props: DesktopViewProps) {
   return (
     <>
       <ScreenCard title="sales.title" includeButtonFunction={sales.handleCreate}>
-        <SalesFilters onFilterChange={sales.handleFilterChange} />
-        <DataTable<Sale>
-          key={sales.tableKey}
-          apiRoute="/api/sale/paginated-list"
-          columns={sales.generateConfig()}
-          hideSearch
-          filters={sales.filters}
-        />
+        <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
+          <SalesFilters onFilterChange={sales.handleFilterChange} />
+          <Box sx={{flex: 1, minHeight: 0}}>
+            <DataTable<Sale>
+              key={sales.tableKey}
+              apiRoute="/api/sale/paginated-list"
+              columns={sales.generateConfig()}
+              hideSearch
+              filters={sales.filters}
+            />
+          </Box>
+        </Box>
       </ScreenCard>
 
       <Form sales={sales} />
