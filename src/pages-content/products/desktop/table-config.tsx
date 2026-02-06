@@ -1,4 +1,4 @@
-import {Box, Chip, useTheme} from "@mui/material";
+import {Box, Chip, Tooltip, useTheme} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn, TableButton} from "@/src/components/data-columns";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
@@ -31,7 +31,20 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             {!row.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
-            {row.name}
+            <Tooltip title={row.name} placement="top">
+              <Box
+                sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  wordBreak: "break-word",
+                }}
+              >
+                {row.name}
+              </Box>
+            </Tooltip>
           </Box>
         ),
       },
@@ -39,7 +52,22 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
         field: "description",
         headerKey: "products.fields.description",
         width: "40%",
-        render: (row) => row.description || "-",
+        render: (row) => (
+          <Tooltip title={row.description || "-"} placement="top">
+            <Box
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                wordBreak: "break-word",
+              }}
+            >
+              {row.description || "-"}
+            </Box>
+          </Tooltip>
+        ),
       },
       {
         field: "price",
