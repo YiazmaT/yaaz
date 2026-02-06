@@ -121,3 +121,9 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
   - update: `logUpdate({module: LogModule.INGREDIENT, source: LogSource.API, content: {before: existingIngredient, after: ingredient}, route: ROUTE,userId: auth.user!.id, tenantId: auth.tenant_id,});`
   - delete: `logDelete({module: LogModule.INGREDIENT, source: LogSource.API, content: {ingredient}, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id,});`
   - get: `logGet({module: LogModule.INGREDIENT, source: LogSource.API, content: response, userId: auth.user!.id, route: ROUTE, tenantId: auth.tenant_id,});`
+
+# Existing Utils
+- whenever you need to format money, use formatCurrency from utils;
+- whenever you need to add a text in contrast to a color, use blackOrWhite from utils;
+- whenever you need to validate an email, use validEmailRegex from utils;
+- whenever you need to get tenant or user informations, get it from useTenant;
