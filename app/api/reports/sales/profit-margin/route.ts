@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
     const whereClause: any = {
       tenant_id: auth.tenant_id,
       sale: {
+        is_quote: false,
         creation_date: {
           gte: utcStart,
           lte: utcEnd,

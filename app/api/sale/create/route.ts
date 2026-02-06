@@ -3,7 +3,8 @@ import {authenticateRequest} from "@/src/lib/auth";
 import {calculateApproximateCost} from "@/src/lib/calculate-sale-cost";
 import {logCritical, logError, LogModule, LogSource, logCreate} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {CreateSaleDto, ProductStockWarning, PackageStockWarning} from "@/src/pages-content/sales/dto";
+import {checkStockWarnings, decrementStock} from "@/src/lib/sale-stock";
+import {CreateSaleDto} from "@/src/pages-content/sales/dto";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/sale/create";
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body: CreateSaleDto = await req.json();
-    const {payment_method, total, items, packages, force} = body;
+    const {payment_method, total, items, packages, force, is_quote} = body;
 
     const hasItems = items && items.length > 0;
     const hasPackages = packages && packages.length > 0;
@@ -30,9 +31,6 @@ export async function POST(req: NextRequest) {
       });
       return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
     }
-
-    const stockWarnings: ProductStockWarning[] = [];
-    const packageWarnings: PackageStockWarning[] = [];
 
     const productsMap = new Map<string, {id: string; name: string; stock: number; price: string}>();
 
@@ -51,53 +49,33 @@ export async function POST(req: NextRequest) {
           price: product.price.toString(),
         });
       }
-
-      for (const item of items) {
-        const product = productsMap.get(item.product_id);
-        if (product) {
-          const currentStock = new Decimal(product.stock);
-          const resultingStock = currentStock.minus(item.quantity);
-          if (resultingStock.lessThan(0)) {
-            stockWarnings.push({
-              productId: product.id,
-              productName: product.name,
-              currentStock: currentStock.toNumber(),
-              requestedQuantity: item.quantity,
-              resultingStock: resultingStock.toNumber(),
-            });
-          }
-        }
-      }
     }
 
-    if (hasPackages) {
-      const packageIds = packages.map((pkg) => pkg.package_id);
-      const dbPackages = await prisma.package.findMany({
-        where: {id: {in: packageIds}, tenant_id: auth.tenant_id},
-        select: {id: true, name: true, stock: true},
+    if (!is_quote) {
+      const stockItems = items.filter((i) => productsMap.has(i.product_id)).map((i) => {
+        const p = productsMap.get(i.product_id)!;
+        return {id: p.id, name: p.name, stock: p.stock, quantity: i.quantity};
       });
 
-      for (const pkg of packages) {
-        const dbPackage = dbPackages.find((p) => p.id === pkg.package_id);
-        if (dbPackage) {
-          const currentStock = new Decimal(dbPackage.stock);
-          const resultingStock = currentStock.minus(pkg.quantity);
-          if (resultingStock.lessThan(0)) {
-            packageWarnings.push({
-              packageId: dbPackage.id,
-              packageName: dbPackage.name,
-              currentStock: currentStock.toNumber(),
-              requestedQuantity: pkg.quantity,
-              resultingStock: resultingStock.toNumber(),
-            });
-          }
-        }
+      let packageStockItems: {id: string; name: string; stock: number; quantity: number}[] = [];
+      if (hasPackages) {
+        const packageIds = packages.map((pkg) => pkg.package_id);
+        const dbPackages = await prisma.package.findMany({
+          where: {id: {in: packageIds}, tenant_id: auth.tenant_id},
+          select: {id: true, name: true, stock: true},
+        });
+        packageStockItems = packages
+          .map((pkg) => {
+            const dbPkg = dbPackages.find((p) => p.id === pkg.package_id);
+            return dbPkg ? {id: dbPkg.id, name: dbPkg.name, stock: new Decimal(dbPkg.stock).toNumber(), quantity: pkg.quantity} : null;
+          })
+          .filter((x): x is NonNullable<typeof x> => x !== null);
       }
-    }
 
-    const hasWarnings = stockWarnings.length > 0 || packageWarnings.length > 0;
-    if (hasWarnings && !force) {
-      return NextResponse.json({success: false, stockWarnings, packageWarnings}, {status: 200});
+      const {stockWarnings, packageWarnings, hasWarnings} = checkStockWarnings(stockItems, packageStockItems);
+      if (hasWarnings && !force) {
+        return NextResponse.json({success: false, stockWarnings, packageWarnings}, {status: 200});
+      }
     }
 
     const approximateCost = await calculateApproximateCost(items || [], packages || [], auth.tenant_id);
@@ -109,6 +87,7 @@ export async function POST(req: NextRequest) {
           payment_method: payment_method as any,
           total,
           approximate_cost: approximateCost,
+          is_quote: is_quote || false,
           creator_id: auth.user!.id,
           items: hasItems
             ? {
@@ -144,22 +123,12 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      if (hasItems) {
-        for (const item of items) {
-          await tx.product.update({
-            where: {id: item.product_id},
-            data: {stock: {decrement: item.quantity}},
-          });
-        }
-      }
-
-      if (hasPackages) {
-        for (const pkg of packages) {
-          await tx.package.update({
-            where: {id: pkg.package_id},
-            data: {stock: {decrement: pkg.quantity}},
-          });
-        }
+      if (!is_quote) {
+        await decrementStock(
+          tx,
+          hasItems ? items.map((i) => ({id: i.product_id, quantity: i.quantity})) : [],
+          hasPackages ? packages.map((p) => ({id: p.package_id, quantity: p.quantity})) : [],
+        );
       }
 
       return newSale;

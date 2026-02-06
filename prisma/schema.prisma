@@ -313,6 +313,7 @@ model Sale {
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())
   creator        User?     @relation("SaleCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  is_quote       Boolean   @default(false)
   last_edit_date DateTime?
   last_editor_id String?   @db.Uuid
   last_editor    User?     @relation("SaleEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)

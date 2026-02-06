@@ -12,7 +12,7 @@ import {PackageCompositionItem} from "@/src/components/packages-selector/types";
 import {Sale, ItemSale} from "./types";
 import {SaleFormValues, useSaleFormConfig} from "./form-config";
 import {useSalesTableConfig} from "./desktop/table-config";
-import {CreateSaleResponse, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "./dto";
+import {CreateSaleResponse, ConvertQuoteResponse, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "./dto";
 import {SalesFilters} from "./components/filters/types";
 
 export function useSales() {
@@ -137,6 +137,7 @@ export function useSales() {
     onView: (row) => handleView(row),
     onEdit: (row) => handleEdit(row),
     onDelete: (row) => handleDelete(row),
+    onConvertQuote: (row) => handleConvertQuote(row),
   });
 
   async function submit(data: SaleFormValues) {
@@ -182,6 +183,7 @@ export function useSales() {
       items: cleanItems,
       packages: cleanPackages,
       force: false,
+      is_quote: data.is_quote || false,
     };
 
     if (formType === "edit" && selectedId) {
@@ -333,6 +335,42 @@ export function useSales() {
     });
   }
 
+  function handleConvertQuote(row: Sale) {
+    showConfirmModal({
+      message: "sales.convertQuoteConfirm",
+      onConfirm: async () => {
+        const result = await api.fetch<ConvertQuoteResponse>("PUT", "/api/sale/convert-quote", {body: {id: row.id}});
+
+        if (result?.success) {
+          toast.successToast("sales.convertQuoteSuccess");
+          setTableKey((prev) => prev + 1);
+        } else {
+          const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
+          const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
+
+          if (hasProductWarnings || hasPackageWarnings) {
+            showConfirmModal({
+              message: "sales.negativeStockWarning",
+              content: (
+                <StockWarningsList
+                  productWarnings={result?.stockWarnings || []}
+                  packageWarnings={result?.packageWarnings || []}
+                />
+              ),
+              onConfirm: async () => {
+                const forceResult = await api.fetch<ConvertQuoteResponse>("PUT", "/api/sale/convert-quote", {body: {id: row.id, force: true}});
+                if (forceResult?.success) {
+                  toast.successToast("sales.convertQuoteSuccess");
+                  setTableKey((prev) => prev + 1);
+                }
+              },
+            });
+          }
+        }
+      },
+    });
+  }
+
   function handleFilterChange(newFilters: SalesFilters) {
     setFilters(newFilters);
   }
@@ -357,6 +395,7 @@ export function useSales() {
     handleView,
     handleEdit,
     handleDelete,
+    handleConvertQuote,
     handleFilterChange,
   };
 }

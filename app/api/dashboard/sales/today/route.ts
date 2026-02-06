@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
       },
       where: {
         tenant_id: auth.tenant_id,
+        is_quote: false,
         creation_date: {
           gte: utcStart,
           lte: utcEnd,

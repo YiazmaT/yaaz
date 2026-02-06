@@ -8,6 +8,7 @@ export interface SaleFormValues {
   items: ItemSale[];
   packages: PackageCompositionItem[];
   total: string;
+  is_quote: boolean;
 }
 
 export function useSaleFormConfig() {
@@ -24,6 +25,7 @@ export function useSaleFormConfig() {
     items: [],
     packages: [],
     total: "0",
+    is_quote: false,
   };
 
   return {

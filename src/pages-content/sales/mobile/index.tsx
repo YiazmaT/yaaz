@@ -1,7 +1,8 @@
 "use client";
 import {ReactNode} from "react";
-import {Box, CardContent, Chip, Fab, Typography, useTheme} from "@mui/material";
+import {Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import ShoppingCartCheckout from "@mui/icons-material/ShoppingCartCheckout";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
@@ -29,12 +30,17 @@ export function MobileView(props: MobileViewProps) {
               {item.creation_date ? new Date(item.creation_date).toLocaleString("pt-BR") : "-"}
             </Typography>
           </Box>
-          <Chip
-            label={translate(payment_methods[item.payment_method]?.label || "")}
-            size="small"
-            color="primary"
-            variant="outlined"
-          />
+          <Box sx={{display: "flex", gap: 0.5}}>
+            {item.is_quote && (
+              <Chip label={translate("sales.quote")} size="small" color="warning" />
+            )}
+            <Chip
+              label={translate(payment_methods[item.payment_method]?.label || "")}
+              size="small"
+              color="primary"
+              variant="outlined"
+            />
+          </Box>
         </Box>
         <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <Typography variant="body2" color="text.secondary">
@@ -53,6 +59,13 @@ export function MobileView(props: MobileViewProps) {
             borderTop: `1px solid ${theme.palette.divider}`,
           }}
         >
+          {item.is_quote && (
+            <Tooltip title={translate("sales.convertQuote")}>
+              <IconButton size="small" onClick={() => sales.handleConvertQuote(item)}>
+                <ShoppingCartCheckout fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
           {actions}
         </Box>
       </CardContent>

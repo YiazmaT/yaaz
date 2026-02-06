@@ -311,6 +311,11 @@
       "packages": "🎁 Embalagens",
       "noItems": "Nenhum item"
     },
+    "quote": "Orçamento",
+    "convertQuote": "Converter para Venda",
+    "convertQuoteConfirm": "Tem certeza que deseja converter este orçamento em venda?",
+    "convertQuoteSuccess": "Orçamento convertido em venda com sucesso!",
+    "isQuote": "Orçamento",
     "priceChangeWarning": {
       "title": "Preços Alterados",
       "message": "Alguns produtos tiveram seus preços alterados desde esta venda. Clique em 'Confirmar' para atualizar os preços, ou 'Cancelar' para manter os preços originais.",

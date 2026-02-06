@@ -19,4 +19,5 @@ export interface Sale {
   items: ItemSale[];
   packages?: PackageCompositionItem[];
   creation_date?: string;
+  is_quote?: boolean;
 }

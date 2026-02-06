@@ -15,6 +15,7 @@ export interface CreateSaleDto {
   items: SaleItemDto[];
   packages: SalePackageDto[];
   force?: boolean;
+  is_quote?: boolean;
 }
 
 export interface UpdateSaleDto extends CreateSaleDto {
@@ -47,6 +48,18 @@ export interface PriceChangeWarning {
   productName: string;
   originalPrice: string;
   currentPrice: string;
+}
+
+export interface ConvertQuoteDto {
+  id: string;
+  force?: boolean;
+}
+
+export interface ConvertQuoteResponse {
+  success: boolean;
+  sale?: any;
+  stockWarnings?: ProductStockWarning[];
+  packageWarnings?: PackageStockWarning[];
 }
 
 export interface CreateSaleResponse {

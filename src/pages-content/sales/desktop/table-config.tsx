@@ -1,12 +1,19 @@
+import {Chip} from "@mui/material";
+import ShoppingCartCheckout from "@mui/icons-material/ShoppingCartCheckout";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
+import {CustomAction} from "@/src/components/data-columns/types";
 import {TableConfigProps} from "@/src/@types/global-types";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Sale} from "../types";
 import {useSalesConstants} from "../constants";
 import {useTranslate} from "@/src/contexts/translation-context";
 
-export function useSalesTableConfig(props: TableConfigProps<Sale>) {
+interface SalesTableConfigProps extends TableConfigProps<Sale> {
+  onConvertQuote: (row: Sale) => void;
+}
+
+export function useSalesTableConfig(props: SalesTableConfigProps) {
   const {payment_methods} = useSalesConstants();
   const {translate} = useTranslate();
   const formatCurrency = useFormatCurrency();
@@ -23,9 +30,16 @@ export function useSalesTableConfig(props: TableConfigProps<Sale>) {
         },
       },
       {
+        field: "is_quote",
+        headerKey: "sales.isQuote",
+        width: "10%",
+        align: "center",
+        render: (row) => row.is_quote ? <Chip label={translate("sales.quote")} size="small" color="warning" /> : null,
+      },
+      {
         field: "payment_method",
         headerKey: "sales.fields.paymentMethod",
-        width: "25%",
+        width: "20%",
         render: (row) => translate(payment_methods[row.payment_method]?.label || ""),
       },
       {
@@ -50,9 +64,19 @@ export function useSalesTableConfig(props: TableConfigProps<Sale>) {
       {
         field: "actions",
         headerKey: "global.actions.label",
-        width: "120px",
+        width: "150px",
         align: "center",
-        render: (row) => <ActionsColumn row={row} onView={props.onView} onEdit={props.onEdit} onDelete={props.onDelete} />,
+        render: (row) => {
+          const customActions: CustomAction<Sale>[] = [
+            {
+              icon: <ShoppingCartCheckout fontSize="small" />,
+              tooltip: translate("sales.convertQuote"),
+              onClick: (r) => props.onConvertQuote(r),
+              hidden: (r) => !r.is_quote,
+            },
+          ];
+          return <ActionsColumn row={row} onView={props.onView} onEdit={props.onEdit} onDelete={props.onDelete} customActions={customActions} />;
+        },
       },
     ];
   }

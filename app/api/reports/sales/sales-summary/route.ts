@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
     const sales = await prisma.sale.findMany({
       where: {
         tenant_id: auth.tenant_id,
+        is_quote: false,
         creation_date: {
           gte: utcStart,
           lte: utcEnd,
