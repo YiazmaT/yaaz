@@ -1,5 +1,5 @@
 "use client";
-import {PropsWithChildren, createContext, useContext, useEffect, useState} from "react";
+import {PropsWithChildren, createContext, useContext, useState} from "react";
 import {Tenant} from "../pages-content/tenants/types";
 
 const TENANT_STORAGE_KEY = "tenant";
@@ -48,19 +48,8 @@ function getStoredUser(): User | null {
 }
 
 export function TenantContextProvider(props: PropsWithChildren) {
-  const [tenant, setTenantState] = useState<Tenant | null>(null);
-  const [user, setUserState] = useState<User | null>(null);
-
-  useEffect(() => {
-    const storedTenant = getStoredTenant();
-    if (storedTenant) {
-      setTenantState(storedTenant);
-    }
-    const storedUser = getStoredUser();
-    if (storedUser) {
-      setUserState(storedUser);
-    }
-  }, []);
+  const [tenant, setTenantState] = useState<Tenant | null>(getStoredTenant);
+  const [user, setUserState] = useState<User | null>(getStoredUser);
 
   function setTenant(newTenant: Tenant | null) {
     setTenantState(newTenant);
