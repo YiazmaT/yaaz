@@ -66,7 +66,7 @@ export function StockAlertsCard() {
   const hasAlerts = data && (data.products.length > 0 || data.ingredients.length > 0 || data.packages.length > 0);
 
   return (
-    <Card sx={{height: "100%"}}>
+    <Card sx={{flex: 1}}>
       <CardContent>
         <Box sx={{display: "flex", alignItems: "center", gap: 1, marginBottom: 2}}>
           <WarningAmberIcon sx={{color: hasAlerts ? theme.palette.error.main : "primary.main"}} />

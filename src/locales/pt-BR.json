@@ -324,6 +324,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "welcome": "Bem-vindo",
     "stockAlerts": "Alertas",
     "noStockAlerts": "Nenhum alerta encontrado",
     "minStock": "Estoque Mínimo",

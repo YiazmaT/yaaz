@@ -23,7 +23,7 @@ const DEFAULT_LOGO = "/assets/icon.png";
 const DEFAULT_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME || "";
 
 export function useAuthenticatedLayout() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const {logout} = useAuth();
   const {tenant} = useTenant();

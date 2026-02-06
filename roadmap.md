@@ -11,7 +11,11 @@ ok - Ajuste de estoque (insumos e embalagens) (com motivo e descricao) (vencimen
 ok - Filtros Especificos para insumos, vendas e produtos;
 ok - fix sale to save the value of the item/package at the time that it was created.
 ok - tratar imagens muito grandes antes de enviar para o r2, tambem tratar quais as extensoes suportadas;
-- desabilitar produtos e addnar filtros;
-- Relatorios;
+ok - desabilitar produtos e addnar filtros;
 - adicionar lucro estimado para o dashboard;
+- desabilitar insumos;
+- desabilitar embalagens;
+- encrypt local storage;
+- encrypt jwt data;
+- Relatorios;
 - Financeiros;
