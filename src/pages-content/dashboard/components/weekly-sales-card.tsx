@@ -1,20 +1,16 @@
 "use client";
-import {useEffect, useState} from "react";
 import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@mui/material";
 import CalendarViewWeekIcon from "@mui/icons-material/CalendarViewWeek";
 import {BarChart} from "@mui/x-charts/BarChart";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant} from "@/src/contexts/tenant-context";
-import {useApi} from "@/src/hooks/use-api";
+import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {WeeklySalesResponse} from "../dto";
 
 export function WeeklySalesCard() {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<WeeklySalesResponse | null>(null);
   const {translate} = useTranslate();
   const {tenant} = useTenant();
-  const api = useApi();
   const theme = useTheme();
   const timeZone = tenant?.time_zone;
   const formatCurrency = useFormatCurrency();
@@ -30,6 +26,12 @@ export function WeeklySalesCard() {
     translate("dashboard.days.sat"),
   ];
 
+  const {data, isLoading} = useApiQuery<WeeklySalesResponse>({
+    queryKey: ["dashboard", "sales", "weekly", timeZone],
+    route: `/api/dashboard/sales/weekly?timezone=${encodeURIComponent(timeZone!)}`,
+    enabled: !!timeZone,
+  });
+
   function getDayLabels() {
     if (!data?.weekStart) return shortDayNames;
 
@@ -43,18 +45,6 @@ export function WeeklySalesCard() {
     });
   }
 
-  useEffect(() => {
-    if (!timeZone) return;
-    async function fetchData() {
-      const result = await api.fetch<WeeklySalesResponse>("GET", `/api/dashboard/sales/weekly?timezone=${encodeURIComponent(timeZone!)}`);
-      if (result) {
-        setData(result);
-      }
-      setLoading(false);
-    }
-    fetchData();
-  }, [timeZone]);
-
   return (
     <Card sx={{height: "100%"}}>
       <CardContent>
@@ -63,7 +53,7 @@ export function WeeklySalesCard() {
           <Typography variant="h6">{translate("dashboard.weeklySales")}</Typography>
         </Box>
 
-        {loading ? (
+        {isLoading ? (
           <Box sx={{display: "flex", justifyContent: "center", padding: 4}}>
             <CircularProgress />
           </Box>

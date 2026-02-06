@@ -1,63 +1,43 @@
 "use client";
-import {useEffect, useRef, useState} from "react";
 import {Box, Dialog, DialogContent, DialogTitle, IconButton, Skeleton, Typography, alpha, useTheme} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {LineChart} from "@mui/x-charts/LineChart";
-import {useApi} from "@/src/hooks/use-api";
+import {useApiQuery} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {CostHistoryModalProps, CostHistoryResponse} from "./types";
 
 export function CostHistoryModal(props: CostHistoryModalProps) {
-  const [loading, setLoading] = useState(true);
-  const [dates, setDates] = useState<Date[]>([]);
-  const [prices, setPrices] = useState<number[]>([]);
   const {translate} = useTranslate();
-  const api = useApi();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
-  const fetchedRef = useRef<string | null>(null);
   const primaryColor = theme.palette.primary.main;
 
-  useEffect(() => {
-    if (props.open && props.packageId && fetchedRef.current !== props.packageId) {
-      fetchedRef.current = props.packageId;
-      fetchData();
-    }
-  }, [props.open, props.packageId]);
+  const {data: result, isLoading} = useApiQuery<CostHistoryResponse>({
+    queryKey: ["cost-history", "package", props.packageId],
+    route: `/api/package/${props.packageId}/cost-history`,
+    enabled: props.open && !!props.packageId,
+  });
 
-  async function fetchData() {
-    setLoading(true);
-    const result = await api.fetch<CostHistoryResponse>("GET", `/api/package/${props.packageId}/cost-history`);
-    if (result?.data) {
-      const sortedData = result.data.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      setDates(sortedData.map((item) => new Date(item.date)));
-      setPrices(sortedData.map((item) => item.costPerUnit));
-    }
-    setLoading(false);
-  }
-
-  function handleClose() {
-    setDates([]);
-    setPrices([]);
-    setLoading(true);
-    fetchedRef.current = null;
-    props.onClose();
-  }
+  const sortedData = result?.data
+    ? [...result.data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    : [];
+  const dates = sortedData.map((item) => new Date(item.date));
+  const prices = sortedData.map((item) => item.costPerUnit);
 
   return (
-    <Dialog open={props.open} onClose={handleClose} maxWidth="md" fullWidth>
+    <Dialog open={props.open} onClose={props.onClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{...flexGenerator("r.center.space-between")}}>
         <Typography variant="h6" component="span">
           {translate("packages.costHistory")} - {props.packageName}
         </Typography>
-        <IconButton onClick={handleClose} size="small">
+        <IconButton onClick={props.onClose} size="small">
           <CloseIcon />
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        {loading ? (
+        {isLoading ? (
           <Box sx={{...flexGenerator("c"), gap: 2, padding: 2}}>
             <Skeleton variant="rectangular" height={300} />
             <Skeleton variant="text" width="60%" />

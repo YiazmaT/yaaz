@@ -1,20 +1,23 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
+import {useQueryClient} from "@tanstack/react-query";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
 import {Tenant} from "./types";
 import {TenantFormValues, useTenantFormConfig} from "./form-config";
 import {useTenantsTableConfig} from "./desktop/table-config";
 
+const API_ROUTE = "/api/tenant/paginated-list";
+
 export function useTenants() {
-  const [tableKey, setTableKey] = useState(0);
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const {defaultValues, schema} = useTenantFormConfig();
   const api = useApi();
   const toast = useToaster();
+  const queryClient = useQueryClient();
 
   const {
     control,
@@ -31,6 +34,10 @@ export function useTenants() {
     onView: (row) => handleView(row),
     onEdit: (row) => handleEdit(row),
   });
+
+  function refreshTable() {
+    queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
 
   async function submit(data: TenantFormValues) {
     const formData = new FormData();
@@ -52,7 +59,7 @@ export function useTenants() {
           toast.successToast("tenants.updateSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         },
       });
     } else {
@@ -62,7 +69,7 @@ export function useTenants() {
           toast.successToast("tenants.createSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         },
       });
     }
@@ -107,12 +114,7 @@ export function useTenants() {
     openDrawer("edit");
   }
 
-  function refreshTable() {
-    setTableKey((prev) => prev + 1);
-  }
-
   return {
-    tableKey,
     formType,
     showDrawer,
     control,

@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
+import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
@@ -8,8 +9,9 @@ import {Package} from "./types";
 import {PackageFormValues, usePackageFormConfig} from "./form-config";
 import {usePackagesTableConfig} from "./desktop/table-config";
 
+const API_ROUTE = "/api/package/paginated-list";
+
 export function usePackages() {
-  const [tableKey, setTableKey] = useState(0);
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -21,6 +23,7 @@ export function usePackages() {
   const {defaultValues, schema} = usePackageFormConfig();
   const api = useApi();
   const toast = useToaster();
+  const queryClient = useQueryClient();
 
   const {
     control,
@@ -42,6 +45,10 @@ export function usePackages() {
     onStockHistoryClick: (row) => setStockHistoryItem(row),
   });
 
+  function refreshTable() {
+    queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
   async function submit(data: PackageFormValues) {
     const formData = new FormData();
     formData.append("name", data.name);
@@ -61,7 +68,7 @@ export function usePackages() {
           toast.successToast("packages.updateSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         },
       });
     } else {
@@ -71,7 +78,7 @@ export function usePackages() {
           toast.successToast("packages.createSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         },
       });
     }
@@ -123,7 +130,7 @@ export function usePackages() {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast("packages.deleteSuccess");
-            setTableKey((prev) => prev + 1);
+            refreshTable();
           },
         });
       },
@@ -136,10 +143,6 @@ export function usePackages() {
 
   function closeStockModal() {
     setShowStockModal(false);
-  }
-
-  function refreshTable() {
-    setTableKey((prev) => prev + 1);
   }
 
   function closeCostHistory() {
@@ -159,7 +162,6 @@ export function usePackages() {
   }
 
   return {
-    tableKey,
     formType,
     showDrawer,
     control,

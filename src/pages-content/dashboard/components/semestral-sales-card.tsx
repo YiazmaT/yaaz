@@ -1,36 +1,26 @@
 "use client";
-import {useEffect, useState} from "react";
 import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@mui/material";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import {BarChart} from "@mui/x-charts/BarChart";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant} from "@/src/contexts/tenant-context";
-import {useApi} from "@/src/hooks/use-api";
+import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {SemestralSalesResponse} from "../dto";
 
 export function SemestralSalesCard() {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<SemestralSalesResponse | null>(null);
   const {translate} = useTranslate();
   const {tenant} = useTenant();
-  const api = useApi();
   const theme = useTheme();
   const timeZone = tenant?.time_zone;
   const formatCurrency = useFormatCurrency();
   const primaryColor = theme.palette.primary.main;
 
-  useEffect(() => {
-    if (!timeZone) return;
-    async function fetchData() {
-      const result = await api.fetch<SemestralSalesResponse>("GET", `/api/dashboard/sales/semestral?timezone=${encodeURIComponent(timeZone!)}`);
-      if (result) {
-        setData(result);
-      }
-      setLoading(false);
-    }
-    fetchData();
-  }, [timeZone]);
+  const {data, isLoading} = useApiQuery<SemestralSalesResponse>({
+    queryKey: ["dashboard", "sales", "semestral", timeZone],
+    route: `/api/dashboard/sales/semestral?timezone=${encodeURIComponent(timeZone!)}`,
+    enabled: !!timeZone,
+  });
 
   const labels = data?.months.map((m) => m.label) || [];
   const values = data?.months.map((m) => m.total) || [];
@@ -43,7 +33,7 @@ export function SemestralSalesCard() {
           <Typography variant="h6">{translate("dashboard.semestralSales")}</Typography>
         </Box>
 
-        {loading ? (
+        {isLoading ? (
           <Box sx={{display: "flex", justifyContent: "center", padding: 4}}>
             <CircularProgress />
           </Box>

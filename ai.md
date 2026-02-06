@@ -79,7 +79,7 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 - Schema should only have fields that have rules (required for example), but default values should have every field.
 - Stop here and check login component, it's simple and can be used as base example. (/src/pages-content/login);
 - All forms must have Grid from material ui with spacing={1} by default;
-- For api calls, always use the hook useApi, NO RAW FETCH;
+- For api calls, always use the hooks inside src/hooks/use-api.ts, NO RAW FETCH; this project uses @tanstack/react-query;
 - If you need to confirm something from the user, use the confirm-modal-context.tsx;
 - All database entities should have (example fields), and they MUST be updated at edits/creates endpoints:
   creator_id String? @db.Uuid

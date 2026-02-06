@@ -75,7 +75,6 @@ export function MobileView(props: MobileViewProps) {
   return (
     <Box sx={{display: "flex", flexDirection: "column", height: "100%", position: "relative"}}>
       <MobileList<Sale>
-        key={sales.tableKey}
         title="sales.title"
         apiRoute="/api/sale/paginated-list"
         renderRow={renderRow}

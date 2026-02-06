@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
+import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
@@ -8,8 +9,9 @@ import {CompositionItem, PackageCompositionItem, Product, ProductsFilters} from 
 import {ProductFormValues, useProductFormConfig} from "./form-config";
 import {useProductsTableConfig} from "./desktop/table-config";
 
+const API_ROUTE = "/api/product/paginated-list";
+
 export function useProducts() {
-  const [tableKey, setTableKey] = useState(0);
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -20,6 +22,7 @@ export function useProducts() {
   const {defaultValues, schema} = useProductFormConfig();
   const api = useApi();
   const toast = useToaster();
+  const queryClient = useQueryClient();
 
   const {
     control,
@@ -55,6 +58,10 @@ export function useProducts() {
     onToggleActive: (row: Product) => handleToggleActive(row),
   });
 
+  function refreshTable() {
+    queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
   async function submit(data: ProductFormValues) {
     const hasZeroQuantityIngredient = data.composition?.some((item) => !item.quantity || parseFloat(item.quantity) === 0);
     const hasZeroQuantityPackage = data.packages?.some((item) => !item.quantity || parseFloat(item.quantity) === 0);
@@ -84,7 +91,7 @@ export function useProducts() {
           toast.successToast("products.updateSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         },
       });
     } else {
@@ -94,7 +101,7 @@ export function useProducts() {
           toast.successToast("products.createSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         },
       });
     }
@@ -153,7 +160,7 @@ export function useProducts() {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast("products.deleteSuccess");
-            setTableKey((prev) => prev + 1);
+            refreshTable();
           },
           onError: (error) => {
             if (error === "products.errors.inUseBySales") {
@@ -164,7 +171,7 @@ export function useProducts() {
                     body: {id: row.id},
                     onSuccess: () => {
                       toast.successToast("products.deactivateSuccess");
-                      setTableKey((prev) => prev + 1);
+                      refreshTable();
                     },
                   });
                 },
@@ -199,15 +206,11 @@ export function useProducts() {
           formData,
           onSuccess: () => {
             toast.successToast(successKey);
-            setTableKey((prev) => prev + 1);
+            refreshTable();
           },
         });
       },
     });
-  }
-
-  function refreshTable() {
-    setTableKey((prev) => prev + 1);
   }
 
   function handleStockChange(row: Product) {
@@ -238,7 +241,7 @@ export function useProducts() {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast(successKey);
-            setTableKey((prev) => prev + 1);
+            refreshTable();
           },
         });
       },
@@ -250,7 +253,6 @@ export function useProducts() {
   }
 
   return {
-    tableKey,
     formType,
     showDrawer,
     control,

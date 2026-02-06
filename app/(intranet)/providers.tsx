@@ -1,4 +1,5 @@
 "use client";
+import {QueryClientProvider} from "@tanstack/react-query";
 import {AppRouterCacheProvider} from "@mui/material-nextjs/v15-appRouter";
 import {LoaderContextProvider} from "@/src/contexts/loading-context";
 import {AuthContextProvider} from "@/src/contexts/auth-context";
@@ -8,6 +9,7 @@ import {ToasterContextProvider} from "@/src/contexts/toast-context";
 import {TopLoader} from "@/src/components/top-loader";
 import {ConfirmModalContextProvider} from "@/src/contexts/confirm-modal-context";
 import {TenantThemeProvider} from "@/src/components/tenant-theme-provider";
+import {queryClient} from "@/src/lib/query-client";
 import {Tenant} from "@/src/pages-content/tenants/types";
 import {User} from "@/src/contexts/tenant-context";
 
@@ -19,23 +21,25 @@ interface ProvidersProps {
 
 export function Providers({children, initialTenant, initialUser}: ProvidersProps) {
   return (
-    <AppRouterCacheProvider>
-      <TenantContextProvider initialTenant={initialTenant} initialUser={initialUser}>
-        <TenantThemeProvider>
-          <TranslationContextProvider>
-            <ConfirmModalContextProvider>
-              <ToasterContextProvider>
-                <LoaderContextProvider>
-                  <AuthContextProvider>
-                    <TopLoader />
-                    {children}
-                  </AuthContextProvider>
-                </LoaderContextProvider>
-              </ToasterContextProvider>
-            </ConfirmModalContextProvider>
-          </TranslationContextProvider>
-        </TenantThemeProvider>
-      </TenantContextProvider>
-    </AppRouterCacheProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppRouterCacheProvider>
+        <TenantContextProvider initialTenant={initialTenant} initialUser={initialUser}>
+          <TenantThemeProvider>
+            <TranslationContextProvider>
+              <ConfirmModalContextProvider>
+                <ToasterContextProvider>
+                  <LoaderContextProvider>
+                    <AuthContextProvider>
+                      <TopLoader />
+                      {children}
+                    </AuthContextProvider>
+                  </LoaderContextProvider>
+                </ToasterContextProvider>
+              </ConfirmModalContextProvider>
+            </TranslationContextProvider>
+          </TenantThemeProvider>
+        </TenantContextProvider>
+      </AppRouterCacheProvider>
+    </QueryClientProvider>
   );
 }

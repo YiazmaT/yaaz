@@ -20,7 +20,6 @@ export function DesktopView(props: DesktopViewProps) {
     <>
       <ScreenCard title="ingredients.title" includeButtonFunction={ingredients.handleCreate}>
         <DataTable<Ingredient>
-          key={ingredients.tableKey}
           apiRoute="/api/ingredient/paginated-list"
           columns={ingredients.generateConfig()}
           footerLeftContent={

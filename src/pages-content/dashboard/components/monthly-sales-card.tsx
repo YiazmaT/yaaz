@@ -1,21 +1,17 @@
 "use client";
-import {useEffect, useState} from "react";
 import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import {LineChart} from "@mui/x-charts/LineChart";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant} from "@/src/contexts/tenant-context";
-import {useApi} from "@/src/hooks/use-api";
+import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {MonthlySalesResponse} from "../dto";
 
 export function MonthlySalesCard() {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<MonthlySalesResponse | null>(null);
   const {translate} = useTranslate();
   const {tenant} = useTenant();
   const theme = useTheme();
-  const api = useApi();
   const timeZone = tenant?.time_zone;
   const formatCurrency = useFormatCurrency();
   const primaryColor = theme.palette.primary.main;
@@ -23,17 +19,11 @@ export function MonthlySalesCard() {
   const currentMonth = new Date().toLocaleString("pt-BR", {month: "long"});
   const currentMonthCapitalized = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
 
-  useEffect(() => {
-    if (!timeZone) return;
-    async function fetchData() {
-      const result = await api.fetch<MonthlySalesResponse>("GET", `/api/dashboard/sales/monthly?timezone=${encodeURIComponent(timeZone!)}`);
-      if (result) {
-        setData(result);
-      }
-      setLoading(false);
-    }
-    fetchData();
-  }, [timeZone]);
+  const {data, isLoading} = useApiQuery<MonthlySalesResponse>({
+    queryKey: ["dashboard", "sales", "monthly", timeZone],
+    route: `/api/dashboard/sales/monthly?timezone=${encodeURIComponent(timeZone!)}`,
+    enabled: !!timeZone,
+  });
 
   const days = data?.days.map((d) => d.day) || [];
   const values = data?.days.map((d) => d.total) || [];
@@ -48,7 +38,7 @@ export function MonthlySalesCard() {
           </Typography>
         </Box>
 
-        {loading ? (
+        {isLoading ? (
           <Box sx={{display: "flex", justifyContent: "center", padding: 4}}>
             <CircularProgress />
           </Box>

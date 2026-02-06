@@ -1,50 +1,37 @@
 "use client";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Box, Card, TablePagination, Typography, useTheme} from "@mui/material";
 import {Loader} from "@/src/components/loader";
 import {SearchInput} from "@/src/components/search-input";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useApi} from "@/src/hooks/use-api";
+import {useApiQuery} from "@/src/hooks/use-api";
 import {MobileListActions} from "./mobile-list-actions";
 import {ApiResponse, MobileListProps} from "./types";
 
 export function MobileList<T = any>(props: MobileListProps<T>) {
-  const [data, setData] = useState<T[]>([]);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(props.defaultRowsPerPage ?? 25);
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
   const {translate} = useTranslate();
-  const api = useApi();
   const theme = useTheme();
 
-  useEffect(() => {
-    fetchData();
-  }, [page, rowsPerPage, search, props.filters]);
+  const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+  const filterParams = props.filters
+    ? Object.entries(props.filters)
+        .filter(([, value]) => value !== undefined && value !== "")
+        .map(([key, value]) => `&${key}=${encodeURIComponent(value!)}`)
+        .join("")
+    : "";
+  const route = `${props.apiRoute}?page=${page + 1}&limit=${rowsPerPage}${searchParam}${filterParams}`;
 
-  async function fetchData() {
-    setLoading(true);
-    const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
-    const filterParams = props.filters
-      ? Object.entries(props.filters)
-          .filter(([, value]) => value !== undefined && value !== "")
-          .map(([key, value]) => `&${key}=${encodeURIComponent(value!)}`)
-          .join("")
-      : "";
-    const result = await api.fetch<ApiResponse<T>>("GET", `${props.apiRoute}?page=${page + 1}&limit=${rowsPerPage}${searchParam}${filterParams}`, {
-      hideLoader: true,
-    });
-    if (result) {
-      setData(result.data);
-      setTotal(result.total);
-    } else {
-      setData([]);
-      setTotal(0);
-    }
-    setLoading(false);
-  }
+  const {data: result, isFetching} = useApiQuery<ApiResponse<T>>({
+    queryKey: [props.apiRoute, {page, limit: rowsPerPage, search, ...props.filters}],
+    route,
+  });
+
+  const data = result?.data ?? [];
+  const total = result?.total ?? 0;
 
   function handleChangePage(event: unknown, newPage: number) {
     setPage(newPage);
@@ -119,7 +106,7 @@ export function MobileList<T = any>(props: MobileListProps<T>) {
       </Box>
 
       <Box sx={{flex: 1, overflow: "hidden", position: "relative"}}>
-        {loading ? (
+        {isFetching ? (
           <Box sx={{position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center"}}>
             <Loader size={80} />
           </Box>

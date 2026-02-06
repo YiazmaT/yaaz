@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
+import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
@@ -9,8 +10,9 @@ import {IngredientFormValues, useIngredientFormConfig} from "./form-config";
 import {useIngredientsTableConfig} from "./desktop/table-config";
 import {useIngredientsConstants} from "./constants";
 
+const API_ROUTE = "/api/ingredient/paginated-list";
+
 export function useIngredients() {
-  const [tableKey, setTableKey] = useState(0);
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -23,6 +25,7 @@ export function useIngredients() {
   const {defaultValues, schema} = useIngredientFormConfig();
   const api = useApi();
   const toast = useToaster();
+  const queryClient = useQueryClient();
 
   const {
     control,
@@ -44,6 +47,10 @@ export function useIngredients() {
     onStockHistoryClick: (row) => setStockHistoryItem(row),
   });
 
+  function refreshTable() {
+    queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
   async function submit(data: IngredientFormValues) {
     const formData = new FormData();
     formData.append("name", data.name);
@@ -63,7 +70,7 @@ export function useIngredients() {
           toast.successToast("ingredients.updateSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         },
       });
     } else {
@@ -73,7 +80,7 @@ export function useIngredients() {
           toast.successToast("ingredients.createSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         },
       });
     }
@@ -125,7 +132,7 @@ export function useIngredients() {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast("ingredients.deleteSuccess");
-            setTableKey((prev) => prev + 1);
+            refreshTable();
           },
         });
       },
@@ -138,10 +145,6 @@ export function useIngredients() {
 
   function closeStockModal() {
     setShowStockModal(false);
-  }
-
-  function refreshTable() {
-    setTableKey((prev) => prev + 1);
   }
 
   function closeCostHistory() {
@@ -161,7 +164,6 @@ export function useIngredients() {
   }
 
   return {
-    tableKey,
     formType,
     showDrawer,
     control,

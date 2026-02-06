@@ -17,7 +17,6 @@ export function DesktopView(props: DesktopViewProps) {
           <SalesFilters onFilterChange={sales.handleFilterChange} />
           <Box sx={{flex: 1, minHeight: 0}}>
             <DataTable<Sale>
-              key={sales.tableKey}
               apiRoute="/api/sale/paginated-list"
               columns={sales.generateConfig()}
               hideSearch

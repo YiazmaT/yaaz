@@ -1,10 +1,9 @@
 "use client";
-import {useEffect, useRef, useState} from "react";
 import {Box, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemText, Skeleton, Typography} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import {useApi} from "@/src/hooks/use-api";
+import {useApiQuery} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
 import moment from "moment";
 import {flexGenerator} from "@/src/utils/flex-generator";
@@ -12,35 +11,16 @@ import {useIngredientsConstants} from "../../constants";
 import {StockHistoryModalProps, StockHistoryResponse, StockHistoryItem} from "./types";
 
 export function StockHistoryModal(props: StockHistoryModalProps) {
-  const [loading, setLoading] = useState(true);
-  const [history, setHistory] = useState<StockHistoryItem[]>([]);
   const {translate} = useTranslate();
   const {stockChangeReasons, unitOfMeasures} = useIngredientsConstants();
-  const api = useApi();
-  const fetchedRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (props.open && props.ingredientId && fetchedRef.current !== props.ingredientId) {
-      fetchedRef.current = props.ingredientId;
-      fetchData();
-    }
-  }, [props.open, props.ingredientId]);
+  const {data, isLoading} = useApiQuery<StockHistoryResponse>({
+    queryKey: ["stock-history", "ingredient", props.ingredientId],
+    route: `/api/ingredient/stock-history?ingredientId=${props.ingredientId}`,
+    enabled: props.open && !!props.ingredientId,
+  });
 
-  async function fetchData() {
-    setLoading(true);
-    const result = await api.fetch<StockHistoryResponse>("GET", `/api/ingredient/stock-history?ingredientId=${props.ingredientId}`);
-    if (result?.history) {
-      setHistory(result.history);
-    }
-    setLoading(false);
-  }
-
-  function handleClose() {
-    setHistory([]);
-    setLoading(true);
-    fetchedRef.current = null;
-    props.onClose();
-  }
+  const history = data?.history ?? [];
 
   function getReasonLabel(reason: string | null): string {
     if (!reason) return "";
@@ -51,17 +31,17 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
   const unitLabel = unitOfMeasures[props.unitOfMeasure as keyof typeof unitOfMeasures]?.label ?? translate("ingredients.stockChange.units");
 
   return (
-    <Dialog open={props.open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={props.open} onClose={props.onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{...flexGenerator("r.center.space-between")}}>
         <Typography variant="h6" component="span">
           {translate("ingredients.stockHistory.title")} - {props.ingredientName}
         </Typography>
-        <IconButton onClick={handleClose} size="small">
+        <IconButton onClick={props.onClose} size="small">
           <CloseIcon />
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        {loading ? (
+        {isLoading ? (
           <Box sx={{...flexGenerator("c"), gap: 1, padding: 2}}>
             {[...Array(5)].map((_, i) => (
               <Skeleton key={i} variant="rectangular" height={60} />

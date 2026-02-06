@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {Box, Typography} from "@mui/material";
+import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -15,8 +16,9 @@ import {useSalesTableConfig} from "./desktop/table-config";
 import {CreateSaleResponse, ConvertQuoteResponse, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "./dto";
 import {SalesFilters} from "./components/filters/types";
 
+const API_ROUTE = "/api/sale/paginated-list";
+
 export function useSales() {
-  const [tableKey, setTableKey] = useState(0);
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
   const [filters, setFilters] = useState<SalesFilters>({});
@@ -27,6 +29,11 @@ export function useSales() {
   const api = useApi();
   const toast = useToaster();
   const formatCurrency = useFormatCurrency();
+  const queryClient = useQueryClient();
+
+  function refreshTable() {
+    queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
 
   function StockWarningsList(props: {productWarnings: ProductStockWarning[]; packageWarnings: PackageStockWarning[]}) {
     return (
@@ -194,7 +201,7 @@ export function useSales() {
           toast.successToast("sales.updateSuccess");
           reset();
           closeDrawer();
-          setTableKey((prev) => prev + 1);
+          refreshTable();
           return true;
         }
 
@@ -253,7 +260,7 @@ export function useSales() {
         toast.successToast("sales.createSuccess");
         reset();
         closeDrawer();
-        setTableKey((prev) => prev + 1);
+        refreshTable();
       } else {
         const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
         const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
@@ -274,7 +281,7 @@ export function useSales() {
                 toast.successToast("sales.createSuccess");
                 reset();
                 closeDrawer();
-                setTableKey((prev) => prev + 1);
+                refreshTable();
               }
             },
           });
@@ -328,7 +335,7 @@ export function useSales() {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast("sales.deleteSuccess");
-            setTableKey((prev) => prev + 1);
+            refreshTable();
           },
         });
       },
@@ -343,7 +350,7 @@ export function useSales() {
 
         if (result?.success) {
           toast.successToast("sales.convertQuoteSuccess");
-          setTableKey((prev) => prev + 1);
+          refreshTable();
         } else {
           const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
           const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
@@ -361,7 +368,7 @@ export function useSales() {
                 const forceResult = await api.fetch<ConvertQuoteResponse>("PUT", "/api/sale/convert-quote", {body: {id: row.id, force: true}});
                 if (forceResult?.success) {
                   toast.successToast("sales.convertQuoteSuccess");
-                  setTableKey((prev) => prev + 1);
+                  refreshTable();
                 }
               },
             });
@@ -376,7 +383,6 @@ export function useSales() {
   }
 
   return {
-    tableKey,
     formType,
     showDrawer,
     control,
