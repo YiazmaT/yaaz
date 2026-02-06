@@ -8,7 +8,7 @@ import {WeeklySalesCard} from "./components/weekly-sales-card";
 import {MonthlySalesCard} from "./components/monthly-sales-card";
 import {SemestralSalesCard} from "./components/semestral-sales-card";
 
-export function HomeScreen() {
+export function DashboardScreen() {
   const {translate} = useTranslate();
 
   return (

@@ -77,7 +77,7 @@ export function DesktopView(props: DesktopViewProps) {
                 alt={layout.tenantName}
                 src={layout.tenantLogo}
                 sx={{width: 48, height: 48, cursor: "pointer", objectFit: "contain"}}
-                onClick={() => layout.handleNavigate("/home")}
+                onClick={() => layout.handleNavigate("/dashboard")}
               />
               <Typography
                 sx={{

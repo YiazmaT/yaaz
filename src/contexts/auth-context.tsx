@@ -23,7 +23,7 @@ export function AuthContextProvider(props: PropsWithChildren) {
       resetSessionExpiredFlag();
       setTenant(response.tenant);
       setUser(response.user);
-      navigate("/home");
+      navigate("/dashboard");
     }
   }
 
