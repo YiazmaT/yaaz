@@ -1,33 +1,25 @@
-"use client";
-import {AppRouterCacheProvider} from "@mui/material-nextjs/v15-appRouter";
-import {LoaderContextProvider} from "@/src/contexts/loading-context";
-import {AuthContextProvider} from "@/src/contexts/auth-context";
-import {TenantContextProvider} from "@/src/contexts/tenant-context";
-import {TranslationContextProvider} from "@/src/contexts/translation-context";
-import {ToasterContextProvider} from "@/src/contexts/toast-context";
-import {TopLoader} from "@/src/components/top-loader";
-import {ConfirmModalContextProvider} from "@/src/contexts/confirm-modal-context";
-import {TenantThemeProvider} from "@/src/components/tenant-theme-provider";
+import {cookies} from "next/headers";
+import {Providers} from "./providers";
+import {Tenant} from "@/src/pages-content/tenants/types";
+import {User} from "@/src/contexts/tenant-context";
 
-export default function DefaultLayout({children}: {children: React.ReactNode}) {
+function parseCookie<T>(value: string | undefined): T | null {
+  if (!value) return null;
+  try {
+    return JSON.parse(decodeURIComponent(value)) as T;
+  } catch {
+    return null;
+  }
+}
+
+export default async function DefaultLayout({children}: {children: React.ReactNode}) {
+  const cookieStore = await cookies();
+  const initialTenant = parseCookie<Tenant>(cookieStore.get("tenant")?.value);
+  const initialUser = parseCookie<User>(cookieStore.get("user")?.value);
+
   return (
-    <AppRouterCacheProvider>
-      <TenantContextProvider>
-        <TenantThemeProvider>
-          <TranslationContextProvider>
-            <ConfirmModalContextProvider>
-              <ToasterContextProvider>
-                <LoaderContextProvider>
-                  <AuthContextProvider>
-                    <TopLoader />
-                    {children}
-                  </AuthContextProvider>
-                </LoaderContextProvider>
-              </ToasterContextProvider>
-            </ConfirmModalContextProvider>
-          </TranslationContextProvider>
-        </TenantThemeProvider>
-      </TenantContextProvider>
-    </AppRouterCacheProvider>
+    <Providers initialTenant={initialTenant} initialUser={initialUser}>
+      {children}
+    </Providers>
   );
 }
