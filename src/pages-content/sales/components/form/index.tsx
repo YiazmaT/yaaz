@@ -30,10 +30,6 @@ export function Form(props: FormProps) {
       >
         <form onSubmit={sales.handleSubmit(sales.submit)}>
           <Grid container spacing={2}>
-            {sales.formType === "create" && (
-              <FormCheckBox fieldName="is_quote" label="sales.isQuote" />
-            )}
-
             <FormRadioGroup fieldName="payment_method" label="sales.fields.paymentMethod" options={paymentMethodOptions} />
 
             <Grid size={12}>
@@ -73,6 +69,8 @@ export function Form(props: FormProps) {
                 </Typography>
               </Box>
             </Grid>
+
+            {sales.formType === "create" && <FormCheckBox fieldName="is_quote" label="sales.isQuote" />}
 
             {!isDetails && (
               <Grid size={12}>
