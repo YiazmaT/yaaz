@@ -18,6 +18,7 @@ export function AuthContextProvider(props: PropsWithChildren) {
   async function login(login: string, password: string) {
     const response = await api.fetch<{success: boolean; tenant: Tenant; user: User}>("POST", "/api/login", {
       body: {email: login, password: password},
+      hideLoader: true,
     });
     if (response) {
       resetSessionExpiredFlag();

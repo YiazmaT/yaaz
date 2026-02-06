@@ -1,5 +1,5 @@
 "use client";
-import {Box, Button, Grid, useTheme} from "@mui/material";
+import {Box, Button, CircularProgress, Grid, useTheme} from "@mui/material";
 import {useLoginFormConfig} from "./form-config";
 import Cookies from "js-cookie";
 import Image from "next/image";
@@ -15,6 +15,7 @@ import {flexGenerator} from "@/src/utils/flex-generator";
 
 export function LoginScreen() {
   const [saveMe, setSaveMe] = useState(true);
+  const [loading, setLoading] = useState(false);
   const {login} = useAuth();
   const {translate} = useTranslate();
   const {defaultValues, schema} = useLoginFormConfig();
@@ -43,7 +44,12 @@ export function LoginScreen() {
         expires: 365 * 100,
         path: "/",
       });
-    await login(data.login, data.password);
+    setLoading(true);
+    try {
+      await login(data.login, data.password);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -76,21 +82,45 @@ export function LoginScreen() {
             <Grid container spacing={1}>
               <Grid size={12} sx={{...flexGenerator("c.center.center")}}>
                 <Box
-                    sx={{
-                      ...flexGenerator("c.center.center"),
-                      borderRadius: "100%",
-                      width: 300,
-                      height: 300,
-                      border: "2px solid transparent",
-                      backgroundImage: {
-                        xs: "none",
-                        md: `linear-gradient(white, white), linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
-                      },
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "padding-box, border-box",
-                    }}
-                  >
+                  sx={{
+                    ...flexGenerator("c.center.center"),
+                    borderRadius: "100%",
+                    width: 300,
+                    height: 300,
+                    position: "relative",
+                    border: loading ? "none" : "2px solid transparent",
+                    backgroundImage: loading
+                      ? "none"
+                      : {
+                          xs: "none",
+                          md: `linear-gradient(white, white), linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                        },
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "padding-box, border-box",
+                  }}
+                >
                   <Image alt={process.env.NEXT_PUBLIC_COMPANY_NAME!} src="/assets/icon.png" width={200} height={200} />
+                  {loading && (
+                    <>
+                      <svg width={0} height={0}>
+                        <defs>
+                          <linearGradient id="login_loader_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor={secondaryColor} />
+                            <stop offset="100%" stopColor={primaryColor} />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <CircularProgress
+                        disableShrink
+                        sx={{
+                          position: "absolute",
+                          "svg circle": {stroke: "url(#login_loader_gradient)"},
+                        }}
+                        size={300}
+                        thickness={1}
+                      />
+                    </>
+                  )}
                 </Box>
               </Grid>
               <FormTextInput fieldName="login" label="global.email" grid size={12} />
