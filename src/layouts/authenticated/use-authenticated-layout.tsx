@@ -10,12 +10,14 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import TakeoutDiningOutlinedIcon from "@mui/icons-material/TakeoutDiningOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
 const menuItems: MenuItem[] = [
   {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
   {name: "global.products", route: "/products", icon: <Inventory2OutlinedIcon />},
   {name: "global.ingredients", route: "/ingredients", icon: <CategoryOutlinedIcon />},
   {name: "global.packages", route: "/packages", icon: <TakeoutDiningOutlinedIcon />},
+  {name: "global.clients", route: "/clients", icon: <PersonOutlineIcon />},
   {name: "global.reports", route: "/reports", icon: <ReceiptOutlinedIcon />},
 ];
 

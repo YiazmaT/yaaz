@@ -27,6 +27,7 @@
     "reports": "Relatórios",
     "tenants": "Empresas",
     "unity": "Unidade",
+    "clients": "Clientes",
     "packages": "Embalagens",
     "total": "Total",
     "actions": {
@@ -386,6 +387,33 @@
       "timeZone": "Fuso Horário",
       "currencyType": "Moeda",
       "creationDate": "Data de Criação"
+    }
+  },
+  "clients": {
+    "title": "Clientes",
+    "createTitle": "Incluir Cliente",
+    "editTitle": "Editar Cliente",
+    "detailsTitle": "Visualizar Cliente",
+    "createSuccess": "Cliente criado com sucesso!",
+    "updateSuccess": "Cliente atualizado com sucesso!",
+    "deleteSuccess": "Cliente excluído com sucesso!",
+    "deleteConfirm": "Tem certeza que deseja excluir este cliente?",
+    "person": "Pessoa Física",
+    "company": "Pessoa Jurídica",
+    "fields": {
+      "name": "Nome",
+      "image": "Foto",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "cpf": "CPF",
+      "cnpj": "CNPJ",
+      "cpfCnpj": "CPF / CNPJ",
+      "type": "Tipo",
+      "isCompany": "Pessoa Jurídica"
+    },
+    "errors": {
+      "invalidCpf": "CPF inválido",
+      "invalidCnpj": "CNPJ inválido"
     }
   },
   "reports": {

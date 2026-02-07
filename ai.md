@@ -19,6 +19,7 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 - If you are going to create a new function that already exists in another component/context, extract it and import im both;
 - Keep the files formated with the prettier rules;
 - Avois useEffects, use it only if it's extremely necessary;
+- You can add new libs, just ask first;
 
 # How translation works:
 

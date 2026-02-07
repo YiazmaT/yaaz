@@ -88,6 +88,7 @@ model Tenant {
   product_stock_changes    ProductStockChange[]
   ingredient_stock_changes IngredientStockChange[]
   package_stock_changes    PackageStockChange[]
+  clients                  Client[]
 
   @@map("tenant")
   @@schema("data")
@@ -131,6 +132,8 @@ model User {
   created_product_stock_changes    ProductStockChange[]    @relation("ProductStockChangeCreator")
   created_ingredient_stock_changes IngredientStockChange[] @relation("IngredientStockChangeCreator")
   created_package_stock_changes    PackageStockChange[]    @relation("PackageStockChangeCreator")
+  created_clients                  Client[]                @relation("ClientCreator")
+  edited_clients                   Client[]                @relation("ClientEditor")
 
   @@map("user")
   @@schema("data")
@@ -404,5 +407,28 @@ model PackageStockChange {
   creator        User?                    @relation("PackageStockChangeCreator", fields: [creator_id], references: [id], onDelete: SetNull)
 
   @@map("package_stock_change")
+  @@schema("data")
+}
+
+model Client {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String  @db.Uuid
+  name       String
+  image      String?
+  email      String?
+  phone      String?
+  cnpj       String?
+  cpf        String?
+  is_company Boolean @default(false)
+  tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("ClientCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("ClientEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@map("client")
   @@schema("data")
 }
