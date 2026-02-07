@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body: UpdateSaleDto = await req.json();
-    const {id, payment_method, total, items, packages, force, updatePrices} = body;
+    const {id, payment_method, total, items, packages, force, updatePrices, client_id} = body;
 
     const hasItems = items && items.length > 0;
     const hasPackages = packages && packages.length > 0;
@@ -210,6 +210,7 @@ export async function PUT(req: NextRequest) {
           payment_method: payment_method as any,
           total: finalTotal,
           approximate_cost: approximateCost,
+          client_id: client_id || null,
           last_edit_date: new Date(),
           last_editor_id: auth.user!.id,
           items: hasItems

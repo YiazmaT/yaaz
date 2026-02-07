@@ -314,6 +314,8 @@ model Sale {
   tenant           Tenant        @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   items            SaleItem[]
   packages         SalePackage[]
+  client_id        String?       @db.Uuid
+  client           Client?       @relation(fields: [client_id], references: [id], onDelete: SetNull)
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())
@@ -421,6 +423,7 @@ model Client {
   cpf        String?
   is_company Boolean @default(false)
   tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  sales      Sale[]
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())

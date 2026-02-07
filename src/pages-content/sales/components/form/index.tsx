@@ -1,5 +1,6 @@
 "use client";
 import {Button, Divider, Grid, Typography, Box} from "@mui/material";
+import {FormAsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {FormRadioGroup} from "@/src/components/form-fields/radio-group";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
@@ -9,6 +10,7 @@ import {ProductsSelector} from "@/src/components/products-selector";
 import {PackagesSelector} from "@/src/components/packages-selector";
 import {PackageType} from "@/src/pages-content/packages/types";
 import {FormCheckBox} from "@/src/components/form-fields/check-box";
+import {Client} from "@/src/pages-content/client/types";
 import {useSalesConstants} from "../../constants";
 import {FormProps} from "./types";
 
@@ -18,7 +20,6 @@ export function Form(props: FormProps) {
   const {payment_methods} = useSalesConstants();
   const formatCurrency = useFormatCurrency();
   const isDetails = sales.formType === "details";
-
   const paymentMethodOptions = Object.values(payment_methods);
 
   return (
@@ -69,6 +70,14 @@ export function Form(props: FormProps) {
                 </Typography>
               </Box>
             </Grid>
+
+            <FormAsyncDropdown<Client>
+              fieldName="client"
+              apiRoute="/api/client/paginated-list"
+              uniqueKey="id"
+              label="sales.fields.client"
+              buildLabel={(option) => option.name}
+            />
 
             {sales.formType === "create" && <FormCheckBox fieldName="is_quote" label="sales.isQuote" />}
 

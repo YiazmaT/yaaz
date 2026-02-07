@@ -316,6 +316,7 @@
     "fields": {
       "date": "Data",
       "paymentMethod": "Método de pagamento",
+      "client": "Cliente",
       "items": "Itens",
       "total": "Total",
       "approximateCost": "Custo Aproximado"
@@ -413,7 +414,8 @@
     },
     "errors": {
       "invalidCpf": "CPF inválido",
-      "invalidCnpj": "CNPJ inválido"
+      "invalidCnpj": "CNPJ inválido",
+      "inUseBySales": "Este cliente possui vendas vinculadas e não pode ser excluído."
     }
   },
   "reports": {

@@ -16,6 +16,7 @@ export interface CreateSaleDto {
   packages: SalePackageDto[];
   force?: boolean;
   is_quote?: boolean;
+  client_id?: string | null;
 }
 
 export interface UpdateSaleDto extends CreateSaleDto {

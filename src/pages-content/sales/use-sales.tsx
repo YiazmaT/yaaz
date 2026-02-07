@@ -191,6 +191,7 @@ export function useSales() {
       packages: cleanPackages,
       force: false,
       is_quote: data.is_quote || false,
+      client_id: data.client?.id || null,
     };
 
     if (formType === "edit" && selectedId) {
@@ -307,6 +308,7 @@ export function useSales() {
       items: row.items || [],
       packages: row.packages || [],
       total: row.total,
+      client: row.client || null,
     });
   }
 

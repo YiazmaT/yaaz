@@ -1,5 +1,6 @@
 import {useTranslate} from "@/src/contexts/translation-context";
 import {PackageCompositionItem} from "@/src/components/packages-selector/types";
+import {Client} from "@/src/pages-content/client/types";
 import {PaymentMethod, ItemSale} from "./types";
 import * as yup from "yup";
 
@@ -9,6 +10,7 @@ export interface SaleFormValues {
   packages: PackageCompositionItem[];
   total: string;
   is_quote: boolean;
+  client: Client | null;
 }
 
 export function useSaleFormConfig() {
@@ -26,6 +28,7 @@ export function useSaleFormConfig() {
     packages: [],
     total: "0",
     is_quote: false,
+    client: null,
   };
 
   return {

@@ -70,6 +70,7 @@ export async function GET(req: NextRequest) {
               package: true,
             },
           },
+          client: true,
         },
       }),
       prisma.sale.count({where}),

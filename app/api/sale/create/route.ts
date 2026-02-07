@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body: CreateSaleDto = await req.json();
-    const {payment_method, total, items, packages, force, is_quote} = body;
+    const {payment_method, total, items, packages, force, is_quote, client_id} = body;
 
     const hasItems = items && items.length > 0;
     const hasPackages = packages && packages.length > 0;
@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
           total,
           approximate_cost: approximateCost,
           is_quote: is_quote || false,
+          client_id: client_id || null,
           creator_id: auth.user!.id,
           items: hasItems
             ? {

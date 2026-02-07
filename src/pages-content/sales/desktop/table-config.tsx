@@ -30,6 +30,12 @@ export function useSalesTableConfig(props: SalesTableConfigProps) {
         },
       },
       {
+        field: "client",
+        headerKey: "sales.fields.client",
+        width: "15%",
+        render: (row) => row.client?.name || "-",
+      },
+      {
         field: "is_quote",
         headerKey: "sales.isQuote",
         width: "10%",

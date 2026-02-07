@@ -15,15 +15,43 @@ export async function DELETE(req: NextRequest) {
     const {id}: DeleteClientDto = await req.json();
 
     if (!id) {
-      logError({module: LogModule.CLIENT, source: LogSource.API, message: "api.errors.missingRequiredFields", route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+      logError({
+        module: LogModule.CLIENT,
+        source: LogSource.API,
+        message: "api.errors.missingRequiredFields",
+        route: ROUTE,
+        userId: auth.user!.id,
+        tenantId: auth.tenant_id,
+      });
       return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
     }
 
-    const client = await prisma.client.findUnique({where: {id, tenant_id: auth.tenant_id}});
+    const client = await prisma.client.findUnique({where: {id, tenant_id: auth.tenant_id}, include: {sales: {take: 1}}});
 
     if (!client) {
-      logError({module: LogModule.CLIENT, source: LogSource.API, message: "Client not found", content: {id}, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+      logError({
+        module: LogModule.CLIENT,
+        source: LogSource.API,
+        message: "Client not found",
+        content: {id},
+        route: ROUTE,
+        userId: auth.user!.id,
+        tenantId: auth.tenant_id,
+      });
       return NextResponse.json({error: "api.errors.dataNotFound"}, {status: 404});
+    }
+
+    if (client.sales.length > 0) {
+      logError({
+        module: LogModule.CLIENT,
+        source: LogSource.API,
+        message: "Client is in use by sales",
+        content: client,
+        route: ROUTE,
+        userId: auth.user!.id,
+        tenantId: auth.tenant_id,
+      });
+      return NextResponse.json({error: "clients.errors.inUseBySales"}, {status: 400});
     }
 
     if (client.image) {

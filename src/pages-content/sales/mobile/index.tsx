@@ -29,6 +29,11 @@ export function MobileView(props: MobileViewProps) {
             <Typography variant="caption" color="text.secondary">
               {item.creation_date ? new Date(item.creation_date).toLocaleString("pt-BR") : "-"}
             </Typography>
+            {item.client && (
+              <Typography variant="body2" color="text.secondary">
+                {item.client.name}
+              </Typography>
+            )}
           </Box>
           <Box sx={{display: "flex", gap: 0.5}}>
             {item.is_quote && (

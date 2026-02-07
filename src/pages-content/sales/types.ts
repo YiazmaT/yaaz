@@ -1,5 +1,6 @@
 import {ProductItem} from "@/src/components/products-selector/types";
 import {PackageCompositionItem} from "@/src/components/packages-selector/types";
+import {Client} from "@/src/pages-content/client/types";
 
 export type ItemSale = ProductItem;
 
@@ -20,4 +21,6 @@ export interface Sale {
   packages?: PackageCompositionItem[];
   creation_date?: string;
   is_quote?: boolean;
+  client_id?: string | null;
+  client?: Client | null;
 }
