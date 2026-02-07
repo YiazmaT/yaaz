@@ -5,6 +5,7 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Product} from "../types";
 import StarIcon from "@mui/icons-material/Star";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
@@ -112,7 +113,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
       {
         field: "actions",
         headerKey: "global.actions.label",
-        width: "150px",
+        width: "180px",
         align: "center",
         render: (row) => (
           <ActionsColumn
@@ -122,6 +123,11 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
             hideEdit={(r) => !r.active}
             onDelete={props.onDelete}
             customActions={[
+              {
+                icon: () => <AttachFileIcon fontSize="small" />,
+                tooltip: () => translate("products.files.tooltip"),
+                onClick: props.onOpenFiles,
+              },
               {
                 icon: () => <SyncAltIcon fontSize="small" />,
                 tooltip: () => translate("products.stockChange.title"),

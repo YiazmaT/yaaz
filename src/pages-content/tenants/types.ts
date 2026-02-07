@@ -7,4 +7,5 @@ export interface Tenant {
   secondary_color: string | null;
   time_zone: string;
   currency_type: string;
+  max_file_size_in_mbs: number;
 }

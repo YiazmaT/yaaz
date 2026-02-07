@@ -261,6 +261,21 @@
       "removed": "Removido",
       "stockAddition": "Adição de estoque",
       "by": "por"
+    },
+    "files": {
+      "tooltip": "Arquivos",
+      "title": "Arquivos",
+      "upload": "Enviar arquivo",
+      "counter": "arquivos",
+      "openInNewTab": "Abrir em nova aba",
+      "download": "Baixar",
+      "delete": "Excluir",
+      "deleteConfirm": "Tem certeza que deseja excluir este arquivo?",
+      "deleteSuccess": "Arquivo excluído com sucesso!",
+      "uploadSuccess": "Arquivo enviado com sucesso!",
+      "maxFiles": "Limite máximo de 5 arquivos atingido.",
+      "fileTooLarge": "O arquivo excede o tamanho máximo permitido.",
+      "uploadError": "Erro ao enviar o arquivo."
     }
   },
   "sales": {

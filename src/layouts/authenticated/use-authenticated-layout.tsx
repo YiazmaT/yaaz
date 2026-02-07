@@ -6,14 +6,14 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant} from "@/src/contexts/tenant-context";
 import {MenuItem} from "./types";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
-import BakeryDiningOutlinedIcon from "@mui/icons-material/BakeryDiningOutlined";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import TakeoutDiningOutlinedIcon from "@mui/icons-material/TakeoutDiningOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 
 const menuItems: MenuItem[] = [
   {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
-  {name: "global.products", route: "/products", icon: <BakeryDiningOutlinedIcon />},
+  {name: "global.products", route: "/products", icon: <Inventory2OutlinedIcon />},
   {name: "global.ingredients", route: "/ingredients", icon: <CategoryOutlinedIcon />},
   {name: "global.packages", route: "/packages", icon: <TakeoutDiningOutlinedIcon />},
   {name: "global.reports", route: "/reports", icon: <ReceiptOutlinedIcon />},

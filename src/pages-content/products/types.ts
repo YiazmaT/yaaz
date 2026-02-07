@@ -24,6 +24,7 @@ export interface Product {
   composition?: CompositionItem[];
   packages?: PackageCompositionItem[];
   approximateCost?: number;
+  files?: string[];
   displayLandingPage: boolean;
   active: boolean;
 }

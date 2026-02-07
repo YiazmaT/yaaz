@@ -91,6 +91,7 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 
 # Logging
 
+- U MUST LOG EVERYTHING THAT IS GOING TO BE RETURNED TO THE FRONT END;
 - Use the logger from /src/lib/logger for everything that needs to be logged;
 - Import: `import {logCreate, logUpdate, logDelete, logGet, logError, logImportant, logCritical} from "@/src/lib/logger";`
 - Always use enums: LogModule, LogSource;
@@ -126,4 +127,4 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 - whenever you need to format money, use formatCurrency from utils;
 - whenever you need to add a text in contrast to a color, use blackOrWhite from utils;
 - whenever you need to validate an email, use validEmailRegex from utils;
-- whenever you need to get tenant or user informations, get it from useTenant;
+- whenever you need to get tenant or user informations, get it from useTenant, you also have this info at cookies;

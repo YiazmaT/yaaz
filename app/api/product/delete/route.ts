@@ -77,6 +77,13 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
+    for (const fileUrl of product.files) {
+      const key = extractR2KeyFromUrl(fileUrl);
+      if (key) {
+        await deleteFromR2(key, auth.tenant_id);
+      }
+    }
+
     await prisma.product.delete({where: {id}});
 
     logDelete({module: LogModule.PRODUCT, source: LogSource.API, content: product, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});

@@ -11,12 +11,15 @@ import {AddStockDrawer} from "../components/add-stock-drawer";
 import {AddStockDrawerRef} from "../components/add-stock-drawer/types";
 import {StockChangeModal} from "../components/stock-change-modal";
 import {StockHistoryModal} from "../components/stock-history-modal";
+import {FilesModal} from "../components/files-modal";
 import {ProductsFiltersComponent} from "../components/filters";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {DesktopViewProps} from "./types";
 
 export function DesktopView(props: DesktopViewProps) {
   const {products} = props;
   const {translate} = useTranslate();
+  const {tenant} = useTenant();
   const stockDrawerRef = useRef<AddStockDrawerRef>(null);
 
   return (
@@ -48,6 +51,17 @@ export function DesktopView(props: DesktopViewProps) {
           onClose={products.closeStockHistoryModal}
           productId={products.stockHistoryItem.id}
           productName={products.stockHistoryItem.name}
+        />
+      )}
+      {products.filesItem && (
+        <FilesModal
+          open={!!products.filesItem}
+          onClose={products.closeFilesModal}
+          productId={products.filesItem.id}
+          productName={products.filesItem.name}
+          files={products.filesItem.files ?? []}
+          maxFileSizeMb={tenant?.max_file_size_in_mbs ?? 10}
+          onFilesChange={products.handleFilesChange}
         />
       )}
     </>

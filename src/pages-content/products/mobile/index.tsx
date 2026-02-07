@@ -15,8 +15,11 @@ import {Form} from "../components/form";
 import {AddStockDrawer} from "../components/add-stock-drawer";
 import {AddStockDrawerRef} from "../components/add-stock-drawer/types";
 import {StockChangeModal} from "../components/stock-change-modal";
+import {FilesModal} from "../components/files-modal";
 import {ProductsFiltersComponent} from "../components/filters";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {MobileViewProps} from "./types";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
@@ -24,6 +27,7 @@ import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 export function MobileView(props: MobileViewProps) {
   const {products} = props;
   const {translate} = useTranslate();
+  const {tenant} = useTenant();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
   const stockDrawerRef = useRef<AddStockDrawerRef>(null);
@@ -74,6 +78,17 @@ export function MobileView(props: MobileViewProps) {
             borderTop: `1px solid ${theme.palette.divider}`,
           }}
         >
+          <Tooltip title={translate("products.files.tooltip")}>
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                products.handleOpenFiles(item);
+              }}
+            >
+              <AttachFileIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
           {item.active && (
             <Tooltip title={translate("products.stockChange.title")}>
               <IconButton
@@ -170,6 +185,17 @@ export function MobileView(props: MobileViewProps) {
       <Form products={products} imageSize={150} />
       <AddStockDrawer ref={stockDrawerRef} onSuccess={products.refreshTable} />
       <StockChangeModal item={products.stockChangeItem} onClose={products.closeStockChangeModal} onSuccess={products.refreshTable} />
+      {products.filesItem && (
+        <FilesModal
+          open={!!products.filesItem}
+          onClose={products.closeFilesModal}
+          productId={products.filesItem.id}
+          productName={products.filesItem.name}
+          files={products.filesItem.files ?? []}
+          maxFileSizeMb={tenant?.max_file_size_in_mbs ?? 10}
+          onFilesChange={products.handleFilesChange}
+        />
+      )}
     </Box>
   );
 }

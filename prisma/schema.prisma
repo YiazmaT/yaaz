@@ -69,7 +69,8 @@ model Tenant {
   primary_color   String?
   secondary_color String?
   time_zone       String   @default("America/Sao_Paulo")
-  currency_type   String   @default("R$")
+  currency_type        String   @default("R$")
+  max_file_size_in_mbs Int      @default(10)
 
   instagram_posts          InstagramPost[]
   users                    User[]
@@ -253,6 +254,7 @@ model Product {
   min_stock            Int                  @default(0)
   display_landing_page Boolean              @default(false)
   active               Boolean              @default(true)
+  files                String[]             @default([])
   tenant               Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   composition          ProductIngredient[]
   packages             ProductPackage[]

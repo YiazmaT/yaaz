@@ -61,3 +61,12 @@ export interface StockChangeDto {
   reason: ProductStockChangeReason;
   comment?: string;
 }
+
+export interface UploadProductFileDto {
+  productId: string;
+}
+
+export interface DeleteProductFileDto {
+  productId: string;
+  fileUrl: string;
+}

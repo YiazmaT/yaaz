@@ -14,10 +14,11 @@ const API_ROUTE = "/api/product/paginated-list";
 export function useProducts() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
+  const [filters, setFilters] = useState<ProductsFilters>({});
+  const [filesItem, setFilesItem] = useState<Product | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stockChangeItem, setStockChangeItem] = useState<Product | null>(null);
   const [stockHistoryItem, setStockHistoryItem] = useState<Product | null>(null);
-  const [filters, setFilters] = useState<ProductsFilters>({});
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useProductFormConfig();
   const api = useApi();
@@ -56,6 +57,7 @@ export function useProducts() {
     onStockChange: (row: Product) => handleStockChange(row),
     onStockHistoryClick: (row: Product) => setStockHistoryItem(row),
     onToggleActive: (row: Product) => handleToggleActive(row),
+    onOpenFiles: (row: Product) => handleOpenFiles(row),
   });
 
   function refreshTable() {
@@ -248,6 +250,19 @@ export function useProducts() {
     });
   }
 
+  function handleOpenFiles(row: Product) {
+    setFilesItem(row);
+  }
+
+  function closeFilesModal() {
+    setFilesItem(null);
+  }
+
+  function handleFilesChange(files: string[]) {
+    setFilesItem((prev) => (prev ? {...prev, files} : null));
+    refreshTable();
+  }
+
   function handleFilterChange(newFilters: ProductsFilters) {
     setFilters(newFilters);
   }
@@ -276,6 +291,10 @@ export function useProducts() {
     closeStockChangeModal,
     stockHistoryItem,
     closeStockHistoryModal,
+    filesItem,
+    handleOpenFiles,
+    closeFilesModal,
+    handleFilesChange,
     filters,
     handleFilterChange,
     handleToggleActive,
