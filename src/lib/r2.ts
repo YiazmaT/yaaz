@@ -31,7 +31,7 @@ export async function uploadToR2(file: File, folder: string, tenantId: string): 
         Key: key,
         Body: buffer,
         ContentType: file.type,
-      })
+      }),
     );
 
     const url = `${process.env.R2_PUBLIC_URL}/${key}`;
@@ -67,11 +67,46 @@ export async function deleteFromR2(key: string, tenantId: string): Promise<boole
       new DeleteObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME!,
         Key: key,
-      })
+      }),
     );
     return true;
   } catch (error) {
     console.error("R2 delete error:", error);
     return false;
+  }
+}
+
+export async function noTenantUploadToR2(file: File, folder: string): Promise<UploadResult> {
+  //only for system stuff.
+  try {
+    const timestamp = Date.now();
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+    const key = `${folder}/${timestamp}-${sanitizedName}`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+      }),
+    );
+
+    const url = `${process.env.R2_PUBLIC_URL}/${key}`;
+
+    return {
+      success: true,
+      url,
+      key,
+    };
+  } catch (error) {
+    console.error("R2 upload error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 }

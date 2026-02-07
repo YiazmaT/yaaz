@@ -1,7 +1,7 @@
 import {authenticateRequest} from "@/src/lib/auth";
 import {logCritical, logError, LogModule, LogSource, logCreate} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {uploadToR2} from "@/src/lib/r2";
+import {noTenantUploadToR2, uploadToR2} from "@/src/lib/r2";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/tenant/create";
@@ -20,17 +20,32 @@ export async function POST(req: NextRequest) {
     const logo = formData.get("logo") as File | null;
 
     if (!name || !time_zone || !currency_type) {
-      logError({module: LogModule.TENANT, source: LogSource.API, message: "api.errors.missingRequiredFields", route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+      logError({
+        module: LogModule.TENANT,
+        source: LogSource.API,
+        message: "api.errors.missingRequiredFields",
+        route: ROUTE,
+        userId: auth.user!.id,
+        tenantId: auth.tenant_id,
+      });
       return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
     }
 
     let logoUrl: string | null = null;
 
     if (logo && logo.size > 0) {
-      const uploadResult = await uploadToR2(logo, "tenants", auth.tenant_id);
+      const uploadResult = await noTenantUploadToR2(logo, "tenants");
 
       if (!uploadResult.success) {
-        logError({module: LogModule.TENANT, source: LogSource.API, message: "Failed to upload logo to R2", content: uploadResult, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+        logError({
+          module: LogModule.TENANT,
+          source: LogSource.API,
+          message: "Failed to upload logo to R2",
+          content: uploadResult,
+          route: ROUTE,
+          userId: auth.user!.id,
+          tenantId: auth.tenant_id,
+        });
         return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 400});
       }
 

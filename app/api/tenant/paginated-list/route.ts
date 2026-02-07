@@ -31,6 +31,8 @@ export async function GET(req: NextRequest) {
           logo: true,
           primary_color: true,
           secondary_color: true,
+          time_zone: true,
+          currency_type: true,
         },
       }),
       prisma.tenant.count({where}),
