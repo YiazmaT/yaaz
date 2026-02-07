@@ -1,6 +1,6 @@
 "use client";
 import {ReactNode, useRef} from "react";
-import {Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
+import {Badge, Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import StarIcon from "@mui/icons-material/Star";
@@ -86,7 +86,9 @@ export function MobileView(props: MobileViewProps) {
                 products.handleOpenFiles(item);
               }}
             >
-              <AttachFileIcon fontSize="small" />
+              <Badge badgeContent={item.files?.length ?? 0} color="primary" max={99}>
+                <AttachFileIcon fontSize="small" />
+              </Badge>
             </IconButton>
           </Tooltip>
           {item.active && (

@@ -275,7 +275,8 @@
       "uploadSuccess": "Arquivo enviado com sucesso!",
       "maxFiles": "Limite máximo de 5 arquivos atingido.",
       "fileTooLarge": "O arquivo excede o tamanho máximo permitido.",
-      "uploadError": "Erro ao enviar o arquivo."
+      "uploadError": "Erro ao enviar o arquivo.",
+      "dropHere": "Solte o arquivo aqui"
     }
   },
   "sales": {

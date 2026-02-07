@@ -1,4 +1,4 @@
-import {Box, Chip, Tooltip, useTheme} from "@mui/material";
+import {Badge, Box, Chip, Tooltip, useTheme} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn, TableButton} from "@/src/components/data-columns";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
@@ -124,7 +124,11 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
             onDelete={props.onDelete}
             customActions={[
               {
-                icon: () => <AttachFileIcon fontSize="small" />,
+                icon: (r) => (
+                  <Badge badgeContent={r.files?.length ?? 0} color="primary" max={99}>
+                    <AttachFileIcon fontSize="small" />
+                  </Badge>
+                ),
                 tooltip: () => translate("products.files.tooltip"),
                 onClick: props.onOpenFiles,
               },
