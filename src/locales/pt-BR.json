@@ -350,7 +350,8 @@
       "subtotal": "Subtotal",
       "productsSubtotal": "Subtotal Produtos",
       "package": "Embalagem",
-      "type": "Tipo"
+      "type": "Tipo",
+      "footer": "Documento gerado automaticamente pelo sistema. Não possui valor fiscal."
     },
     "priceChangeWarning": {
       "title": "Preços Alterados",

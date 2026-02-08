@@ -150,7 +150,7 @@ export async function GET(req: NextRequest) {
       </table>
     `;
 
-    const html = generatePdfHtml({title, content, generatedAt, tenant: auth.tenant});
+    const html = generatePdfHtml({title, content, generatedAt, tenant: auth.tenant, footerText: t("sales.pdf.footer")});
 
     logGet({
       module: LogModule.SALE,

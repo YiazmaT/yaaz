@@ -11,6 +11,7 @@ interface PdfTemplateProps {
   content: string;
   generatedAt: string;
   tenant: Tenant | null;
+  footerText?: string;
 }
 
 export function generatePdfHtml(props: PdfTemplateProps): string {
@@ -65,7 +66,7 @@ export function generatePdfHtml(props: PdfTemplateProps): string {
   ${props.content}
 
   <div class="footer">
-    <p>${t("global.pdf.footer")}</p>
+    <p>${props.footerText ?? t("global.pdf.footer")}</p>
   </div>
 </body>
 </html>
