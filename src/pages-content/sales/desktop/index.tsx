@@ -19,7 +19,6 @@ export function DesktopView(props: DesktopViewProps) {
             <DataTable<Sale>
               apiRoute="/api/sale/paginated-list"
               columns={sales.generateConfig()}
-              hideSearch
               filters={sales.filters}
             />
           </Box>

@@ -1,4 +1,5 @@
 import moment from "moment";
+import {serverTranslate} from "./server-translate";
 import {Tenant} from "../pages-content/tenants/types";
 
 const DEFAULT_PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR ?? "#A20103";
@@ -13,6 +14,7 @@ interface PdfTemplateProps {
 }
 
 export function generatePdfHtml(props: PdfTemplateProps): string {
+  const t = serverTranslate;
   const primaryColor = props.tenant?.primary_color || DEFAULT_PRIMARY_COLOR;
   const companyName = props.tenant?.name || DEFAULT_COMPANY_NAME;
   const logoUrl = props.tenant?.logo || DEFAULT_LOGO_URL;
@@ -50,20 +52,20 @@ export function generatePdfHtml(props: PdfTemplateProps): string {
   </style>
 </head>
 <body>
-  <button class="print-button no-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+  <button class="print-button no-print" onclick="window.print()">${t("global.pdf.printOrSave")}</button>
 
   <div class="header">
     <img src="${logoUrl}" alt="Logo" class="header-logo" />
     <div class="header-info">
       <h1>${companyName}</h1>
-      <p class="date">Gerado em: ${moment(props.generatedAt).format("DD/MM/YYYY HH:mm")}</p>
+      <p class="date">${t("global.pdf.generatedAt")}: ${moment(props.generatedAt).format("DD/MM/YYYY HH:mm")}</p>
     </div>
   </div>
 
   ${props.content}
 
   <div class="footer">
-    <p>Este relatório foi gerado automaticamente pelo sistema.</p>
+    <p>${t("global.pdf.footer")}</p>
   </div>
 </body>
 </html>

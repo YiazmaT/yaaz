@@ -26,7 +26,14 @@ export async function GET(req: NextRequest) {
     const where: any = {tenant_id: auth.tenant_id};
 
     if (search) {
-      where.items = {some: {product: {name: {contains: search, mode: "insensitive" as const}}}};
+      const idMatches = await prisma.$queryRaw<{id: string}[]>`
+        SELECT id FROM data.sale WHERE tenant_id = ${auth.tenant_id}::uuid AND CAST(id AS TEXT) LIKE ${"%" + search.toLowerCase() + "%"}
+      `;
+      const matchedIds = idMatches.map((r) => r.id);
+      where.OR = [
+        {items: {some: {product: {name: {contains: search, mode: "insensitive" as const}}}}},
+        ...(matchedIds.length > 0 ? [{id: {in: matchedIds}}] : []),
+      ];
     }
 
     if (dateFrom || dateTo) {

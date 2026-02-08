@@ -145,6 +145,7 @@ export function useSales() {
     onEdit: (row) => handleEdit(row),
     onDelete: (row) => handleDelete(row),
     onConvertQuote: (row) => handleConvertQuote(row),
+    onDownloadPdf: (row) => handleDownloadPdf(row),
   });
 
   async function submit(data: SaleFormValues) {
@@ -380,6 +381,10 @@ export function useSales() {
     });
   }
 
+  function handleDownloadPdf(row: Sale) {
+    window.open(`/api/sale/pdf?id=${row.id}`, "_blank");
+  }
+
   function handleFilterChange(newFilters: SalesFilters) {
     setFilters(newFilters);
   }
@@ -404,6 +409,7 @@ export function useSales() {
     handleEdit,
     handleDelete,
     handleConvertQuote,
+    handleDownloadPdf,
     handleFilterChange,
   };
 }

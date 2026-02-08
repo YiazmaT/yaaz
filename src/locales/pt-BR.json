@@ -11,6 +11,11 @@
     "ingredients": "Insumos",
     "products": "Produtos",
     "exit": "Sair",
+    "pdf": {
+      "printOrSave": "Imprimir / Salvar PDF",
+      "generatedAt": "Gerado em",
+      "footer": "Este relatório foi gerado automaticamente pelo sistema."
+    },
     "noDataFound": "Nenhum dado encontrado",
     "rowsPerPage": "Linhas por página",
     "of": "de",
@@ -282,6 +287,7 @@
   },
   "sales": {
     "title": "Vendas",
+    "sale": "Venda",
     "createTitle": "Nova Venda",
     "editTitle": "Editar Venda",
     "detailsTitle": "Detalhes da Venda",
@@ -314,6 +320,7 @@
       "futureDateNotAllowed": "Datas futuras não são permitidas"
     },
     "fields": {
+      "id": "Código",
       "date": "Data",
       "paymentMethod": "Método de pagamento",
       "client": "Cliente",
@@ -334,6 +341,17 @@
     "convertQuoteConfirm": "Tem certeza que deseja converter este orçamento em venda?",
     "convertQuoteSuccess": "Orçamento convertido em venda com sucesso!",
     "isQuote": "Orçamento",
+    "downloadPdf": "Baixar PDF",
+    "pdf": {
+      "products": "Produtos",
+      "product": "Produto",
+      "quantity": "Quantidade",
+      "unitPrice": "Preço Unitário",
+      "subtotal": "Subtotal",
+      "productsSubtotal": "Subtotal Produtos",
+      "package": "Embalagem",
+      "type": "Tipo"
+    },
     "priceChangeWarning": {
       "title": "Preços Alterados",
       "message": "Alguns produtos tiveram seus preços alterados desde esta venda. Clique em 'Confirmar' para atualizar os preços, ou 'Cancelar' para manter os preços originais.",

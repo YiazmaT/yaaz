@@ -1,4 +1,5 @@
 import {Chip} from "@mui/material";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ShoppingCartCheckout from "@mui/icons-material/ShoppingCartCheckout";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
@@ -11,6 +12,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 
 interface SalesTableConfigProps extends TableConfigProps<Sale> {
   onConvertQuote: (row: Sale) => void;
+  onDownloadPdf: (row: Sale) => void;
 }
 
 export function useSalesTableConfig(props: SalesTableConfigProps) {
@@ -21,9 +23,15 @@ export function useSalesTableConfig(props: SalesTableConfigProps) {
   function generateConfig(): DataTableColumn<Sale>[] {
     return [
       {
+        field: "id",
+        headerKey: "sales.fields.id",
+        width: "10%",
+        render: (row) => `#${row.id.split("-").pop()?.toUpperCase()}`,
+      },
+      {
         field: "creation_date",
         headerKey: "sales.fields.date",
-        width: "20%",
+        width: "15%",
         render: (row) => {
           if (!row.creation_date) return "-";
           return new Date(row.creation_date).toLocaleString("pt-BR");
@@ -59,13 +67,13 @@ export function useSalesTableConfig(props: SalesTableConfigProps) {
         field: "approximate_cost",
         headerKey: "sales.fields.approximateCost",
         width: "15%",
-        render: (row) => formatCurrency(Number(row.approximate_cost || 0)),
+        render: (row) => <span style={{whiteSpace: "nowrap"}}>{formatCurrency(Number(row.approximate_cost || 0))}</span>,
       },
       {
         field: "total",
         headerKey: "sales.fields.total",
         width: "15%",
-        render: (row) => formatCurrency(Number(row.total)),
+        render: (row) => <span style={{whiteSpace: "nowrap"}}>{formatCurrency(Number(row.total))}</span>,
       },
       {
         field: "actions",
@@ -74,6 +82,11 @@ export function useSalesTableConfig(props: SalesTableConfigProps) {
         align: "center",
         render: (row) => {
           const customActions: CustomAction<Sale>[] = [
+            {
+              icon: <PictureAsPdfIcon fontSize="small" />,
+              tooltip: translate("sales.downloadPdf"),
+              onClick: (r) => props.onDownloadPdf(r),
+            },
             {
               icon: <ShoppingCartCheckout fontSize="small" />,
               tooltip: translate("sales.convertQuote"),
