@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -62,13 +59,13 @@ enum PackageStockChangeReason {
 }
 
 model Tenant {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name            String
-  creation_date   DateTime @default(now())
-  logo            String?
-  primary_color   String?
-  secondary_color String?
-  time_zone       String   @default("America/Sao_Paulo")
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String
+  creation_date        DateTime @default(now())
+  logo                 String?
+  primary_color        String?
+  secondary_color      String?
+  time_zone            String   @default("America/Sao_Paulo")
   currency_type        String   @default("R$")
   max_file_size_in_mbs Int      @default(10)
 
