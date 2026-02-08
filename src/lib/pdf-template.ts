@@ -47,7 +47,8 @@ export function generatePdfHtml(props: PdfTemplateProps): string {
     .status-critical td { background-color: #ffebee; }
     .status-low td { background-color: #fff3e0; }
     .footer { margin-top: 30px; text-align: center; font-size: 10px; color: #999; }
-    @media print { body { padding: 0; } .no-print { display: none; } }
+    @page { margin: 0; }
+    @media print { body { padding: 10mm; } .no-print { display: none; } }
     .print-button { position: fixed; top: 10px; right: 10px; padding: 10px 20px; background-color: ${primaryColor}; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
     .print-button:hover { opacity: 0.9; }
   </style>
