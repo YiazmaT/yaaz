@@ -76,9 +76,9 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
                           {isAddition ? "+" : ""}
                           {item.amount} {translate("products.stockChange.units")}
                         </Typography>
-                        {item.type === "stock_change" && item.reason && (
+                        {item.type === "stock_change" && (
                           <Typography variant="body2" color="text.secondary">
-                            ({getReasonLabel(item.reason)})
+                            ({item.reason ? getReasonLabel(item.reason) : translate("products.stockHistory.stockAddition")})
                           </Typography>
                         )}
                         {item.type === "stock_cost" && (

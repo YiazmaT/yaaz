@@ -122,6 +122,20 @@ export async function POST(req: NextRequest) {
           data: {stock: {increment: item.quantity}},
         }),
       ),
+      ...items.map((item) => {
+        const product = products.find((p) => p.id === item.productId);
+        const previousStock = product?.stock ?? 0;
+        return prisma.productStockChange.create({
+          data: {
+            tenant_id: auth.tenant_id,
+            product_id: item.productId,
+            previous_stock: previousStock,
+            new_stock: previousStock + item.quantity,
+            reason: null,
+            creator_id: auth.user!.id,
+          },
+        });
+      }),
       ...Object.entries(ingredientRequirements).map(([ingredientId, data]) =>
         prisma.ingredient.update({
           where: {id: ingredientId},

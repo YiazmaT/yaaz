@@ -361,7 +361,7 @@ model ProductStockChange {
   product_id     String                   @db.Uuid
   previous_stock Int
   new_stock      Int
-  reason         ProductStockChangeReason
+  reason         ProductStockChangeReason?
   comment        String?
   tenant         Tenant                   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   product        Product                  @relation(fields: [product_id], references: [id], onDelete: Cascade)
