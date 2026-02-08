@@ -35,12 +35,14 @@ export async function GET(request: NextRequest) {
       },
       select: {
         total: true,
+        approximate_cost: true,
         creation_date: true,
       },
     });
 
     const dailyTotals: number[] = [0, 0, 0, 0, 0, 0, 0];
     let weekTotal = 0;
+    let weekCost = 0;
 
     for (const sale of sales) {
       if (sale.creation_date) {
@@ -50,6 +52,7 @@ export async function GET(request: NextRequest) {
         const saleTotal = Number(sale.total);
         dailyTotals[saleDay] += saleTotal;
         weekTotal += saleTotal;
+        weekCost += Number(sale.approximate_cost);
       }
     }
 
@@ -59,6 +62,8 @@ export async function GET(request: NextRequest) {
       days: dailyTotals,
       count: sales.length,
       averageTicket,
+      approximateCost: weekCost,
+      approximateProfit: weekTotal - weekCost,
       period: {
         start: utcStart.toISOString(),
         end: utcEnd.toISOString(),

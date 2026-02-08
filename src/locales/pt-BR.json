@@ -377,6 +377,8 @@
     "salesCount": "vendas realizadas",
     "salesQuantity": "Quantidade de Vendas",
     "averageTicket": "Ticket Médio",
+    "approximateCost": "Custo Aproximado",
+    "approximateProfit": "Lucro Aproximado",
     "days": {
       "sun": "Dom",
       "mon": "Seg",

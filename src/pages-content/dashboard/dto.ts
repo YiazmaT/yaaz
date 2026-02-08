@@ -2,6 +2,8 @@ export interface TodaySalesResponse {
   total: number;
   count: number;
   averageTicket: number;
+  approximateCost: number;
+  approximateProfit: number;
 }
 
 export interface WeeklySalesResponse {
@@ -10,6 +12,8 @@ export interface WeeklySalesResponse {
   weekEnd: string;
   count: number;
   averageTicket: number;
+  approximateCost: number;
+  approximateProfit: number;
 }
 
 export interface DaySalesData {
@@ -21,6 +25,8 @@ export interface MonthlySalesResponse {
   days: DaySalesData[];
   count: number;
   averageTicket: number;
+  approximateCost: number;
+  approximateProfit: number;
 }
 
 export interface MonthSalesData {
@@ -32,6 +38,8 @@ export interface SemestralSalesResponse {
   months: MonthSalesData[];
   count: number;
   averageTicket: number;
+  approximateCost: number;
+  approximateProfit: number;
 }
 
 export interface MonthProcessingData {

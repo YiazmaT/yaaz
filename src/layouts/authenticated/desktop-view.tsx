@@ -194,7 +194,7 @@ export function DesktopView(props: DesktopViewProps) {
           )}
         </List>
       </Box>
-      <Box sx={{flex: 1, height: "100vh", overflow: "hidden"}}>{children}</Box>
+      <Box sx={{flex: 1, height: "100vh", overflow: "auto"}}>{children}</Box>
     </Box>
   );
 }

@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
     const result = await prisma.sale.aggregate({
       _sum: {
         total: true,
+        approximate_cost: true,
       },
       _count: {
         id: true,
@@ -43,6 +44,7 @@ export async function GET(request: NextRequest) {
     });
 
     const total = Number(result._sum.total || 0);
+    const approximateCost = Number(result._sum.approximate_cost || 0);
     const count = result._count.id;
     const averageTicket = count > 0 ? total / count : 0;
 
@@ -50,6 +52,8 @@ export async function GET(request: NextRequest) {
       total,
       count,
       averageTicket,
+      approximateCost,
+      approximateProfit: total - approximateCost,
       period: {
         start: utcStart.toISOString(),
         end: utcEnd.toISOString(),

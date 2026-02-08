@@ -57,6 +57,22 @@ export function TodaySalesCard() {
                 {formatCurrency(data?.averageTicket || 0)}
               </Typography>
             </Box>
+            <Box sx={{display: "flex", gap: 1, paddingTop: 1}}>
+              <Typography variant="body2" color="text.secondary">
+                {translate("dashboard.approximateCost")}:
+              </Typography>
+              <Typography variant="body2" fontWeight={600}>
+                {formatCurrency(data?.approximateCost || 0)}
+              </Typography>
+            </Box>
+            <Box sx={{display: "flex", gap: 1, paddingTop: 1}}>
+              <Typography variant="body2" color="text.secondary">
+                {translate("dashboard.approximateProfit")}:
+              </Typography>
+              <Typography variant="body2" fontWeight={600} color="success.main">
+                {formatCurrency(data?.approximateProfit || 0)}
+              </Typography>
+            </Box>
           </Box>
         )}
       </CardContent>

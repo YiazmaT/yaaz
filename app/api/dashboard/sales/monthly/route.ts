@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
       },
       select: {
         total: true,
+        approximate_cost: true,
         creation_date: true,
       },
     });
@@ -47,6 +48,7 @@ export async function GET(request: NextRequest) {
     }
 
     let monthTotal = 0;
+    let monthCost = 0;
 
     for (const sale of sales) {
       if (sale.creation_date) {
@@ -56,6 +58,7 @@ export async function GET(request: NextRequest) {
         const saleTotal = Number(sale.total);
         dailyTotals[dayOfMonth - 1].total += saleTotal;
         monthTotal += saleTotal;
+        monthCost += Number(sale.approximate_cost);
       }
     }
 
@@ -65,6 +68,8 @@ export async function GET(request: NextRequest) {
       days: dailyTotals,
       count: sales.length,
       averageTicket,
+      approximateCost: monthCost,
+      approximateProfit: monthTotal - monthCost,
       period: {
         start: zonedStart.toISOString(),
         end: zonedEnd.toISOString(),

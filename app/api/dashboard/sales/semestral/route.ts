@@ -47,11 +47,13 @@ export async function GET(request: NextRequest) {
       },
       select: {
         total: true,
+        approximate_cost: true,
         creation_date: true,
       },
     });
 
     let totalAmount = 0;
+    let totalCost = 0;
 
     for (const sale of sales) {
       if (sale.creation_date) {
@@ -67,6 +69,7 @@ export async function GET(request: NextRequest) {
           months[monthIndex].total += saleTotal;
         }
         totalAmount += saleTotal;
+        totalCost += Number(sale.approximate_cost);
       }
     }
 
@@ -79,6 +82,8 @@ export async function GET(request: NextRequest) {
       })),
       count: sales.length,
       averageTicket,
+      approximateCost: totalCost,
+      approximateProfit: totalAmount - totalCost,
       period: {
         start: utcStart.toISOString(),
         end: utcEnd.toISOString(),
