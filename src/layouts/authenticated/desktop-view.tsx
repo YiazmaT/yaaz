@@ -1,4 +1,4 @@
-import {Box, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
+import {Box, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip, Typography} from "@mui/material";
 import Link from "next/link";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -96,76 +96,79 @@ export function DesktopView(props: DesktopViewProps) {
             </Box>
             <Divider sx={{marginTop: "16px", marginBottom: "16px", flexShrink: 0}} />
             {layout.menuItems.map((item) => (
-              <ListItem
+              <Tooltip key={item.route} title={layout.isCollapsed ? layout.translate(item.name) : ""} placement="right" arrow>
+                <ListItem
+                  sx={{
+                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                    border: `1px solid transparent`,
+                    backgroundImage: `linear-gradient(white, white), linear-gradient(135deg, ${layout.theme.palette.divider}, ${layout.theme.palette.divider})`,
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "padding-box, border-box",
+                    borderRadius: 1,
+                    marginBottom: "8px",
+                    flexShrink: 0,
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    "&:hover": {
+                      backgroundImage: `linear-gradient(white, white), linear-gradient(135deg, ${layout.theme.palette.primary.main}, ${layout.theme.palette.secondary.main})`,
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+                    },
+                  }}
+                  disablePadding
+                >
+                  <ListItemButton
+                    component={Link}
+                    href={item.route}
+                    sx={{
+                      ...flexGenerator("r.center.center"),
+                      height: "48px",
+                      paddingLeft: 2,
+                      paddingRight: 2,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 24,
+                        ...flexGenerator("r.center.center"),
+                        marginRight: layout.isCollapsed ? 0 : 2,
+                        transition: "margin 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={layout.translate(item.name)}
+                      color="black"
+                      sx={{
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
+            ))}
+          </Box>
+
+          {layout.isCollapsed ? (
+            <Tooltip title={layout.translate("global.exit")} placement="right" arrow>
+              <IconButton
+                onClick={layout.logout}
                 sx={{
-                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
                   border: `1px solid transparent`,
                   backgroundImage: `linear-gradient(white, white), linear-gradient(135deg, ${layout.theme.palette.divider}, ${layout.theme.palette.divider})`,
                   backgroundOrigin: "border-box",
                   backgroundClip: "padding-box, border-box",
-                  borderRadius: 1,
-                  marginBottom: "8px",
-                  flexShrink: 0,
                   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                   "&:hover": {
                     backgroundImage: `linear-gradient(white, white), linear-gradient(135deg, ${layout.theme.palette.primary.main}, ${layout.theme.palette.secondary.main})`,
                     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
                   },
                 }}
-                disablePadding
-                key={item.route}
               >
-                <ListItemButton
-                  component={Link}
-                  href={item.route}
-                  sx={{
-                    ...flexGenerator("r.center.center"),
-                    height: "48px",
-                    paddingLeft: 2,
-                    paddingRight: 2,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 24,
-                      ...flexGenerator("r.center.center"),
-                      marginRight: layout.isCollapsed ? 0 : 2,
-                      transition: "margin 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={layout.translate(item.name)}
-                    color="black"
-                    sx={{
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                      transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </Box>
-
-          {layout.isCollapsed ? (
-            <IconButton
-              onClick={layout.logout}
-              sx={{
-                border: `1px solid transparent`,
-                backgroundImage: `linear-gradient(white, white), linear-gradient(135deg, ${layout.theme.palette.divider}, ${layout.theme.palette.divider})`,
-                backgroundOrigin: "border-box",
-                backgroundClip: "padding-box, border-box",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                  backgroundImage: `linear-gradient(white, white), linear-gradient(135deg, ${layout.theme.palette.primary.main}, ${layout.theme.palette.secondary.main})`,
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
-                },
-              }}
-            >
-              <ExitToAppIcon />
-            </IconButton>
+                <ExitToAppIcon />
+              </IconButton>
+            </Tooltip>
           ) : (
             <Button
               variant="outlined"
