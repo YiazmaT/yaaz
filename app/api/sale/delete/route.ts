@@ -44,18 +44,20 @@ export async function DELETE(req: NextRequest) {
     }
 
     await prisma.$transaction(async (tx) => {
-      for (const item of sale.items) {
-        await tx.product.update({
-          where: {id: item.product_id},
-          data: {stock: {increment: item.quantity}},
-        });
-      }
+      if (!sale.is_quote) {
+        for (const item of sale.items) {
+          await tx.product.update({
+            where: {id: item.product_id},
+            data: {stock: {increment: item.quantity}},
+          });
+        }
 
-      for (const pkg of sale.packages) {
-        await tx.package.update({
-          where: {id: pkg.package_id},
-          data: {stock: {increment: pkg.quantity}},
-        });
+        for (const pkg of sale.packages) {
+          await tx.package.update({
+            where: {id: pkg.package_id},
+            data: {stock: {increment: pkg.quantity}},
+          });
+        }
       }
 
       await tx.sale.delete({where: {id}});
