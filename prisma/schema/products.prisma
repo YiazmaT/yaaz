@@ -1,0 +1,88 @@
+enum ProductStockChangeReason {
+  stolen
+  expired
+  damaged
+  found
+  inventory_correction
+  donation
+  other
+
+  @@schema("data")
+}
+
+model Product {
+  id                   String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id            String               @db.Uuid
+  name                 String
+  price                Decimal              @db.Decimal
+  description          String?
+  image                String?
+  stock                Int                  @default(0)
+  min_stock            Int                  @default(0)
+  display_landing_page Boolean              @default(false)
+  active               Boolean              @default(true)
+  files                String[]             @default([])
+  tenant               Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  composition          ProductIngredient[]
+  packages             ProductPackage[]
+  sale_items           SaleItem[]
+  stock_changes        ProductStockChange[]
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("ProductCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("ProductEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@map("product")
+  @@schema("data")
+}
+
+model ProductIngredient {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id     String     @db.Uuid
+  product_id    String     @db.Uuid
+  ingredient_id String     @db.Uuid
+  quantity      Decimal    @db.Decimal
+  tenant        Tenant     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  product       Product    @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  ingredient    Ingredient @relation(fields: [ingredient_id], references: [id], onDelete: Cascade)
+
+  @@unique([product_id, ingredient_id])
+  @@map("product_ingredient")
+  @@schema("data")
+}
+
+model ProductPackage {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String  @db.Uuid
+  product_id String  @db.Uuid
+  package_id String  @db.Uuid
+  quantity   Decimal @db.Decimal
+  tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  package    Package @relation(fields: [package_id], references: [id], onDelete: Cascade)
+
+  @@unique([product_id, package_id])
+  @@map("product_package")
+  @@schema("data")
+}
+
+model ProductStockChange {
+  id             String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String                   @db.Uuid
+  product_id     String                   @db.Uuid
+  previous_stock Int
+  new_stock      Int
+  reason         ProductStockChangeReason?
+  comment        String?
+  tenant         Tenant                   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  product        Product                  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  creator_id     String?                  @db.Uuid
+  creation_date  DateTime                 @default(now())
+  creator        User?                    @relation("ProductStockChangeCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+
+  @@map("product_stock_change")
+  @@schema("data")
+}

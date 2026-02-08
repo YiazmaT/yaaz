@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["data"]
+}
+
+model Log {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id   String   @db.Uuid
+  type        String   @db.VarChar(50)
+  create_date DateTime @default(now()) @db.Timestamptz()
+  message     String?  @db.Text
+  user_id     String?  @db.Uuid
+  user        User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  tenant      Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  source      String   @db.VarChar(100)
+  module      String   @db.VarChar(100)
+  route       String?  @db.VarChar(255)
+  content     Json?    @db.JsonB
+  error       Json?    @db.JsonB
+
+  @@index([create_date(sort: Desc)])
+  @@index([user_id])
+  @@index([content], type: Gin)
+  @@map("log")
+  @@schema("data")
+}

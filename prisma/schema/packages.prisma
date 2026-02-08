@@ -1,0 +1,77 @@
+enum PackageType {
+  sale
+  product
+
+  @@schema("data")
+}
+
+enum PackageStockChangeReason {
+  stolen
+  damaged
+  found
+  inventory_correction
+  other
+
+  @@schema("data")
+}
+
+model Package {
+  id            String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id     String               @db.Uuid
+  name          String
+  description   String?
+  image         String?
+  type          PackageType          @default(product)
+  stock         Decimal              @default(0) @db.Decimal
+  min_stock     Decimal              @default(0) @db.Decimal
+  tenant        Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  costs         PackageCost[]
+  products      ProductPackage[]
+  sales         SalePackage[]
+  stock_changes PackageStockChange[]
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("PackageCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("PackageEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@map("package")
+  @@schema("data")
+}
+
+model PackageCost {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String  @db.Uuid
+  package_id String  @db.Uuid
+  quantity   Decimal @db.Decimal
+  price      Decimal @db.Decimal
+  tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  package    Package @relation(fields: [package_id], references: [id], onDelete: Cascade)
+
+  creator_id    String?  @db.Uuid
+  creation_date DateTime @default(now())
+  creator       User?    @relation("PackageCostCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+
+  @@map("package_cost")
+  @@schema("data")
+}
+
+model PackageStockChange {
+  id             String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String                   @db.Uuid
+  package_id     String                   @db.Uuid
+  previous_stock Decimal                  @db.Decimal
+  new_stock      Decimal                  @db.Decimal
+  reason         PackageStockChangeReason
+  comment        String?
+  tenant         Tenant                   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  package        Package                  @relation(fields: [package_id], references: [id], onDelete: Cascade)
+  creator_id     String?                  @db.Uuid
+  creation_date  DateTime                 @default(now())
+  creator        User?                    @relation("PackageStockChangeCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+
+  @@map("package_stock_change")
+  @@schema("data")
+}

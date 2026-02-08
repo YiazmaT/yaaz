@@ -1,0 +1,43 @@
+model Tenant {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String
+  creation_date        DateTime @default(now())
+  logo                 String?
+  primary_color        String?
+  secondary_color      String?
+  time_zone            String   @default("America/Sao_Paulo")
+  currency_type        String   @default("R$")
+  max_file_size_in_mbs Int      @default(10)
+
+  instagram_posts          InstagramPost[]
+  users                    User[]
+  logs                     Log[]
+  ingredients              Ingredient[]
+  ingredient_costs         IngredientCost[]
+  packages                 Package[]
+  package_costs            PackageCost[]
+  products                 Product[]
+  product_ingredients      ProductIngredient[]
+  product_packages         ProductPackage[]
+  sales                    Sale[]
+  sale_items               SaleItem[]
+  sale_packages            SalePackage[]
+  product_stock_changes    ProductStockChange[]
+  ingredient_stock_changes IngredientStockChange[]
+  package_stock_changes    PackageStockChange[]
+  clients                  Client[]
+
+  @@map("tenant")
+  @@schema("data")
+}
+
+model InstagramPost {
+  id        String @id @db.Uuid
+  tenant_id String @db.Uuid
+  index     Int    @map("index") @db.Integer
+  html      String @db.VarChar
+  tenant    Tenant @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  @@map("instagram-posts")
+  @@schema("data")
+}

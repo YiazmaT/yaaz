@@ -1,0 +1,62 @@
+enum PaymentMethod {
+  credit
+  debit
+  pix
+  cash
+  iFood
+
+  @@schema("data")
+}
+
+model Sale {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id        String        @db.Uuid
+  payment_method   PaymentMethod
+  total            Decimal       @db.Decimal
+  approximate_cost Decimal       @default(0) @db.Decimal
+  tenant           Tenant        @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  items            SaleItem[]
+  packages         SalePackage[]
+  client_id        String?       @db.Uuid
+  client           Client?       @relation(fields: [client_id], references: [id], onDelete: SetNull)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("SaleCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  is_quote       Boolean   @default(false)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("SaleEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@map("sale")
+  @@schema("data")
+}
+
+model SaleItem {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String  @db.Uuid
+  sale_id    String  @db.Uuid
+  product_id String  @db.Uuid
+  quantity   Int
+  unit_price Decimal @db.Decimal
+  tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  sale       Sale    @relation(fields: [sale_id], references: [id], onDelete: Cascade)
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("sale_item")
+  @@schema("data")
+}
+
+model SalePackage {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String  @db.Uuid
+  sale_id    String  @db.Uuid
+  package_id String  @db.Uuid
+  quantity   Int
+  tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  sale       Sale    @relation(fields: [sale_id], references: [id], onDelete: Cascade)
+  package    Package @relation(fields: [package_id], references: [id], onDelete: Cascade)
+
+  @@map("sale_package")
+  @@schema("data")
+}

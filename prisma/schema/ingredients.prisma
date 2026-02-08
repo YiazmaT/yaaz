@@ -1,0 +1,71 @@
+enum IngredientStockChangeReason {
+  stolen
+  expired
+  damaged
+  spillage
+  found
+  inventory_correction
+  other
+
+  @@schema("data")
+}
+
+model Ingredient {
+  id              String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id       String                  @db.Uuid
+  name            String
+  description     String?
+  image           String?
+  unit_of_measure String
+  stock           Decimal                 @default(0) @db.Decimal
+  min_stock       Decimal                 @default(0) @db.Decimal
+  tenant          Tenant                  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  products        ProductIngredient[]
+  costs           IngredientCost[]
+  stock_changes   IngredientStockChange[]
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("IngredientCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("IngredientEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@map("ingredient")
+  @@schema("data")
+}
+
+model IngredientCost {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id     String     @db.Uuid
+  ingredient_id String     @db.Uuid
+  quantity      Decimal    @db.Decimal
+  price         Decimal    @db.Decimal
+  tenant        Tenant     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  ingredient    Ingredient @relation(fields: [ingredient_id], references: [id], onDelete: Cascade)
+
+  creator_id    String?  @db.Uuid
+  creation_date DateTime @default(now())
+  creator       User?    @relation("IngredientCostCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+
+  @@map("ingredient_cost")
+  @@schema("data")
+}
+
+model IngredientStockChange {
+  id             String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String                      @db.Uuid
+  ingredient_id  String                      @db.Uuid
+  previous_stock Decimal                     @db.Decimal
+  new_stock      Decimal                     @db.Decimal
+  reason         IngredientStockChangeReason
+  comment        String?
+  tenant         Tenant                      @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  ingredient     Ingredient                  @relation(fields: [ingredient_id], references: [id], onDelete: Cascade)
+  creator_id     String?                     @db.Uuid
+  creation_date  DateTime                    @default(now())
+  creator        User?                       @relation("IngredientStockChangeCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+
+  @@map("ingredient_stock_change")
+  @@schema("data")
+}
