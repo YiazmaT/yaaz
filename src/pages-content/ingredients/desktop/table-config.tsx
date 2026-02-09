@@ -7,6 +7,7 @@ import {useIngredientsConstants} from "../constants";
 import {IngredientsTableConfigProps} from "./types";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {LinkifyText} from "@/src/components/linkify-text";
 
 export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
   const {translate} = useTranslate();
@@ -31,7 +32,7 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
         field: "description",
         headerKey: "ingredients.fields.description",
         width: "30%",
-        render: (row) => row.description || "-",
+        render: (row) => (row.description ? <LinkifyText text={row.description} variant="body2" /> : "-"),
       },
       {
         field: "stock",
@@ -68,7 +69,7 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
         render: (row) =>
           row.lastCost ? (
             <TableButton onClick={() => props.onCostClick?.(row)} minWidth={140}>
-              {formatCurrency(row.lastCost, 4)} / {row.unit_of_measure}
+              {formatCurrency(row.lastCost, 4)} / {unitOfMeasures[row.unit_of_measure as keyof typeof unitOfMeasures].label}
             </TableButton>
           ) : (
             "-"
