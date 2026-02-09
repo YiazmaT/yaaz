@@ -108,8 +108,8 @@ function IngredientRowMobile(props: IngredientRowProps) {
         border: `1px solid ${theme.palette.grey[300]}`,
       }}
     >
-      <Box sx={{...flexGenerator("r.center.space-between"), width: "100%"}}>
-        <Box sx={{...flexGenerator("c.flex-start"), gap: 2, width: 150}}>
+      <Box sx={{...flexGenerator("r.center"), gap: 1.5, width: "100%"}}>
+        <Box sx={{flex: 1}}>
           <DecimalInput
             value={props.item.quantity}
             onChange={(quantity) => props.handleQuantityChange(props.item.ingredient.id, quantity)}
@@ -117,7 +117,9 @@ function IngredientRowMobile(props: IngredientRowProps) {
             label="products.fields.quantity"
             fullWidth
           />
-          {props.showCostField && props.handleCostChange && (
+        </Box>
+        {props.showCostField && props.handleCostChange && (
+          <Box sx={{flex: 1}}>
             <CurrencyInput
               value={props.item.cost || "0"}
               onChange={(cost) => props.handleCostChange!(props.item.ingredient.id, cost)}
@@ -125,25 +127,22 @@ function IngredientRowMobile(props: IngredientRowProps) {
               label="ingredients.fields.cost"
               fullWidth
             />
-          )}
-        </Box>
-
+          </Box>
+        )}
         {!props.disabled && (
           <IconButton size="small" onClick={() => props.handleRemove(props.item.ingredient.id)} disabled={props.disabled} color="error">
             <DeleteIcon fontSize="small" />
           </IconButton>
         )}
       </Box>
-      <Box sx={{...flexGenerator("r.center"), gap: 1}}>
+      <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
         <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
-        <Box sx={{flex: 1, minWidth: 0}}>
-          <Typography variant="body2" fontWeight={600} noWrap>
-            {props.item.ingredient.name}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {unitOfMeasures[props.item.ingredient.unit_of_measure as keyof typeof unitOfMeasures].label}
-          </Typography>
-        </Box>
+        <Typography variant="body2" fontWeight={600}>
+          {props.item.ingredient.name}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {unitOfMeasures[props.item.ingredient.unit_of_measure as keyof typeof unitOfMeasures].label}
+        </Typography>
       </Box>
     </Box>
   );
@@ -156,8 +155,7 @@ function IngredientRowDesktop(props: IngredientRowProps) {
     <Box
       key={props.item.ingredient.id}
       sx={{
-        display: "flex",
-        alignItems: "center",
+        ...flexGenerator("c.flex-start"),
         gap: 1.5,
         padding: 1.5,
         borderRadius: 1,
@@ -165,41 +163,42 @@ function IngredientRowDesktop(props: IngredientRowProps) {
         border: `1px solid ${theme.palette.grey[300]}`,
       }}
     >
-      <Box sx={{...flexGenerator("c.flex-start"), gap: 2, width: 200}}>
-        <DecimalInput
-          value={props.item.quantity}
-          onChange={(quantity) => props.handleQuantityChange(props.item.ingredient.id, quantity)}
-          disabled={props.disabled}
-          label="products.fields.quantity"
-          fullWidth
-        />
-        {props.showCostField && props.handleCostChange && (
-          <CurrencyInput
-            value={props.item.cost || "0"}
-            onChange={(cost) => props.handleCostChange!(props.item.ingredient.id, cost)}
+      <Box sx={{...flexGenerator("r.center"), gap: 1.5, width: "100%"}}>
+        <Box sx={{flex: 1}}>
+          <DecimalInput
+            value={props.item.quantity}
+            onChange={(quantity) => props.handleQuantityChange(props.item.ingredient.id, quantity)}
             disabled={props.disabled}
-            label="ingredients.fields.cost"
+            label="products.fields.quantity"
             fullWidth
           />
+        </Box>
+        {props.showCostField && props.handleCostChange && (
+          <Box sx={{flex: 1}}>
+            <CurrencyInput
+              value={props.item.cost || "0"}
+              onChange={(cost) => props.handleCostChange!(props.item.ingredient.id, cost)}
+              disabled={props.disabled}
+              label="ingredients.fields.cost"
+              fullWidth
+            />
+          </Box>
+        )}
+        {!props.disabled && (
+          <IconButton size="small" onClick={() => props.handleRemove(props.item.ingredient.id)} disabled={props.disabled} color="error">
+            <DeleteIcon fontSize="small" />
+          </IconButton>
         )}
       </Box>
-
-      <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
-
-      <Box sx={{flex: 1, minWidth: 0}}>
-        <Typography variant="body2" fontWeight={600} noWrap>
+      <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
+        <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
+        <Typography variant="body2" fontWeight={600}>
           {props.item.ingredient.name}
         </Typography>
         <Typography variant="caption" color="text.secondary">
           {unitOfMeasures[props.item.ingredient.unit_of_measure as keyof typeof unitOfMeasures].label}
         </Typography>
       </Box>
-
-      {!props.disabled && (
-        <IconButton size="small" onClick={() => props.handleRemove(props.item.ingredient.id)} disabled={props.disabled} color="error">
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      )}
     </Box>
   );
 }

@@ -107,8 +107,8 @@ function PackageRowMobile(props: PackageRowProps) {
         border: `1px solid ${theme.palette.grey[300]}`,
       }}
     >
-      <Box sx={{...flexGenerator("r.center.space-between"), width: "100%"}}>
-        <Box sx={{...flexGenerator("c.flex-start"), gap: 2, width: 150}}>
+      <Box sx={{...flexGenerator("r.center"), gap: 1.5, width: "100%"}}>
+        <Box sx={{flex: 1}}>
           <DecimalInput
             value={props.item.quantity}
             onChange={(quantity) => props.handleQuantityChange(props.item.package.id, quantity)}
@@ -116,7 +116,9 @@ function PackageRowMobile(props: PackageRowProps) {
             label="products.fields.quantity"
             fullWidth
           />
-          {props.showCostField && props.handleCostChange && (
+        </Box>
+        {props.showCostField && props.handleCostChange && (
+          <Box sx={{flex: 1}}>
             <CurrencyInput
               value={props.item.cost || "0"}
               onChange={(cost) => props.handleCostChange!(props.item.package.id, cost)}
@@ -124,22 +126,19 @@ function PackageRowMobile(props: PackageRowProps) {
               label="packages.fields.cost"
               fullWidth
             />
-          )}
-        </Box>
-
+          </Box>
+        )}
         {!props.disabled && (
           <IconButton size="small" onClick={() => props.handleRemove(props.item.package.id)} disabled={props.disabled} color="error">
             <DeleteIcon fontSize="small" />
           </IconButton>
         )}
       </Box>
-      <Box sx={{...flexGenerator("r.center"), gap: 1}}>
+      <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
         <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
-        <Box sx={{flex: 1, minWidth: 0}}>
-          <Typography variant="body2" fontWeight={600} noWrap>
-            {props.item.package.name}
-          </Typography>
-        </Box>
+        <Typography variant="body2" fontWeight={600}>
+          {props.item.package.name}
+        </Typography>
       </Box>
     </Box>
   );
@@ -151,8 +150,7 @@ function PackageRowDesktop(props: PackageRowProps) {
     <Box
       key={props.item.package.id}
       sx={{
-        display: "flex",
-        alignItems: "center",
+        ...flexGenerator("c.flex-start"),
         gap: 1.5,
         padding: 1.5,
         borderRadius: 1,
@@ -160,38 +158,41 @@ function PackageRowDesktop(props: PackageRowProps) {
         border: `1px solid ${theme.palette.grey[300]}`,
       }}
     >
-      <Box sx={{...flexGenerator("c.flex-start"), gap: 2, width: 200}}>
-        <DecimalInput
-          value={props.item.quantity}
-          onChange={(quantity) => props.handleQuantityChange(props.item.package.id, quantity)}
-          disabled={props.disabled}
-          label="products.fields.quantity"
-          fullWidth
-        />
-        {props.showCostField && props.handleCostChange && (
-          <CurrencyInput
-            value={props.item.cost || "0"}
-            onChange={(cost) => props.handleCostChange!(props.item.package.id, cost)}
+      <Box sx={{...flexGenerator("r.center"), gap: 1.5, width: "100%"}}>
+        <Box sx={{flex: 1}}>
+          <DecimalInput
+            value={props.item.quantity}
+            onChange={(quantity) => props.handleQuantityChange(props.item.package.id, quantity)}
             disabled={props.disabled}
-            label="packages.fields.cost"
+            label="products.fields.quantity"
             fullWidth
           />
+        </Box>
+        {props.showCostField && props.handleCostChange && (
+          <Box sx={{flex: 1}}>
+            <CurrencyInput
+              value={props.item.cost || "0"}
+              onChange={(cost) => props.handleCostChange!(props.item.package.id, cost)}
+              disabled={props.disabled}
+              label="packages.fields.cost"
+              fullWidth
+            />
+          </Box>
+        )}
+
+        {!props.disabled && (
+          <IconButton size="small" onClick={() => props.handleRemove(props.item.package.id)} disabled={props.disabled} color="error">
+            <DeleteIcon fontSize="small" />
+          </IconButton>
         )}
       </Box>
 
-      <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
-
-      <Box sx={{flex: 1, minWidth: 0}}>
-        <Typography variant="body2" fontWeight={600} noWrap>
+      <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
+        <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
+        <Typography variant="body2" fontWeight={600}>
           {props.item.package.name}
         </Typography>
       </Box>
-
-      {!props.disabled && (
-        <IconButton size="small" onClick={() => props.handleRemove(props.item.package.id)} disabled={props.disabled} color="error">
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      )}
     </Box>
   );
 }

@@ -24,8 +24,8 @@ function ProductRowMobile(props: ProductRowProps) {
         border: `1px solid ${hasPriceChanged ? theme.palette.warning.main : theme.palette.grey[300]}`,
       }}
     >
-      <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%"}}>
-        <Box sx={{width: 200}}>
+      <Box sx={{display: "flex", alignItems: "center", gap: 1.5, width: "100%"}}>
+        <Box sx={{flex: 1}}>
           <IntegerInput
             value={props.item.quantity}
             onChange={(quantity) => props.handleQuantityChange(props.item.product.id, quantity)}
@@ -34,25 +34,20 @@ function ProductRowMobile(props: ProductRowProps) {
             fullWidth
           />
         </Box>
-
         {!props.disabled && (
           <IconButton size="small" onClick={() => props.handleRemove(props.item.product.id)} color="error">
             <DeleteIcon fontSize="small" />
           </IconButton>
         )}
       </Box>
-      <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+      <Box sx={{display: "flex", alignItems: "center", gap: 1, width: "100%"}}>
         <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
-        <Box sx={{flex: 1, minWidth: 0}}>
-          <Tooltip title={props.item.product.name} placement="top">
-            <Typography variant="body2" fontWeight={600} noWrap>
-              {props.item.product.name}
-            </Typography>
-          </Tooltip>
-          <Typography variant="caption" color="text.secondary">
-            {props.formatCurrency(Number(props.item.product.price))}
-          </Typography>
-        </Box>
+        <Typography variant="body2" fontWeight={600}>
+          {props.item.product.name}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {props.formatCurrency(Number(props.item.product.price))}
+        </Typography>
       </Box>
       {hasPriceChanged && (
         <Alert severity="warning" sx={{py: 0.5, alignItems: "center"}}>
@@ -88,8 +83,8 @@ function ProductRowDesktop(props: ProductRowProps) {
         border: `1px solid ${hasPriceChanged ? theme.palette.warning.main : theme.palette.grey[300]}`,
       }}
     >
-      <Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
-        <Box sx={{width: 200}}>
+      <Box sx={{display: "flex", alignItems: "center", gap: 1.5, width: "100%"}}>
+        <Box sx={{flex: 1}}>
           <IntegerInput
             value={props.item.quantity}
             onChange={(quantity) => props.handleQuantityChange(props.item.product.id, quantity)}
@@ -98,25 +93,20 @@ function ProductRowDesktop(props: ProductRowProps) {
             fullWidth
           />
         </Box>
-
-        <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
-
-        <Box sx={{flex: 1, minWidth: 0}}>
-          <Tooltip title={props.item.product.name} placement="top">
-            <Typography variant="body2" fontWeight={600} noWrap>
-              {props.item.product.name}
-            </Typography>
-          </Tooltip>
-          <Typography variant="caption" color="text.secondary">
-            {props.formatCurrency(Number(props.item.product.price))}
-          </Typography>
-        </Box>
-
         {!props.disabled && (
           <IconButton size="small" onClick={() => props.handleRemove(props.item.product.id)} color="error">
             <DeleteIcon fontSize="small" />
           </IconButton>
         )}
+      </Box>
+      <Box sx={{display: "flex", alignItems: "center", gap: 1, width: "100%"}}>
+        <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
+        <Typography variant="body2" fontWeight={600}>
+          {props.item.product.name}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {props.formatCurrency(Number(props.item.product.price))}
+        </Typography>
       </Box>
       {hasPriceChanged && (
         <Alert severity="warning" sx={{py: 0.5, alignItems: "center"}}>
