@@ -8,6 +8,92 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Product} from "@/src/pages-content/products/types";
 import {ProductsSelectorProps, ProductRowProps} from "./types";
 
+export function ProductsSelector(props: ProductsSelectorProps) {
+  const {value, onChange, disabled, incrementOnDuplicate, priceChangeText} = props;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const formatCurrency = useFormatCurrency();
+
+  function handleAddProduct(product: Product | null) {
+    if (!product) return;
+
+    const cleanProduct: Product = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      description: product.description ?? null,
+      image: product.image ?? null,
+      stock: product.stock,
+      displayLandingPage: product.displayLandingPage,
+      active: product.active,
+    };
+
+    const existingItem = value.find((item) => item.product.id === cleanProduct.id);
+
+    if (existingItem) {
+      if (incrementOnDuplicate) {
+        const newItems = value.map((item) => (item.product.id === cleanProduct.id ? {...item, quantity: item.quantity + 1} : item));
+        onChange(newItems);
+      }
+      return;
+    }
+
+    onChange([...value, {product: cleanProduct, quantity: 1}]);
+  }
+
+  function handleQuantityChange(productId: string, quantity: number) {
+    const updated = value.map((item) => (item.product.id === productId ? {...item, quantity} : item));
+    onChange(updated);
+  }
+
+  function handleRemove(productId: string) {
+    const filtered = value.filter((item) => item.product.id !== productId);
+    onChange(filtered);
+  }
+
+  return (
+    <Grid size={12}>
+      <AsyncDropdown<Product>
+        apiRoute="/api/product/paginated-list"
+        uniqueKey="id"
+        label="global.products"
+        buildLabel={(option) => option.name}
+        renderOption={(option) => <DropdownOption image={option.image} name={option.name} />}
+        onChange={handleAddProduct}
+        disabled={disabled}
+      />
+
+      {value.length > 0 && (
+        <Box sx={{display: "flex", flexDirection: "column", gap: 1, marginTop: 2}}>
+          {value.map((item) =>
+            isMobile ? (
+              <ProductRowMobile
+                key={item.product.id}
+                disabled={disabled}
+                handleQuantityChange={handleQuantityChange}
+                handleRemove={handleRemove}
+                item={item}
+                formatCurrency={formatCurrency}
+                priceChangeText={priceChangeText}
+              />
+            ) : (
+              <ProductRowDesktop
+                key={item.product.id}
+                disabled={disabled}
+                handleQuantityChange={handleQuantityChange}
+                handleRemove={handleRemove}
+                item={item}
+                formatCurrency={formatCurrency}
+                priceChangeText={priceChangeText}
+              />
+            ),
+          )}
+        </Box>
+      )}
+    </Grid>
+  );
+}
+
 function ProductRowMobile(props: ProductRowProps) {
   const theme = useTheme();
   const hasPriceChanged = props.item.unit_price && props.item.unit_price !== props.item.product.price.toString();
@@ -114,93 +200,5 @@ function ProductRowDesktop(props: ProductRowProps) {
         </Alert>
       )}
     </Box>
-  );
-}
-
-export function ProductsSelector(props: ProductsSelectorProps) {
-  const {value, onChange, disabled, incrementOnDuplicate, priceChangeText} = props;
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const formatCurrency = useFormatCurrency();
-
-  function handleAddProduct(product: Product | null) {
-    if (!product) return;
-
-    const cleanProduct: Product = {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      description: product.description ?? null,
-      image: product.image ?? null,
-      stock: product.stock,
-      displayLandingPage: product.displayLandingPage,
-      active: product.active,
-    };
-
-    const existingItem = value.find((item) => item.product.id === cleanProduct.id);
-
-    if (existingItem) {
-      if (incrementOnDuplicate) {
-        const newItems = value.map((item) =>
-          item.product.id === cleanProduct.id ? {...item, quantity: item.quantity + 1} : item,
-        );
-        onChange(newItems);
-      }
-      return;
-    }
-
-    onChange([...value, {product: cleanProduct, quantity: 1}]);
-  }
-
-  function handleQuantityChange(productId: string, quantity: number) {
-    const updated = value.map((item) => (item.product.id === productId ? {...item, quantity} : item));
-    onChange(updated);
-  }
-
-  function handleRemove(productId: string) {
-    const filtered = value.filter((item) => item.product.id !== productId);
-    onChange(filtered);
-  }
-
-  return (
-    <Grid size={12}>
-      <AsyncDropdown<Product>
-        apiRoute="/api/product/paginated-list"
-        uniqueKey="id"
-        label="global.products"
-        buildLabel={(option) => option.name}
-        renderOption={(option) => <DropdownOption image={option.image} name={option.name} />}
-        onChange={handleAddProduct}
-        disabled={disabled}
-      />
-
-      {value.length > 0 && (
-        <Box sx={{display: "flex", flexDirection: "column", gap: 1, marginTop: 2}}>
-          {value.map((item) =>
-            isMobile ? (
-              <ProductRowMobile
-                key={item.product.id}
-                disabled={disabled}
-                handleQuantityChange={handleQuantityChange}
-                handleRemove={handleRemove}
-                item={item}
-                formatCurrency={formatCurrency}
-                priceChangeText={priceChangeText}
-              />
-            ) : (
-              <ProductRowDesktop
-                key={item.product.id}
-                disabled={disabled}
-                handleQuantityChange={handleQuantityChange}
-                handleRemove={handleRemove}
-                item={item}
-                formatCurrency={formatCurrency}
-                priceChangeText={priceChangeText}
-              />
-            ),
-          )}
-        </Box>
-      )}
-    </Grid>
   );
 }

@@ -63,7 +63,7 @@ export async function DELETE(req: NextRequest) {
       await tx.sale.delete({where: {id}});
     });
 
-    logDelete({module: LogModule.SALE, source: LogSource.API, content: sale, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+    logDelete({module: LogModule.SALE, source: LogSource.API, content: {sale}, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
 
     return NextResponse.json({success: true}, {status: 200});
   } catch (error) {
