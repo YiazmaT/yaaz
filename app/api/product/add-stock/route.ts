@@ -1,29 +1,18 @@
 import Decimal from "decimal.js";
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logError, LogModule, LogSource, logCreate} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {withAuth} from "@/src/lib/route-handler";
 import {AddProductStockDto, IngredientStockWarning, PackageStockWarning} from "@/src/pages-content/products/dto";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/product/add-stock";
 
 export async function POST(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.PRODUCT, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log, error) => {
     const {items, deductIngredients, deductPackages, force}: AddProductStockDto = await req.json();
 
     if (!items || !Array.isArray(items) || items.length === 0) {
-      logError({
-        module: LogModule.PRODUCT,
-        source: LogSource.API,
-        message: "api.errors.missingRequiredFields",
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
+      return error("api.errors.missingRequiredFields", 400);
     }
 
     const products = await prisma.product.findMany({
@@ -132,7 +121,7 @@ export async function POST(req: NextRequest) {
             previous_stock: previousStock,
             new_stock: previousStock + item.quantity,
             reason: null,
-            creator_id: auth.user!.id,
+            creator_id: auth.user.id,
           },
         });
       }),
@@ -152,11 +141,8 @@ export async function POST(req: NextRequest) {
 
     await prisma.$transaction(transactionOperations);
 
-    logCreate({module: LogModule.PRODUCT, source: LogSource.API, content: {items, deductIngredients, deductPackages}, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+    log("create", {content: {items, deductIngredients, deductPackages}});
 
     return NextResponse.json({success: true}, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.PRODUCT, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }
