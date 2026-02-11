@@ -221,6 +221,7 @@ async function log(params: LogParams): Promise<void> {
 }
 
 export function logCreate(params: Omit<LogParams, "type">): Promise<void> {
+  if (process.env.LOGGING_CREATE === "false") return Promise.resolve();
   return log({...params, type: LogType.SUCCESS});
 }
 
