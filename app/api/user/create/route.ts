@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     //     admin: user.admin,
     //   };
     //   // logCreate({module: LogModule.USER, source: LogSource.API, content: userResponse, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    //   return NextResponse.json({success: true, user: userResponse}, {status: 201});
+    //   return NextResponse.json({success: true, user: userResponse}, {status: 200});
   } catch (error) {
     await logCritical({module: LogModule.USER, source: LogSource.API, error, route: ROUTE});
     return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});

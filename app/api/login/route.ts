@@ -1,5 +1,6 @@
-import {logCritical, logError, LogModule, LogSource, logImportant} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {createRouteLogger} from "@/src/lib/route-handler";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {NextRequest, NextResponse} from "next/server";
@@ -7,6 +8,8 @@ import {NextRequest, NextResponse} from "next/server";
 const ROUTE = "/api/login";
 
 export async function POST(req: NextRequest) {
+  const log = createRouteLogger(LogModule.LOGIN, ROUTE);
+
   try {
     const {email, password} = await req.json();
     const user = await prisma.user.findFirst({
@@ -15,13 +18,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      logError({
-        module: LogModule.LOGIN,
-        source: LogSource.API,
-        message: "api.errors.loginOrPasswordIncorrect",
-        content: {email, password},
-        route: ROUTE,
-      });
+      log("error", {message: "api.errors.loginOrPasswordIncorrect", content: {email}});
       return NextResponse.json({error: "api.errors.loginOrPasswordIncorrect"}, {status: 400});
     }
 
@@ -55,11 +52,11 @@ export async function POST(req: NextRequest) {
       maxAge: expiresIn,
     });
 
-    logImportant({module: LogModule.LOGIN, source: LogSource.API, content: {token, user}, userId: user.id, route: ROUTE});
+    log("important", {content: {token, user}, userId: user.id});
 
     return response;
   } catch (error) {
-    await logCritical({module: LogModule.LOGIN, source: LogSource.API, error, route: ROUTE});
-    return NextResponse.json({error: "Whoops something went wrong"}, {status: 500});
+    await log("critical", {error});
+    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
   }
 }

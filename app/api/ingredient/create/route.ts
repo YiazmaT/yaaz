@@ -39,6 +39,6 @@ export async function POST(req: NextRequest) {
 
     log("create", {content: ingredient});
 
-    return NextResponse.json({success: true, ingredient}, {status: 201});
+    return NextResponse.json({success: true, ingredient}, {status: 200});
   });
 }

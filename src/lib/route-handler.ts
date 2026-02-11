@@ -32,7 +32,7 @@ const logFnMap: Record<LogAction, (params: any) => Promise<void>> = {
   critical: logCritical,
 };
 
-function createRouteLogger(module: LogModule, route: string, auth?: {user?: {id: string}; tenant_id?: string}): LogFn {
+export function createRouteLogger(module: LogModule, route: string, auth?: {user?: {id: string}; tenant_id?: string}): LogFn {
   return function (action: LogAction, params?: LogCallParams) {
     return logFnMap[action]({
       module,

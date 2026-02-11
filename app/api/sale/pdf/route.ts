@@ -1,7 +1,7 @@
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logError, logGet, LogModule, LogSource} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
+import {withAuth} from "@/src/lib/route-handler";
 import {formatCurrency} from "@/src/utils/format-currency";
 import {serverTranslate} from "@/src/lib/server-translate";
 import {NextRequest, NextResponse} from "next/server";
@@ -10,23 +10,12 @@ import moment from "moment";
 const ROUTE = "/api/sale/pdf";
 
 export async function GET(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.SALE, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.SALE, ROUTE, async (auth, log, error) => {
     const {searchParams} = new URL(req.url);
     const saleId = searchParams.get("id") || "";
 
     if (!saleId) {
-      logError({
-        module: LogModule.SALE,
-        source: LogSource.API,
-        message: "Missing sale id",
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 400});
+      return error("api.errors.missingRequiredFields", 400);
     }
 
     const sale = await prisma.sale.findFirst({
@@ -39,16 +28,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (!sale) {
-      logError({
-        module: LogModule.SALE,
-        source: LogSource.API,
-        message: "Sale not found",
-        content: {saleId},
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 404});
+      return error("api.errors.notFound", 404, {saleId});
     }
 
     const t = serverTranslate;
@@ -152,21 +132,11 @@ export async function GET(req: NextRequest) {
 
     const html = generatePdfHtml({title, content, generatedAt, tenant: auth.tenant, footerText: t("sales.pdf.footer")});
 
-    logGet({
-      module: LogModule.SALE,
-      source: LogSource.API,
-      userId: auth.user!.id,
-      tenantId: auth.tenant_id,
-      content: {html},
-      route: ROUTE,
-    });
+    log("get", {content: {html}});
 
     return new NextResponse(html, {
       status: 200,
       headers: {"Content-Type": "text/html; charset=utf-8"},
     });
-  } catch (error) {
-    await logCritical({module: LogModule.SALE, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }

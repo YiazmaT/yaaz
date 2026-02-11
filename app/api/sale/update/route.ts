@@ -1,18 +1,15 @@
 import Decimal from "decimal.js";
-import {authenticateRequest} from "@/src/lib/auth";
 import {calculateApproximateCost} from "@/src/lib/calculate-sale-cost";
-import {logCritical, logError, LogModule, LogSource, logUpdate} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {withAuth} from "@/src/lib/route-handler";
 import {UpdateSaleDto, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "@/src/pages-content/sales/dto";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/sale/update";
 
 export async function PUT(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.SALE, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.SALE, ROUTE, async (auth, log, error) => {
     const body: UpdateSaleDto = await req.json();
     const {id, payment_method, total, items, packages, force, updatePrices, client_id} = body;
 
@@ -20,15 +17,7 @@ export async function PUT(req: NextRequest) {
     const hasPackages = packages && packages.length > 0;
 
     if (!id || !payment_method || total === undefined || (!hasItems && !hasPackages)) {
-      logError({
-        module: LogModule.SALE,
-        source: LogSource.API,
-        message: "api.errors.missingRequiredFields",
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
+      return error("api.errors.missingRequiredFields", 400);
     }
 
     const existingSale = await prisma.sale.findUnique({
@@ -40,16 +29,7 @@ export async function PUT(req: NextRequest) {
     });
 
     if (!existingSale) {
-      logError({
-        module: LogModule.SALE,
-        source: LogSource.API,
-        message: "Sale not found",
-        content: {id},
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 404});
+      return error("api.errors.notFound", 404, {id});
     }
 
     const oldItemsMap = new Map<string, number>();
@@ -212,7 +192,7 @@ export async function PUT(req: NextRequest) {
           approximate_cost: approximateCost,
           client_id: client_id || null,
           last_edit_date: new Date(),
-          last_editor_id: auth.user!.id,
+          last_editor_id: auth.user.id,
           items: hasItems
             ? {
                 create: items.map((item) => ({
@@ -270,11 +250,8 @@ export async function PUT(req: NextRequest) {
       return updatedSale;
     });
 
-    logUpdate({module: LogModule.SALE, source: LogSource.API, content: {before: existingSale, after: sale}, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+    log("update", {content: {before: existingSale, after: sale}});
 
     return NextResponse.json({success: true, sale}, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.SALE, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }

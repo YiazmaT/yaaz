@@ -1,8 +1,8 @@
 import Decimal from "decimal.js";
-import {authenticateRequest} from "@/src/lib/auth";
 import {calculateApproximateCost} from "@/src/lib/calculate-sale-cost";
-import {logCritical, logError, LogModule, LogSource, logCreate} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {withAuth} from "@/src/lib/route-handler";
 import {checkStockWarnings, decrementStock} from "@/src/lib/sale-stock";
 import {CreateSaleDto} from "@/src/pages-content/sales/dto";
 import {NextRequest, NextResponse} from "next/server";
@@ -10,10 +10,7 @@ import {NextRequest, NextResponse} from "next/server";
 const ROUTE = "/api/sale/create";
 
 export async function POST(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.SALE, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.SALE, ROUTE, async (auth, log, error) => {
     const body: CreateSaleDto = await req.json();
     const {payment_method, total, items, packages, force, is_quote, client_id} = body;
 
@@ -21,15 +18,7 @@ export async function POST(req: NextRequest) {
     const hasPackages = packages && packages.length > 0;
 
     if (!payment_method || total === undefined || (!hasItems && !hasPackages)) {
-      logError({
-        module: LogModule.SALE,
-        source: LogSource.API,
-        message: "api.errors.missingRequiredFields",
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
+      return error("api.errors.missingRequiredFields", 400);
     }
 
     const productsMap = new Map<string, {id: string; name: string; stock: number; price: string}>();
@@ -89,7 +78,7 @@ export async function POST(req: NextRequest) {
           approximate_cost: approximateCost,
           is_quote: is_quote || false,
           client_id: client_id || null,
-          creator_id: auth.user!.id,
+          creator_id: auth.user.id,
           items: hasItems
             ? {
                 create: items.map((item) => ({
@@ -135,11 +124,8 @@ export async function POST(req: NextRequest) {
       return newSale;
     });
 
-    logCreate({module: LogModule.SALE, source: LogSource.API, content: sale, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+    log("create", {content: sale});
 
     return NextResponse.json({success: true, sale}, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.SALE, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }

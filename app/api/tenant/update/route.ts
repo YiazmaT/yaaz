@@ -1,16 +1,13 @@
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logError, LogModule, LogSource, logUpdate} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl, noTenantUploadToR2, uploadToR2} from "@/src/lib/r2";
+import {deleteFromR2, extractR2KeyFromUrl, noTenantUploadToR2} from "@/src/lib/r2";
+import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/tenant/update";
 
 export async function PUT(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.TENANT, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.TENANT, ROUTE, async (auth, log, error) => {
     const formData = await req.formData();
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
@@ -21,30 +18,13 @@ export async function PUT(req: NextRequest) {
     const logo = formData.get("logo") as File | null;
 
     if (!id || !name || !time_zone || !currency_type) {
-      logError({
-        module: LogModule.TENANT,
-        source: LogSource.API,
-        message: "api.errors.missingRequiredFields",
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
+      return error("api.errors.missingRequiredFields", 400);
     }
 
     const existingTenant = await prisma.tenant.findUnique({where: {id}});
 
     if (!existingTenant) {
-      logError({
-        module: LogModule.TENANT,
-        source: LogSource.API,
-        message: "Tenant not found",
-        content: {id},
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.dataNotFound"}, {status: 404});
+      return error("api.errors.notFound", 404, {id});
     }
 
     let logoUrl: string | null = existingTenant.logo;
@@ -53,23 +33,17 @@ export async function PUT(req: NextRequest) {
       if (existingTenant.logo) {
         const oldKey = extractR2KeyFromUrl(existingTenant.logo);
         if (oldKey) {
-          await deleteFromR2(oldKey, auth.tenant_id);
+          const deleted = await deleteFromR2(oldKey, auth.tenant_id);
+          if (!deleted) {
+            return error("api.errors.deleteFailed", 400);
+          }
         }
       }
 
       const uploadResult = await noTenantUploadToR2(logo, "tenants");
 
       if (!uploadResult.success) {
-        logError({
-          module: LogModule.TENANT,
-          source: LogSource.API,
-          message: "Failed to upload logo to R2",
-          content: uploadResult,
-          route: ROUTE,
-          userId: auth.user!.id,
-          tenantId: auth.tenant_id,
-        });
-        return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 400});
+        return error("api.errors.uploadFailed", 400, uploadResult);
       }
 
       logoUrl = uploadResult.url!;
@@ -87,18 +61,8 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    logUpdate({
-      module: LogModule.TENANT,
-      source: LogSource.API,
-      content: {before: existingTenant, after: tenant},
-      route: ROUTE,
-      userId: auth.user!.id,
-      tenantId: auth.tenant_id,
-    });
+    log("update", {content: {before: existingTenant, after: tenant}});
 
     return NextResponse.json({success: true, tenant}, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.TENANT, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }

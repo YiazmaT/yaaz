@@ -40,6 +40,6 @@ export async function POST(req: NextRequest) {
 
     log("create", {content: pkg});
 
-    return NextResponse.json({success: true, package: pkg}, {status: 201});
+    return NextResponse.json({success: true, package: pkg}, {status: 200});
   });
 }
