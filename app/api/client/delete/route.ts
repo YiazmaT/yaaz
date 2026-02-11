@@ -1,73 +1,34 @@
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logError, LogModule, LogSource, logDelete} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {withAuth} from "@/src/lib/route-handler";
 import {DeleteClientDto} from "@/src/pages-content/client/dto";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/client/delete";
 
 export async function DELETE(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.CLIENT, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.CLIENT, ROUTE, async (auth, log, error) => {
     const {id}: DeleteClientDto = await req.json();
 
-    if (!id) {
-      logError({
-        module: LogModule.CLIENT,
-        source: LogSource.API,
-        message: "api.errors.missingRequiredFields",
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
-    }
+    if (!id) return error("api.errors.missingRequiredFields", 400);
 
     const client = await prisma.client.findUnique({where: {id, tenant_id: auth.tenant_id}, include: {sales: {take: 1}}});
-
-    if (!client) {
-      logError({
-        module: LogModule.CLIENT,
-        source: LogSource.API,
-        message: "Client not found",
-        content: {id},
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.dataNotFound"}, {status: 404});
-    }
-
-    if (client.sales.length > 0) {
-      logError({
-        module: LogModule.CLIENT,
-        source: LogSource.API,
-        message: "Client is in use by sales",
-        content: client,
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "clients.errors.inUseBySales"}, {status: 400});
-    }
+    if (!client) return error("api.errors.notFound", 404, {id});
+    if (client.sales.length > 0) return error("clients.errors.inUseBySales", 400, {id, name: client.name});
 
     if (client.image) {
       const key = extractR2KeyFromUrl(client.image);
       if (key) {
-        await deleteFromR2(key, auth.tenant_id);
+        const deleted = await deleteFromR2(key, auth.tenant_id);
+        if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl: client.image});
       }
     }
 
     await prisma.client.delete({where: {id}});
 
-    logDelete({module: LogModule.CLIENT, source: LogSource.API, content: {client}, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
+    log("delete", {content: client});
 
     return NextResponse.json({success: true}, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.CLIENT, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }

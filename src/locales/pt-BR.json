@@ -62,6 +62,7 @@
       "somethingWentWrong": "Ops! Algo deu errado.",
       "uploadFailed": "Erro ao enviar o arquivo. Tente novamente.",
       "deleteFailed": "Erro ao excluir o arquivo. Tente novamente.",
+      "notFound": "Registro não encontrado.",
       "dataNotFound": "Nenhum dado encontrado."
     }
   },
