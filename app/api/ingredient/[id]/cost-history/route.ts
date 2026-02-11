@@ -1,16 +1,13 @@
 import Decimal from "decimal.js";
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, LogModule, LogSource, logGet} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/ingredient/[id]/cost-history";
 
 export async function GET(_: NextRequest, {params}: {params: Promise<{id: string}>}) {
-  const auth = await authenticateRequest(LogModule.INGREDIENT, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.INGREDIENT, ROUTE, async (auth, log) => {
     const {id} = await params;
 
     const costs = await prisma.ingredientCost.findMany({
@@ -33,11 +30,8 @@ export async function GET(_: NextRequest, {params}: {params: Promise<{id: string
       };
     });
 
-    logGet({module: LogModule.INGREDIENT, source: LogSource.API, content: {id, data}, userId: auth.user!.id, tenantId: auth.tenant_id, route: ROUTE});
-    
+    log("get", {content: {id, data}});
+
     return NextResponse.json({data}, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.INGREDIENT, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }

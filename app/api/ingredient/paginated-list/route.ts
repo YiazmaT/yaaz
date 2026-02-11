@@ -1,16 +1,13 @@
 import Decimal from "decimal.js";
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, LogModule, LogSource, logGet} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/ingredient/paginated-list";
 
 export async function GET(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.INGREDIENT, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.INGREDIENT, ROUTE, async (auth, log) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -58,11 +55,8 @@ export async function GET(req: NextRequest) {
     });
 
     const response = {data, total, page, limit};
-    logGet({module: LogModule.INGREDIENT, source: LogSource.API, content: response, userId: auth.user!.id, tenantId: auth.tenant_id, route: ROUTE});
+    log("get", {content: response});
 
     return NextResponse.json(response, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.INGREDIENT, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }
