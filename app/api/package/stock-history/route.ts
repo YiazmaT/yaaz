@@ -1,29 +1,16 @@
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logError, logGet, LogModule, LogSource} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/package/stock-history";
 
 export async function GET(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.PACKAGE, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.PACKAGE, ROUTE, async (auth, log, error) => {
     const {searchParams} = new URL(req.url);
     const packageId = searchParams.get("packageId");
 
-    if (!packageId) {
-      logError({
-        module: LogModule.PACKAGE,
-        source: LogSource.API,
-        message: "api.errors.missingRequiredFields",
-        route: ROUTE,
-        userId: auth.user!.id,
-        tenantId: auth.tenant_id,
-      });
-      return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
-    }
+    if (!packageId) return error("api.errors.missingRequiredFields", 400);
 
     const [stockChanges, stockCosts] = await Promise.all([
       prisma.packageStockChange.findMany({
@@ -71,11 +58,8 @@ export async function GET(req: NextRequest) {
 
     history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    logGet({module: LogModule.PACKAGE, source: LogSource.API, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id, content: {packageId, history}});
+    log("get", {content: {packageId, history}});
 
     return NextResponse.json({history}, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.PACKAGE, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }
