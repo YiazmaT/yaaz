@@ -52,11 +52,16 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 
 # Backend
 
-- ALL QUERIES MUST INCLUDE tenant_id. you can get it from authenticateRequest function.
+- ALL QUERIES MUST INCLUDE tenant_id.
 - Inside src/page-content/... all the endpoints dto's must be created inside the dto.ts file, if it don't exist create it;
 - Numeric fields must be casted before returning to front, do it at prisma.extensions.ts;
-- All endpoint must be authenticated with authenticateRequest, this function also returns the user, and the user id must be used on every log call;
-- create a `const ROUTE = "/api/ingredient/paginated-list";` with the route of the endpoint, in order to use in the logging options;
+- All authenticated endpoints must use `withAuth` from `src/lib/route-handler.ts`;
+- `withAuth(module, route, handler)` handles auth, try/catch, and logCritical automatically;
+- Handler receives `(auth, log, error)`:
+  - `auth` has `user`, `tenant_id`, `tenant` (already validated);
+  - `log(action, params?)` — action: "create" | "update" | "delete" | "get" | "important" | "error" | "critical";
+  - `error(message, status, content?)` — logs the error and returns `NextResponse.json({error: message}, {status})`;
+- create a `const ROUTE = "/api/ingredient/paginated-list";` with the route of the endpoint;
 - Whenever possible, bring all the data at once and formated thorugh the postgres query, avoid manipulating data on javascript. If you can't bring the data from orm directly, use query string;
 
 # Component beauty
@@ -92,37 +97,26 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 
 # Logging
 
-- U MUST LOG EVERYTHING THAT IS GOING TO BE RETURNED TO THE FRONT END;
-- Use the logger from /src/lib/logger for everything that needs to be logged;
-- Import: `import {logCreate, logUpdate, logDelete, logGet, logError, logImportant, logCritical} from "@/src/lib/logger";`
-- Always use enums: LogModule, LogSource;
-- Use convenience functions: logCreate, logUpdate, logDelete, logGet, logError, logImportant, logCritical;
-- logCritical sends Discord notifications automatically and saves full error stack to database (should only be used in catch blocks);
+- Log everything returned to the frontend;
+- `withAuth` handles module, source, route, userId, tenantId automatically — just pass unique params;
+- `log(action, params?)` — action maps to the same log functions internally;
+- `error(message, status, content?)` — logs as error and returns the response;
+- logCritical (catch blocks) is handled by `withAuth` automatically;
 - Add new modules to LogModule enum as you create them;
-- Always include: module, source;
-- Include route for API routes (ex: route: "/api/login");
-- Include userId when user is authenticated;
-- Include content with everything possible:{
-  logCreate is used for logging endpoints that create something, the content should be the entire content created;
-  logUpdate is used for logging endpoints that update something, the content should have the previous content and the new content;
-  logDelete is used for logging endpoints that delete something, the content should be the entire content deleted;
-  logGet is used for logging endpoints that get something, the content should be the entire content returned;
-  logError is used to log non critical errors, content should have the most possible amount of that that can lead to that error;
-  logImportant is used in especial cases that don't fit the rest, like login/logout;
-  logCritical is used to log catch cases only.
-  }
-- ALWAYS await logCritical in catch blocks before returning error response;
-- NEVER await other log calls (fire-and-forget pattern);
-- Use translation keys for messages when applicable (ex: message: "api.errors.loginOrPasswordIncorrect");
-- ALWAYS try to fit the entire log call in a single line, only break the line if the prettier max line width is exceeded;
-- Examples from codebase:
-  - Error: `logError({module: LogModule.LOGIN, source: LogSource.API, message: "api.errors.loginOrPasswordIncorrect", content: {email, password}, route: "/api/login", tenantId: auth.tenant_id,});`
-  - Success: `logImportant({module: LogModule.LOGIN, source: LogSource.API, content: {token}, userId: user.id, route: "/api/login", tenantId: auth.tenant_id,});`
-  - Critical: `await logCritical({module: LogModule.LOGIN, source: LogSource.API, error, route: "/api/login", tenantId: auth.tenant_id,});`
-  - create: `logCreate({module: LogModule.INGREDIENT, source: LogSource.API, content: ingredient, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id,});`
-  - update: `logUpdate({module: LogModule.INGREDIENT, source: LogSource.API, content: {before: existingIngredient, after: ingredient}, route: ROUTE,userId: auth.user!.id, tenantId: auth.tenant_id,});`
-  - delete: `logDelete({module: LogModule.INGREDIENT, source: LogSource.API, content: {ingredient}, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id,});`
-  - get: `logGet({module: LogModule.INGREDIENT, source: LogSource.API, content: response, userId: auth.user!.id, route: ROUTE, tenantId: auth.tenant_id,});`
+- Content guidelines:
+  - create: full created entity;
+  - update: `{before, after}`;
+  - delete: full deleted entity;
+  - get: full response;
+  - error: data that can help debug;
+  - important: special cases like login/logout;
+- Examples:
+  - `log("create", {content: ingredient});`
+  - `log("update", {content: {before: existingIngredient, after: ingredient}});`
+  - `log("delete", {content: ingredient});`
+  - `log("get", {content: response});`
+  - `return error("api.errors.missingRequiredFields", 400);`
+  - `return error("api.errors.uploadFailed", 400, uploadResult);`
 
 # Existing Utils
 - whenever you need to format money, use formatCurrency from utils;
