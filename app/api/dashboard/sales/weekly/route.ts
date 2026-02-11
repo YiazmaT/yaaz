@@ -1,6 +1,6 @@
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logGet, LogModule, LogSource} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest, NextResponse} from "next/server";
 import {startOfWeek, endOfWeek, getDay} from "date-fns";
 import {toZonedTime, fromZonedTime} from "date-fns-tz";
@@ -8,10 +8,7 @@ import {toZonedTime, fromZonedTime} from "date-fns-tz";
 const ROUTE = "/api/dashboard/sales/weekly";
 
 export async function GET(request: NextRequest) {
-  const auth = await authenticateRequest(LogModule.DASHBOARD, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.DASHBOARD, ROUTE, async (auth, log) => {
     const {searchParams} = new URL(request.url);
     const timezone = searchParams.get("timezone") || "UTC";
 
@@ -70,11 +67,8 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    logGet({module: LogModule.DASHBOARD, source: LogSource.API, route: ROUTE, content: returnPayload, userId: auth.user!.id, tenantId: auth.tenant_id});
+    log("get", {content: returnPayload});
 
     return NextResponse.json(returnPayload);
-  } catch (error) {
-    await logCritical({module: LogModule.DASHBOARD, source: LogSource.API, route: ROUTE, error, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }
