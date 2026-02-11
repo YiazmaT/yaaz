@@ -1,6 +1,6 @@
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logGet, LogModule, LogSource} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
+import {withAuth} from "@/src/lib/route-handler";
 import {formatCurrency} from "@/src/utils/format-currency";
 import {NextRequest, NextResponse} from "next/server";
 import moment from "moment";
@@ -8,10 +8,7 @@ import moment from "moment";
 const ROUTE = "/api/reports/sales/sales-summary/pdf";
 
 export async function GET(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.REPORTS, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.REPORTS, ROUTE, async (auth, log) => {
     const {searchParams} = new URL(req.url);
     const dataStr = searchParams.get("data") || "[]";
     const generatedAt = searchParams.get("generatedAt") || "";
@@ -89,21 +86,11 @@ export async function GET(req: NextRequest) {
 
     const html = generatePdfHtml({title: "Resumo de Vendas", content, generatedAt, tenant: auth.tenant});
 
-    logGet({
-      module: LogModule.REPORTS,
-      source: LogSource.API,
-      userId: auth.user!.id,
-      tenantId: auth.tenant_id,
-      content: {dateFrom, dateTo},
-      route: ROUTE,
-    });
+    log("get", {content: {dateFrom, dateTo, html}});
 
     return new NextResponse(html, {
       status: 200,
       headers: {"Content-Type": "text/html; charset=utf-8"},
     });
-  } catch (error) {
-    await logCritical({module: LogModule.REPORTS, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }

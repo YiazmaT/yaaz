@@ -1,6 +1,6 @@
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logGet, LogModule, LogSource} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
+import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/reports/stock/stock-levels/pdf";
@@ -18,10 +18,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export async function GET(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.REPORTS, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.REPORTS, ROUTE, async (auth, log) => {
     const {searchParams} = new URL(req.url);
     const dataStr = searchParams.get("data") || "[]";
     const generatedAt = searchParams.get("generatedAt") || "";
@@ -41,7 +38,7 @@ export async function GET(req: NextRequest) {
         <td>${row.unit}</td>
         <td class="center">${STATUS_LABELS[row.status] || row.status}</td>
       </tr>
-    `
+    `,
       )
       .join("");
 
@@ -69,14 +66,11 @@ export async function GET(req: NextRequest) {
 
     const html = generatePdfHtml({title: "Níveis de Estoque", content, generatedAt, tenant: auth.tenant});
 
-    logGet({module: LogModule.REPORTS, source: LogSource.API, userId: auth.user!.id, tenantId: auth.tenant_id, content: {type, belowMinimumOnly}, route: ROUTE});
+    log("get", {content: {type, belowMinimumOnly, html}});
 
     return new NextResponse(html, {
       status: 200,
       headers: {"Content-Type": "text/html; charset=utf-8"},
     });
-  } catch (error) {
-    await logCritical({module: LogModule.REPORTS, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }

@@ -1,6 +1,6 @@
-import {authenticateRequest} from "@/src/lib/auth";
-import {logCritical, logGet, LogModule, LogSource} from "@/src/lib/logger";
+import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
+import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest, NextResponse} from "next/server";
 import {startOfDay, endOfDay, parseISO, eachDayOfInterval} from "date-fns";
 import {fromZonedTime} from "date-fns-tz";
@@ -9,18 +9,13 @@ import Decimal from "decimal.js";
 const ROUTE = "/api/reports/sales/sales-summary";
 
 export async function GET(req: NextRequest) {
-  const auth = await authenticateRequest(LogModule.REPORTS, ROUTE);
-  if (auth.error) return auth.error;
-
-  try {
+  return withAuth(LogModule.REPORTS, ROUTE, async (auth, log, error) => {
     const {searchParams} = new URL(req.url);
     const dateFrom = searchParams.get("dateFrom") || "";
     const dateTo = searchParams.get("dateTo") || "";
     const timezone = searchParams.get("timezone") || "America/Sao_Paulo";
 
-    if (!dateFrom || !dateTo) {
-      return NextResponse.json({error: "api.errors.missingRequiredFields"}, {status: 400});
-    }
+    if (!dateFrom || !dateTo) return error("api.errors.missingRequiredFields", 400);
 
     const zonedStart = startOfDay(parseISO(dateFrom));
     const zonedEnd = endOfDay(parseISO(dateTo));
@@ -88,11 +83,8 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    logGet({module: LogModule.REPORTS, source: LogSource.API, userId: auth.user!.id, tenantId: auth.tenant_id, content: result, route: ROUTE});
+    log("get", {content: result});
 
     return NextResponse.json(result, {status: 200});
-  } catch (error) {
-    await logCritical({module: LogModule.REPORTS, source: LogSource.API, error, route: ROUTE, userId: auth.user!.id, tenantId: auth.tenant_id});
-    return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});
-  }
+  });
 }
