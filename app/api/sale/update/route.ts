@@ -9,7 +9,7 @@ import {NextRequest, NextResponse} from "next/server";
 const ROUTE = "/api/sale/update";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
     const body: UpdateSaleDto = await req.json();
     const {id, payment_method, total, items, packages, force, updatePrices, client_id} = body;
 
@@ -105,7 +105,7 @@ export async function PUT(req: NextRequest) {
       }
 
       if (priceChangeWarnings.length > 0 && updatePrices === undefined) {
-        return NextResponse.json({success: false, priceChangeWarnings}, {status: 200});
+        return success("update", {success: false, priceChangeWarnings});
       }
     }
 
@@ -250,8 +250,6 @@ export async function PUT(req: NextRequest) {
       return updatedSale;
     });
 
-    log("update", {content: {before: existingSale, after: sale}});
-
-    return NextResponse.json({success: true, sale}, {status: 200});
+    return success("update", sale, {before: existingSale, after: sale});
   });
 }

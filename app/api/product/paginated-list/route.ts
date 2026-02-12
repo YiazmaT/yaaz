@@ -2,12 +2,12 @@ import Decimal from "decimal.js";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/product/paginated-list";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -92,10 +92,6 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    const response = {data, total, page, limit};
-
-    log("get", {content: response});
-
-    return NextResponse.json(response, {status: 200});
+    return success("get", {data, total, page, limit});
   });
 }

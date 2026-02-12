@@ -1,7 +1,7 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 import {startOfDay, endOfDay, parseISO} from "date-fns";
 import {fromZonedTime} from "date-fns-tz";
 import Decimal from "decimal.js";
@@ -9,7 +9,7 @@ import Decimal from "decimal.js";
 const ROUTE = "/api/reports/sales/profit-margin";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.REPORTS, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.REPORTS, ROUTE, async ({auth, success, error}) => {
     const {searchParams} = new URL(req.url);
     const dateFrom = searchParams.get("dateFrom") || "";
     const dateTo = searchParams.get("dateTo") || "";
@@ -143,8 +143,6 @@ export async function GET(req: NextRequest) {
 
     result.sort((a, b) => parseFloat(b.profit) - parseFloat(a.profit));
 
-    log("get", {content: result});
-
-    return NextResponse.json(result, {status: 200});
+    return success("get", result);
   });
 }

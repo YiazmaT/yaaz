@@ -3,12 +3,12 @@ import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl, uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {CompositionItemDto, PackageCompositionItemDto} from "@/src/pages-content/products/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/product/update";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
     const formData = await req.formData();
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
@@ -97,8 +97,6 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    log("update", {content: {before: existingProduct, after: product}});
-
-    return NextResponse.json({success: true, product}, {status: 200});
+    return success("update", product, {before: existingProduct, after: product});
   });
 }

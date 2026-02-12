@@ -15,6 +15,7 @@ interface LogCallParams {
 
 export type LogFn = (action: LogAction, params?: LogCallParams) => Promise<void>;
 export type ErrorFn = (message: string, status: number, content?: Record<string, any>) => NextResponse;
+export type SuccessFn = (action: LogAction, data?: any, logContent?: any) => NextResponse;
 
 export interface AuthContext {
   user: {id: string; name: string; tenant_id: string; [key: string]: any};
@@ -54,10 +55,17 @@ function createErrorFn(module: LogModule, route: string, auth?: {user?: {id: str
   };
 }
 
+export interface RouteContext {
+  auth: AuthContext;
+  success: SuccessFn;
+  error: ErrorFn;
+  log: LogFn;
+}
+
 export async function withAuth(
   module: LogModule,
   route: string,
-  handler: (auth: AuthContext, log: LogFn, error: ErrorFn) => Promise<NextResponse>,
+  handler: (ctx: RouteContext) => Promise<NextResponse>,
 ): Promise<NextResponse> {
   const auth = await authenticateRequest(module, route);
   if (auth.error) return auth.error;
@@ -65,8 +73,13 @@ export async function withAuth(
   const log = createRouteLogger(module, route, auth);
   const error = createErrorFn(module, route, auth);
 
+  const success: SuccessFn = (action, data, logContent) => {
+    log(action, {content: logContent !== undefined ? logContent : data});
+    return NextResponse.json(data !== undefined ? {data} : {}, {status: 200});
+  };
+
   try {
-    return await handler(auth as unknown as AuthContext, log, error);
+    return await handler({auth: auth as unknown as AuthContext, success, error, log});
   } catch (err) {
     await log("critical", {error: err});
     return NextResponse.json({error: "api.errors.somethingWentWrong"}, {status: 500});

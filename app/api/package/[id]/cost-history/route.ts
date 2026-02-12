@@ -7,7 +7,7 @@ import {NextRequest, NextResponse} from "next/server";
 const ROUTE = "/api/package/[id]/cost-history";
 
 export async function GET(_: NextRequest, {params}: {params: Promise<{id: string}>}) {
-  return withAuth(LogModule.PACKAGE, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success}) => {
     const {id} = await params;
 
     const costs = await prisma.packageCost.findMany({
@@ -30,8 +30,6 @@ export async function GET(_: NextRequest, {params}: {params: Promise<{id: string
       };
     });
 
-    log("get", {content: {id, data}});
-
-    return NextResponse.json({data}, {status: 200});
+    return success("get", data);
   });
 }

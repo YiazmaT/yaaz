@@ -1,14 +1,14 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 import {startOfDay, endOfDay} from "date-fns";
 import {toZonedTime, fromZonedTime} from "date-fns-tz";
 
 const ROUTE = "/api/dashboard/sales/today";
 
 export async function GET(request: NextRequest) {
-  return withAuth(LogModule.DASHBOARD, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.DASHBOARD, ROUTE, async ({auth, success}) => {
     const {searchParams} = new URL(request.url);
     const timezone = searchParams.get("timezone") || "UTC";
 
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     const count = result._count.id;
     const averageTicket = count > 0 ? total / count : 0;
 
-    const returnPayload = {
+    return success("get", {
       total,
       count,
       averageTicket,
@@ -54,10 +54,6 @@ export async function GET(request: NextRequest) {
         start: utcStart.toISOString(),
         end: utcEnd.toISOString(),
       },
-    };
-
-    log("get", {content: returnPayload});
-
-    return NextResponse.json(returnPayload);
+    });
   });
 }

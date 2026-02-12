@@ -1,19 +1,14 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 import Decimal from "decimal.js";
+import {StockLevelRowDto} from "@/src/pages-content/reports/dto";
 
 const ROUTE = "/api/reports/stock/stock-levels";
 
-function getStatus(current: Decimal, min: Decimal): "ok" | "low" | "critical" {
-  if (current.lessThanOrEqualTo(0)) return "critical";
-  if (current.lessThanOrEqualTo(min)) return "low";
-  return "ok";
-}
-
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.REPORTS, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.REPORTS, ROUTE, async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const type = searchParams.get("type") || "all";
     const belowMinimumOnly = searchParams.get("belowMinimumOnly") === "true";
@@ -98,8 +93,12 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    log("get", {content: result});
-
-    return NextResponse.json(result, {status: 200});
+    return success("get", result);
   });
+}
+
+function getStatus(current: Decimal, min: Decimal): "ok" | "low" | "critical" {
+  if (current.lessThanOrEqualTo(0)) return "critical";
+  if (current.lessThanOrEqualTo(min)) return "low";
+  return "ok";
 }

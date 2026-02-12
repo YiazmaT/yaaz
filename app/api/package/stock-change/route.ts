@@ -3,12 +3,12 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {StockChangeDto} from "@/src/pages-content/packages/dto";
 import {PackageStockChangeReason} from "@/src/pages-content/packages/types";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/package/stock-change";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PACKAGE, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {
     const {packageId, newStock, reason, comment}: StockChangeDto = await req.json();
 
     if (!packageId || newStock === undefined || newStock === null || !reason) {
@@ -46,8 +46,6 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
-    log("create", {content: {packageId, previousStock: previousStock.toString(), newStock, reason, comment}});
-
-    return NextResponse.json({success: true}, {status: 200});
+    return success("create", {packageId, previousStock: previousStock.toString(), newStock, reason, comment});
   });
 }

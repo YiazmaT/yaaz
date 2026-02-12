@@ -2,13 +2,13 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/product/upload-file";
 const MAX_FILES = 5;
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
     const formData = await req.formData();
     const productId = formData.get("productId") as string;
     const file = formData.get("file") as File | null;
@@ -43,8 +43,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    log("update", {content: {before: product.files, after: updated.files}});
-
-    return NextResponse.json({files: updated.files}, {status: 200});
+    return success("update", updated.files);
   });
 }

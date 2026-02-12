@@ -3,12 +3,12 @@ import {prisma} from "@/src/lib/prisma";
 import {uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {CompositionItemDto, PackageCompositionItemDto} from "@/src/pages-content/products/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/product/create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
     const formData = await req.formData();
     const name = formData.get("name") as string;
     const price = parseFloat(formData.get("price") as string);
@@ -69,8 +69,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    log("create", {content: product});
-
-    return NextResponse.json({success: true, product}, {status: 200});
+    return success("create", product);
   });
 }

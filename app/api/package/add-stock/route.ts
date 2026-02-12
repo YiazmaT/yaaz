@@ -2,12 +2,12 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {AddStockDto} from "@/src/pages-content/packages/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/package/add-stock";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PACKAGE, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {
     const {items}: AddStockDto = await req.json();
 
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -35,8 +35,6 @@ export async function POST(req: NextRequest) {
 
     const updated = await prisma.$transaction([...stockUpdates, ...costCreates]);
 
-    log("create", {content: {items, stockUpdates, costCreates}});
-
-    return NextResponse.json({success: true, updated}, {status: 200});
+    return success("create", {items, updated, stockUpdates, costCreates});
   });
 }

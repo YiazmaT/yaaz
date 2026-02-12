@@ -10,7 +10,7 @@ import moment from "moment";
 const ROUTE = "/api/sale/pdf";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.SALE, ROUTE, async ({auth, log, error}) => {
     const {searchParams} = new URL(req.url);
     const saleId = searchParams.get("id") || "";
 

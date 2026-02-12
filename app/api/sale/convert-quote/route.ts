@@ -9,7 +9,7 @@ import {NextRequest, NextResponse} from "next/server";
 const ROUTE = "/api/sale/convert-quote";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
     const body: ConvertQuoteDto = await req.json();
     const {id, force} = body;
 
@@ -43,7 +43,7 @@ export async function PUT(req: NextRequest) {
 
     const {stockWarnings, packageWarnings, hasWarnings} = checkStockWarnings(stockItems, packageStockItems);
     if (hasWarnings && !force) {
-      return NextResponse.json({success: false, stockWarnings, packageWarnings}, {status: 200});
+      return success("create", {success: false, stockWarnings, packageWarnings});
     }
 
     const sale = await prisma.$transaction(async (tx) => {
@@ -69,8 +69,6 @@ export async function PUT(req: NextRequest) {
       return updatedSale;
     });
 
-    log("update", {content: {before: existingSale, after: sale}});
-
-    return NextResponse.json({success: true, sale}, {status: 200});
+    return success("update", sale, {before: existingSale, after: sale});
   });
 }

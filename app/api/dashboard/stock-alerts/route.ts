@@ -1,19 +1,12 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextResponse} from "next/server";
+import {StockAlertRow} from "@/src/pages-content/dashboard/dto";
 
 const ROUTE = "/api/dashboard/stock-alerts";
 
-interface StockAlertRow {
-  id: string;
-  name: string;
-  stock: number;
-  min_stock: number;
-}
-
 export async function GET() {
-  return withAuth(LogModule.DASHBOARD, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.DASHBOARD, ROUTE, async ({auth, success}) => {
     const [products, ingredients, packages] = await Promise.all([
       prisma.$queryRaw<StockAlertRow[]>`
         SELECT id, name, stock, min_stock
@@ -35,9 +28,6 @@ export async function GET() {
       `,
     ]);
 
-    const returnPayload = {products, ingredients, packages};
-    log("get", {content: returnPayload});
-
-    return NextResponse.json(returnPayload);
+    return success("get", {products, ingredients, packages});
   });
 }

@@ -2,12 +2,12 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {DeleteSaleDto} from "@/src/pages-content/sales/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/sale/delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
     const {id}: DeleteSaleDto = await req.json();
 
     if (!id) {
@@ -43,8 +43,6 @@ export async function DELETE(req: NextRequest) {
       await tx.sale.delete({where: {id}});
     });
 
-    log("delete", {content: sale});
-
-    return NextResponse.json({success: true}, {status: 200});
+    return success("delete", sale);
   });
 }

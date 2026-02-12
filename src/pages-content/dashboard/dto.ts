@@ -61,3 +61,10 @@ export interface StockAlertsResponse {
   ingredients: StockAlertItem[];
   packages: StockAlertItem[];
 }
+
+export interface StockAlertRow {
+  id: string;
+  name: string;
+  stock: number;
+  min_stock: number;
+}

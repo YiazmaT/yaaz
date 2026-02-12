@@ -2,12 +2,12 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl, noTenantUploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/tenant/update";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.TENANT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.TENANT, ROUTE, async ({auth, success, error}) => {
     const formData = await req.formData();
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
@@ -61,8 +61,6 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    log("update", {content: {before: existingTenant, after: tenant}});
-
-    return NextResponse.json({success: true, tenant}, {status: 200});
+    return success("update", tenant, {before: existingTenant, after: tenant});
   });
 }

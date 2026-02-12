@@ -3,12 +3,12 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {AddProductStockDto, IngredientStockWarning, PackageStockWarning} from "@/src/pages-content/products/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/product/add-stock";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
     const {items, deductIngredients, deductPackages, force}: AddProductStockDto = await req.json();
 
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
 
     const hasWarnings = ingredientWarnings.length > 0 || packageWarnings.length > 0;
     if (hasWarnings && !force) {
-      return NextResponse.json({success: false, ingredientWarnings, packageWarnings}, {status: 200});
+      success("create", {success: false, ingredientWarnings, packageWarnings});
     }
 
     const transactionOperations = [
@@ -141,8 +141,6 @@ export async function POST(req: NextRequest) {
 
     await prisma.$transaction(transactionOperations);
 
-    log("create", {content: {items, deductIngredients, deductPackages}});
-
-    return NextResponse.json({success: true}, {status: 200});
+    return success("create", {items, deductIngredients, deductPackages});
   });
 }

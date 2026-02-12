@@ -5,12 +5,12 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {checkStockWarnings, decrementStock} from "@/src/lib/sale-stock";
 import {CreateSaleDto} from "@/src/pages-content/sales/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/sale/create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
     const body: CreateSaleDto = await req.json();
     const {payment_method, total, items, packages, force, is_quote, client_id} = body;
 
@@ -41,10 +41,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (!is_quote) {
-      const stockItems = items.filter((i) => productsMap.has(i.product_id)).map((i) => {
-        const p = productsMap.get(i.product_id)!;
-        return {id: p.id, name: p.name, stock: p.stock, quantity: i.quantity};
-      });
+      const stockItems = items
+        .filter((i) => productsMap.has(i.product_id))
+        .map((i) => {
+          const p = productsMap.get(i.product_id)!;
+          return {id: p.id, name: p.name, stock: p.stock, quantity: i.quantity};
+        });
 
       let packageStockItems: {id: string; name: string; stock: number; quantity: number}[] = [];
       if (hasPackages) {
@@ -63,7 +65,7 @@ export async function POST(req: NextRequest) {
 
       const {stockWarnings, packageWarnings, hasWarnings} = checkStockWarnings(stockItems, packageStockItems);
       if (hasWarnings && !force) {
-        return NextResponse.json({success: false, stockWarnings, packageWarnings}, {status: 200});
+        return success("create", {success: false, stockWarnings, packageWarnings});
       }
     }
 
@@ -124,8 +126,6 @@ export async function POST(req: NextRequest) {
       return newSale;
     });
 
-    log("create", {content: sale});
-
-    return NextResponse.json({success: true, sale}, {status: 200});
+    return success("create", sale);
   });
 }

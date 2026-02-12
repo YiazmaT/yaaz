@@ -3,12 +3,12 @@ import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {DeleteProductFileDto} from "@/src/pages-content/products/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/product/delete-file";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
     const body: DeleteProductFileDto = await req.json();
 
     if (!body.productId || !body.fileUrl) return error("api.errors.missingRequiredFields", 400);
@@ -34,8 +34,6 @@ export async function DELETE(req: NextRequest) {
       },
     });
 
-    log("delete", {content: {deletedFile: body.fileUrl, remainingFiles: updated.files}});
-
-    return NextResponse.json({files: updated.files}, {status: 200});
+    return success("delete", updated.files);
   });
 }

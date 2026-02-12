@@ -6,13 +6,13 @@ import {NextResponse} from "next/server";
 const ROUTE = "/api/logout";
 
 export async function POST() {
-  return withAuth(LogModule.LOGIN, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.LOGIN, ROUTE, async ({auth, success}) => {
     await prisma.user.update({
       data: {current_token: null, token_expires: null},
       where: {id: auth.user.id},
     });
 
-    const response = NextResponse.json({success: true}, {status: 200});
+    const response = success("important", undefined, {userId: auth.user.id});
     response.cookies.set("token", "", {
       httpOnly: true,
       secure: true,
@@ -20,8 +20,6 @@ export async function POST() {
       path: "/",
       maxAge: 0,
     });
-
-    log("important", {content: {userId: auth.user.id}});
 
     return response;
   });

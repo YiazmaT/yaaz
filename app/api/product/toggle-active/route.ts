@@ -1,12 +1,12 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/product/toggle-active";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
     const {id} = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);
@@ -27,8 +27,6 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    log("update", {content: {before: existingProduct, after: product}});
-
-    return NextResponse.json({success: true, product}, {status: 200});
+    return success("update", product, {before: existingProduct, after: product});
   });
 }

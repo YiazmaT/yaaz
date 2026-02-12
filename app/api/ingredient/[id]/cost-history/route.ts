@@ -2,12 +2,12 @@ import Decimal from "decimal.js";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/ingredient/[id]/cost-history";
 
 export async function GET(_: NextRequest, {params}: {params: Promise<{id: string}>}) {
-  return withAuth(LogModule.INGREDIENT, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.INGREDIENT, ROUTE, async ({auth, success}) => {
     const {id} = await params;
 
     const costs = await prisma.ingredientCost.findMany({
@@ -30,8 +30,6 @@ export async function GET(_: NextRequest, {params}: {params: Promise<{id: string
       };
     });
 
-    log("get", {content: {id, data}});
-
-    return NextResponse.json({data}, {status: 200});
+    return success("get", data);
   });
 }

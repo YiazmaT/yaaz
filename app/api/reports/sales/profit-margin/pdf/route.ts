@@ -8,7 +8,7 @@ import moment from "moment";
 const ROUTE = "/api/reports/sales/profit-margin/pdf";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.REPORTS, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.REPORTS, ROUTE, async ({auth, log}) => {
     const {searchParams} = new URL(req.url);
     const dataStr = searchParams.get("data") || "[]";
     const generatedAt = searchParams.get("generatedAt") || "";

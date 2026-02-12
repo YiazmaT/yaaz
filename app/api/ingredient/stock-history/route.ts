@@ -1,12 +1,12 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/ingredient/stock-history";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.INGREDIENT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.INGREDIENT, ROUTE, async ({auth, success, error}) => {
     const {searchParams} = new URL(req.url);
     const ingredientId = searchParams.get("ingredientId");
 
@@ -58,8 +58,6 @@ export async function GET(req: NextRequest) {
 
     history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    log("get", {content: {ingredientId, history}});
-
-    return NextResponse.json({history}, {status: 200});
+    return success("get", history);
   });
 }

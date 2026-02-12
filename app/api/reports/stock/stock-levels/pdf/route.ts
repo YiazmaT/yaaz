@@ -1,24 +1,13 @@
 import {LogModule} from "@/src/lib/logger";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
 import {withAuth} from "@/src/lib/route-handler";
+import {STATUS_LABELS, TYPE_LABELS} from "@/src/pages-content/reports/dto";
 import {NextRequest, NextResponse} from "next/server";
 
 const ROUTE = "/api/reports/stock/stock-levels/pdf";
 
-const TYPE_LABELS: Record<string, string> = {
-  ingredient: "Insumo",
-  product: "Produto",
-  package: "Embalagem",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  ok: "OK",
-  low: "Baixo",
-  critical: "Crítico",
-};
-
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.REPORTS, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.REPORTS, ROUTE, async ({auth, log}) => {
     const {searchParams} = new URL(req.url);
     const dataStr = searchParams.get("data") || "[]";
     const generatedAt = searchParams.get("generatedAt") || "";

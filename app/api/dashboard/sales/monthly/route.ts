@@ -1,14 +1,14 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 import {startOfMonth, endOfMonth, getDaysInMonth, getDate} from "date-fns";
 import {toZonedTime, fromZonedTime} from "date-fns-tz";
 
 const ROUTE = "/api/dashboard/sales/monthly";
 
 export async function GET(request: NextRequest) {
-  return withAuth(LogModule.DASHBOARD, ROUTE, async (auth, log) => {
+  return withAuth(LogModule.DASHBOARD, ROUTE, async ({auth, success}) => {
     const {searchParams} = new URL(request.url);
     const timezone = searchParams.get("timezone") || "UTC";
 
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 
     const averageTicket = sales.length > 0 ? monthTotal / sales.length : 0;
 
-    const returnPayload = {
+    return success("get", {
       days: dailyTotals,
       count: sales.length,
       averageTicket,
@@ -71,10 +71,6 @@ export async function GET(request: NextRequest) {
         start: zonedStart.toISOString(),
         end: zonedEnd.toISOString(),
       },
-    };
-
-    log("get", {content: returnPayload});
-
-    return NextResponse.json(returnPayload);
+    });
   });
 }

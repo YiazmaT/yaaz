@@ -3,12 +3,12 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {StockChangeDto} from "@/src/pages-content/products/dto";
 import {ProductStockChangeReason} from "@/src/pages-content/products/types";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/product/stock-change";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
     const {productId, newStock, reason, comment}: StockChangeDto = await req.json();
 
     if (!productId || newStock === undefined || newStock === null || !reason) {
@@ -46,8 +46,6 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
-    log("create", {content: {productId, previousStock, newStock, reason, comment}});
-
-    return NextResponse.json({success: true}, {status: 200});
+    return success("create", {productId, previousStock, newStock, reason, comment});
   });
 }

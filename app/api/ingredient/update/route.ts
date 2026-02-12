@@ -2,12 +2,12 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl, uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/ingredient/update";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.INGREDIENT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.INGREDIENT, ROUTE, async ({auth, success, error}) => {
     const formData = await req.formData();
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
@@ -50,8 +50,6 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    log("update", {content: {before: existingIngredient, after: ingredient}});
-
-    return NextResponse.json({success: true, ingredient}, {status: 200});
+    return success("update", ingredient, {before: existingIngredient, after: ingredient});
   });
 }

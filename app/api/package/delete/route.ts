@@ -3,12 +3,12 @@ import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {DeletePackageDto} from "@/src/pages-content/packages/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/package/delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.PACKAGE, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {
     const {id}: DeletePackageDto = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);
@@ -32,8 +32,6 @@ export async function DELETE(req: NextRequest) {
 
     await prisma.package.delete({where: {id}});
 
-    log("delete", {content: pkg});
-
-    return NextResponse.json({success: true}, {status: 200});
+    return success("delete", {package: pkg});
   });
 }

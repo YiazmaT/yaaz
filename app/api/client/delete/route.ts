@@ -3,12 +3,12 @@ import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {DeleteClientDto} from "@/src/pages-content/client/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/client/delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.CLIENT, ROUTE, async (auth, log, error) => {
+  return withAuth(LogModule.CLIENT, ROUTE, async ({auth, success, error}) => {
     const {id}: DeleteClientDto = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);
@@ -27,8 +27,6 @@ export async function DELETE(req: NextRequest) {
 
     await prisma.client.delete({where: {id}});
 
-    log("delete", {content: client});
-
-    return NextResponse.json({success: true}, {status: 200});
+    return success("delete", client);
   });
 }
