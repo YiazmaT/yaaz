@@ -26,6 +26,7 @@ model Tenant {
   ingredient_stock_changes IngredientStockChange[]
   package_stock_changes    PackageStockChange[]
   clients                  Client[]
+  client_addresses         ClientAddress[]
 
   @@map("tenant")
   @@schema("data")

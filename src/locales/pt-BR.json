@@ -425,8 +425,13 @@
     "deleteConfirm": "Tem certeza que deseja excluir este cliente?",
     "person": "Pessoa Física",
     "company": "Pessoa Jurídica",
+    "tabs": {
+      "general": "Geral",
+      "address": "Endereço"
+    },
     "fields": {
       "name": "Nome",
+      "description": "Descrição",
       "image": "Foto",
       "email": "E-mail",
       "phone": "Telefone",
@@ -434,7 +439,14 @@
       "cnpj": "CNPJ",
       "cpfCnpj": "CPF / CNPJ",
       "type": "Tipo",
-      "isCompany": "Pessoa Jurídica"
+      "isCompany": "Pessoa Jurídica",
+      "cep": "CEP",
+      "address": "Logradouro",
+      "number": "Número",
+      "complement": "Complemento",
+      "neighborhood": "Bairro",
+      "city": "Cidade",
+      "state": "Estado"
     },
     "errors": {
       "invalidCpf": "CPF inválido",

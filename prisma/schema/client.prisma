@@ -1,15 +1,17 @@
 model Client {
-  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenant_id  String  @db.Uuid
-  name       String
-  image      String?
-  email      String?
-  phone      String?
-  cnpj       String?
-  cpf        String?
-  is_company Boolean @default(false)
-  tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  sales      Sale[]
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id   String  @db.Uuid
+  name        String
+  description String?
+  image       String?
+  email       String?
+  phone       String?
+  cnpj        String?
+  cpf         String?
+  is_company  Boolean @default(false)
+  tenant      Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  sales       Sale[]
+  address     ClientAddress?
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())
@@ -19,5 +21,30 @@ model Client {
   last_editor    User?     @relation("ClientEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
 
   @@map("client")
+  @@schema("data")
+}
+
+model ClientAddress {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id    String  @db.Uuid
+  client_id    String  @unique @db.Uuid
+  cep          String?
+  address      String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  city         String?
+  state        String?
+  tenant       Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  client       Client  @relation(fields: [client_id], references: [id], onDelete: Cascade)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("ClientAddressCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("ClientAddressEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@map("client_address")
   @@schema("data")
 }

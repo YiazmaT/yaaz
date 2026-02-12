@@ -46,11 +46,13 @@ export function useClients() {
   async function submit(data: ClientFormValues) {
     const formData = new FormData();
     formData.append("name", data.name);
+    formData.append("description", data.description || "");
     formData.append("email", data.email || "");
     formData.append("phone", data.phone || "");
     formData.append("cpf", data.cpf || "");
     formData.append("cnpj", data.cnpj || "");
     formData.append("isCompany", String(data.isCompany));
+    formData.append("address", JSON.stringify(data.address));
 
     if (data.image instanceof File) {
       formData.append("image", data.image);
@@ -94,12 +96,22 @@ export function useClients() {
   function populateForm(row: Client) {
     reset({
       name: row.name,
+      description: row.description || "",
       email: row.email || "",
       phone: row.phone || "",
       cpf: row.cpf || "",
       cnpj: row.cnpj || "",
       image: row.image,
       isCompany: row.isCompany,
+      address: {
+        cep: row.address?.cep || "",
+        address: row.address?.address || "",
+        number: row.address?.number || "",
+        complement: row.address?.complement || "",
+        neighborhood: row.address?.neighborhood || "",
+        city: row.address?.city || "",
+        state: row.address?.state || "",
+      },
     });
   }
 

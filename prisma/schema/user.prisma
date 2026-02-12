@@ -27,6 +27,8 @@ model User {
   created_package_stock_changes    PackageStockChange[]    @relation("PackageStockChangeCreator")
   created_clients                  Client[]                @relation("ClientCreator")
   edited_clients                   Client[]                @relation("ClientEditor")
+  created_client_addresses         ClientAddress[]         @relation("ClientAddressCreator")
+  edited_client_addresses          ClientAddress[]         @relation("ClientAddressEditor")
 
   @@map("user")
   @@schema("data")

@@ -4,14 +4,26 @@ import {isValidCPF, isValidCNPJ} from "@/src/utils/cpf-cnpj";
 import {validEmailRegex} from "@/src/utils/regex";
 import * as yup from "yup";
 
+export interface ClientAddressFormValues {
+  cep: string;
+  address: string;
+  number: string;
+  complement: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+}
+
 export interface ClientFormValues {
   name: string;
+  description: string;
   email: string;
   phone: string;
   cpf: string;
   cnpj: string;
   image: ImageInputValue;
   isCompany: boolean;
+  address: ClientAddressFormValues;
 }
 
 export function useClientFormConfig() {
@@ -37,12 +49,22 @@ export function useClientFormConfig() {
 
   const defaultValues: ClientFormValues = {
     name: "",
+    description: "",
     email: "",
     phone: "",
     cpf: "",
     cnpj: "",
     image: null,
     isCompany: false,
+    address: {
+      cep: "",
+      address: "",
+      number: "",
+      complement: "",
+      neighborhood: "",
+      city: "",
+      state: "",
+    },
   };
 
   return {schema, defaultValues};

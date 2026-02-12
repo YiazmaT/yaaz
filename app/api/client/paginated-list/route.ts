@@ -33,6 +33,11 @@ export async function GET(req: NextRequest) {
         take: limit,
         orderBy: {name: "asc"},
         omit: {creation_date: true, creator_id: true, last_edit_date: true, last_editor_id: true},
+        include: {
+          address: {
+            omit: {tenant_id: true, client_id: true, creation_date: true, creator_id: true, last_edit_date: true, last_editor_id: true},
+          },
+        },
       }),
       prisma.client.count({where}),
     ]);
