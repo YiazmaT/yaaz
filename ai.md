@@ -57,12 +57,19 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 - Numeric fields must be casted before returning to front, do it at prisma.extensions.ts;
 - All authenticated endpoints must use `withAuth` from `src/lib/route-handler.ts`;
 - `withAuth(module, route, handler)` handles auth, try/catch, and logCritical automatically;
-- Handler receives `(auth, log, error)`:
+- Handler receives a destructured context object `{auth, success, error, log}` — only destructure what you need;
   - `auth` has `user`, `tenant_id`, `tenant` (already validated);
-  - `log(action, params?)` — action: "create" | "update" | "delete" | "get" | "important" | "error" | "critical";
-  - `error(message, status, content?)` — logs the error and returns `NextResponse.json({error: message}, {status})`;
-- create a `const ROUTE = "/api/ingredient/paginated-list";` with the route of the endpoint;
-- Whenever possible, bring all the data at once and formated thorugh the postgres query, avoid manipulating data on javascript. If you can't bring the data from orm directly, use query string;
+  - `success(action, data?, logContent?)` — logs and returns `{data}` with status 200. If `logContent` is provided, logs that instead of `data` (useful for update routes that log `{before, after}`);
+  - `error(message, status, content?)` — logs the error and returns `{error: message}` with the given status;
+  - `log(action, params?)` — standalone logging, only use when `success()` can't be used (PDF routes, special responses);
+- Response patterns:
+  - Normal success: `return success("create", entity)` → responds `{data: entity}`;
+  - Update with before/after log: `return success("update", entity, {before: old, after: entity})` → responds `{data: entity}`, logs `{before, after}`;
+  - Warning flows (stock/price): return `NextResponse.json({success: false, stockWarnings, ...})` directly — frontend checks `result?.success === false`;
+  - Paginated lists: `return success("get", {data, total, page, limit})`;
+  - PDF routes: keep `log()` + `return new NextResponse(html, {headers: {"Content-Type": "text/html; charset=utf-8"}})`;
+- Create a `const ROUTE = "/api/ingredient/paginated-list";` with the route of the endpoint;
+- Whenever possible, bring all the data at once and formated through the postgres query, avoid manipulating data on javascript. If you can't bring the data from orm directly, use query string;
 
 # Component beauty
 
@@ -97,24 +104,21 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 
 # Logging
 
-- Log everything returned to the frontend;
-- `withAuth` handles module, source, route, userId, tenantId automatically — just pass unique params;
-- `log(action, params?)` — action maps to the same log functions internally;
-- `error(message, status, content?)` — logs as error and returns the response;
+- All logging is handled through `success()`, `error()`, and `log()` from `withAuth` — module, source, route, userId, tenantId are pre-filled;
 - logCritical (catch blocks) is handled by `withAuth` automatically;
 - Add new modules to LogModule enum as you create them;
 - Content guidelines:
-  - create: full created entity;
-  - update: `{before, after}`;
-  - delete: full deleted entity;
-  - get: full response;
-  - error: data that can help debug;
-  - important: special cases like login/logout;
+  - create: full created entity via `success("create", entity)`;
+  - update: entity returned, before/after logged via `success("update", entity, {before: old, after: entity})`;
+  - delete: full deleted entity via `success("delete", entity)`;
+  - get: full response via `success("get", data)`;
+  - error: via `error("translationKey", status, debugData?)`;
+  - important: special cases via `success("important", undefined, logData)`;
 - Examples:
-  - `log("create", {content: ingredient});`
-  - `log("update", {content: {before: existingIngredient, after: ingredient}});`
-  - `log("delete", {content: ingredient});`
-  - `log("get", {content: response});`
+  - `return success("create", ingredient);`
+  - `return success("update", ingredient, {before: existingIngredient, after: ingredient});`
+  - `return success("delete", ingredient);`
+  - `return success("get", {data, total, page, limit});`
   - `return error("api.errors.missingRequiredFields", 400);`
   - `return error("api.errors.uploadFailed", 400, uploadResult);`
 
