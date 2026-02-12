@@ -1,20 +1,6 @@
 "use client";
 import {useRef, useState} from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import {Box, CircularProgress, IconButton, List, ListItem, Tooltip, Typography, useMediaQuery, useTheme} from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -24,10 +10,9 @@ import {useApi} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
-import {useMediaQuery, useTheme} from "@mui/material";
 import {flexGenerator} from "@/src/utils/flex-generator";
-import {blackOrWhite} from "@/src/utils/black-or-white";
 import {extractFileName} from "@/src/utils/extract-file-name";
+import {GenericModal} from "@/src/components/generic-modal";
 import {FilesModalProps} from "./types";
 
 const MAX_FILES = 5;
@@ -42,7 +27,6 @@ export function FilesModal(props: FilesModalProps) {
   const theme = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const buttonTextColor = blackOrWhite(theme.palette.primary.main);
 
   async function uploadFile(file: File) {
     if (file.size > props.maxFileSizeMb * 1024 * 1024) {
@@ -132,16 +116,8 @@ export function FilesModal(props: FilesModalProps) {
   }
 
   return (
-    <Dialog open={props.open} onClose={props.onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{...flexGenerator("r.center.space-between")}}>
-        <Typography variant="h6" component="span">
-          {translate("products.files.title")} - {props.productName}
-        </Typography>
-        <IconButton onClick={props.onClose} size="small">
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+    <GenericModal open={props.open} onClose={props.onClose} title={`${translate("products.files.title")} - ${props.productName}`}>
+      <Box onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
         <Box sx={{...flexGenerator("r.center.space-between"), mb: 2}}>
           <Typography variant="body2" color="text.secondary">
             {props.files.length}/{MAX_FILES} {translate("products.files.counter")}
@@ -180,7 +156,10 @@ export function FilesModal(props: FilesModalProps) {
         ) : (
           <List sx={{maxHeight: 400, overflow: "auto"}}>
             {props.files.map((fileUrl) => (
-              <ListItem key={fileUrl} sx={{borderBottom: "1px solid", borderColor: "divider", ...flexGenerator(isMobile ? "c" : "r.center.space-between"), gap: 1, py: 1}}>
+              <ListItem
+                key={fileUrl}
+                sx={{borderBottom: "1px solid", borderColor: "divider", ...flexGenerator(isMobile ? "c" : "r.center.space-between"), gap: 1, py: 1}}
+              >
                 <Box sx={{...flexGenerator("r.center"), gap: 1, minWidth: 0, flex: 1, ...(isMobile && {alignSelf: "flex-start"})}}>
                   <InsertDriveFileIcon sx={{color: "text.secondary", flexShrink: 0}} fontSize="small" />
                   <Tooltip title={extractFileName(fileUrl)} placement="top">
@@ -210,7 +189,7 @@ export function FilesModal(props: FilesModalProps) {
             ))}
           </List>
         )}
-      </DialogContent>
-    </Dialog>
+      </Box>
+    </GenericModal>
   );
 }

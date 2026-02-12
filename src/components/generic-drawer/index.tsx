@@ -10,7 +10,7 @@ export function GenericDrawer(props: PropsWithChildren<GenericDrawerProps>) {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <Drawer anchor="right" open={props.show} onClose={props.onClose}>
+    <Drawer anchor="right" open={props.show} onClose={(_, reason) => { if (reason === "backdropClick") return; props.onClose(); }}>
       <Box sx={{width: isMobile ? "100vw" : 500, height: "100%", display: "flex", flexDirection: "column"}}>
         <Box
           sx={{

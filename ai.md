@@ -78,6 +78,8 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 # Useful components
 
 - When dispalying an Image, use the component ImagePreview;
+- When you need a modal/dialog, use GenericModal from /src/components/generic-modal. Never use MUI Dialog or Modal directly;
+- When you need a side drawer (forms, etc), use GenericDrawer from /src/components/generic-drawer. Never use MUI Drawer directly;
 
 # Forms ... Oh boy we are going to see a lot of these around here.
 
