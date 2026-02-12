@@ -6,7 +6,7 @@ import {useApiQuery} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {flexGenerator} from "@/src/utils/flex-generator";
-import {CostHistoryModalProps, CostHistoryResponse} from "./types";
+import {CostHistoryItem, CostHistoryModalProps} from "./types";
 
 export function CostHistoryModal(props: CostHistoryModalProps) {
   const {translate} = useTranslate();
@@ -20,9 +20,7 @@ export function CostHistoryModal(props: CostHistoryModalProps) {
     enabled: props.open && !!props.packageId,
   });
 
-  const sortedData = result
-    ? [...result].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    : [];
+  const sortedData = result ? [...result].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) : [];
   const dates = sortedData.map((item) => new Date(item.date));
   const prices = sortedData.map((item) => item.costPerUnit);
 
