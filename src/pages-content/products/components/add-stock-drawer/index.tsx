@@ -51,11 +51,7 @@ export const AddStockDrawer = forwardRef<AddStockDrawerRef, AddStockDrawerProps>
       body: {items, deductIngredients, deductPackages, force},
     });
 
-    if (result?.success) {
-      toast.successToast("products.addStockSuccess");
-      handleClose();
-      onSuccess?.();
-    } else {
+    if (result?.success === false) {
       const hasIngredientWarnings = result?.ingredientWarnings && result.ingredientWarnings.length > 0;
       const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
 
@@ -71,6 +67,13 @@ export const AddStockDrawer = forwardRef<AddStockDrawerRef, AddStockDrawerProps>
           onConfirm: () => handleSubmit(true),
         });
       }
+      return;
+    }
+
+    if (result) {
+      toast.successToast("products.addStockSuccess");
+      handleClose();
+      onSuccess?.();
     }
   }
 

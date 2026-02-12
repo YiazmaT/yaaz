@@ -54,7 +54,8 @@ export function AsyncDropdown<T extends object>(props: AsyncDropdownProps<T>) {
           `${props.apiRoute}?search=${encodeURIComponent(search)}&page=${page}&limit=${PAGE_SIZE}${extraParams}`,
         );
         if (response.ok) {
-          const result = await response.json();
+          const json = await response.json();
+          const result = json.data !== undefined ? json.data : json;
           const newData: T[] = result.data || [];
           totalRef.current = result.total ?? 0;
           pageRef.current = page;

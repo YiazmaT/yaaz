@@ -14,13 +14,11 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
   const {translate} = useTranslate();
   const {stockChangeReasons} = usePackagesConstants();
 
-  const {data, isLoading} = useApiQuery<StockHistoryResponse>({
+  const {data: history = [], isLoading} = useApiQuery<StockHistoryItem[]>({
     queryKey: ["stock-history", "package", props.packageId],
     route: `/api/package/stock-history?packageId=${props.packageId}`,
     enabled: props.open && !!props.packageId,
   });
-
-  const history = data?.history ?? [];
 
   function getReasonLabel(reason: string | null): string {
     if (!reason) return "";

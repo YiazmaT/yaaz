@@ -46,7 +46,8 @@ async function fetchInternal<T = any>(
   });
 
   if (response.status === 200 || response.status === 201) {
-    return await response.json();
+    const json = await response.json();
+    return json.data !== undefined ? json.data : json;
   }
 
   if (response.status === 401) {

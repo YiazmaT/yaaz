@@ -165,7 +165,7 @@ export async function PUT(req: NextRequest) {
 
     const hasWarnings = stockWarnings.length > 0 || packageWarnings.length > 0;
     if (hasWarnings && !force) {
-      return NextResponse.json({success: false, stockWarnings, packageWarnings}, {status: 200});
+      return success("update", {success: false, stockWarnings, packageWarnings});
     }
 
     const approximateCost = await calculateApproximateCost(items || [], packages || [], auth.tenant_id);

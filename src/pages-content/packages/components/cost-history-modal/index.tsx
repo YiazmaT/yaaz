@@ -14,14 +14,14 @@ export function CostHistoryModal(props: CostHistoryModalProps) {
   const formatCurrency = useFormatCurrency();
   const primaryColor = theme.palette.primary.main;
 
-  const {data: result, isLoading} = useApiQuery<CostHistoryResponse>({
+  const {data: result, isLoading} = useApiQuery<CostHistoryItem[]>({
     queryKey: ["cost-history", "package", props.packageId],
     route: `/api/package/${props.packageId}/cost-history`,
     enabled: props.open && !!props.packageId,
   });
 
-  const sortedData = result?.data
-    ? [...result.data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  const sortedData = result
+    ? [...result].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     : [];
   const dates = sortedData.map((item) => new Date(item.date));
   const prices = sortedData.map((item) => item.costPerUnit);

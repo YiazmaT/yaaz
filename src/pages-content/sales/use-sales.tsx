@@ -95,11 +95,15 @@ export function useSales() {
         <Box sx={{mt: 2, p: 1.5, backgroundColor: "grey.100", borderRadius: 1}}>
           <Box sx={{display: "flex", justifyContent: "space-between", mb: 0.5}}>
             <Typography variant="body2">{translate("sales.priceChangeWarning.originalTotal")}</Typography>
-            <Typography variant="body2" fontWeight={600}>{formatCurrency(props.originalTotal)}</Typography>
+            <Typography variant="body2" fontWeight={600}>
+              {formatCurrency(props.originalTotal)}
+            </Typography>
           </Box>
           <Box sx={{display: "flex", justifyContent: "space-between"}}>
             <Typography variant="body2">{translate("sales.priceChangeWarning.newTotal")}</Typography>
-            <Typography variant="body2" fontWeight={600} color="warning.main">{formatCurrency(props.newTotal)}</Typography>
+            <Typography variant="body2" fontWeight={600} color="warning.main">
+              {formatCurrency(props.newTotal)}
+            </Typography>
           </Box>
         </Box>
       </Box>
@@ -199,56 +203,55 @@ export function useSales() {
       async function submitUpdate(updateBody: typeof body & {id: string; updatePrices?: boolean}) {
         const result = await api.fetch<CreateSaleResponse>("PUT", "/api/sale/update", {body: updateBody});
 
-        if (result?.success) {
+        if (result?.success === false) {
+          const hasPriceWarnings = result?.priceChangeWarnings && result.priceChangeWarnings.length > 0;
+          if (hasPriceWarnings) {
+            const originalTotal = data.items.reduce((acc, item) => {
+              const price = item.unit_price || item.product.price.toString();
+              return acc.plus(new Decimal(price).times(item.quantity));
+            }, new Decimal(0));
+            const newTotal = data.items.reduce((acc, item) => {
+              return acc.plus(new Decimal(item.product.price).times(item.quantity));
+            }, new Decimal(0));
+
+            showConfirmModal({
+              title: "sales.priceChangeWarning.title",
+              message: "sales.priceChangeWarning.message",
+              content: (
+                <PriceChangeWarningsList
+                  warnings={result.priceChangeWarnings!}
+                  originalTotal={originalTotal.toString()}
+                  newTotal={newTotal.toString()}
+                />
+              ),
+              onConfirm: () => submitUpdate({...updateBody, updatePrices: true}),
+              onCancel: () => submitUpdate({...updateBody, updatePrices: false}),
+            });
+            return false;
+          }
+
+          const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
+          const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
+          if (hasProductWarnings || hasPackageWarnings) {
+            showConfirmModal({
+              message: "sales.negativeStockWarning",
+              content: <StockWarningsList productWarnings={result?.stockWarnings || []} packageWarnings={result?.packageWarnings || []} />,
+              onConfirm: async () => {
+                await submitUpdate({...updateBody, force: true});
+              },
+            });
+            return false;
+          }
+
+          return false;
+        }
+
+        if (result) {
           toast.successToast("sales.updateSuccess");
           reset();
           closeDrawer();
           refreshTable();
           return true;
-        }
-
-        const hasPriceWarnings = result?.priceChangeWarnings && result.priceChangeWarnings.length > 0;
-        if (hasPriceWarnings) {
-          const originalTotal = data.items.reduce((acc, item) => {
-            const price = item.unit_price || item.product.price.toString();
-            return acc.plus(new Decimal(price).times(item.quantity));
-          }, new Decimal(0));
-          const newTotal = data.items.reduce((acc, item) => {
-            return acc.plus(new Decimal(item.product.price).times(item.quantity));
-          }, new Decimal(0));
-
-          showConfirmModal({
-            title: "sales.priceChangeWarning.title",
-            message: "sales.priceChangeWarning.message",
-            content: (
-              <PriceChangeWarningsList
-                warnings={result.priceChangeWarnings!}
-                originalTotal={originalTotal.toString()}
-                newTotal={newTotal.toString()}
-              />
-            ),
-            onConfirm: () => submitUpdate({...updateBody, updatePrices: true}),
-            onCancel: () => submitUpdate({...updateBody, updatePrices: false}),
-          });
-          return false;
-        }
-
-        const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
-        const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
-        if (hasProductWarnings || hasPackageWarnings) {
-          showConfirmModal({
-            message: "sales.negativeStockWarning",
-            content: (
-              <StockWarningsList
-                productWarnings={result?.stockWarnings || []}
-                packageWarnings={result?.packageWarnings || []}
-              />
-            ),
-            onConfirm: async () => {
-              await submitUpdate({...updateBody, force: true});
-            },
-          });
-          return false;
         }
 
         return false;
@@ -258,12 +261,7 @@ export function useSales() {
     } else {
       const result = await api.fetch<CreateSaleResponse>("POST", "/api/sale/create", {body});
 
-      if (result?.success) {
-        toast.successToast("sales.createSuccess");
-        reset();
-        closeDrawer();
-        refreshTable();
-      } else {
+      if (result?.success === false) {
         const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
         const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
 
@@ -271,15 +269,10 @@ export function useSales() {
           const forceBody = {...body, force: true};
           showConfirmModal({
             message: "sales.negativeStockWarning",
-            content: (
-              <StockWarningsList
-                productWarnings={result?.stockWarnings || []}
-                packageWarnings={result?.packageWarnings || []}
-              />
-            ),
+            content: <StockWarningsList productWarnings={result?.stockWarnings || []} packageWarnings={result?.packageWarnings || []} />,
             onConfirm: async () => {
               const forceResult = await api.fetch<CreateSaleResponse>("POST", "/api/sale/create", {body: forceBody});
-              if (forceResult?.success) {
+              if (forceResult) {
                 toast.successToast("sales.createSuccess");
                 reset();
                 closeDrawer();
@@ -288,6 +281,11 @@ export function useSales() {
             },
           });
         }
+      } else if (result) {
+        toast.successToast("sales.createSuccess");
+        reset();
+        closeDrawer();
+        refreshTable();
       }
     }
   }
@@ -351,31 +349,26 @@ export function useSales() {
       onConfirm: async () => {
         const result = await api.fetch<ConvertQuoteResponse>("PUT", "/api/sale/convert-quote", {body: {id: row.id}});
 
-        if (result?.success) {
-          toast.successToast("sales.convertQuoteSuccess");
-          refreshTable();
-        } else {
+        if (result?.success === false) {
           const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
           const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
 
           if (hasProductWarnings || hasPackageWarnings) {
             showConfirmModal({
               message: "sales.negativeStockWarning",
-              content: (
-                <StockWarningsList
-                  productWarnings={result?.stockWarnings || []}
-                  packageWarnings={result?.packageWarnings || []}
-                />
-              ),
+              content: <StockWarningsList productWarnings={result?.stockWarnings || []} packageWarnings={result?.packageWarnings || []} />,
               onConfirm: async () => {
                 const forceResult = await api.fetch<ConvertQuoteResponse>("PUT", "/api/sale/convert-quote", {body: {id: row.id, force: true}});
-                if (forceResult?.success) {
+                if (forceResult) {
                   toast.successToast("sales.convertQuoteSuccess");
                   refreshTable();
                 }
               },
             });
           }
+        } else if (result) {
+          toast.successToast("sales.convertQuoteSuccess");
+          refreshTable();
         }
       },
     });

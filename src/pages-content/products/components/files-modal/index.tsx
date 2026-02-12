@@ -62,9 +62,9 @@ export function FilesModal(props: FilesModalProps) {
 
     await api.fetch("POST", "/api/product/upload-file", {
       formData,
-      onSuccess: (data: {files: string[]}) => {
+      onSuccess: (data: string[]) => {
         toast.successToast("products.files.uploadSuccess");
-        props.onFilesChange(data.files);
+        props.onFilesChange(data);
       },
     });
     setUploading(false);
@@ -122,9 +122,9 @@ export function FilesModal(props: FilesModalProps) {
       onConfirm: async () => {
         await api.fetch("DELETE", "/api/product/delete-file", {
           body: {productId: props.productId, fileUrl},
-          onSuccess: (data: {files: string[]}) => {
+          onSuccess: (data: string[]) => {
             toast.successToast("products.files.deleteSuccess");
-            props.onFilesChange(data.files);
+            props.onFilesChange(data);
           },
         });
       },
