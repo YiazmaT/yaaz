@@ -25,6 +25,11 @@ export function MobileView(props: MobileViewProps) {
             <Typography variant="subtitle1" fontWeight={600} noWrap>
               {item.name}
             </Typography>
+            {item.description && (
+              <Typography variant="body2" color="text.secondary" noWrap>
+                {item.description}
+              </Typography>
+            )}
             {item.email && (
               <Typography variant="body2" color="text.secondary" noWrap>
                 {item.email}
@@ -45,26 +50,24 @@ export function MobileView(props: MobileViewProps) {
                 {formatCPF(item.cpf)}
               </Typography>
             )}
-            <Chip
-              label={item.isCompany ? translate("clients.company") : translate("clients.person")}
-              size="small"
-              color={item.isCompany ? "primary" : "default"}
-              variant="outlined"
-              sx={{mt: 0.5, width: "fit-content"}}
-            />
           </Box>
         </Box>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
+            ...flexGenerator("r.center.space-between"),
             gap: 1,
             marginTop: 1,
             paddingTop: 1,
             borderTop: `1px solid ${theme.palette.divider}`,
           }}
         >
+          <Chip
+            label={item.isCompany ? translate("clients.company") : translate("clients.person")}
+            size="small"
+            color={item.isCompany ? "primary" : "default"}
+            variant="outlined"
+            sx={{mt: 0.5, width: "fit-content"}}
+          />
           {actions}
         </Box>
       </CardContent>

@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
           tenant_id: auth.tenant_id,
           OR: [
             {name: {contains: search, mode: "insensitive" as const}},
+            {description: {contains: search, mode: "insensitive" as const}},
             {email: {contains: search, mode: "insensitive" as const}},
             {phone: {contains: search, mode: "insensitive" as const}},
             {cpf: {contains: search, mode: "insensitive" as const}},

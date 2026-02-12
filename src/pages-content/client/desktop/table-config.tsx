@@ -20,12 +20,18 @@ export function useClientsTableConfig(props: ClientsTableConfigProps) {
       {
         field: "name",
         headerKey: "clients.fields.name",
-        width: "25%",
+        width: "20%",
+      },
+      {
+        field: "description",
+        headerKey: "clients.fields.description",
+        width: "15%",
+        render: (row) => row.description || "-",
       },
       {
         field: "email",
         headerKey: "clients.fields.email",
-        width: "20%",
+        width: "15%",
         render: (row) => row.email || "-",
       },
       {
@@ -37,7 +43,7 @@ export function useClientsTableConfig(props: ClientsTableConfigProps) {
       {
         field: "cpf",
         headerKey: "clients.fields.cpfCnpj",
-        width: "15%",
+        width: "10%",
         render: (row) => {
           if (row.isCompany && row.cnpj) return formatCNPJ(row.cnpj);
           if (!row.isCompany && row.cpf) return formatCPF(row.cpf);
