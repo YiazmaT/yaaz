@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     const dateFrom = searchParams.get("dateFrom") || "";
     const dateTo = searchParams.get("dateTo") || "";
     const productId = searchParams.get("productId") || "";
-    const timezone = searchParams.get("timezone") || "America/Sao_Paulo";
+    const timezone = auth.tenant.time_zone;
 
     if (!dateFrom || !dateTo) return error("api.errors.missingRequiredFields", 400);
 

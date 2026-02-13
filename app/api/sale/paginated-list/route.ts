@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     const dateTo = searchParams.get("dateTo") || "";
     const valueFrom = searchParams.get("valueFrom") || "";
     const valueTo = searchParams.get("valueTo") || "";
-    const timezone = searchParams.get("timezone") || "America/Sao_Paulo";
+    const timezone = auth.tenant.time_zone;
     const skip = (page - 1) * limit;
 
     const where: any = {tenant_id: auth.tenant_id};

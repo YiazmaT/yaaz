@@ -7,7 +7,6 @@ import {Box, Grid} from "@mui/material";
 import {FormDatePicker} from "@/src/components/form-fields/date-picker";
 import {FormAsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {FormContextProvider} from "@/src/contexts/form-context";
-import {useTenant} from "@/src/contexts/tenant-context";
 import {useApi} from "@/src/hooks/use-api";
 import {ReportCard} from "../../components/report-card";
 import {ProfitMarginResult} from "./result";
@@ -20,10 +19,8 @@ const today = moment().format("YYYY-MM-DD");
 export function ProfitMarginReport() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<{data: ProfitMarginRow[]; filters: ProfitMarginFilters} | null>(null);
-  const {tenant} = useTenant();
   const {schema, defaultValues} = useProfitMarginFormConfig();
   const api = useApi();
-  const timeZone = tenant?.time_zone;
 
   const {
     control,
@@ -36,12 +33,10 @@ export function ProfitMarginReport() {
   });
 
   async function generate(data: ProfitMarginFilters) {
-    if (!timeZone) return;
     setIsGenerating(true);
     const params = new URLSearchParams();
     params.append("dateFrom", data.dateFrom);
     params.append("dateTo", data.dateTo);
-    params.append("timezone", timeZone);
     if (data.product?.id) params.append("productId", data.product.id);
 
     const response = await api.fetch<ProfitMarginRow[]>("GET", `/api/reports/sales/profit-margin?${params.toString()}`, {hideLoader: true});

@@ -3,16 +3,13 @@ import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@m
 import CalendarViewWeekIcon from "@mui/icons-material/CalendarViewWeek";
 import {BarChart} from "@mui/x-charts/BarChart";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useTenant} from "@/src/contexts/tenant-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {WeeklySalesResponse} from "../dto";
 
 export function WeeklySalesCard() {
   const {translate} = useTranslate();
-  const {tenant} = useTenant();
   const theme = useTheme();
-  const timeZone = tenant?.time_zone;
   const formatCurrency = useFormatCurrency();
   const primaryColor = theme.palette.primary.main;
 
@@ -27,9 +24,8 @@ export function WeeklySalesCard() {
   ];
 
   const {data, isLoading} = useApiQuery<WeeklySalesResponse>({
-    queryKey: ["dashboard", "sales", "weekly", timeZone],
-    route: `/api/dashboard/sales/weekly?timezone=${encodeURIComponent(timeZone!)}`,
-    enabled: !!timeZone,
+    queryKey: ["dashboard", "sales", "weekly"],
+    route: "/api/dashboard/sales/weekly",
   });
 
   function getDayLabels() {

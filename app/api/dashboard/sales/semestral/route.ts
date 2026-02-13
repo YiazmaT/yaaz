@@ -2,16 +2,14 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {ptBR} from "date-fns/locale";
-import {NextRequest} from "next/server";
 import {subMonths, startOfMonth, endOfMonth, getMonth, getYear, format} from "date-fns";
 import {toZonedTime, fromZonedTime} from "date-fns-tz";
 
 const ROUTE = "/api/dashboard/sales/semestral";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   return withAuth(LogModule.DASHBOARD, ROUTE, async ({auth, success}) => {
-    const {searchParams} = new URL(request.url);
-    const timezone = searchParams.get("timezone") || "UTC";
+    const timezone = auth.tenant.time_zone;
 
     const now = new Date();
     const zonedNow = toZonedTime(now, timezone);

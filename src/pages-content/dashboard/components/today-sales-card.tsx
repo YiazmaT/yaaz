@@ -2,24 +2,20 @@
 import {Box, Card, CardContent, CircularProgress, Typography} from "@mui/material";
 import TodayIcon from "@mui/icons-material/Today";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useTenant} from "@/src/contexts/tenant-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {TodaySalesResponse} from "../dto";
 
 export function TodaySalesCard() {
   const {translate} = useTranslate();
-  const {tenant} = useTenant();
-  const timeZone = tenant?.time_zone;
   const formatCurrency = useFormatCurrency();
 
   const today = new Date();
   const todayFormatted = `${today.getDate().toString().padStart(2, "0")}/${(today.getMonth() + 1).toString().padStart(2, "0")}`;
 
   const {data, isLoading} = useApiQuery<TodaySalesResponse>({
-    queryKey: ["dashboard", "sales", "today", timeZone],
-    route: `/api/dashboard/sales/today?timezone=${encodeURIComponent(timeZone!)}`,
-    enabled: !!timeZone,
+    queryKey: ["dashboard", "sales", "today"],
+    route: "/api/dashboard/sales/today",
   });
 
   return (

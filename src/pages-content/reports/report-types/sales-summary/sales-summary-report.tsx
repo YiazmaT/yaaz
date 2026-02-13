@@ -6,7 +6,6 @@ import moment from "moment";
 import {Box, Grid} from "@mui/material";
 import {FormDatePicker} from "@/src/components/form-fields/date-picker";
 import {FormContextProvider} from "@/src/contexts/form-context";
-import {useTenant} from "@/src/contexts/tenant-context";
 import {useApi} from "@/src/hooks/use-api";
 import {ReportCard} from "../../components/report-card";
 import {SalesSummaryResult} from "./result";
@@ -18,10 +17,8 @@ const today = moment().format("YYYY-MM-DD");
 export function SalesSummaryReport() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<{data: SalesSummaryRow[]; filters: SalesSummaryFilters} | null>(null);
-  const {tenant} = useTenant();
   const {schema, defaultValues} = useSalesSummaryFormConfig();
   const api = useApi();
-  const timeZone = tenant?.time_zone;
 
   const {
     control,
@@ -34,11 +31,10 @@ export function SalesSummaryReport() {
   });
 
   async function generate(data: SalesSummaryFilters) {
-    if (!timeZone) return;
     setIsGenerating(true);
     const response = await api.fetch<SalesSummaryRow[]>(
       "GET",
-      `/api/reports/sales/sales-summary?dateFrom=${data.dateFrom}&dateTo=${data.dateTo}&timezone=${timeZone}`,
+      `/api/reports/sales/sales-summary?dateFrom=${data.dateFrom}&dateTo=${data.dateTo}`,
       {hideLoader: true},
     );
 

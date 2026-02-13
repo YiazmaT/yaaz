@@ -6,16 +6,13 @@ import {Grid} from "@mui/material";
 import {DatePicker} from "@/src/components/form-fields/date-picker";
 import {CurrencyInput} from "@/src/components/form-fields/currency-input";
 import {FilterDrawer} from "@/src/components/filter-drawer";
-import {useTenant} from "@/src/contexts/tenant-context";
 import {SalesFiltersProps, SalesFilterFormValues} from "./types";
 import {useSalesFilterFormConfig} from "./form-config";
 import moment from "moment";
 
 export function SalesFilters(props: SalesFiltersProps) {
   const [filtersApplied, setFiltersApplied] = useState(false);
-  const {tenant} = useTenant();
   const {schema, defaultValues} = useSalesFilterFormConfig();
-  const timeZone = tenant?.time_zone;
   const today = moment().format("YYYY-MM-DD");
 
   const {
@@ -44,7 +41,6 @@ export function SalesFilters(props: SalesFiltersProps) {
       dateTo: data.dateTo || undefined,
       valueFrom: data.valueFrom && data.valueFrom !== "0" ? data.valueFrom : undefined,
       valueTo: data.valueTo && data.valueTo !== "0" ? data.valueTo : undefined,
-      timezone: hasDateFilters ? timeZone : undefined,
     });
   }
 

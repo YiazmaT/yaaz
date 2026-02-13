@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         tenant_id: user.tenant_id,
         tenant: user.tenant,
       },
-      process.env.JWT_SECRET ?? "default_secret",
+      process.env.JWT_SECRET!,
       {expiresIn},
     );
 

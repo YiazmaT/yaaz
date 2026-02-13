@@ -3,23 +3,19 @@ import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@m
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import {BarChart} from "@mui/x-charts/BarChart";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useTenant} from "@/src/contexts/tenant-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {SemestralSalesResponse} from "../dto";
 
 export function SemestralSalesCard() {
   const {translate} = useTranslate();
-  const {tenant} = useTenant();
   const theme = useTheme();
-  const timeZone = tenant?.time_zone;
   const formatCurrency = useFormatCurrency();
   const primaryColor = theme.palette.primary.main;
 
   const {data, isLoading} = useApiQuery<SemestralSalesResponse>({
-    queryKey: ["dashboard", "sales", "semestral", timeZone],
-    route: `/api/dashboard/sales/semestral?timezone=${encodeURIComponent(timeZone!)}`,
-    enabled: !!timeZone,
+    queryKey: ["dashboard", "sales", "semestral"],
+    route: "/api/dashboard/sales/semestral",
   });
 
   const labels = data?.months.map((m) => m.label) || [];

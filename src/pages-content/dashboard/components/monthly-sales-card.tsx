@@ -3,16 +3,13 @@ import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@m
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import {LineChart} from "@mui/x-charts/LineChart";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useTenant} from "@/src/contexts/tenant-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {MonthlySalesResponse} from "../dto";
 
 export function MonthlySalesCard() {
   const {translate} = useTranslate();
-  const {tenant} = useTenant();
   const theme = useTheme();
-  const timeZone = tenant?.time_zone;
   const formatCurrency = useFormatCurrency();
   const primaryColor = theme.palette.primary.main;
 
@@ -20,9 +17,8 @@ export function MonthlySalesCard() {
   const currentMonthCapitalized = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
 
   const {data, isLoading} = useApiQuery<MonthlySalesResponse>({
-    queryKey: ["dashboard", "sales", "monthly", timeZone],
-    route: `/api/dashboard/sales/monthly?timezone=${encodeURIComponent(timeZone!)}`,
-    enabled: !!timeZone,
+    queryKey: ["dashboard", "sales", "monthly"],
+    route: "/api/dashboard/sales/monthly",
   });
 
   const days = data?.days.map((d) => d.day) || [];
