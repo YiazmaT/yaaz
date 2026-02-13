@@ -129,3 +129,4 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 - whenever you need to add a text in contrast to a color, use blackOrWhite from utils;
 - whenever you need to validate an email, use validEmailRegex from utils;
 - whenever you need to get tenant or user informations, get it from useTenant, you also have this info at cookies;
+- whenever you need to display an entity name (product, ingredient, package, client), use the `buildName` function from the respective module's `utils.ts` (e.g. `import {buildName} from "@/src/pages-content/products/utils"`). This ensures a consistent format across dropdowns, selectors, mobile cards, dashboard, etc. Desktop table name columns are the exception — they keep the raw name since there's a dedicated code column;
