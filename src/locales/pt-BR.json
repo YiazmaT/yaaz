@@ -80,9 +80,28 @@
     "addStockTitle": "Adicionar Estoque",
     "addStockSuccess": "Estoque adicionado com sucesso!",
     "unity": "unidade",
+    "inactive": "Inativo",
+    "deactivateConfirm": "Tem certeza que deseja desativar este insumo?",
+    "deactivateInstead": "Este insumo está sendo usado em produtos e não pode ser excluído. Deseja desativá-lo?",
+    "activateConfirm": "Tem certeza que deseja ativar este insumo?",
+    "deactivateSuccess": "Insumo desativado com sucesso!",
+    "activateSuccess": "Insumo ativado com sucesso!",
+    "tooltipDeactivate": "Desativar insumo",
+    "tooltipActivate": "Ativar insumo",
+    "totalProducts": "Total: ",
     "errors": {
       "inUseByProducts": "Este insumo está sendo usado em produtos e não pode ser excluído.",
-      "quantityMustBeGreaterThanZero": "Todos os itens devem ter quantidade maior que zero."
+      "quantityMustBeGreaterThanZero": "Todos os itens devem ter quantidade maior que zero.",
+      "cannotDeactivateWithStock": "Não é possível desativar um insumo com estoque. Ajuste o estoque para zero antes de desativar.",
+      "cannotDeleteWithStock": "Não é possível excluir um insumo com estoque. Ajuste o estoque para zero antes de excluir."
+    },
+    "filters": {
+      "open": "Abrir Filtros",
+      "close": "Fechar Filtros",
+      "clear": "Limpar",
+      "apply": "Aplicar",
+      "clearTooltip": "Limpar Filtros",
+      "showInactives": "Mostrar insumos inativos"
     },
     "fields": {
       "name": "Nome",

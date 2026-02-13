@@ -165,7 +165,7 @@ export function useProducts() {
             refreshTable();
           },
           onError: (error) => {
-            if (error === "products.errors.inUseBySales") {
+            if (error === "products.errors.inUseBySales" && row.active) {
               showConfirmModal({
                 message: "products.deactivateInstead",
                 onConfirm: async () => {

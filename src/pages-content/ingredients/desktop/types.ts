@@ -10,4 +10,5 @@ export interface IngredientsTableConfigProps extends TableConfigProps<Ingredient
   onCostClick?: (row: Ingredient) => void;
   onStockChange: (row: Ingredient) => void;
   onStockHistoryClick: (row: Ingredient) => void;
+  onToggleActive: (row: Ingredient) => void;
 }

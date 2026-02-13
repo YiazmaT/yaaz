@@ -1,8 +1,11 @@
 "use client";
 import {ReactNode} from "react";
-import {Box, CardContent, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
+import {Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import {MobileList} from "@/src/components/mobile-list";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -10,9 +13,9 @@ import {Ingredient} from "../types";
 import {Form} from "../components/form";
 import {AddStockModal} from "../components/add-stock-drawer";
 import {StockChangeModal} from "../components/stock-change-modal";
+import {IngredientsFiltersComponent} from "../components/filters";
 import {MobileViewProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
-import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import {LinkifyText} from "@/src/components/linkify-text";
 
 export function MobileView(props: MobileViewProps) {
@@ -25,7 +28,10 @@ export function MobileView(props: MobileViewProps) {
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
         <Box sx={{display: "flex", gap: 2}}>
-          <ImagePreview url={item.image} alt={item.name} width={64} height={64} borderRadius={1} />
+          <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5}}>
+            <ImagePreview url={item.image} alt={item.name} width={64} height={64} borderRadius={1} />
+            {!item.active && <Chip label={translate("ingredients.inactive")} size="small" color="error" />}
+          </Box>
           <Box sx={{...flexGenerator("c"), minWidth: 0, overflow: "hidden"}}>
             <Typography variant="subtitle1" fontWeight={600} noWrap>
               {item.name}
@@ -66,15 +72,32 @@ export function MobileView(props: MobileViewProps) {
             borderTop: `1px solid ${theme.palette.divider}`,
           }}
         >
-          <Tooltip title={translate("ingredients.stockChange.title")}>
+          {item.active && (
+            <Tooltip title={translate("ingredients.stockChange.title")}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  ingredients.handleStockChange(item);
+                }}
+              >
+                <SyncAltIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title={translate(item.active ? "ingredients.tooltipDeactivate" : "ingredients.tooltipActivate")}>
             <IconButton
               size="small"
               onClick={(e) => {
                 e.stopPropagation();
-                ingredients.handleStockChange(item);
+                ingredients.handleToggleActive(item);
               }}
             >
-              <SyncAltIcon fontSize="small" />
+              {item.active ? (
+                <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+              ) : (
+                <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+              )}
             </IconButton>
           </Tooltip>
           {actions}
@@ -91,7 +114,10 @@ export function MobileView(props: MobileViewProps) {
         renderRow={renderRow}
         onView={ingredients.handleView}
         onEdit={ingredients.handleEdit}
+        hideEdit={(row) => !row.active}
         onDelete={ingredients.handleDelete}
+        filters={ingredients.filters.showInactives ? {showInactives: "true"} : undefined}
+        headerContent={<IngredientsFiltersComponent onFilterChange={ingredients.handleFilterChange} />}
       />
 
       <Fab

@@ -8,7 +8,7 @@ interface useApiOptions<T> {
   body?: Record<string, any>;
   formData?: FormData;
   onSuccess?: (response: T) => void;
-  onError?: (error: string) => boolean;
+  onError?: (error: string, data?: any) => boolean;
   hideLoader?: boolean;
 }
 
@@ -22,6 +22,7 @@ class ApiError extends Error {
   constructor(
     public errorKey: string,
     public status: number,
+    public data?: any,
   ) {
     super(errorKey);
   }
@@ -57,7 +58,7 @@ async function fetchInternal<T = any>(
   try {
     const errorBody = await response.json();
     const errorKey = errorBody.error || "api.errors.somethingWentWrong";
-    throw new ApiError(errorKey, response.status);
+    throw new ApiError(errorKey, response.status, errorBody.data);
   } catch (e) {
     if (e instanceof ApiError) throw e;
     throw new ApiError("api.errors.somethingWentWrong", response.status);
@@ -69,7 +70,7 @@ function useApiErrorHandler() {
   const toast = useToaster();
   const confirmModal = useConfirmModal();
 
-  return function handleError(e: unknown, onError?: (errorKey: string) => boolean) {
+  return function handleError(e: unknown, onError?: (errorKey: string, data?: any) => boolean) {
     if (e instanceof ApiError) {
       if (e.status === 401) {
         if (!sessionExpiredHandled) {
@@ -80,7 +81,7 @@ function useApiErrorHandler() {
         return;
       }
 
-      if (onError?.(e.errorKey)) return;
+      if (onError?.(e.errorKey, e.data)) return;
 
       confirmModal.show({
         message: e.errorKey,

@@ -14,7 +14,7 @@ interface LogCallParams {
 }
 
 export type LogFn = (action: LogAction, params?: LogCallParams) => Promise<void>;
-export type ErrorFn = (message: string, status: number, content?: Record<string, any>) => NextResponse;
+export type ErrorFn = (message: string, status: number, content?: Record<string, any>, responseData?: any) => NextResponse;
 export type SuccessFn = (action: LogAction, data?: any, logContent?: any) => NextResponse;
 
 export interface AuthContext {
@@ -49,9 +49,9 @@ export function createRouteLogger(module: LogModule, route: string, auth?: {user
 }
 
 function createErrorFn(module: LogModule, route: string, auth?: {user?: {id: string}; tenant_id?: string}): ErrorFn {
-  return function (message: string, status: number, content?: Record<string, any>) {
+  return function (message: string, status: number, content?: Record<string, any>, responseData?: any) {
     logError({module, source: LogSource.API, route, userId: auth?.user?.id, tenantId: auth?.tenant_id, message, content});
-    return NextResponse.json({error: message}, {status});
+    return NextResponse.json({error: message, ...(responseData !== undefined && {data: responseData})}, {status});
   };
 }
 
@@ -62,11 +62,7 @@ export interface RouteContext {
   log: LogFn;
 }
 
-export async function withAuth(
-  module: LogModule,
-  route: string,
-  handler: (ctx: RouteContext) => Promise<NextResponse>,
-): Promise<NextResponse> {
+export async function withAuth(module: LogModule, route: string, handler: (ctx: RouteContext) => Promise<NextResponse>): Promise<NextResponse> {
   const auth = await authenticateRequest(module, route);
   if (auth.error) return auth.error;
 

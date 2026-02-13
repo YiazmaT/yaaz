@@ -2,10 +2,12 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useQueryClient} from "@tanstack/react-query";
+import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
-import {Ingredient} from "./types";
+import {Ingredient, IngredientsFilters} from "./types";
 import {IngredientFormValues, useIngredientFormConfig} from "./form-config";
 import {useIngredientsTableConfig} from "./desktop/table-config";
 import {useIngredientsConstants} from "./constants";
@@ -15,12 +17,14 @@ const API_ROUTE = "/api/ingredient/paginated-list";
 export function useIngredients() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showStockModal, setShowStockModal] = useState(false);
+  const [filters, setFilters] = useState<IngredientsFilters>({});
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [costHistoryIngredient, setCostHistoryIngredient] = useState<Ingredient | null>(null);
   const [stockChangeItem, setStockChangeItem] = useState<Ingredient | null>(null);
   const [stockHistoryItem, setStockHistoryItem] = useState<Ingredient | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
+  const {translate} = useTranslate();
   const {unitOfMeasures} = useIngredientsConstants();
   const {defaultValues, schema} = useIngredientFormConfig();
   const api = useApi();
@@ -45,10 +49,29 @@ export function useIngredients() {
     onCostClick: (row) => setCostHistoryIngredient(row),
     onStockChange: (row) => handleStockChange(row),
     onStockHistoryClick: (row) => setStockHistoryItem(row),
+    onToggleActive: (row) => handleToggleActive(row),
   });
 
   function refreshTable() {
     queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
+  function buildDependenciesContent(data?: {products: string[]; total: number}) {
+    if (!data?.products?.length) return undefined;
+    return (
+      <Box sx={{marginTop: 1, width: "100%"}}>
+        <Box>
+          {data.products.map((name, i) => (
+            <Typography key={i} variant="body2" sx={{marginY: 0.5}}>
+              · {name}
+            </Typography>
+          ))}
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{marginTop: 1}}>
+          {`${translate("ingredients.totalProducts")}${data.total}`}
+        </Typography>
+      </Box>
+    );
   }
 
   async function submit(data: IngredientFormValues) {
@@ -125,6 +148,11 @@ export function useIngredients() {
   }
 
   function handleDelete(row: Ingredient) {
+    if (Number(row.stock) !== 0) {
+      toast.errorToast("ingredients.errors.cannotDeleteWithStock");
+      return;
+    }
+
     showConfirmModal({
       message: "ingredients.deleteConfirm",
       onConfirm: async () => {
@@ -134,9 +162,64 @@ export function useIngredients() {
             toast.successToast("ingredients.deleteSuccess");
             refreshTable();
           },
+          onError: (error, data) => {
+            if (error === "ingredients.errors.inUseByProducts") {
+              const content = buildDependenciesContent(data);
+              if (row.active) {
+                showConfirmModal({
+                  message: "ingredients.deactivateInstead",
+                  content,
+                  onConfirm: async () => {
+                    await api.fetch("PUT", "/api/ingredient/toggle-active", {
+                      body: {id: row.id},
+                      onSuccess: () => {
+                        toast.successToast("ingredients.deactivateSuccess");
+                        refreshTable();
+                      },
+                    });
+                  },
+                });
+              } else {
+                showConfirmModal({
+                  message: "ingredients.errors.inUseByProducts",
+                  content,
+                  hideCancel: true,
+                });
+              }
+              return true;
+            }
+            return false;
+          },
         });
       },
     });
+  }
+
+  function handleToggleActive(row: Ingredient) {
+    if (row.active && Number(row.stock) !== 0) {
+      toast.errorToast("ingredients.errors.cannotDeactivateWithStock");
+      return;
+    }
+
+    const messageKey = row.active ? "ingredients.deactivateConfirm" : "ingredients.activateConfirm";
+    const successKey = row.active ? "ingredients.deactivateSuccess" : "ingredients.activateSuccess";
+
+    showConfirmModal({
+      message: messageKey,
+      onConfirm: async () => {
+        await api.fetch("PUT", "/api/ingredient/toggle-active", {
+          body: {id: row.id},
+          onSuccess: () => {
+            toast.successToast(successKey);
+            refreshTable();
+          },
+        });
+      },
+    });
+  }
+
+  function handleFilterChange(newFilters: IngredientsFilters) {
+    setFilters(newFilters);
   }
 
   function openStockModal() {
@@ -188,5 +271,8 @@ export function useIngredients() {
     closeStockChangeModal,
     stockHistoryItem,
     closeStockHistoryModal,
+    handleToggleActive,
+    filters,
+    handleFilterChange,
   };
 }

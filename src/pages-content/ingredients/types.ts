@@ -16,8 +16,13 @@ export interface Ingredient {
   unit_of_measure: string;
   stock: string;
   min_stock?: string;
+  active: boolean;
   costs?: IngredientCost[];
   lastCost?: number | null;
+}
+
+export interface IngredientsFilters {
+  showInactives?: boolean;
 }
 
 export interface IngredientCost {

@@ -1,3 +1,4 @@
+import Decimal from "decimal.js";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
@@ -15,11 +16,23 @@ export async function DELETE(req: NextRequest) {
 
     const ingredient = await prisma.ingredient.findUnique({
       where: {id, tenant_id: auth.tenant_id},
-      include: {products: {take: 1}},
+      include: {
+        products: {
+          take: 10,
+          include: {product: {select: {name: true}}},
+        },
+      },
     });
 
     if (!ingredient) return error("api.errors.notFound", 404, {id});
-    if (ingredient.products.length > 0) return error("ingredients.errors.inUseByProducts", 400, {id, name: ingredient.name});
+    if (new Decimal(ingredient.stock).greaterThan(0))
+      return error("ingredients.errors.cannotDeleteWithStock", 400, {id, name: ingredient.name, stock: ingredient.stock});
+
+    if (ingredient.products.length > 0) {
+      const total = await prisma.productIngredient.count({where: {ingredient_id: id, tenant_id: auth.tenant_id}});
+      const products = ingredient.products.map((p) => p.product.name);
+      return error("ingredients.errors.inUseByProducts", 400, {id, ingredient, products, total}, {products, total});
+    }
 
     if (ingredient.image) {
       const key = extractR2KeyFromUrl(ingredient.image);

@@ -19,6 +19,7 @@ model Ingredient {
   unit_of_measure String
   stock           Decimal                 @default(0) @db.Decimal
   min_stock       Decimal                 @default(0) @db.Decimal
+  active          Boolean                 @default(true)
   tenant          Tenant                  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   products        ProductIngredient[]
   costs           IngredientCost[]
