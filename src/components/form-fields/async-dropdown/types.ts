@@ -9,6 +9,7 @@ export interface AsyncDropdownProps<T extends object> {
   error?: string;
   buildLabel?: (option: T) => string;
   renderOption?: (option: T) => React.ReactNode;
+  startAdornment?: React.ReactNode;
   disabled?: boolean;
   debounceMs?: number;
   extraQueryParams?: string;

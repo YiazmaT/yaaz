@@ -150,6 +150,7 @@ export function AsyncDropdown<T extends object>(props: AsyncDropdownProps<T>) {
           fullWidth
           slotProps={{
             input: {
+              startAdornment: props.startAdornment ? <InputAdornment position="start">{props.startAdornment}</InputAdornment> : undefined,
               endAdornment: (
                 <InputAdornment position="end">
                   {loading && <SmallLoader size={20} />}

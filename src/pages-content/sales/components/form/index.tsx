@@ -1,14 +1,16 @@
 "use client";
-import {Button, Divider, Grid, Typography, Box} from "@mui/material";
+import {Button, Chip, Divider, Grid, Typography, Box} from "@mui/material";
 import {FormAsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {FormRadioGroup} from "@/src/components/form-fields/radio-group";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
+import {ImagePreview} from "@/src/components/image-preview";
 import {ProductsSelector} from "@/src/components/products-selector";
 import {PackagesSelector} from "@/src/components/packages-selector";
 import {PackageType} from "@/src/pages-content/packages/types";
+import {useWatch} from "react-hook-form";
 import {FormCheckBox} from "@/src/components/form-fields/check-box";
 import {Client} from "@/src/pages-content/client/types";
 import {useSalesConstants} from "../../constants";
@@ -21,6 +23,7 @@ export function Form(props: FormProps) {
   const formatCurrency = useFormatCurrency();
   const isDetails = sales.formType === "details";
   const paymentMethodOptions = Object.values(payment_methods);
+  const selectedClient = useWatch({control: sales.control, name: "client"}) as Client | null;
 
   return (
     <FormContextProvider control={sales.control} errors={sales.errors} formType={sales.formType}>
@@ -77,6 +80,21 @@ export function Form(props: FormProps) {
               uniqueKey="id"
               label="sales.fields.client"
               buildLabel={(option) => option.name}
+              renderOption={(option) => (
+                <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+                  {option.active === false && <Chip label={translate("clients.inactive")} size="small" color="error" />}
+                  <ImagePreview url={option.image} alt={option.name} width={30} height={30} />
+                  <Typography variant="body2">{option.name}</Typography>
+                </Box>
+              )}
+              startAdornment={
+                selectedClient ? (
+                  <Box sx={{display: "flex", alignItems: "center", gap: 0.5}}>
+                    {selectedClient.active === false && <Chip label={translate("clients.inactive")} size="small" color="error" />}
+                    <ImagePreview url={selectedClient.image} alt={selectedClient.name} width={24} height={24} />
+                  </Box>
+                ) : undefined
+              }
             />
 
             {sales.formType === "create" && <FormCheckBox fieldName="is_quote" label="sales.isQuote" />}
