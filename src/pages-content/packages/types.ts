@@ -13,6 +13,7 @@ export enum PackageStockChangeReason {
 
 export interface Package {
   id: string;
+  code: number;
   name: string;
   description?: string | null;
   image: string | null;

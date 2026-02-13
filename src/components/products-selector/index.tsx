@@ -8,6 +8,7 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Product} from "@/src/pages-content/products/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {ProductsSelectorProps, ProductRowProps} from "./types";
+import {buildName} from "@/src/pages-content/products/utils";
 
 export function ProductsSelector(props: ProductsSelectorProps) {
   const {value, onChange, disabled, incrementOnDuplicate, priceChangeText} = props;
@@ -20,6 +21,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
 
     const cleanProduct: Product = {
       id: product.id,
+      code: product.code,
       name: product.name,
       price: product.price,
       description: product.description ?? null,
@@ -58,8 +60,8 @@ export function ProductsSelector(props: ProductsSelectorProps) {
         apiRoute="/api/product/paginated-list"
         uniqueKey="id"
         label="global.products"
-        buildLabel={(option) => option.name}
-        renderOption={(option) => <DropdownOption image={option.image} name={option.name} />}
+        buildLabel={(option) => buildName(option)}
+        renderOption={(option) => <DropdownOption image={option.image} name={buildName(option)} />}
         onChange={handleAddProduct}
         disabled={disabled}
       />
@@ -132,7 +134,7 @@ function ProductRowMobile(props: ProductRowProps) {
         {!props.item.product.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
-          {props.item.product.name}
+          {buildName(props.item.product)}
         </Typography>
         <Typography variant="caption" color="text.secondary">
           {props.formatCurrency(Number(props.item.product.price))}
@@ -193,7 +195,7 @@ function ProductRowDesktop(props: ProductRowProps) {
         {!props.item.product.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
-          {props.item.product.name}
+          {buildName(props.item.product)}
         </Typography>
         <Typography variant="caption" color="text.secondary">
           {props.formatCurrency(Number(props.item.product.price))}

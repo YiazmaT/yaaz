@@ -9,6 +9,7 @@ import {CompositionIngredient, CompositionItem, IngredientsSelectorProps, Ingred
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {useIngredientsConstants} from "@/src/pages-content/ingredients/constants";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {buildName} from "@/src/pages-content/ingredients/utils";
 
 export function IngredientsSelector(props: IngredientsSelectorProps) {
   const theme = useTheme();
@@ -48,8 +49,8 @@ export function IngredientsSelector(props: IngredientsSelectorProps) {
         apiRoute="/api/ingredient/paginated-list"
         uniqueKey="id"
         label="global.ingredients"
-        buildLabel={(option) => option.name}
-        renderOption={(option) => <DropdownOption image={option.image} name={option.name} />}
+        buildLabel={(option) => buildName(option)}
+        renderOption={(option) => <DropdownOption image={option.image} name={buildName(option)} />}
         onChange={handleAddIngredient}
         disabled={props.disabled}
       />
@@ -142,7 +143,7 @@ function IngredientRowMobile(props: IngredientRowProps) {
         {props.item.ingredient.active === false && <Chip label={translate("ingredients.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
-          {props.item.ingredient.name}
+          {buildName(props.item.ingredient)}
         </Typography>
         <Typography variant="caption" color="text.secondary">
           {unitOfMeasures[props.item.ingredient.unit_of_measure as keyof typeof unitOfMeasures].label}
@@ -200,7 +201,7 @@ function IngredientRowDesktop(props: IngredientRowProps) {
         {props.item.ingredient.active === false && <Chip label={translate("ingredients.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
-          {props.item.ingredient.name}
+          {buildName(props.item.ingredient)}
         </Typography>
         <Typography variant="caption" color="text.secondary">
           {unitOfMeasures[props.item.ingredient.unit_of_measure as keyof typeof unitOfMeasures].label}

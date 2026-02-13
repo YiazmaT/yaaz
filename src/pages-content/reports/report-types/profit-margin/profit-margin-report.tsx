@@ -13,6 +13,7 @@ import {ReportCard} from "../../components/report-card";
 import {ProfitMarginResult} from "./result";
 import {useProfitMarginFormConfig} from "./form-config";
 import {ProfitMarginFilters, ProfitMarginRow, ProductOption} from "./types";
+import {buildName} from "@/src/pages-content/products/utils";
 
 const today = moment().format("YYYY-MM-DD");
 
@@ -63,7 +64,7 @@ export function ProfitMarginReport() {
               label="reports.filters.product"
               apiRoute="/api/product/paginated-list"
               uniqueKey="id"
-              buildLabel={(opt) => opt.name}
+              buildLabel={(opt) => buildName(opt)}
               size={4}
             />
           </Grid>

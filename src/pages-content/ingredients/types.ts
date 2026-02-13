@@ -10,6 +10,7 @@ export enum IngredientStockChangeReason {
 
 export interface Ingredient {
   id: string;
+  code: number;
   name: string;
   description: string | null;
   image: string | null;

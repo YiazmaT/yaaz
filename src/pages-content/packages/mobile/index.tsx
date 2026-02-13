@@ -16,6 +16,7 @@ import {AddStockModal} from "../components/add-stock-drawer";
 import {StockChangeModal} from "../components/stock-change-modal";
 import {PackagesFiltersComponent} from "../components/filters";
 import {MobileViewProps} from "./types";
+import {buildName} from "../utils";
 import {flexGenerator} from "@/src/utils/flex-generator";
 
 export function MobileView(props: MobileViewProps) {
@@ -34,7 +35,7 @@ export function MobileView(props: MobileViewProps) {
           </Box>
           <Box sx={{...flexGenerator("c"), minWidth: 0}}>
             <Typography variant="subtitle1" fontWeight={600} noWrap>
-              {item.name}
+              {buildName(item)}
             </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
               {item.description || "-"}
@@ -42,13 +43,17 @@ export function MobileView(props: MobileViewProps) {
 
             <Typography
               variant="caption"
-              sx={{color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary"}}
+              sx={{
+                color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary",
+              }}
             >
               {`${translate("packages.fields.stock")}: ${Number(item.stock).toLocaleString("pt-BR")}`}
             </Typography>
             <Typography
               variant="caption"
-              sx={{color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary"}}
+              sx={{
+                color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary",
+              }}
             >
               {`${translate("packages.fields.minStock")}: ${Number(item.min_stock || 0).toLocaleString("pt-BR")}`}
             </Typography>
@@ -148,11 +153,7 @@ export function MobileView(props: MobileViewProps) {
 
       <Form packages={packages} imageSize={150} />
       <AddStockModal packages={packages} />
-      <StockChangeModal
-        item={packages.stockChangeItem}
-        onClose={packages.closeStockChangeModal}
-        onSuccess={packages.refreshTable}
-      />
+      <StockChangeModal item={packages.stockChangeItem} onClose={packages.closeStockChangeModal} onSuccess={packages.refreshTable} />
     </Box>
   );
 }

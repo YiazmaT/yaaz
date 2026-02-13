@@ -4,6 +4,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {StockAlertsResponse, StockAlertItem} from "../dto";
+import {buildName} from "@/src/pages-content/products/utils";
 
 export function StockAlertsCard() {
   const {translate} = useTranslate();
@@ -77,7 +78,7 @@ function AlertSection(props: {title: string; items: StockAlertItem[]}) {
           }}
         >
           <Typography variant="body2" noWrap sx={{flex: 1, minWidth: 0}}>
-            {item.name}
+            {buildName(item)}
           </Typography>
           <Box component="span" sx={{whiteSpace: "nowrap", marginLeft: 1, fontWeight: 500}}>
             <Typography component="span" variant="body2" sx={{color: theme.palette.error.main, fontWeight: 500}}>

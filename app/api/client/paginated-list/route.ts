@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
     const where: any = {tenant_id: auth.tenant_id};
     if (!showInactives) where.active = true;
     if (search) {
+      const searchAsNumber = parseInt(search);
       where.OR = [
         {name: {contains: search, mode: "insensitive" as const}},
         {description: {contains: search, mode: "insensitive" as const}},
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
         {phone: {contains: search, mode: "insensitive" as const}},
         {cpf: {contains: search, mode: "insensitive" as const}},
         {cnpj: {contains: search, mode: "insensitive" as const}},
+        ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : []),
       ];
     }
 

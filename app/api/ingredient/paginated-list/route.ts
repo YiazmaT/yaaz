@@ -22,7 +22,12 @@ export async function GET(req: NextRequest) {
     }
 
     if (search) {
-      where.OR = [{name: {contains: search, mode: "insensitive" as const}}, {description: {contains: search, mode: "insensitive" as const}}];
+      const searchAsNumber = parseInt(search);
+      where.OR = [
+        {name: {contains: search, mode: "insensitive" as const}},
+        {description: {contains: search, mode: "insensitive" as const}},
+        ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : []),
+      ];
     }
 
     const [ingredients, total] = await Promise.all([

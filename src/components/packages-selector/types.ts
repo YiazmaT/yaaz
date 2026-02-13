@@ -2,6 +2,7 @@ import {PackageType} from "@/src/pages-content/packages/types";
 
 export interface CompositionPackage {
   id: string;
+  code: number;
   name: string;
   description: string | null;
   image: string | null;

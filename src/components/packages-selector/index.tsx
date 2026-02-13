@@ -6,6 +6,7 @@ import {CurrencyInput} from "@/src/components/form-fields/currency-input";
 import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {buildName} from "@/src/pages-content/packages/utils";
 import {CompositionPackage, PackageCompositionItem, PackagesSelectorProps, PackageRowProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
 
@@ -47,8 +48,8 @@ export function PackagesSelector(props: PackagesSelectorProps) {
         apiRoute="/api/package/paginated-list"
         uniqueKey="id"
         label="global.packages"
-        buildLabel={(option) => option.name}
-        renderOption={(option) => <DropdownOption image={option.image} name={option.name} />}
+        buildLabel={(option) => buildName(option)}
+        renderOption={(option) => <DropdownOption image={option.image} name={buildName(option)} />}
         onChange={handleAddPackage}
         disabled={props.disabled}
         extraQueryParams={props.typeFilter ? `type=${props.typeFilter}` : undefined}
@@ -141,7 +142,7 @@ function PackageRowMobile(props: PackageRowProps) {
         {props.item.package.active === false && <Chip label={translate("packages.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
-          {props.item.package.name}
+          {buildName(props.item.package)}
         </Typography>
       </Box>
     </Box>
@@ -197,7 +198,7 @@ function PackageRowDesktop(props: PackageRowProps) {
         {props.item.package.active === false && <Chip label={translate("packages.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
-          {props.item.package.name}
+          {buildName(props.item.package)}
         </Typography>
       </Box>
     </Box>

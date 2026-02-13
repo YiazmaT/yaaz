@@ -19,6 +19,7 @@ import {FilesModal} from "../components/files-modal";
 import {ProductsFiltersComponent} from "../components/filters";
 import {useTenant} from "@/src/contexts/tenant-context";
 import {MobileViewProps} from "./types";
+import {buildName} from "../utils";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
@@ -42,7 +43,7 @@ export function MobileView(props: MobileViewProps) {
           </Box>
           <Box sx={{flex: 1, minWidth: 0, ...flexGenerator("c")}}>
             <Typography variant="subtitle1" fontWeight={600} sx={{wordBreak: "break-word"}}>
-              {item.name}
+              {buildName(item)}
             </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
               {item.description || "-"}

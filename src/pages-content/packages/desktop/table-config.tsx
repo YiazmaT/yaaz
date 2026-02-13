@@ -19,6 +19,13 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
   function generateConfig(): DataTableColumn<Package>[] {
     return [
       {
+        field: "code",
+        headerKey: "packages.fields.code",
+        width: "70px",
+        align: "center",
+        render: (row) => `#${row.code}`,
+      },
+      {
         field: "image",
         headerKey: "packages.fields.image",
         width: "60px",
@@ -27,7 +34,7 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
       {
         field: "name",
         headerKey: "packages.fields.name",
-        width: "20%",
+        width: "18%",
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             {!row.active && <Chip label={translate("packages.inactive")} size="small" color="error" />}

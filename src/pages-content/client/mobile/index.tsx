@@ -11,6 +11,7 @@ import {Client} from "../types";
 import {Form} from "../components/form";
 import {ClientsFiltersComponent} from "../components/filters";
 import {MobileViewProps} from "./types";
+import {buildName} from "../utils";
 import {formatCPF, formatCNPJ} from "@/src/utils/cpf-cnpj";
 import {flexGenerator} from "@/src/utils/flex-generator";
 
@@ -29,7 +30,7 @@ export function MobileView(props: MobileViewProps) {
           </Box>
           <Box sx={{...flexGenerator("c"), minWidth: 0}}>
             <Typography variant="subtitle1" fontWeight={600} noWrap>
-              {item.name}
+              {buildName(item)}
             </Typography>
             {item.description && (
               <Typography variant="body2" color="text.secondary" noWrap>

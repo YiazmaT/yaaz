@@ -9,19 +9,19 @@ export async function GET() {
   return withAuth(LogModule.DASHBOARD, ROUTE, async ({auth, success}) => {
     const [products, ingredients, packages] = await Promise.all([
       prisma.$queryRaw<StockAlertRow[]>`
-        SELECT id, name, stock, min_stock
+        SELECT id, code, name, stock, min_stock
         FROM data.product
         WHERE tenant_id = ${auth.tenant_id}::uuid AND min_stock > 0 AND stock < min_stock
         ORDER BY name ASC
       `,
       prisma.$queryRaw<StockAlertRow[]>`
-        SELECT id, name, stock::numeric, min_stock::numeric
+        SELECT id, code, name, stock::numeric, min_stock::numeric
         FROM data.ingredient
         WHERE tenant_id = ${auth.tenant_id}::uuid AND min_stock > 0 AND stock < min_stock
         ORDER BY name ASC
       `,
       prisma.$queryRaw<StockAlertRow[]>`
-        SELECT id, name, stock::numeric, min_stock::numeric
+        SELECT id, code, name, stock::numeric, min_stock::numeric
         FROM data.package
         WHERE tenant_id = ${auth.tenant_id}::uuid AND min_stock > 0 AND stock < min_stock
         ORDER BY name ASC

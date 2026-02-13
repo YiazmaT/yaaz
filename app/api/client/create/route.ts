@@ -33,9 +33,13 @@ export async function POST(req: NextRequest) {
 
     const hasAddress = address && Object.values(address).some((v) => !!v);
 
+    const maxCode = await prisma.client.aggregate({where: {tenant_id: auth.tenant_id}, _max: {code: true}});
+    const nextCode = (maxCode._max.code || 0) + 1;
+
     const client = await prisma.client.create({
       data: {
         tenant_id: auth.tenant_id,
+        code: nextCode,
         name,
         description: description || null,
         email: email || null,

@@ -15,6 +15,7 @@ import {AddStockModal} from "../components/add-stock-drawer";
 import {StockChangeModal} from "../components/stock-change-modal";
 import {IngredientsFiltersComponent} from "../components/filters";
 import {MobileViewProps} from "./types";
+import {buildName} from "../utils";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {LinkifyText} from "@/src/components/linkify-text";
 
@@ -34,7 +35,7 @@ export function MobileView(props: MobileViewProps) {
           </Box>
           <Box sx={{...flexGenerator("c"), minWidth: 0, overflow: "hidden"}}>
             <Typography variant="subtitle1" fontWeight={600} noWrap>
-              {item.name}
+              {buildName(item)}
             </Typography>
             {item.description ? (
               <LinkifyText text={item.description} variant="body2" color="text.secondary" />

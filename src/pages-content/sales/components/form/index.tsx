@@ -13,6 +13,7 @@ import {PackageType} from "@/src/pages-content/packages/types";
 import {useWatch} from "react-hook-form";
 import {FormCheckBox} from "@/src/components/form-fields/check-box";
 import {Client} from "@/src/pages-content/client/types";
+import {buildName} from "@/src/pages-content/client/utils";
 import {useSalesConstants} from "../../constants";
 import {FormProps} from "./types";
 
@@ -79,12 +80,12 @@ export function Form(props: FormProps) {
               apiRoute="/api/client/paginated-list"
               uniqueKey="id"
               label="sales.fields.client"
-              buildLabel={(option) => option.name}
+              buildLabel={(option) => buildName(option)}
               renderOption={(option) => (
                 <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                   {option.active === false && <Chip label={translate("clients.inactive")} size="small" color="error" />}
                   <ImagePreview url={option.image} alt={option.name} width={30} height={30} />
-                  <Typography variant="body2">{option.name}</Typography>
+                  <Typography variant="body2">{buildName(option)}</Typography>
                 </Box>
               )}
               startAdornment={

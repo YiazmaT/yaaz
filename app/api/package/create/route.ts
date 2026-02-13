@@ -26,9 +26,13 @@ export async function POST(req: NextRequest) {
       imageUrl = uploadResult.url!;
     }
 
+    const maxCode = await prisma.package.aggregate({where: {tenant_id: auth.tenant_id}, _max: {code: true}});
+    const nextCode = (maxCode._max.code || 0) + 1;
+
     const pkg = await prisma.package.create({
       data: {
         tenant_id: auth.tenant_id,
+        code: nextCode,
         name,
         description: description || null,
         type,

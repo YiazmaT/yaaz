@@ -1,5 +1,6 @@
 export interface CompositionIngredient {
   id: string;
+  code: number;
   name: string;
   description: string | null;
   image: string | null;

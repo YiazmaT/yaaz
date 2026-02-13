@@ -11,6 +11,7 @@ export interface ClientAddress {
 
 export interface Client {
   id: string;
+  code: number;
   name: string;
   description?: string;
   image: string | null;

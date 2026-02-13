@@ -20,6 +20,13 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
   function generateConfig(): DataTableColumn<Product>[] {
     return [
       {
+        field: "code",
+        headerKey: "products.fields.code",
+        width: "70px",
+        align: "center",
+        render: (row) => `#${row.code}`,
+      },
+      {
         field: "image",
         headerKey: "products.fields.image",
         width: "60px",
@@ -28,7 +35,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
       {
         field: "name",
         headerKey: "products.fields.name",
-        width: "30%",
+        width: "25%",
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             {!row.active && <Chip label={translate("products.inactive")} size="small" color="error" />}

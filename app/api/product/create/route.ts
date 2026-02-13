@@ -31,9 +31,13 @@ export async function POST(req: NextRequest) {
     const composition: CompositionItemDto[] = compositionJson ? JSON.parse(compositionJson) : [];
     const packages: PackageCompositionItemDto[] = packagesJson ? JSON.parse(packagesJson) : [];
 
+    const maxCode = await prisma.product.aggregate({where: {tenant_id: auth.tenant_id}, _max: {code: true}});
+    const nextCode = (maxCode._max.code || 0) + 1;
+
     const product = await prisma.product.create({
       data: {
         tenant_id: auth.tenant_id,
+        code: nextCode,
         name,
         price,
         description: description || null,

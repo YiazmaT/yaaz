@@ -16,6 +16,7 @@ export interface ProfitMarginRow {
 
 export interface ProductOption {
   id: string;
+  code: number;
   name: string;
 }
 

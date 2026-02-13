@@ -14,6 +14,13 @@ export function useClientsTableConfig(props: ClientsTableConfigProps) {
   function generateConfig(): DataTableColumn<Client>[] {
     return [
       {
+        field: "code",
+        headerKey: "clients.fields.code",
+        width: "70px",
+        align: "center",
+        render: (row) => `#${row.code}`,
+      },
+      {
         field: "image",
         headerKey: "clients.fields.image",
         width: "60px",
@@ -22,7 +29,7 @@ export function useClientsTableConfig(props: ClientsTableConfigProps) {
       {
         field: "name",
         headerKey: "clients.fields.name",
-        width: "20%",
+        width: "18%",
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             {!row.active && <Chip label={translate("clients.inactive")} size="small" color="error" />}

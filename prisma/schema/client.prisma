@@ -1,6 +1,7 @@
 model Client {
   id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenant_id   String  @db.Uuid
+  code        Int
   name        String
   description String?
   image       String?
@@ -21,6 +22,7 @@ model Client {
   last_editor_id String?   @db.Uuid
   last_editor    User?     @relation("ClientEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
 
+  @@unique([tenant_id, code])
   @@map("client")
   @@schema("data")
 }

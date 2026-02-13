@@ -15,6 +15,7 @@ export enum ProductStockChangeReason {
 
 export interface Product {
   id: string;
+  code: number;
   name: string;
   price: string;
   description?: string | null;

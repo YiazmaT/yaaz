@@ -51,6 +51,7 @@ export interface MonthProcessingData {
 
 export interface StockAlertItem {
   id: string;
+  code: number;
   name: string;
   stock: number;
   min_stock: number;
@@ -64,6 +65,7 @@ export interface StockAlertsResponse {
 
 export interface StockAlertRow {
   id: string;
+  code: number;
   name: string;
   stock: number;
   min_stock: number;

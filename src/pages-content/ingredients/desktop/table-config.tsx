@@ -20,6 +20,13 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
   function generateConfig(): DataTableColumn<Ingredient>[] {
     return [
       {
+        field: "code",
+        headerKey: "ingredients.fields.code",
+        width: "70px",
+        align: "center",
+        render: (row) => `#${row.code}`,
+      },
+      {
         field: "image",
         headerKey: "ingredients.fields.image",
         width: "60px",
@@ -28,7 +35,7 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
       {
         field: "name",
         headerKey: "ingredients.fields.name",
-        width: "25%",
+        width: "20%",
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             {!row.active && <Chip label={translate("ingredients.inactive")} size="small" color="error" />}

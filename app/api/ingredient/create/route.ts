@@ -25,9 +25,13 @@ export async function POST(req: NextRequest) {
       imageUrl = uploadResult.url!;
     }
 
+    const maxCode = await prisma.ingredient.aggregate({where: {tenant_id: auth.tenant_id}, _max: {code: true}});
+    const nextCode = (maxCode._max.code || 0) + 1;
+
     const ingredient = await prisma.ingredient.create({
       data: {
         tenant_id: auth.tenant_id,
+        code: nextCode,
         name,
         description: description || null,
         unit_of_measure: unitOfMeasure,

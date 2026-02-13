@@ -104,6 +104,7 @@
       "showInactives": "Mostrar insumos inativos"
     },
     "fields": {
+      "code": "Código",
       "name": "Nome",
       "description": "Descrição",
       "unitOfMeasure": "Unidade de medida",
@@ -185,6 +186,7 @@
       "cannotDeleteWithStock": "Não é possível excluir uma embalagem com estoque. Ajuste o estoque para zero antes de excluir."
     },
     "fields": {
+      "code": "Código",
       "name": "Nome",
       "description": "Descrição",
       "image": "Imagem",
@@ -273,6 +275,7 @@
       "tooltipRemove": "Remover da página inicial"
     },
     "fields": {
+      "code": "Código",
       "name": "Nome",
       "description": "Descrição",
       "price": "Preço",
@@ -470,6 +473,7 @@
       "address": "Endereço"
     },
     "fields": {
+      "code": "Código",
       "name": "Nome",
       "description": "Descrição",
       "image": "Foto",

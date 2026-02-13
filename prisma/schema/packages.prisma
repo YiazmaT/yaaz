@@ -18,6 +18,7 @@ enum PackageStockChangeReason {
 model Package {
   id            String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenant_id     String               @db.Uuid
+  code          Int
   name          String
   description   String?
   image         String?
@@ -38,6 +39,7 @@ model Package {
   last_editor_id String?   @db.Uuid
   last_editor    User?     @relation("PackageEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
 
+  @@unique([tenant_id, code])
   @@map("package")
   @@schema("data")
 }
