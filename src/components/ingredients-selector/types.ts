@@ -4,6 +4,7 @@ export interface CompositionIngredient {
   description: string | null;
   image: string | null;
   unit_of_measure: string;
+  active?: boolean;
 }
 
 export interface CompositionItem {

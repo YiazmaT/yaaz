@@ -1,11 +1,12 @@
 "use client";
-import {Box, Grid, IconButton, Tooltip, Typography, useMediaQuery, useTheme, Alert} from "@mui/material";
+import {Box, Chip, Grid, IconButton, Tooltip, Typography, useMediaQuery, useTheme, Alert} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {IntegerInput} from "@/src/components/form-fields/integer-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Product} from "@/src/pages-content/products/types";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {ProductsSelectorProps, ProductRowProps} from "./types";
 
 export function ProductsSelector(props: ProductsSelectorProps) {
@@ -95,6 +96,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
 }
 
 function ProductRowMobile(props: ProductRowProps) {
+  const {translate} = useTranslate();
   const theme = useTheme();
   const hasPriceChanged = props.item.unit_price && props.item.unit_price !== props.item.product.price.toString();
 
@@ -127,6 +129,7 @@ function ProductRowMobile(props: ProductRowProps) {
         )}
       </Box>
       <Box sx={{display: "flex", alignItems: "center", gap: 1, width: "100%"}}>
+        {!props.item.product.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
           {props.item.product.name}
@@ -154,6 +157,7 @@ function DropdownOption(props: {image?: string | null; name: string}) {
 }
 
 function ProductRowDesktop(props: ProductRowProps) {
+  const {translate} = useTranslate();
   const theme = useTheme();
   const hasPriceChanged = props.item.unit_price && props.item.unit_price !== props.item.product.price.toString();
 
@@ -186,6 +190,7 @@ function ProductRowDesktop(props: ProductRowProps) {
         )}
       </Box>
       <Box sx={{display: "flex", alignItems: "center", gap: 1, width: "100%"}}>
+        {!props.item.product.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
           {props.item.product.name}

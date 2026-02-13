@@ -6,6 +6,7 @@ export interface CompositionPackage {
   description: string | null;
   image: string | null;
   lastCost?: string | null;
+  active?: boolean;
 }
 
 export interface PackageCompositionItem {

@@ -1,5 +1,5 @@
 "use client";
-import {Box, Grid, IconButton, Typography, useMediaQuery, useTheme} from "@mui/material";
+import {Box, Chip, Grid, IconButton, Typography, useMediaQuery, useTheme} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {CurrencyInput} from "@/src/components/form-fields/currency-input";
@@ -8,6 +8,7 @@ import {ImagePreview} from "@/src/components/image-preview";
 import {CompositionIngredient, CompositionItem, IngredientsSelectorProps, IngredientRowProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {useIngredientsConstants} from "@/src/pages-content/ingredients/constants";
+import {useTranslate} from "@/src/contexts/translation-context";
 
 export function IngredientsSelector(props: IngredientsSelectorProps) {
   const theme = useTheme();
@@ -94,8 +95,10 @@ function DropdownOption(props: {image?: string | null; name: string}) {
 }
 
 function IngredientRowMobile(props: IngredientRowProps) {
+  const {translate} = useTranslate();
   const {unitOfMeasures} = useIngredientsConstants();
   const theme = useTheme();
+
   return (
     <Box
       key={props.item.ingredient.id}
@@ -136,6 +139,7 @@ function IngredientRowMobile(props: IngredientRowProps) {
         )}
       </Box>
       <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
+        {props.item.ingredient.active === false && <Chip label={translate("ingredients.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
           {props.item.ingredient.name}
@@ -149,8 +153,10 @@ function IngredientRowMobile(props: IngredientRowProps) {
 }
 
 function IngredientRowDesktop(props: IngredientRowProps) {
+  const {translate} = useTranslate();
   const {unitOfMeasures} = useIngredientsConstants();
   const theme = useTheme();
+
   return (
     <Box
       key={props.item.ingredient.id}
@@ -191,6 +197,7 @@ function IngredientRowDesktop(props: IngredientRowProps) {
         )}
       </Box>
       <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
+        {props.item.ingredient.active === false && <Chip label={translate("ingredients.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
           {props.item.ingredient.name}

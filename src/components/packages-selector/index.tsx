@@ -1,10 +1,11 @@
 "use client";
-import {Box, Grid, IconButton, Typography, useMediaQuery, useTheme} from "@mui/material";
+import {Box, Chip, Grid, IconButton, Typography, useMediaQuery, useTheme} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {CurrencyInput} from "@/src/components/form-fields/currency-input";
 import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {ImagePreview} from "@/src/components/image-preview";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {CompositionPackage, PackageCompositionItem, PackagesSelectorProps, PackageRowProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
 
@@ -94,7 +95,9 @@ function DropdownOption(props: {image?: string | null; name: string}) {
 }
 
 function PackageRowMobile(props: PackageRowProps) {
+  const {translate} = useTranslate();
   const theme = useTheme();
+
   return (
     <Box
       key={props.item.package.id}
@@ -135,6 +138,7 @@ function PackageRowMobile(props: PackageRowProps) {
         )}
       </Box>
       <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
+        {props.item.package.active === false && <Chip label={translate("packages.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
           {props.item.package.name}
@@ -145,7 +149,9 @@ function PackageRowMobile(props: PackageRowProps) {
 }
 
 function PackageRowDesktop(props: PackageRowProps) {
+  const {translate} = useTranslate();
   const theme = useTheme();
+
   return (
     <Box
       key={props.item.package.id}
@@ -188,6 +194,7 @@ function PackageRowDesktop(props: PackageRowProps) {
       </Box>
 
       <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
+        {props.item.package.active === false && <Chip label={translate("packages.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
         <Typography variant="body2" fontWeight={600}>
           {props.item.package.name}

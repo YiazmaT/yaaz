@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
 
       if (deductIngredients) {
         for (const comp of product.composition) {
+          if (!comp.ingredient.active) continue;
           const ingredientId = comp.ingredient_id;
           const required = new Decimal(comp.quantity).times(item.quantity);
 
@@ -56,6 +57,7 @@ export async function POST(req: NextRequest) {
 
       if (deductPackages) {
         for (const pkg of product.packages) {
+          if (!pkg.package.active) continue;
           const packageId = pkg.package_id;
           const required = new Decimal(pkg.quantity).times(item.quantity);
 
