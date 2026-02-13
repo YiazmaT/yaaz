@@ -10,4 +10,5 @@ export interface PackagesTableConfigProps extends TableConfigProps<Package> {
   onCostClick?: (row: Package) => void;
   onStockChange: (row: Package) => void;
   onStockHistoryClick: (row: Package) => void;
+  onToggleActive: (row: Package) => void;
 }

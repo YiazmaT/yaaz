@@ -2,10 +2,12 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useQueryClient} from "@tanstack/react-query";
+import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
-import {Package} from "./types";
+import {Package, PackagesFilters} from "./types";
 import {PackageFormValues, usePackageFormConfig} from "./form-config";
 import {usePackagesTableConfig} from "./desktop/table-config";
 
@@ -14,11 +16,13 @@ const API_ROUTE = "/api/package/paginated-list";
 export function usePackages() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filters, setFilters] = useState<PackagesFilters>({});
   const [showStockModal, setShowStockModal] = useState(false);
-  const [costHistoryPackage, setCostHistoryPackage] = useState<Package | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stockChangeItem, setStockChangeItem] = useState<Package | null>(null);
   const [stockHistoryItem, setStockHistoryItem] = useState<Package | null>(null);
+  const [costHistoryPackage, setCostHistoryPackage] = useState<Package | null>(null);
+  const {translate} = useTranslate();
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = usePackageFormConfig();
   const api = useApi();
@@ -43,10 +47,47 @@ export function usePackages() {
     onCostClick: (row) => setCostHistoryPackage(row),
     onStockChange: (row) => handleStockChange(row),
     onStockHistoryClick: (row) => setStockHistoryItem(row),
+    onToggleActive: (row) => handleToggleActive(row),
   });
 
   function refreshTable() {
     queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
+  function buildProductsDependenciesContent(data?: {products: string[]; total: number}) {
+    if (!data?.products?.length) return undefined;
+    return (
+      <Box sx={{marginTop: 1, width: "100%"}}>
+        <Box>
+          {data.products.map((name, i) => (
+            <Typography key={i} variant="body2" sx={{marginY: 0.5}}>
+              · {name}
+            </Typography>
+          ))}
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{marginTop: 1}}>
+          {`${translate("packages.totalProducts")}${data.total}`}
+        </Typography>
+      </Box>
+    );
+  }
+
+  function buildSalesDependenciesContent(data?: {sales: string[]; total: number}) {
+    if (!data?.sales?.length) return undefined;
+    return (
+      <Box sx={{marginTop: 1, width: "100%"}}>
+        <Box>
+          {data.sales.map((code, i) => (
+            <Typography key={i} variant="body2" sx={{marginY: 0.5}}>
+              · {code.toLocaleUpperCase()}
+            </Typography>
+          ))}
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{marginTop: 1}}>
+          {`${translate("packages.totalSales")}${data.total}`}
+        </Typography>
+      </Box>
+    );
   }
 
   async function submit(data: PackageFormValues) {
@@ -123,6 +164,11 @@ export function usePackages() {
   }
 
   function handleDelete(row: Package) {
+    if (Number(row.stock) !== 0) {
+      toast.errorToast("packages.errors.cannotDeleteWithStock");
+      return;
+    }
+
     showConfirmModal({
       message: "packages.deleteConfirm",
       onConfirm: async () => {
@@ -132,9 +178,81 @@ export function usePackages() {
             toast.successToast("packages.deleteSuccess");
             refreshTable();
           },
+          onError: (error, data) => {
+            if (error === "packages.errors.inUseByProducts") {
+              const content = buildProductsDependenciesContent(data);
+              if (row.active) {
+                showConfirmModal({
+                  message: "packages.deactivateInstead",
+                  content,
+                  onConfirm: async () => {
+                    await api.fetch("PUT", "/api/package/toggle-active", {
+                      body: {id: row.id},
+                      onSuccess: () => {
+                        toast.successToast("packages.deactivateSuccess");
+                        refreshTable();
+                      },
+                    });
+                  },
+                });
+              } else {
+                showConfirmModal({message: "packages.errors.inUseByProducts", content, hideCancel: true});
+              }
+              return true;
+            }
+            if (error === "packages.errors.inUseBySales") {
+              const content = buildSalesDependenciesContent(data);
+              if (row.active) {
+                showConfirmModal({
+                  message: "packages.deactivateInstead",
+                  content,
+                  onConfirm: async () => {
+                    await api.fetch("PUT", "/api/package/toggle-active", {
+                      body: {id: row.id},
+                      onSuccess: () => {
+                        toast.successToast("packages.deactivateSuccess");
+                        refreshTable();
+                      },
+                    });
+                  },
+                });
+              } else {
+                showConfirmModal({message: "packages.errors.inUseBySales", content, hideCancel: true});
+              }
+              return true;
+            }
+            return false;
+          },
         });
       },
     });
+  }
+
+  function handleToggleActive(row: Package) {
+    if (row.active && Number(row.stock) !== 0) {
+      toast.errorToast("packages.errors.cannotDeactivateWithStock");
+      return;
+    }
+
+    const messageKey = row.active ? "packages.deactivateConfirm" : "packages.activateConfirm";
+    const successKey = row.active ? "packages.deactivateSuccess" : "packages.activateSuccess";
+
+    showConfirmModal({
+      message: messageKey,
+      onConfirm: async () => {
+        await api.fetch("PUT", "/api/package/toggle-active", {
+          body: {id: row.id},
+          onSuccess: () => {
+            toast.successToast(successKey);
+            refreshTable();
+          },
+        });
+      },
+    });
+  }
+
+  function handleFilterChange(newFilters: PackagesFilters) {
+    setFilters(newFilters);
   }
 
   function openStockModal() {
@@ -185,5 +303,8 @@ export function usePackages() {
     closeStockChangeModal,
     stockHistoryItem,
     closeStockHistoryModal,
+    handleToggleActive,
+    filters,
+    handleFilterChange,
   };
 }

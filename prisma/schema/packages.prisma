@@ -24,6 +24,7 @@ model Package {
   type          PackageType          @default(product)
   stock         Decimal              @default(0) @db.Decimal
   min_stock     Decimal              @default(0) @db.Decimal
+  active        Boolean              @default(true)
   tenant        Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   costs         PackageCost[]
   products      ProductPackage[]

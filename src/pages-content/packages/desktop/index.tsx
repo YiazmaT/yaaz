@@ -1,5 +1,5 @@
 "use client";
-import {Button} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {DataTable} from "@/src/components/data-table";
 import {ScreenCard} from "@/src/components/screen-card";
@@ -10,6 +10,7 @@ import {AddStockModal} from "../components/add-stock-drawer";
 import {CostHistoryModal} from "../components/cost-history-modal";
 import {StockChangeModal} from "../components/stock-change-modal";
 import {StockHistoryModal} from "../components/stock-history-modal";
+import {PackagesFiltersComponent} from "../components/filters";
 import {DesktopViewProps} from "./types";
 
 export function DesktopView(props: DesktopViewProps) {
@@ -19,15 +20,21 @@ export function DesktopView(props: DesktopViewProps) {
   return (
     <>
       <ScreenCard title="packages.title" includeButtonFunction={packages.handleCreate}>
-        <DataTable<Package>
-          apiRoute="/api/package/paginated-list"
-          columns={packages.generateConfig()}
-          footerLeftContent={
-            <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={packages.openStockModal}>
-              {translate("packages.addStock")}
-            </Button>
-          }
-        />
+        <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
+          <PackagesFiltersComponent onFilterChange={packages.handleFilterChange} />
+          <Box sx={{flex: 1, minHeight: 0}}>
+            <DataTable<Package>
+              apiRoute="/api/package/paginated-list"
+              columns={packages.generateConfig()}
+              filters={packages.filters.showInactives ? {showInactives: "true"} : undefined}
+              footerLeftContent={
+                <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={packages.openStockModal}>
+                  {translate("packages.addStock")}
+                </Button>
+              }
+            />
+          </Box>
+        </Box>
       </ScreenCard>
 
       <Form packages={packages} imageSize={200} />

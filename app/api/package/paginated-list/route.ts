@@ -14,9 +14,14 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10");
     const search = searchParams.get("search") || "";
     const typeFilter = searchParams.get("type") as PackageType | null;
+    const showInactives = searchParams.get("showInactives") === "true";
     const skip = (page - 1) * limit;
 
     const where: any = {tenant_id: auth.tenant_id};
+
+    if (!showInactives) {
+      where.active = true;
+    }
 
     if (search) {
       where.OR = [{name: {contains: search, mode: "insensitive" as const}}, {description: {contains: search, mode: "insensitive" as const}}];

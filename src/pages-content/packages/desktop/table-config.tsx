@@ -1,4 +1,4 @@
-import {Box, Chip, useTheme} from "@mui/material";
+import {Box, Chip, Tooltip, useTheme} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn, TableButton} from "@/src/components/data-columns";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
@@ -6,6 +6,8 @@ import {Package, PackageType} from "../types";
 import {usePackagesConstants} from "../constants";
 import {PackagesTableConfigProps} from "./types";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import {useTranslate} from "@/src/contexts/translation-context";
 
 export function usePackagesTableConfig(props: PackagesTableConfigProps) {
@@ -26,6 +28,14 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
         field: "name",
         headerKey: "packages.fields.name",
         width: "20%",
+        render: (row) => (
+          <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+            {!row.active && <Chip label={translate("packages.inactive")} size="small" color="error" />}
+            <Tooltip title={row.name} placement="top">
+              <Box>{row.name}</Box>
+            </Tooltip>
+          </Box>
+        ),
       },
       {
         field: "type",
@@ -90,19 +100,31 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
       {
         field: "actions",
         headerKey: "global.actions.label",
-        width: "150px",
+        width: "180px",
         align: "center",
         render: (row) => (
           <ActionsColumn
             row={row}
             onView={props.onView}
             onEdit={props.onEdit}
+            hideEdit={(r) => !r.active}
             onDelete={props.onDelete}
             customActions={[
               {
                 icon: () => <SyncAltIcon fontSize="small" />,
                 tooltip: () => translate("packages.stockChange.title"),
                 onClick: props.onStockChange,
+                hidden: (r) => !r.active,
+              },
+              {
+                icon: (r) =>
+                  r.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                  ),
+                tooltip: (r) => translate(r.active ? "packages.tooltipDeactivate" : "packages.tooltipActivate"),
+                onClick: props.onToggleActive,
               },
             ]}
           />

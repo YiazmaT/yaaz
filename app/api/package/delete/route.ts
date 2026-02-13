@@ -1,3 +1,4 @@
+import Decimal from "decimal.js";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
@@ -15,12 +16,32 @@ export async function DELETE(req: NextRequest) {
 
     const pkg = await prisma.package.findUnique({
       where: {id, tenant_id: auth.tenant_id},
-      include: {products: {take: 1}, sales: {take: 1}},
+      include: {
+        products: {
+          take: 10,
+          include: {product: {select: {name: true}}},
+        },
+        sales: {
+          take: 10,
+          include: {sale: {select: {id: true}}},
+        },
+      },
     });
 
     if (!pkg) return error("api.errors.notFound", 404, {id});
-    if (pkg.products.length > 0) return error("packages.errors.inUseByProducts", 400, {id, name: pkg.name});
-    if (pkg.sales.length > 0) return error("packages.errors.inUseBySales", 400, {id, name: pkg.name});
+    if (new Decimal(pkg.stock).greaterThan(0)) return error("packages.errors.cannotDeleteWithStock", 400, {id, name: pkg.name, stock: pkg.stock});
+
+    if (pkg.products.length > 0) {
+      const total = await prisma.productPackage.count({where: {package_id: id, tenant_id: auth.tenant_id}});
+      const products = pkg.products.map((p) => p.product.name);
+      return error("packages.errors.inUseByProducts", 400, {id, name: pkg.name}, {products, total});
+    }
+
+    if (pkg.sales.length > 0) {
+      const total = await prisma.salePackage.count({where: {package_id: id, tenant_id: auth.tenant_id}});
+      const sales = pkg.sales.map((s) => s.sale.id.split("-").pop()!);
+      return error("packages.errors.inUseBySales", 400, {id, name: pkg.name}, {sales, total});
+    }
 
     if (pkg.image) {
       const key = extractR2KeyFromUrl(pkg.image);

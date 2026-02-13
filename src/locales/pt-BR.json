@@ -159,10 +159,30 @@
       "sale": "Para venda",
       "product": "Para produto"
     },
+    "inactive": "Inativo",
+    "deactivateConfirm": "Tem certeza que deseja desativar esta embalagem?",
+    "deactivateInstead": "Esta embalagem está sendo usada e não pode ser excluída. Deseja desativá-la?",
+    "activateConfirm": "Tem certeza que deseja ativar esta embalagem?",
+    "deactivateSuccess": "Embalagem desativada com sucesso!",
+    "activateSuccess": "Embalagem ativada com sucesso!",
+    "tooltipDeactivate": "Desativar embalagem",
+    "tooltipActivate": "Ativar embalagem",
+    "totalProducts": "Total: ",
+    "totalSales": "Total: ",
+    "filters": {
+      "open": "Abrir Filtros",
+      "close": "Fechar Filtros",
+      "clear": "Limpar",
+      "apply": "Aplicar",
+      "clearTooltip": "Limpar Filtros",
+      "showInactives": "Mostrar embalagens inativas"
+    },
     "errors": {
       "inUseByProducts": "Esta embalagem está sendo usada em produtos e não pode ser excluída.",
       "inUseBySales": "Esta embalagem está sendo usada em vendas e não pode ser excluída.",
-      "quantityMustBeGreaterThanZero": "Todos os itens devem ter quantidade maior que zero."
+      "quantityMustBeGreaterThanZero": "Todos os itens devem ter quantidade maior que zero.",
+      "cannotDeactivateWithStock": "Não é possível desativar uma embalagem com estoque. Ajuste o estoque para zero antes de desativar.",
+      "cannotDeleteWithStock": "Não é possível excluir uma embalagem com estoque. Ajuste o estoque para zero antes de excluir."
     },
     "fields": {
       "name": "Nome",

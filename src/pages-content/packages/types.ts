@@ -19,8 +19,13 @@ export interface Package {
   type: PackageType;
   stock: string;
   min_stock?: string;
+  active: boolean;
   costs?: PackageCost[];
   lastCost?: number | null;
+}
+
+export interface PackagesFilters {
+  showInactives?: boolean;
 }
 
 export interface PackageCost {
