@@ -2,10 +2,12 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useQueryClient} from "@tanstack/react-query";
+import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
-import {Client} from "./types";
+import {Client, ClientsFilters} from "./types";
 import {ClientFormValues, useClientFormConfig} from "./form-config";
 import {useClientsTableConfig} from "./desktop/table-config";
 
@@ -15,7 +17,9 @@ export function useClients() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filters, setFilters] = useState<ClientsFilters>({});
   const {show: showConfirmModal} = useConfirmModal();
+  const {translate} = useTranslate();
   const {defaultValues, schema} = useClientFormConfig();
   const api = useApi();
   const toast = useToaster();
@@ -37,10 +41,29 @@ export function useClients() {
     onView: (row) => handleView(row),
     onEdit: (row) => handleEdit(row),
     onDelete: (row) => handleDelete(row),
+    onToggleActive: (row) => handleToggleActive(row),
   });
 
   function refreshTable() {
     queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
+  function buildSalesDependenciesContent(data?: {sales: string[]; total: number}) {
+    if (!data?.sales?.length) return undefined;
+    return (
+      <Box sx={{marginTop: 1, width: "100%"}}>
+        <Box>
+          {data.sales.map((code, i) => (
+            <Typography key={i} variant="body2" sx={{marginY: 0.5}}>
+              · {code.toLocaleUpperCase()}
+            </Typography>
+          ))}
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{marginTop: 1}}>
+          {`${translate("clients.totalSales")}${data.total}`}
+        </Typography>
+      </Box>
+    );
   }
 
   async function submit(data: ClientFormValues) {
@@ -142,9 +165,55 @@ export function useClients() {
             toast.successToast("clients.deleteSuccess");
             refreshTable();
           },
+          onError: (error, data) => {
+            if (error === "clients.errors.inUseBySales") {
+              const content = buildSalesDependenciesContent(data);
+              if (row.active) {
+                showConfirmModal({
+                  message: "clients.deactivateInstead",
+                  content,
+                  onConfirm: async () => {
+                    await api.fetch("PUT", "/api/client/toggle-active", {
+                      body: {id: row.id},
+                      onSuccess: () => {
+                        toast.successToast("clients.deactivateSuccess");
+                        refreshTable();
+                      },
+                    });
+                  },
+                });
+              } else {
+                showConfirmModal({message: "clients.errors.inUseBySales", content, hideCancel: true});
+              }
+              return true;
+            }
+            return false;
+          },
         });
       },
     });
+  }
+
+  function handleToggleActive(row: Client) {
+    const messageKey = row.active ? "clients.deactivateConfirm" : "clients.activateConfirm";
+    const successKey = row.active ? "clients.deactivateSuccess" : "clients.activateSuccess";
+
+    showConfirmModal({
+      message: messageKey,
+      onConfirm: async () => {
+        await api.fetch("PUT", "/api/client/toggle-active", {
+          body: {id: row.id},
+          onSuccess: () => {
+            toast.successToast(successKey);
+            refreshTable();
+          },
+        });
+      },
+    });
+  }
+
+  function handleFilterChange(newFilters: ClientsFilters) {
+    setFilters(newFilters);
   }
 
   return {
@@ -161,6 +230,9 @@ export function useClients() {
     handleView,
     handleEdit,
     handleDelete,
+    handleToggleActive,
     refreshTable,
+    filters,
+    handleFilterChange,
   };
 }

@@ -488,6 +488,23 @@
       "city": "Cidade",
       "state": "Estado"
     },
+    "inactive": "Inativo",
+    "deactivateConfirm": "Tem certeza que deseja desativar este cliente?",
+    "deactivateInstead": "Este cliente possui vendas vinculadas e não pode ser excluído. Deseja desativá-lo?",
+    "activateConfirm": "Tem certeza que deseja ativar este cliente?",
+    "deactivateSuccess": "Cliente desativado com sucesso!",
+    "activateSuccess": "Cliente ativado com sucesso!",
+    "tooltipDeactivate": "Desativar cliente",
+    "tooltipActivate": "Ativar cliente",
+    "totalSales": "Total: ",
+    "filters": {
+      "open": "Abrir Filtros",
+      "close": "Fechar Filtros",
+      "clear": "Limpar",
+      "apply": "Aplicar",
+      "clearTooltip": "Limpar Filtros",
+      "showInactives": "Mostrar clientes inativos"
+    },
     "errors": {
       "invalidCpf": "CPF inválido",
       "invalidCnpj": "CNPJ inválido",

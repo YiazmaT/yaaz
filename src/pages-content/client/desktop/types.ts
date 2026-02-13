@@ -6,4 +6,6 @@ export interface DesktopViewProps {
   clients: ReturnType<typeof useClients>;
 }
 
-export interface ClientsTableConfigProps extends TableConfigProps<Client> {}
+export interface ClientsTableConfigProps extends TableConfigProps<Client> {
+  onToggleActive: (row: Client) => void;
+}

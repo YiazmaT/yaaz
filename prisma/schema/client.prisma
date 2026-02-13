@@ -9,6 +9,7 @@ model Client {
   cnpj        String?
   cpf         String?
   is_company  Boolean @default(false)
+  active      Boolean @default(true)
   tenant      Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   sales       Sale[]
   address     ClientAddress?

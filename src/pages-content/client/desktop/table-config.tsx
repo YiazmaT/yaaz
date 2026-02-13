@@ -1,10 +1,12 @@
-import {Chip} from "@mui/material";
+import {Box, Chip} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {Client} from "../types";
 import {ClientsTableConfigProps} from "./types";
 import {formatCPF, formatCNPJ} from "@/src/utils/cpf-cnpj";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 
 export function useClientsTableConfig(props: ClientsTableConfigProps) {
   const {translate} = useTranslate();
@@ -21,6 +23,12 @@ export function useClientsTableConfig(props: ClientsTableConfigProps) {
         field: "name",
         headerKey: "clients.fields.name",
         width: "20%",
+        render: (row) => (
+          <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+            {!row.active && <Chip label={translate("clients.inactive")} size="small" color="error" />}
+            {row.name}
+          </Box>
+        ),
       },
       {
         field: "description",
@@ -67,14 +75,27 @@ export function useClientsTableConfig(props: ClientsTableConfigProps) {
       {
         field: "actions",
         headerKey: "global.actions.label",
-        width: "120px",
+        width: "150px",
         align: "center",
         render: (row) => (
           <ActionsColumn
             row={row}
             onView={props.onView}
             onEdit={props.onEdit}
+            hideEdit={(r) => !r.active}
             onDelete={props.onDelete}
+            customActions={[
+              {
+                icon: (r) =>
+                  r.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                  ),
+                tooltip: (r) => translate(r.active ? "clients.tooltipDeactivate" : "clients.tooltipActivate"),
+                onClick: props.onToggleActive,
+              },
+            ]}
           />
         ),
       },

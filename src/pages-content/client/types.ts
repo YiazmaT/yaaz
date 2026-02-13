@@ -19,5 +19,10 @@ export interface Client {
   cnpj?: string;
   cpf?: string;
   isCompany: boolean;
+  active: boolean;
   address?: ClientAddress;
+}
+
+export interface ClientsFilters {
+  showInactives?: boolean;
 }
