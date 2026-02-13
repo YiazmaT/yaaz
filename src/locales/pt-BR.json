@@ -227,6 +227,7 @@
     "activateSuccess": "Produto ativado com sucesso!",
     "tooltipDeactivate": "Desativar produto",
     "tooltipActivate": "Ativar produto",
+    "totalSales": "Total: ",
     "filters": {
       "open": "Abrir Filtros",
       "close": "Fechar Filtros",

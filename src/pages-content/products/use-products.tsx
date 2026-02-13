@@ -2,8 +2,10 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useQueryClient} from "@tanstack/react-query";
+import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
 import {CompositionItem, PackageCompositionItem, Product, ProductsFilters} from "./types";
 import {ProductFormValues, useProductFormConfig} from "./form-config";
@@ -20,6 +22,7 @@ export function useProducts() {
   const [stockChangeItem, setStockChangeItem] = useState<Product | null>(null);
   const [stockHistoryItem, setStockHistoryItem] = useState<Product | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
+  const {translate} = useTranslate();
   const {defaultValues, schema} = useProductFormConfig();
   const api = useApi();
   const toast = useToaster();
@@ -62,6 +65,24 @@ export function useProducts() {
 
   function refreshTable() {
     queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
+  function buildDependenciesContent(data?: {sales: string[]; total: number}) {
+    if (!data?.sales?.length) return undefined;
+    return (
+      <Box sx={{marginTop: 1, width: "100%"}}>
+        <Box>
+          {data.sales.map((code, i) => (
+            <Typography key={i} variant="body2" sx={{marginY: 0.5}}>
+              · {code.toLocaleUpperCase()}
+            </Typography>
+          ))}
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{marginTop: 1}}>
+          {`${translate("products.totalSales")}${data.total}`}
+        </Typography>
+      </Box>
+    );
   }
 
   async function submit(data: ProductFormValues) {
@@ -164,20 +185,30 @@ export function useProducts() {
             toast.successToast("products.deleteSuccess");
             refreshTable();
           },
-          onError: (error) => {
-            if (error === "products.errors.inUseBySales" && row.active) {
-              showConfirmModal({
-                message: "products.deactivateInstead",
-                onConfirm: async () => {
-                  await api.fetch("PUT", "/api/product/toggle-active", {
-                    body: {id: row.id},
-                    onSuccess: () => {
-                      toast.successToast("products.deactivateSuccess");
-                      refreshTable();
-                    },
-                  });
-                },
-              });
+          onError: (error, data) => {
+            if (error === "products.errors.inUseBySales") {
+              const content = buildDependenciesContent(data);
+              if (row.active) {
+                showConfirmModal({
+                  message: "products.deactivateInstead",
+                  content,
+                  onConfirm: async () => {
+                    await api.fetch("PUT", "/api/product/toggle-active", {
+                      body: {id: row.id},
+                      onSuccess: () => {
+                        toast.successToast("products.deactivateSuccess");
+                        refreshTable();
+                      },
+                    });
+                  },
+                });
+              } else {
+                showConfirmModal({
+                  message: "products.errors.inUseBySales",
+                  content,
+                  hideCancel: true,
+                });
+              }
               return true;
             }
             return false;

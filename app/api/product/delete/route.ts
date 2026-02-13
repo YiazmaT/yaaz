@@ -15,12 +15,23 @@ export async function DELETE(req: NextRequest) {
 
     const product = await prisma.product.findUnique({
       where: {id, tenant_id: auth.tenant_id},
-      include: {sale_items: {take: 1}},
+      include: {
+        sale_items: {
+          take: 10,
+          include: {sale: {select: {id: true}}},
+          orderBy: {sale: {creation_date: "desc"}},
+        },
+      },
     });
 
     if (!product) return error("api.errors.notFound", 404, {id});
     if (product.stock !== 0) return error("products.errors.cannotDeleteWithStock", 400, {id, name: product.name, stock: product.stock});
-    if (product.sale_items.length > 0) return error("products.errors.inUseBySales", 400, {id, name: product.name});
+
+    if (product.sale_items.length > 0) {
+      const total = await prisma.saleItem.count({where: {product_id: id, tenant_id: auth.tenant_id}});
+      const sales = product.sale_items.map((item) => item.sale.id.split("-").pop()!);
+      return error("products.errors.inUseBySales", 400, {id, name: product.name}, {sales, total});
+    }
 
     if (product.image) {
       const key = extractR2KeyFromUrl(product.image);
