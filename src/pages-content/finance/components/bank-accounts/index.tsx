@@ -15,17 +15,17 @@ export function BankAccountsDesktop() {
   return (
     <>
       <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
-        <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-          <BankAccountsFiltersComponent onFilterChange={bankAccounts.handleFilterChange} />
-          <Button variant="contained" onClick={bankAccounts.handleCreate}>
-            {translate("global.include")}
-          </Button>
-        </Box>
+        <BankAccountsFiltersComponent onFilterChange={bankAccounts.handleFilterChange} />
         <Box sx={{flex: 1, minHeight: 0}}>
           <DataTable<BankAccount>
             apiRoute="/api/finance/bank-account/paginated-list"
             columns={bankAccounts.generateConfig()}
             filters={bankAccounts.filters.showInactives ? {showInactives: "true"} : undefined}
+            renderOpositeSearch={
+              <Button variant="contained" onClick={bankAccounts.handleCreate}>
+                {translate("global.include")}
+              </Button>
+            }
           />
         </Box>
       </Box>

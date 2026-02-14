@@ -14,17 +14,17 @@ export function CategoriesDesktop() {
   return (
     <>
       <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
-        <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-          <CategoriesFiltersComponent onFilterChange={categories.handleFilterChange} />
-          <Button variant="contained" onClick={categories.handleCreate}>
-            {translate("global.include")}
-          </Button>
-        </Box>
+        <CategoriesFiltersComponent onFilterChange={categories.handleFilterChange} />
         <Box sx={{flex: 1, minHeight: 0}}>
           <DataTable<FinanceCategory>
             apiRoute="/api/finance/category/paginated-list"
             columns={categories.generateConfig()}
             filters={categories.filters.showInactives ? {showInactives: "true"} : undefined}
+            renderOpositeSearch={
+              <Button variant="contained" onClick={categories.handleCreate}>
+                {translate("global.include")}
+              </Button>
+            }
           />
         </Box>
       </Box>

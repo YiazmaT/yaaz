@@ -18,6 +18,7 @@ export interface DataTableProps<T = any> {
   footerLeftContent?: ReactNode;
   hideSearch?: boolean;
   filters?: Record<string, string | undefined>;
+  renderOpositeSearch?: ReactNode;
 }
 
 export interface ApiResponse<T = any> {

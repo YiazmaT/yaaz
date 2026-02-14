@@ -14,13 +14,17 @@ export function BillsDesktop() {
   return (
     <>
       <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
-        <Box sx={{display: "flex", justifyContent: "flex-end", mb: 1}}>
-          <Button variant="contained" onClick={bills.handleCreate}>
-            {translate("global.include")}
-          </Button>
-        </Box>
         <Box sx={{flex: 1, minHeight: 0}}>
-          <DataTable<BillInstallment> apiRoute="/api/finance/bill/paginated-list" columns={bills.generateConfig()} filters={bills.filters} />
+          <DataTable<BillInstallment>
+            apiRoute="/api/finance/bill/paginated-list"
+            columns={bills.generateConfig()}
+            filters={bills.filters}
+            renderOpositeSearch={
+              <Button variant="contained" onClick={bills.handleCreate}>
+                {translate("global.include")}
+              </Button>
+            }
+          />
         </Box>
       </Box>
       <BillForm bills={bills} />

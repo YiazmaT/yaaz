@@ -7,6 +7,7 @@ import {SearchInput} from "@/src/components/search-input";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {ApiResponse, DataTableProps} from "./types";
+import {flexGenerator} from "@/src/utils/flex-generator";
 
 export function DataTable<T = any>(props: DataTableProps<T>) {
   const [page, setPage] = useState(0);
@@ -65,8 +66,9 @@ export function DataTable<T = any>(props: DataTableProps<T>) {
       }}
     >
       {!props.hideSearch && (
-        <Box sx={{py: 2, borderBottom: `1px solid ${theme.palette.divider}`}}>
+        <Box sx={{...flexGenerator("r.center.space-between"), py: 2, borderBottom: `1px solid ${theme.palette.divider}`}}>
           <SearchInput onSearch={handleSearch} sx={{width: 400}} />
+          {props.renderOpositeSearch}
         </Box>
       )}
       <Box sx={{flex: 1, overflow: "hidden", position: "relative"}}>
