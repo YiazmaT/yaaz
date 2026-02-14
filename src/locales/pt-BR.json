@@ -604,6 +604,11 @@
         "name": "Nome"
       },
       "filters": {
+        "open": "Abrir Filtros",
+        "close": "Fechar Filtros",
+        "clear": "Limpar",
+        "apply": "Aplicar",
+        "clearTooltip": "Limpar Filtros",
         "showInactives": "Mostrar categorias inativas"
       },
       "errors": {
@@ -643,6 +648,11 @@
         "category": "Categoria"
       },
       "filters": {
+        "open": "Abrir Filtros",
+        "close": "Fechar Filtros",
+        "clear": "Limpar",
+        "apply": "Aplicar",
+        "clearTooltip": "Limpar Filtros",
         "showInactives": "Mostrar contas inativas"
       },
       "errors": {

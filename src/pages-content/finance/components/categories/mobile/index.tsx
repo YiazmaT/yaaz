@@ -1,6 +1,6 @@
 "use client";
 import {ReactNode} from "react";
-import {Box, CardContent, Chip, Fab, FormControlLabel, IconButton, Switch, Tooltip, Typography} from "@mui/material";
+import {Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
@@ -8,6 +8,7 @@ import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {FinanceCategory} from "../../../types";
 import {CategoryForm} from "../form";
+import {CategoriesFiltersComponent} from "../filters";
 import {useCategories} from "../use-categories";
 
 export function CategoriesMobile() {
@@ -55,13 +56,8 @@ export function CategoriesMobile() {
         renderRow={renderRow}
         onEdit={categories.handleEdit}
         hideEdit={(row) => !row.active}
-        filters={categories.showInactives ? {showInactives: "true"} : undefined}
-        headerContent={
-          <FormControlLabel
-            control={<Switch checked={categories.showInactives} onChange={(_, checked) => categories.setShowInactives(checked)} size="small" />}
-            label={translate("finance.categories.filters.showInactives")}
-          />
-        }
+        filters={categories.filters.showInactives ? {showInactives: "true"} : undefined}
+        headerContent={<CategoriesFiltersComponent onFilterChange={categories.handleFilterChange} />}
       />
       <Fab color="primary" size="small" onClick={categories.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
         <AddIcon sx={{color: "white"}} />

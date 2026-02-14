@@ -67,6 +67,14 @@ export enum BillStatusEnum {
   cancelled = "cancelled",
 }
 
+export interface CategoriesFilters {
+  showInactives?: boolean;
+}
+
+export interface BankAccountsFilters {
+  showInactives?: boolean;
+}
+
 export enum FinanceTab {
   BILLS = 0,
   BANK = 1,

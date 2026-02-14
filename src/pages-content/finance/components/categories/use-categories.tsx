@@ -5,7 +5,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
-import {FinanceCategory} from "../../types";
+import {CategoriesFilters, FinanceCategory} from "../../types";
 import {CategoryFormValues, useCategoryFormConfig} from "./form-config";
 import {useCategoriesTableConfig} from "./table-config";
 
@@ -14,7 +14,7 @@ const API_ROUTE = "/api/finance/category/paginated-list";
 export function useCategories() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [showInactives, setShowInactives] = useState(false);
+  const [filters, setFilters] = useState<CategoriesFilters>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useCategoryFormConfig();
@@ -89,6 +89,10 @@ export function useCategories() {
     openDrawer("edit");
   }
 
+  function handleFilterChange(newFilters: CategoriesFilters) {
+    setFilters(newFilters);
+  }
+
   function handleToggleActive(row: FinanceCategory) {
     const messageKey = row.active ? "finance.categories.deactivateConfirm" : "finance.categories.activateConfirm";
     const successKey = row.active ? "finance.categories.deactivateSuccess" : "finance.categories.activateSuccess";
@@ -119,7 +123,7 @@ export function useCategories() {
     handleCreate,
     handleEdit,
     handleToggleActive,
-    showInactives,
-    setShowInactives,
+    filters,
+    handleFilterChange,
   };
 }

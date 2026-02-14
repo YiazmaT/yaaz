@@ -1,6 +1,6 @@
 "use client";
 import {ReactNode} from "react";
-import {Box, CardContent, Chip, Fab, FormControlLabel, IconButton, Switch, Tooltip, Typography, useTheme} from "@mui/material";
+import {Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
@@ -10,6 +10,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {BankAccount} from "../../../types";
 import {BankAccountForm} from "../form";
+import {BankAccountsFiltersComponent} from "../filters";
 import {StatementDrawer} from "../statement-drawer";
 import {useBankAccounts} from "../use-bank-accounts";
 
@@ -74,13 +75,8 @@ export function BankAccountsMobile() {
         renderRow={renderRow}
         onEdit={bankAccounts.handleEdit}
         hideEdit={(row) => !row.active}
-        filters={bankAccounts.showInactives ? {showInactives: "true"} : undefined}
-        headerContent={
-          <FormControlLabel
-            control={<Switch checked={bankAccounts.showInactives} onChange={(_, checked) => bankAccounts.setShowInactives(checked)} size="small" />}
-            label={translate("finance.bank.filters.showInactives")}
-          />
-        }
+        filters={bankAccounts.filters.showInactives ? {showInactives: "true"} : undefined}
+        headerContent={<BankAccountsFiltersComponent onFilterChange={bankAccounts.handleFilterChange} />}
       />
       <Fab color="primary" size="small" onClick={bankAccounts.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
         <AddIcon sx={{color: "white"}} />

@@ -5,7 +5,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
-import {BankAccount} from "../../types";
+import {BankAccount, BankAccountsFilters} from "../../types";
 import {BankAccountFormValues, useBankAccountFormConfig} from "./form-config";
 import {useBankAccountsTableConfig} from "./table-config";
 
@@ -14,7 +14,7 @@ const API_ROUTE = "/api/finance/bank-account/paginated-list";
 export function useBankAccounts() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [showInactives, setShowInactives] = useState(false);
+  const [filters, setFilters] = useState<BankAccountsFilters>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [statementAccount, setStatementAccount] = useState<BankAccount | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
@@ -91,6 +91,10 @@ export function useBankAccounts() {
     openDrawer("edit");
   }
 
+  function handleFilterChange(newFilters: BankAccountsFilters) {
+    setFilters(newFilters);
+  }
+
   function handleToggleActive(row: BankAccount) {
     const messageKey = row.active ? "finance.bank.deactivateConfirm" : "finance.bank.activateConfirm";
     const successKey = row.active ? "finance.bank.deactivateSuccess" : "finance.bank.activateSuccess";
@@ -129,8 +133,8 @@ export function useBankAccounts() {
     handleCreate,
     handleEdit,
     handleToggleActive,
-    showInactives,
-    setShowInactives,
+    filters,
+    handleFilterChange,
     statementAccount,
     handleStatement,
     closeStatement,
