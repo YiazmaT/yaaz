@@ -1,13 +1,15 @@
 "use client";
-import {Box} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {DataTable} from "@/src/components/data-table";
 import {ScreenCard} from "@/src/components/screen-card";
 import {Client} from "../types";
 import {Form} from "../components/form";
 import {ClientsFiltersComponent} from "../components/filters";
 import {DesktopViewProps} from "./types";
+import {useTranslate} from "@/src/contexts/translation-context";
 
 export function DesktopView(props: DesktopViewProps) {
+  const {translate} = useTranslate();
   const {clients} = props;
 
   return (
@@ -20,6 +22,11 @@ export function DesktopView(props: DesktopViewProps) {
               apiRoute="/api/client/paginated-list"
               columns={clients.generateConfig()}
               filters={clients.filters.showInactives ? {showInactives: "true"} : undefined}
+              renderOpositeSearch={
+                <Button variant="contained" onClick={clients.handleCreate}>
+                  {translate("global.include")}
+                </Button>
+              }
             />
           </Box>
         </Box>

@@ -19,7 +19,7 @@ export function DesktopView(props: DesktopViewProps) {
 
   return (
     <>
-      <ScreenCard title="packages.title" includeButtonFunction={packages.handleCreate}>
+      <ScreenCard title="packages.title">
         <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
           <PackagesFiltersComponent onFilterChange={packages.handleFilterChange} />
           <Box sx={{flex: 1, minHeight: 0}}>
@@ -30,6 +30,11 @@ export function DesktopView(props: DesktopViewProps) {
               footerLeftContent={
                 <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={packages.openStockModal}>
                   {translate("packages.addStock")}
+                </Button>
+              }
+              renderOpositeSearch={
+                <Button variant="contained" onClick={packages.handleCreate}>
+                  {translate("global.include")}
                 </Button>
               }
             />

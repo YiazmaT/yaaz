@@ -18,13 +18,13 @@ import {DesktopViewProps} from "./types";
 
 export function DesktopView(props: DesktopViewProps) {
   const {products} = props;
-  const {translate} = useTranslate();
   const {tenant} = useTenant();
+  const {translate} = useTranslate();
   const stockDrawerRef = useRef<AddStockDrawerRef>(null);
 
   return (
     <>
-      <ScreenCard title="products.title" includeButtonFunction={products.handleCreate}>
+      <ScreenCard title="products.title">
         <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
           <ProductsFiltersComponent onFilterChange={products.handleFilterChange} />
           <Box sx={{flex: 1, minHeight: 0}}>
@@ -35,6 +35,11 @@ export function DesktopView(props: DesktopViewProps) {
               footerLeftContent={
                 <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={() => stockDrawerRef.current?.open()}>
                   {translate("products.addStock")}
+                </Button>
+              }
+              renderOpositeSearch={
+                <Button variant="contained" onClick={products.handleCreate}>
+                  {translate("global.include")}
                 </Button>
               }
             />

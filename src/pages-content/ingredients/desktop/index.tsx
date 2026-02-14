@@ -19,7 +19,7 @@ export function DesktopView(props: DesktopViewProps) {
 
   return (
     <>
-      <ScreenCard title="ingredients.title" includeButtonFunction={ingredients.handleCreate}>
+      <ScreenCard title="ingredients.title">
         <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
           <IngredientsFiltersComponent onFilterChange={ingredients.handleFilterChange} />
           <Box sx={{flex: 1, minHeight: 0}}>
@@ -30,6 +30,11 @@ export function DesktopView(props: DesktopViewProps) {
               footerLeftContent={
                 <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={ingredients.openStockModal}>
                   {translate("ingredients.addStock")}
+                </Button>
+              }
+              renderOpositeSearch={
+                <Button variant="contained" onClick={ingredients.handleCreate}>
+                  {translate("global.include")}
                 </Button>
               }
             />
@@ -47,11 +52,7 @@ export function DesktopView(props: DesktopViewProps) {
           ingredientName={ingredients.costHistoryIngredient.name}
         />
       )}
-      <StockChangeModal
-        item={ingredients.stockChangeItem}
-        onClose={ingredients.closeStockChangeModal}
-        onSuccess={ingredients.refreshTable}
-      />
+      <StockChangeModal item={ingredients.stockChangeItem} onClose={ingredients.closeStockChangeModal} onSuccess={ingredients.refreshTable} />
       {ingredients.stockHistoryItem && (
         <StockHistoryModal
           open={!!ingredients.stockHistoryItem}
