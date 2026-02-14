@@ -1,0 +1,160 @@
+enum BillRecurrenceType {
+  none
+  installment
+  recurring
+
+  @@schema("data")
+}
+
+enum BillRecurrenceInterval {
+  weekly
+  biweekly
+  monthly
+  bimonthly
+  quarterly
+  semiannual
+  annual
+
+  @@schema("data")
+}
+
+enum BillStatus {
+  pending
+  paid
+  overdue
+  cancelled
+
+  @@schema("data")
+}
+
+enum BankTransactionType {
+  deposit
+  withdrawal
+  bill_payment
+
+  @@schema("data")
+}
+
+model FinanceCategory {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id String  @db.Uuid
+  name      String
+  active    Boolean @default(true)
+  tenant    Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("FinanceCategoryCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("FinanceCategoryEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  bills             Bill[]
+  bank_transactions BankTransaction[]
+
+  @@unique([tenant_id, name])
+  @@map("finance_category")
+  @@schema("data")
+}
+
+model BankAccount {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id String  @db.Uuid
+  name      String
+  balance   Decimal @default(0) @db.Decimal
+  active    Boolean @default(true)
+  tenant    Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("BankAccountCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("BankAccountEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  transactions      BankTransaction[]
+  bill_installments BillInstallment[]
+
+  @@unique([tenant_id, name])
+  @@map("bank_account")
+  @@schema("data")
+}
+
+model BankTransaction {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id           String              @db.Uuid
+  bank_account_id     String              @db.Uuid
+  type                BankTransactionType
+  amount              Decimal             @db.Decimal
+  description         String?
+  date                DateTime
+  category_id         String?             @db.Uuid
+  bill_installment_id String?             @unique @db.Uuid
+  tenant              Tenant              @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  bank_account        BankAccount         @relation(fields: [bank_account_id], references: [id], onDelete: Cascade)
+  category            FinanceCategory?    @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  bill_installment    BillInstallment?    @relation(fields: [bill_installment_id], references: [id], onDelete: SetNull)
+
+  creator_id    String?  @db.Uuid
+  creation_date DateTime @default(now())
+  creator       User?    @relation("BankTransactionCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+
+  @@map("bank_transaction")
+  @@schema("data")
+}
+
+model Bill {
+  id                  String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id           String                  @db.Uuid
+  code                Int
+  description         String
+  category_id         String?                 @db.Uuid
+  total_amount        Decimal                 @db.Decimal
+  recurrence_type     BillRecurrenceType
+  recurrence_interval BillRecurrenceInterval?
+  recurrence_count    Int?
+  active              Boolean                 @default(true)
+  tenant              Tenant                  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  category            FinanceCategory?        @relation(fields: [category_id], references: [id], onDelete: SetNull)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("BillCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("BillEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  installments BillInstallment[]
+
+  @@unique([tenant_id, code])
+  @@map("bill")
+  @@schema("data")
+}
+
+model BillInstallment {
+  id                 String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id          String       @db.Uuid
+  bill_id            String       @db.Uuid
+  installment_number Int
+  amount             Decimal      @db.Decimal
+  due_date           DateTime
+  status             BillStatus   @default(pending)
+  paid_date          DateTime?
+  bank_account_id    String?      @db.Uuid
+  tenant             Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  bill               Bill         @relation(fields: [bill_id], references: [id], onDelete: Cascade)
+  bank_account       BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("BillInstallmentCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("BillInstallmentEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  bank_transaction BankTransaction?
+
+  @@unique([bill_id, installment_number])
+  @@map("bill_installment")
+  @@schema("data")
+}

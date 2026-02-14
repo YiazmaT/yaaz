@@ -27,6 +27,11 @@ model Tenant {
   package_stock_changes    PackageStockChange[]
   clients                  Client[]
   client_addresses         ClientAddress[]
+  finance_categories       FinanceCategory[]
+  bank_accounts            BankAccount[]
+  bank_transactions        BankTransaction[]
+  bills                    Bill[]
+  bill_installments        BillInstallment[]
 
   @@map("tenant")
   @@schema("data")

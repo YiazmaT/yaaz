@@ -30,6 +30,16 @@ model User {
   created_client_addresses         ClientAddress[]         @relation("ClientAddressCreator")
   edited_client_addresses          ClientAddress[]         @relation("ClientAddressEditor")
 
+  created_finance_categories FinanceCategory[] @relation("FinanceCategoryCreator")
+  edited_finance_categories  FinanceCategory[] @relation("FinanceCategoryEditor")
+  created_bank_accounts      BankAccount[]     @relation("BankAccountCreator")
+  edited_bank_accounts       BankAccount[]     @relation("BankAccountEditor")
+  created_bank_transactions  BankTransaction[] @relation("BankTransactionCreator")
+  created_bills              Bill[]            @relation("BillCreator")
+  edited_bills               Bill[]            @relation("BillEditor")
+  created_bill_installments  BillInstallment[] @relation("BillInstallmentCreator")
+  edited_bill_installments   BillInstallment[] @relation("BillInstallmentEditor")
+
   @@map("user")
   @@schema("data")
 }

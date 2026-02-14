@@ -41,7 +41,7 @@ FOLLOW THIS RULES STRICTLY!: ADD THEN TO YOU CONTEXT AND NEVER COMPACT.
 
 - Take a look at /src/theme , if the color you need is not there, add it there and import it from there;
 - when you need to use flex, call the function flexGenerator to save some lines;
-- if you need to format a Date to display, use moment(date).format("DD/MM/YYYY");
+- if you need to format a Date to display, use `formatDate` from `src/lib/format-date.ts`. Call `formatDate(date)` for date only or `formatDate(date, true)` to include time (HH:mm:ss);
 
 # Module structure
 

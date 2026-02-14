@@ -33,6 +33,7 @@
     "tenants": "Empresas",
     "unity": "Unidade",
     "clients": "Clientes",
+    "finance": "Financeiro",
     "packages": "Embalagens",
     "total": "Total",
     "actions": {
@@ -577,6 +578,137 @@
       "dateRequired": "Data inicial e final são obrigatórias",
       "futureDateNotAllowed": "Datas futuras não são permitidas",
       "dateFromGreaterThanTo": "Data inicial não pode ser maior que a data final"
+    }
+  },
+  "finance": {
+    "title": "Financeiro",
+    "tabs": {
+      "bills": "Contas a Pagar",
+      "bank": "Contas Bancarias",
+      "categories": "Categorias"
+    },
+    "categories": {
+      "title": "Categorias",
+      "createTitle": "Incluir Categoria",
+      "editTitle": "Editar Categoria",
+      "createSuccess": "Categoria criada com sucesso!",
+      "updateSuccess": "Categoria atualizada com sucesso!",
+      "inactive": "Inativa",
+      "deactivateConfirm": "Tem certeza que deseja desativar esta categoria?",
+      "activateConfirm": "Tem certeza que deseja ativar esta categoria?",
+      "deactivateSuccess": "Categoria desativada com sucesso!",
+      "activateSuccess": "Categoria ativada com sucesso!",
+      "tooltipDeactivate": "Desativar categoria",
+      "tooltipActivate": "Ativar categoria",
+      "fields": {
+        "name": "Nome"
+      },
+      "filters": {
+        "showInactives": "Mostrar categorias inativas"
+      },
+      "errors": {
+        "nameAlreadyExists": "Já existe uma categoria com este nome."
+      }
+    },
+    "bank": {
+      "title": "Contas Bancarias",
+      "createTitle": "Incluir Conta",
+      "editTitle": "Editar Conta",
+      "createSuccess": "Conta criada com sucesso!",
+      "updateSuccess": "Conta atualizada com sucesso!",
+      "inactive": "Inativa",
+      "deactivateConfirm": "Tem certeza que deseja desativar esta conta?",
+      "activateConfirm": "Tem certeza que deseja ativar esta conta?",
+      "deactivateSuccess": "Conta desativada com sucesso!",
+      "activateSuccess": "Conta ativada com sucesso!",
+      "tooltipDeactivate": "Desativar conta",
+      "tooltipActivate": "Ativar conta",
+      "viewStatement": "Ver extrato",
+      "statementTitle": "Extrato",
+      "addTransaction": "Adicionar Transacao",
+      "transactionSuccess": "Transacao registrada com sucesso!",
+      "deleteTransactionConfirm": "Tem certeza que deseja excluir esta transacao?",
+      "deleteTransactionSuccess": "Transacao excluida com sucesso!",
+      "transactionTypes": {
+        "deposit": "Deposito",
+        "withdrawal": "Retirada",
+        "bill_payment": "Pagamento de Conta"
+      },
+      "fields": {
+        "name": "Nome",
+        "balance": "Saldo",
+        "amount": "Valor",
+        "date": "Data",
+        "description": "Descricao",
+        "category": "Categoria"
+      },
+      "filters": {
+        "showInactives": "Mostrar contas inativas"
+      },
+      "errors": {
+        "nameAlreadyExists": "Ja existe uma conta com este nome.",
+        "cannotDeleteBillTransaction": "Nao e possivel excluir uma transacao vinculada a uma conta a pagar.",
+        "amountMustBePositive": "O valor deve ser maior que zero."
+      }
+    },
+    "bills": {
+      "title": "Contas a Pagar",
+      "createTitle": "Incluir Conta a Pagar",
+      "editTitle": "Editar Conta a Pagar",
+      "createSuccess": "Conta a pagar criada com sucesso!",
+      "updateSuccess": "Conta a pagar atualizada com sucesso!",
+      "deleteSuccess": "Conta a pagar excluida com sucesso!",
+      "deleteConfirm": "Tem certeza que deseja excluir esta conta a pagar? Todas as parcelas serao excluidas.",
+      "pay": "Pagar",
+      "payTitle": "Pagar Parcela",
+      "paySuccess": "Pagamento registrado com sucesso!",
+      "cancelPayment": "Cancelar Pagamento",
+      "cancelPaymentConfirm": "Tem certeza que deseja cancelar este pagamento? A transacao bancaria sera revertida.",
+      "cancelPaymentSuccess": "Pagamento cancelado com sucesso!",
+      "statuses": {
+        "pending": "Pendente",
+        "paid": "Pago",
+        "overdue": "Vencido",
+        "cancelled": "Cancelado"
+      },
+      "recurrenceTypes": {
+        "none": "Pagamento unico",
+        "installment": "Parcelado",
+        "recurring": "Recorrente"
+      },
+      "intervals": {
+        "weekly": "Semanal",
+        "biweekly": "Quinzenal",
+        "monthly": "Mensal",
+        "bimonthly": "Bimestral",
+        "quarterly": "Trimestral",
+        "semiannual": "Semestral",
+        "annual": "Anual"
+      },
+      "fields": {
+        "code": "Codigo",
+        "description": "Descricao",
+        "category": "Categoria",
+        "installment": "Parcela",
+        "amount": "Valor",
+        "totalAmount": "Valor Total",
+        "dueDate": "Vencimento",
+        "status": "Status",
+        "recurrenceType": "Tipo de Recorrencia",
+        "recurrenceInterval": "Intervalo",
+        "recurrenceCount": "Quantidade de Parcelas",
+        "bankAccount": "Conta Bancaria",
+        "paidDate": "Data do Pagamento"
+      },
+      "errors": {
+        "cannotEditWithPaidInstallments": "Nao e possivel editar uma conta com parcelas pagas.",
+        "cannotDeleteWithPaidInstallments": "Nao e possivel excluir uma conta com parcelas pagas.",
+        "alreadyPaid": "Esta parcela ja foi paga.",
+        "notPaid": "Esta parcela nao esta paga.",
+        "selectAccount": "Selecione uma conta bancaria.",
+        "amountMustBePositive": "O valor deve ser maior que zero.",
+        "countMinOne": "A quantidade deve ser pelo menos 1."
+      }
     }
   }
 }
