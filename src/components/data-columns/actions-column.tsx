@@ -9,7 +9,7 @@ export function ActionsColumn<T>(props: ActionsColumnProps<T>) {
   const showEdit = props.onEdit && !props.hideEdit?.(props.row);
 
   return (
-    <Box sx={{display: "flex", gap: 0.5}}>
+    <Box sx={{display: "flex", gap: 0.5, justifyContent: "center"}}>
       {props.customActions?.map((action, index) => {
         if (action.hidden?.(props.row)) return null;
         const icon = typeof action.icon === "function" ? action.icon(props.row) : action.icon;
