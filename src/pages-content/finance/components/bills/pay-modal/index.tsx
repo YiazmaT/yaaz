@@ -10,32 +10,21 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {Box, Button, Grid, Typography} from "@mui/material";
-import {useEffect} from "react";
-import {useForm} from "react-hook-form";
-import * as yup from "yup";
+import {useMemo, useEffect} from "react";
+import {useForm, useWatch} from "react-hook-form";
 import {BankAccount} from "../../../types";
+import {usePayFormConfig} from "./form-config";
 import {PayFormValues, PayModalProps} from "./types";
 
 export function PayModal(props: PayModalProps) {
-  const {installment, onClose, onSuccess} = props;
   const {translate} = useTranslate();
-  const formatCurrency = useFormatCurrency();
+  const {installment, onClose, onSuccess} = props;
+  const {schema, defaultValues} = usePayFormConfig();
   const api = useApi();
   const toast = useToaster();
-
+  const formatCurrency = useFormatCurrency();
   const {data: accountsData} = useApiQuery<BankAccount[]>({route: "/api/finance/bank-account/list", queryKey: ["/api/finance/bank-account/list"]});
   const accounts = accountsData || [];
-
-  const schema = yup.object().shape({
-    bankAccount: yup
-      .object()
-      .required()
-      .nullable()
-      .test("required", translate("finance.bills.errors.selectAccount"), (v) => !!v),
-    paidDate: yup.string().required().label(translate("finance.bills.fields.paidDate")),
-  });
-
-  const today = new Date().toISOString().split("T")[0];
 
   const {
     control,
@@ -45,14 +34,21 @@ export function PayModal(props: PayModalProps) {
   } = useForm<PayFormValues>({
     mode: "onChange",
     resolver: yupResolver(schema) as any,
-    defaultValues: {bankAccount: null, paidDate: today},
+    defaultValues,
   });
+
+  const selectedAccount = useWatch({control, name: "bankAccount"}) as BankAccount | null;
+
+  const balanceAfterPayment = useMemo(() => {
+    if (!selectedAccount || !installment) return null;
+    return Number(selectedAccount.balance) - Number(installment.amount);
+  }, [selectedAccount, installment]);
 
   useEffect(() => {
     if (installment) {
-      reset({bankAccount: null, paidDate: today});
+      reset({...defaultValues, bankAccount: accounts.length === 1 ? accounts[0] : null});
     }
-  }, [installment]);
+  }, [installment, accounts]);
 
   async function submit(data: PayFormValues) {
     if (!installment || !data.bankAccount) return;
@@ -92,6 +88,15 @@ export function PayModal(props: PayModalProps) {
           </Grid>
         </form>
       </FormContextProvider>
+
+      {balanceAfterPayment !== null && (
+        <Typography
+          variant="body2"
+          sx={{mt: 2, textAlign: "center", color: balanceAfterPayment < 0 || Number(selectedAccount?.balance) < 0 ? "error.main" : "text.secondary"}}
+        >
+          {translate("finance.bills.fields.balanceAfterPayment")}: {formatCurrency(String(balanceAfterPayment))}
+        </Typography>
+      )}
 
       <Box sx={{...flexGenerator("r.center.center"), gap: 1, marginTop: 5}}>
         <Button variant="contained" type="submit" form="pay-form">

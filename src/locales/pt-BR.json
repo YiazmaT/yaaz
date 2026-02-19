@@ -708,7 +708,8 @@
         "recurrenceInterval": "Intervalo",
         "recurrenceCount": "Quantidade de Parcelas",
         "bankAccount": "Conta Bancaria",
-        "paidDate": "Data do Pagamento"
+        "paidDate": "Data do Pagamento",
+        "balanceAfterPayment": "Saldo após o pagamento"
       },
       "errors": {
         "cannotEditWithPaidInstallments": "Nao e possivel editar uma conta com parcelas pagas.",

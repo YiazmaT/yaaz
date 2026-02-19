@@ -18,10 +18,8 @@ export function BillForm(props: BillFormProps) {
   const {bills} = props;
   const {translate} = useTranslate();
   const {recurrenceIntervals} = useFinanceConstants();
-
   const {data: categoriesData} = useApiQuery<FinanceCategory[]>({route: "/api/finance/category/list", queryKey: ["/api/finance/category/list"]});
   const categories = categoriesData || [];
-
   const isEdit = bills.formType === "edit";
 
   return (
