@@ -47,7 +47,7 @@ export function StatementDrawer(props: StatementDrawerProps) {
   }
 
   function handleDeleteTransaction(transaction: BankTransaction) {
-    if (transaction.bill_installment_id) return;
+    if (transaction.bill_id) return;
     showConfirmModal({
       message: "finance.bank.deleteTransactionConfirm",
       onConfirm: async () => {
@@ -110,7 +110,7 @@ export function StatementDrawer(props: StatementDrawerProps) {
                 </Typography>
               </Box>
               <Typography variant="body2" noWrap sx={{mt: 0.5}}>
-                {t.description || (t.bill_installment ? `${t.bill_installment.bill.description} #${t.bill_installment.bill.code}` : "-")}
+                {t.description || (t.bill ? `${t.bill.description} #${t.bill.code}` : "-")}
               </Typography>
               {t.category && (
                 <Typography variant="caption" color="text.secondary">
@@ -123,7 +123,7 @@ export function StatementDrawer(props: StatementDrawerProps) {
                 {t.type === "deposit" ? "+" : "-"}
                 {formatCurrency(String(t.amount))}
               </Typography>
-              {!t.bill_installment_id && (
+              {!t.bill_id && (
                 <Tooltip title={translate("global.actions.delete")}>
                   <IconButton size="small" onClick={() => handleDeleteTransaction(t)}>
                     <DeleteIcon fontSize="small" />

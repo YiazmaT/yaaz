@@ -12,17 +12,12 @@ export async function DELETE(req: NextRequest) {
 
     if (!id) return error("api.errors.missingRequiredFields", 400);
 
-    const existing = await prisma.bill.findUnique({
-      where: {id, tenant_id: auth.tenant_id},
-      include: {installments: true},
-    });
+    const existing = await prisma.bill.findUnique({where: {id, tenant_id: auth.tenant_id}});
     if (!existing) return error("api.errors.notFound", 404, {id});
-
-    const hasPaid = existing.installments.some((i) => i.status === BillStatus.paid);
-    if (hasPaid) return error("finance.bills.errors.cannotDeleteWithPaidInstallments", 400);
+    if (existing.status === BillStatus.paid) return error("finance.bills.errors.cannotDeletePaidBill", 400);
 
     await prisma.bill.delete({where: {id, tenant_id: auth.tenant_id}});
 
-    return success("delete", {id});
+    return success("delete", existing);
   });
 }

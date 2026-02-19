@@ -23,12 +23,10 @@ export async function GET(req: NextRequest) {
 
     if (search) {
       const searchAsNumber = parseInt(search);
-      where.bill = {
-        OR: [
-          {description: {contains: search, mode: "insensitive"}},
-          ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : []),
-        ],
-      };
+      where.OR = [
+        {description: {contains: search, mode: "insensitive"}},
+        ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : []),
+      ];
     }
 
     if (status) {
@@ -36,7 +34,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (categoryId) {
-      where.bill = {...(where.bill || {}), category_id: categoryId};
+      where.category_id = categoryId;
     }
 
     if (dueDateFrom || dueDateTo) {
@@ -47,21 +45,17 @@ export async function GET(req: NextRequest) {
     }
 
     const [data, total] = await Promise.all([
-      prisma.billInstallment.findMany({
+      prisma.bill.findMany({
         where,
         skip,
         take: limit,
         orderBy: {due_date: "asc"},
         include: {
-          bill: {
-            include: {
-              category: {select: {id: true, name: true}},
-            },
-          },
+          category: {select: {id: true, name: true}},
           bank_account: {select: {id: true, name: true}},
         },
       }),
-      prisma.billInstallment.count({where}),
+      prisma.bill.count({where}),
     ]);
 
     return success("get", {data, total, page, limit});

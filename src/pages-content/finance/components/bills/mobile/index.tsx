@@ -8,7 +8,7 @@ import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/lib/format-date";
-import {BillInstallment} from "../../../types";
+import {Bill} from "../../../types";
 import {useFinanceConstants} from "../../../constants";
 import {isOverdue} from "../../../utils";
 import {BillForm} from "../form";
@@ -22,28 +22,29 @@ export function BillsMobile() {
   const bills = useBills();
   const theme = useTheme();
 
-  function renderRow(item: BillInstallment, actions: ReactNode) {
+  function renderRow(item: Bill, actions: ReactNode) {
+    const overdue = isOverdue(item);
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
         <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "flex-start"}}>
           <Box sx={{flex: 1, minWidth: 0}}>
             <Typography variant="subtitle1" fontWeight={600} noWrap>
-              #{item.bill.code} {item.bill.description}
+              #{item.code} {item.description}
             </Typography>
-            {item.bill.category && (
+            {item.category && (
               <Typography variant="body2" color="text.secondary">
-                {item.bill.category.name}
+                {item.category.name}
               </Typography>
             )}
             <Box sx={{display: "flex", gap: 1, mt: 0.5, alignItems: "center"}}>
               <Chip
-                label={isOverdue(item) ? translate("finance.bills.statuses.overdue") : billStatuses[item.status as keyof typeof billStatuses]?.label}
+                label={overdue ? translate("finance.bills.statuses.overdue") : billStatuses[item.status as keyof typeof billStatuses]?.label}
                 size="small"
-                color={isOverdue(item) ? "error" : billStatuses[item.status as keyof typeof billStatuses]?.color || "default"}
+                color={overdue ? "error" : billStatuses[item.status as keyof typeof billStatuses]?.color || "default"}
               />
-              {item.bill.recurrence_type !== "none" && (
+              {item.installment_count > 1 && (
                 <Typography variant="caption" color="text.secondary">
-                  {item.installment_number}/{item.bill.recurrence_count}
+                  {item.installment_number}/{item.installment_count}
                 </Typography>
               )}
             </Box>
@@ -92,7 +93,7 @@ export function BillsMobile() {
 
   return (
     <Box sx={{display: "flex", flexDirection: "column", height: "100%", position: "relative"}}>
-      <MobileList<BillInstallment>
+      <MobileList<Bill>
         title="finance.bills.title"
         apiRoute="/api/finance/bill/paginated-list"
         renderRow={renderRow}
@@ -105,7 +106,7 @@ export function BillsMobile() {
         <AddIcon sx={{color: "white"}} />
       </Fab>
       <BillForm bills={bills} />
-      <PayModal installment={bills.payInstallment} onClose={bills.closePayModal} onSuccess={bills.refreshTable} />
+      <PayModal bill={bills.payBill} onClose={bills.closePayModal} onSuccess={bills.refreshTable} />
     </Box>
   );
 }

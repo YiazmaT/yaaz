@@ -20,8 +20,8 @@ export interface BankTransaction {
   date: string;
   category_id?: string;
   category?: FinanceCategory;
-  bill_installment_id?: string;
-  bill_installment?: BillInstallment & {bill: Bill};
+  bill_id?: string;
+  bill?: Bill;
 }
 
 export interface Bill {
@@ -30,34 +30,15 @@ export interface Bill {
   description: string;
   category_id?: string;
   category?: FinanceCategory;
-  total_amount: number;
-  recurrence_type: string;
-  recurrence_interval?: string;
-  recurrence_count?: number;
-  active: boolean;
-}
-
-export interface BillInstallment {
-  id: string;
-  bill_id: string;
-  installment_number: number;
   amount: number;
   due_date: string;
+  installment_number: number;
+  installment_count: number;
   status: string;
   paid_date?: string;
   bank_account_id?: string;
   bank_account?: BankAccount;
-  bill: Bill;
-}
-
-export enum RecurrenceIntervalEnum {
-  weekly = "weekly",
-  biweekly = "biweekly",
-  monthly = "monthly",
-  bimonthly = "bimonthly",
-  quarterly = "quarterly",
-  semiannual = "semiannual",
-  annual = "annual",
+  active: boolean;
 }
 
 export enum BillStatusEnum {

@@ -1,10 +1,8 @@
 export interface CreateBillDto {
   description: string;
   categoryId?: string;
-  totalAmount: string;
-  recurrenceType: string;
-  recurrenceInterval?: string;
-  recurrenceCount?: number;
+  amount: string;
+  installmentCount?: string;
   dueDate: string;
 }
 
@@ -12,14 +10,16 @@ export interface UpdateBillDto {
   id: string;
   description: string;
   categoryId?: string;
+  amount?: string;
+  dueDate?: string;
 }
 
 export interface PayBillDto {
-  installmentId: string;
+  billId: string;
   bankAccountId: string;
   paidDate: string;
 }
 
 export interface CancelPaymentDto {
-  installmentId: string;
+  billId: string;
 }

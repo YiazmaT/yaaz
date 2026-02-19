@@ -2,7 +2,7 @@
 import {Box, Button} from "@mui/material";
 import {DataTable} from "@/src/components/data-table";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {BillInstallment} from "../../types";
+import {Bill} from "../../types";
 import {BillForm} from "./form";
 import {PayModal} from "./pay-modal";
 import {useBills} from "./use-bills";
@@ -15,7 +15,7 @@ export function BillsDesktop() {
     <>
       <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
         <Box sx={{flex: 1, minHeight: 0}}>
-          <DataTable<BillInstallment>
+          <DataTable<Bill>
             apiRoute="/api/finance/bill/paginated-list"
             columns={bills.generateConfig()}
             filters={bills.filters}
@@ -28,7 +28,7 @@ export function BillsDesktop() {
         </Box>
       </Box>
       <BillForm bills={bills} />
-      <PayModal installment={bills.payInstallment} onClose={bills.closePayModal} onSuccess={bills.refreshTable} />
+      <PayModal bill={bills.payBill} onClose={bills.closePayModal} onSuccess={bills.refreshTable} />
     </>
   );
 }

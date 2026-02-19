@@ -1,7 +1,7 @@
-import {BankAccount, BillInstallment} from "../../../types";
+import {BankAccount, Bill} from "../../../types";
 
 export interface PayModalProps {
-  installment: BillInstallment | null;
+  bill: Bill | null;
   onClose: () => void;
   onSuccess: () => void;
 }

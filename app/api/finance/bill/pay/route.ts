@@ -9,25 +9,22 @@ const ROUTE = "/api/finance/bill/pay";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
-    const {installmentId, bankAccountId, paidDate} = await req.json();
+    const {billId, bankAccountId, paidDate} = await req.json();
 
-    if (!installmentId || !bankAccountId || !paidDate) return error("api.errors.missingRequiredFields", 400);
+    if (!billId || !bankAccountId || !paidDate) return error("api.errors.missingRequiredFields", 400);
 
-    const installment = await prisma.billInstallment.findUnique({
-      where: {id: installmentId, tenant_id: auth.tenant_id},
-      include: {bill: true},
-    });
-    if (!installment) return error("api.errors.notFound", 404);
-    if (installment.status === BillStatus.paid) return error("finance.bills.errors.alreadyPaid", 400);
+    const bill = await prisma.bill.findUnique({where: {id: billId, tenant_id: auth.tenant_id}});
+    if (!bill) return error("api.errors.notFound", 404);
+    if (bill.status === BillStatus.paid) return error("finance.bills.errors.alreadyPaid", 400);
 
     const account = await prisma.bankAccount.findUnique({where: {id: bankAccountId, tenant_id: auth.tenant_id}});
     if (!account) return error("api.errors.notFound", 404);
 
-    const amount = new Decimal(installment.amount.toString());
+    const amount = new Decimal(bill.amount.toString());
 
     await prisma.$transaction([
-      prisma.billInstallment.update({
-        where: {id: installmentId, tenant_id: auth.tenant_id},
+      prisma.bill.update({
+        where: {id: billId, tenant_id: auth.tenant_id},
         data: {
           status: BillStatus.paid,
           paid_date: new Date(paidDate),
@@ -41,11 +38,11 @@ export async function POST(req: NextRequest) {
           tenant_id: auth.tenant_id,
           bank_account_id: bankAccountId,
           type: "bill_payment",
-          amount: installment.amount,
-          description: `${installment.bill.description} #${installment.bill.code}`,
+          amount: bill.amount,
+          description: `${bill.description} #${bill.code}`,
           date: new Date(paidDate),
-          category_id: installment.bill.category_id,
-          bill_installment_id: installmentId,
+          category_id: bill.category_id,
+          bill_id: billId,
           creator_id: auth.user.id,
         },
       }),
@@ -55,6 +52,6 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
-    return success("update", {installmentId, bankAccountId});
+    return success("update", {billId, bankAccountId});
   });
 }

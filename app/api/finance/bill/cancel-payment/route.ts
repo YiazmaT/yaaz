@@ -9,23 +9,23 @@ const ROUTE = "/api/finance/bill/cancel-payment";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
-    const {installmentId} = await req.json();
+    const {billId} = await req.json();
 
-    if (!installmentId) return error("api.errors.missingRequiredFields", 400);
+    if (!billId) return error("api.errors.missingRequiredFields", 400);
 
-    const installment = await prisma.billInstallment.findUnique({
-      where: {id: installmentId, tenant_id: auth.tenant_id},
+    const bill = await prisma.bill.findUnique({
+      where: {id: billId, tenant_id: auth.tenant_id},
       include: {bank_transaction: true},
     });
-    if (!installment) return error("api.errors.notFound", 404, {installmentId});
-    if (installment.status !== BillStatus.paid) return error("finance.bills.errors.notPaid", 400);
+    if (!bill) return error("api.errors.notFound", 404, {billId});
+    if (bill.status !== BillStatus.paid) return error("finance.bills.errors.notPaid", 400);
 
-    const amount = new Decimal(installment.amount.toString());
-    const bankAccountId = installment.bank_account_id;
+    const amount = new Decimal(bill.amount.toString());
+    const bankAccountId = bill.bank_account_id;
 
     const operations: any[] = [
-      prisma.billInstallment.update({
-        where: {id: installmentId, tenant_id: auth.tenant_id},
+      prisma.bill.update({
+        where: {id: billId, tenant_id: auth.tenant_id},
         data: {
           status: BillStatus.pending,
           paid_date: null,
@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
       }),
     ];
 
-    if (installment.bank_transaction) {
-      operations.push(prisma.bankTransaction.delete({where: {id: installment.bank_transaction.id, tenant_id: auth.tenant_id}}));
+    if (bill.bank_transaction) {
+      operations.push(prisma.bankTransaction.delete({where: {id: bill.bank_transaction.id, tenant_id: auth.tenant_id}}));
     }
 
     if (bankAccountId) {
@@ -51,6 +51,6 @@ export async function POST(req: NextRequest) {
 
     await prisma.$transaction(operations);
 
-    return success("update", {installmentId});
+    return success("update", {billId});
   });
 }

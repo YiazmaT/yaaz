@@ -18,7 +18,7 @@ import {PayFormValues, PayModalProps} from "./types";
 
 export function PayModal(props: PayModalProps) {
   const {translate} = useTranslate();
-  const {installment, onClose, onSuccess} = props;
+  const {bill, onClose, onSuccess} = props;
   const {schema, defaultValues} = usePayFormConfig();
   const api = useApi();
   const toast = useToaster();
@@ -40,22 +40,22 @@ export function PayModal(props: PayModalProps) {
   const selectedAccount = useWatch({control, name: "bankAccount"}) as BankAccount | null;
 
   const balanceAfterPayment = useMemo(() => {
-    if (!selectedAccount || !installment) return null;
-    return Number(selectedAccount.balance) - Number(installment.amount);
-  }, [selectedAccount, installment]);
+    if (!selectedAccount || !bill) return null;
+    return Number(selectedAccount.balance) - Number(bill.amount);
+  }, [selectedAccount, bill]);
 
   useEffect(() => {
-    if (installment) {
+    if (bill) {
       reset({...defaultValues, bankAccount: accounts.length === 1 ? accounts[0] : null});
     }
-  }, [installment, accounts]);
+  }, [bill, accounts]);
 
   async function submit(data: PayFormValues) {
-    if (!installment || !data.bankAccount) return;
+    if (!bill || !data.bankAccount) return;
 
     await api.fetch("POST", "/api/finance/bill/pay", {
       body: {
-        installmentId: installment.id,
+        billId: bill.id,
         bankAccountId: data.bankAccount.id,
         paidDate: data.paidDate,
       },
@@ -68,10 +68,10 @@ export function PayModal(props: PayModalProps) {
   }
 
   return (
-    <GenericModal title={translate("finance.bills.payTitle")} open={!!installment} onClose={onClose} maxWidth="sm">
-      {installment && (
+    <GenericModal title={translate("finance.bills.payTitle")} open={!!bill} onClose={onClose} maxWidth="sm">
+      {bill && (
         <Typography variant="body1" sx={{mb: 2}}>
-          {installment.bill.description} — {formatCurrency(String(installment.amount))}
+          {bill.description} — {formatCurrency(String(bill.amount))}
         </Typography>
       )}
       <FormContextProvider control={control} errors={errors} formType="create">

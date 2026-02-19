@@ -668,7 +668,7 @@
       "createSuccess": "Conta a pagar criada com sucesso!",
       "updateSuccess": "Conta a pagar atualizada com sucesso!",
       "deleteSuccess": "Conta a pagar excluida com sucesso!",
-      "deleteConfirm": "Tem certeza que deseja excluir esta conta a pagar? Todas as parcelas serao excluidas.",
+      "deleteConfirm": "Tem certeza que deseja excluir esta conta a pagar?",
       "pay": "Pagar",
       "payTitle": "Pagar Parcela",
       "paySuccess": "Pagamento registrado com sucesso!",
@@ -680,42 +680,24 @@
         "paid": "Pago",
         "overdue": "Vencido"
       },
-      "recurrenceTypes": {
-        "none": "Pagamento unico",
-        "installment": "Parcelado",
-        "recurring": "Recorrente"
-      },
-      "intervals": {
-        "weekly": "Semanal",
-        "biweekly": "Quinzenal",
-        "monthly": "Mensal",
-        "bimonthly": "Bimestral",
-        "quarterly": "Trimestral",
-        "semiannual": "Semestral",
-        "annual": "Anual"
-      },
       "fields": {
         "code": "Codigo",
         "description": "Descricao",
         "category": "Categoria",
         "installment": "Parcela",
         "amount": "Valor",
-        "totalAmount": "Valor Total",
         "dueDate": "Vencimento",
         "status": "Status",
-        "recurrenceType": "Tipo de Recorrencia",
-        "recurrenceInterval": "Intervalo",
-        "recurrenceCount": "Quantidade de Parcelas",
+        "installmentCount": "Quantidade de Parcelas",
         "bankAccount": "Conta Bancaria",
         "paidDate": "Data do Pagamento",
         "balanceAfterPayment": "Saldo após o pagamento"
       },
       "errors": {
-        "cannotEditWithPaidInstallments": "Nao e possivel editar uma conta com parcelas pagas.",
-        "cannotEditPaidInstallment": "Nao e possivel editar uma parcela que ja foi paga.",
-        "cannotDeleteWithPaidInstallments": "Nao e possivel excluir uma conta com parcelas pagas.",
-        "alreadyPaid": "Esta parcela ja foi paga.",
-        "notPaid": "Esta parcela nao esta paga.",
+        "cannotEditPaidInstallment": "Nao e possivel editar uma conta que ja foi paga.",
+        "cannotDeletePaidBill": "Nao e possivel excluir uma conta que ja foi paga.",
+        "alreadyPaid": "Esta conta ja foi paga.",
+        "notPaid": "Esta conta nao esta paga.",
         "selectAccount": "Selecione uma conta bancaria.",
         "amountMustBePositive": "O valor deve ser maior que zero.",
         "countMinOne": "A quantidade deve ser pelo menos 1."

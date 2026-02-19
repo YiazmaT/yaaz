@@ -5,7 +5,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/lib/format-date";
 import {useFinanceConstants} from "../../constants";
-import {BillInstallment} from "../../types";
+import {Bill} from "../../types";
 import {isOverdue} from "../../utils";
 import PaymentIcon from "@mui/icons-material/Payment";
 import UndoIcon from "@mui/icons-material/Undo";
@@ -16,26 +16,26 @@ export function useBillsTableConfig(props: BillsTableConfigProps) {
   const {billStatuses} = useFinanceConstants();
   const formatCurrency = useFormatCurrency();
 
-  function generateConfig(): DataTableColumn<BillInstallment>[] {
+  function generateConfig(): DataTableColumn<Bill>[] {
     return [
       {
         field: "code",
         headerKey: "finance.bills.fields.code",
         width: "70px",
         align: "center",
-        render: (row) => `#${row.bill.code}`,
+        render: (row) => `#${row.code}`,
       },
       {
         field: "description",
         headerKey: "finance.bills.fields.description",
         width: "20%",
-        render: (row) => row.bill.description,
+        render: (row) => row.description,
       },
       {
         field: "category",
         headerKey: "finance.bills.fields.category",
         width: "12%",
-        render: (row) => row.bill.category?.name || "-",
+        render: (row) => row.category?.name || "-",
       },
       {
         field: "installment_number",
@@ -43,8 +43,8 @@ export function useBillsTableConfig(props: BillsTableConfigProps) {
         width: "80px",
         align: "center",
         render: (row) => {
-          if (row.bill.recurrence_type === "none") return "-";
-          return `${row.installment_number}/${row.bill.recurrence_count}`;
+          if (row.installment_count <= 1) return "-";
+          return `${row.installment_number}/${row.installment_count}`;
         },
       },
       {

@@ -15,7 +15,7 @@ export async function DELETE(req: NextRequest) {
     const transaction = await prisma.bankTransaction.findUnique({where: {id, tenant_id: auth.tenant_id}});
     if (!transaction) return error("api.errors.notFound", 404, {id});
 
-    if (transaction.bill_installment_id) {
+    if (transaction.bill_id) {
       return error("finance.bank.errors.cannotDeleteBillTransaction", 400);
     }
 
