@@ -1,8 +1,9 @@
 "use client";
 import {ReactNode} from "react";
-import {Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
+import {Badge, Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import PaymentIcon from "@mui/icons-material/Payment";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import UndoIcon from "@mui/icons-material/Undo";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -14,6 +15,7 @@ import {isOverdue} from "../../../utils";
 import {BillForm} from "../form";
 import {BillsFilters} from "../filters";
 import {PayModal} from "../pay-modal";
+import {ReceiptModal} from "../receipt-modal";
 import {useBills} from "../use-bills";
 
 export function BillsMobile() {
@@ -74,17 +76,32 @@ export function BillsMobile() {
             </Tooltip>
           )}
           {item.status === "paid" && (
-            <Tooltip title={translate("finance.bills.cancelPayment")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  bills.handleCancelPayment(item);
-                }}
-              >
-                <UndoIcon fontSize="small" color="warning" />
-              </IconButton>
-            </Tooltip>
+            <>
+              <Tooltip title={translate("finance.bills.receipt")}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    bills.handleViewReceipt(item);
+                  }}
+                >
+                  <Badge badgeContent={item.receipt_url ? 1 : 0} color="primary" max={99}>
+                    <ReceiptIcon fontSize="small" color="info" />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={translate("finance.bills.cancelPayment")}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    bills.handleCancelPayment(item);
+                  }}
+                >
+                  <UndoIcon fontSize="small" color="warning" />
+                </IconButton>
+              </Tooltip>
+            </>
           )}
           {actions}
         </Box>
@@ -109,6 +126,7 @@ export function BillsMobile() {
       </Fab>
       <BillForm bills={bills} />
       <PayModal bill={bills.payBill} onClose={bills.closePayModal} onSuccess={bills.refreshTable} />
+      <ReceiptModal bill={bills.receiptBill} onClose={bills.closeReceiptModal} onReceiptChange={bills.handleReceiptChange} />
     </Box>
   );
 }

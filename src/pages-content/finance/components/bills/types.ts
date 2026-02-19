@@ -5,4 +5,5 @@ export interface BillsTableConfigProps {
   onDelete: (row: Bill) => void;
   onPay: (row: Bill) => void;
   onCancelPayment: (row: Bill) => void;
+  onViewReceipt: (row: Bill) => void;
 }

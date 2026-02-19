@@ -16,8 +16,9 @@ export function useBills() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
   const [filters, setFilters] = useState<BillsFilters>({});
-  const [selectedBillId, setSelectedBillId] = useState<string | null>(null);
   const [payBill, setPayBill] = useState<Bill | null>(null);
+  const [receiptBill, setReceiptBill] = useState<Bill | null>(null);
+  const [selectedBillId, setSelectedBillId] = useState<string | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useBillFormConfig();
   const api = useApi();
@@ -40,6 +41,7 @@ export function useBills() {
     onDelete: (row) => handleDelete(row),
     onPay: (row) => handlePay(row),
     onCancelPayment: (row) => handleCancelPayment(row),
+    onViewReceipt: (row) => handleViewReceipt(row),
   });
 
   function refreshTable() {
@@ -149,6 +151,19 @@ export function useBills() {
     });
   }
 
+  function handleViewReceipt(row: Bill) {
+    setReceiptBill(row);
+  }
+
+  function closeReceiptModal() {
+    setReceiptBill(null);
+  }
+
+  function handleReceiptChange() {
+    refreshTable();
+    setReceiptBill(null);
+  }
+
   function handleFilterChange(newFilters: BillsFilters) {
     setFilters(newFilters);
   }
@@ -169,6 +184,10 @@ export function useBills() {
     handleCancelPayment,
     payBill,
     closePayModal,
+    receiptBill,
+    handleViewReceipt,
+    closeReceiptModal,
+    handleReceiptChange,
     refreshTable,
     filters,
     handleFilterChange,

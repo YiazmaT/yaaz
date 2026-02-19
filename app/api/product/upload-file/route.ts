@@ -24,15 +24,11 @@ export async function POST(req: NextRequest) {
       return error("products.files.maxFiles", 400, {productId, currentFiles: product.files.length, maxFiles: MAX_FILES});
     }
 
-    const tenant = await prisma.tenant.findUnique({where: {id: auth.tenant_id}});
-    const maxSizeBytes = (tenant?.max_file_size_in_mbs ?? 10) * 1024 * 1024;
-
-    if (file.size > maxSizeBytes) {
-      return error("products.files.fileTooLarge", 400, {productId, fileSize: file.size, maxSizeBytes});
-    }
-
     const uploadResult = await uploadToR2(file, "product-files", auth.tenant_id);
-    if (!uploadResult.success) return error("api.errors.uploadFailed", 400, uploadResult);
+    if (!uploadResult.success) {
+      if (uploadResult.error === "FILE_TOO_LARGE") return error("products.files.fileTooLarge", 400, {productId, fileSize: file.size});
+      return error("api.errors.uploadFailed", 400, uploadResult);
+    }
 
     const updated = await prisma.product.update({
       where: {id: productId},

@@ -38,6 +38,7 @@ export interface Bill {
   paid_date?: string;
   bank_account_id?: string;
   bank_account?: BankAccount;
+  receipt_url?: string;
   active: boolean;
 }
 

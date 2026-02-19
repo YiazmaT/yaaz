@@ -6,6 +6,7 @@ import {Bill} from "../../types";
 import {BillForm} from "./form";
 import {BillsFilters} from "./filters";
 import {PayModal} from "./pay-modal";
+import {ReceiptModal} from "./receipt-modal";
 import {useBills} from "./use-bills";
 
 export function BillsDesktop() {
@@ -31,6 +32,7 @@ export function BillsDesktop() {
       </Box>
       <BillForm bills={bills} />
       <PayModal bill={bills.payBill} onClose={bills.closePayModal} onSuccess={bills.refreshTable} />
+      <ReceiptModal bill={bills.receiptBill} onClose={bills.closeReceiptModal} onReceiptChange={bills.handleReceiptChange} />
     </>
   );
 }

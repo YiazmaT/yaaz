@@ -1,4 +1,5 @@
 "use client";
+import {useRef, useState} from "react";
 import {FormDateTimePicker} from "@/src/components/form-fields/date-time-picker";
 import {FormDropdown} from "@/src/components/form-fields/dropdown";
 import {GenericModal} from "@/src/components/generic-modal";
@@ -10,21 +11,27 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {Box, Button, Grid, Typography} from "@mui/material";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import ClearIcon from "@mui/icons-material/Clear";
 import {useMemo, useEffect} from "react";
 import {useForm, useWatch} from "react-hook-form";
 import {BankAccount} from "../../../types";
 import {usePayFormConfig} from "./form-config";
 import {PayFormValues, PayModalProps} from "./types";
 
+const ACCEPT = "image/*,.pdf";
+
 export function PayModal(props: PayModalProps) {
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const {translate} = useTranslate();
   const {bill, onClose, onSuccess} = props;
   const {schema, defaultValues} = usePayFormConfig();
+  const {data: accountsData} = useApiQuery<BankAccount[]>({route: "/api/finance/bank-account/list", queryKey: ["/api/finance/bank-account/list"]});
   const api = useApi();
   const toast = useToaster();
-  const formatCurrency = useFormatCurrency();
-  const {data: accountsData} = useApiQuery<BankAccount[]>({route: "/api/finance/bank-account/list", queryKey: ["/api/finance/bank-account/list"]});
   const accounts = accountsData || [];
+  const formatCurrency = useFormatCurrency();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     control,
@@ -47,6 +54,7 @@ export function PayModal(props: PayModalProps) {
   useEffect(() => {
     if (bill) {
       reset({...defaultValues, bankAccount: accounts.length === 1 ? accounts[0] : null});
+      setReceiptFile(null);
     }
   }, [bill, accounts]);
 
@@ -59,12 +67,25 @@ export function PayModal(props: PayModalProps) {
         bankAccountId: data.bankAccount.id,
         paidDate: data.paidDate,
       },
-      onSuccess: () => {
+      onSuccess: async () => {
+        if (receiptFile) {
+          const formData = new FormData();
+          formData.append("billId", bill.id);
+          formData.append("file", receiptFile);
+          await api.fetch("POST", "/api/finance/bill/upload-receipt", {formData});
+        }
         toast.successToast("finance.bills.paySuccess");
         onClose();
         onSuccess();
       },
     });
+  }
+
+  function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setReceiptFile(file);
   }
 
   return (
@@ -88,6 +109,27 @@ export function PayModal(props: PayModalProps) {
           </Grid>
         </form>
       </FormContextProvider>
+
+      <input ref={fileInputRef} type="file" accept={ACCEPT} hidden onChange={handleFileSelected} />
+      <Box sx={{mt: 2}}>
+        {receiptFile ? (
+          <Box sx={{...flexGenerator("r.center.space-between"), p: 1, border: "1px solid", borderColor: "divider", borderRadius: 1}}>
+            <Box sx={{...flexGenerator("r.center"), gap: 1, minWidth: 0}}>
+              <AttachFileIcon fontSize="small" color="primary" />
+              <Typography variant="body2" noWrap>
+                {receiptFile.name}
+              </Typography>
+            </Box>
+            <Button size="small" onClick={() => setReceiptFile(null)} startIcon={<ClearIcon />}>
+              {translate("global.actions.remove")}
+            </Button>
+          </Box>
+        ) : (
+          <Button variant="outlined" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()} fullWidth size="small">
+            {translate("finance.bills.attachReceipt")}
+          </Button>
+        )}
+      </Box>
 
       {balanceAfterPayment !== null && (
         <Typography

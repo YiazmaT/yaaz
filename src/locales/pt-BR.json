@@ -40,7 +40,8 @@
       "label": "Ações",
       "view": "Visualizar",
       "edit": "Editar",
-      "delete": "Excluir"
+      "delete": "Excluir",
+      "remove": "Remover"
     },
     "errors": {
       "invalidEmail": "E-mail inválido",
@@ -675,6 +676,18 @@
       "cancelPayment": "Cancelar Pagamento",
       "cancelPaymentConfirm": "Tem certeza que deseja cancelar este pagamento? A transacao bancaria sera revertida.",
       "cancelPaymentSuccess": "Pagamento cancelado com sucesso!",
+      "receipt": "Comprovante",
+      "receiptTitle": "Comprovante",
+      "viewReceipt": "Ver Comprovante",
+      "uploadReceipt": "Enviar Comprovante",
+      "deleteReceipt": "Excluir Comprovante",
+      "replaceReceipt": "Substituir Comprovante",
+      "attachReceipt": "Anexar Comprovante",
+      "noReceipt": "Nenhum comprovante anexado.",
+      "replaceReceiptConfirm": "O comprovante anterior será excluído permanentemente. Deseja continuar?",
+      "deleteReceiptConfirm": "Tem certeza que deseja excluir este comprovante? O arquivo será excluído permanentemente.",
+      "deleteReceiptSuccess": "Comprovante excluído com sucesso!",
+      "uploadReceiptSuccess": "Comprovante enviado com sucesso!",
       "statuses": {
         "pending": "Pendente",
         "paid": "Pago",
@@ -717,7 +730,9 @@
         "notPaid": "Esta conta nao esta paga.",
         "selectAccount": "Selecione uma conta bancaria.",
         "amountMustBePositive": "O valor deve ser maior que zero.",
-        "countMinOne": "A quantidade deve ser pelo menos 1."
+        "countMinOne": "A quantidade deve ser pelo menos 1.",
+        "invalidFileType": "Tipo de arquivo inválido. Envie uma imagem ou PDF.",
+        "fileTooLarge": "O arquivo excede o tamanho máximo permitido."
       }
     }
   }

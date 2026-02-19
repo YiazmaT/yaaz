@@ -47,7 +47,10 @@ export async function PUT(req: NextRequest) {
       }
 
       const uploadResult = await uploadToR2(image, "products", auth.tenant_id);
-      if (!uploadResult.success) return error("api.errors.uploadFailed", 400, uploadResult);
+      if (!uploadResult.success) {
+        if (uploadResult.error === "FILE_TOO_LARGE") return error("global.errors.fileTooLarge", 400);
+        return error("api.errors.uploadFailed", 400, uploadResult);
+      }
       imageUrl = uploadResult.url!;
     }
 

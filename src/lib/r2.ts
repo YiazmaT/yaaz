@@ -1,4 +1,5 @@
 import {S3Client, PutObjectCommand, DeleteObjectCommand} from "@aws-sdk/client-s3";
+import {prisma} from "@/src/lib/prisma";
 
 const s3Client = new S3Client({
   region: "auto",
@@ -18,6 +19,13 @@ interface UploadResult {
 
 export async function uploadToR2(file: File, folder: string, tenantId: string): Promise<UploadResult> {
   try {
+    const tenant = await prisma.tenant.findUnique({where: {id: tenantId}, select: {max_file_size_in_mbs: true}});
+    const maxSizeBytes = (tenant?.max_file_size_in_mbs ?? 10) * 1024 * 1024;
+
+    if (file.size > maxSizeBytes) {
+      return {success: false, error: "FILE_TOO_LARGE"};
+    }
+
     const timestamp = Date.now();
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
     const key = `${folder}/${tenantId}/${timestamp}-${sanitizedName}`;

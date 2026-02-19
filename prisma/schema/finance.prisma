@@ -94,6 +94,7 @@ model Bill {
   status             BillStatus       @default(pending)
   paid_date          DateTime?
   bank_account_id    String?          @db.Uuid
+  receipt_url        String?
   active             Boolean          @default(true)
   tenant             Tenant           @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   category           FinanceCategory? @relation(fields: [category_id], references: [id], onDelete: SetNull)

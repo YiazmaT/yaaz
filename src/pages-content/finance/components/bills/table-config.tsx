@@ -1,4 +1,4 @@
-import {Chip} from "@mui/material";
+import {Badge, Chip} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -8,6 +8,7 @@ import {useFinanceConstants} from "../../constants";
 import {Bill} from "../../types";
 import {isOverdue} from "../../utils";
 import PaymentIcon from "@mui/icons-material/Payment";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import UndoIcon from "@mui/icons-material/Undo";
 import {BillsTableConfigProps} from "./types";
 
@@ -107,6 +108,15 @@ export function useBillsTableConfig(props: BillsTableConfigProps) {
                 : []),
               ...(row.status === "paid"
                 ? [
+                    {
+                      icon: (r: Bill) => (
+                        <Badge badgeContent={r.receipt_url ? 1 : 0} color="primary" max={99}>
+                          <ReceiptIcon fontSize="small" color="info" />
+                        </Badge>
+                      ),
+                      tooltip: () => translate("finance.bills.receipt"),
+                      onClick: props.onViewReceipt,
+                    },
                     {
                       icon: () => <UndoIcon fontSize="small" color="warning" />,
                       tooltip: () => translate("finance.bills.cancelPayment"),
