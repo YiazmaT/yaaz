@@ -21,8 +21,6 @@ enum BillRecurrenceInterval {
 enum BillStatus {
   pending
   paid
-  overdue
-  cancelled
 
   @@schema("data")
 }

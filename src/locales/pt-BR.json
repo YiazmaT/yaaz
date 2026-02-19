@@ -678,8 +678,7 @@
       "statuses": {
         "pending": "Pendente",
         "paid": "Pago",
-        "overdue": "Vencido",
-        "cancelled": "Cancelado"
+        "overdue": "Vencido"
       },
       "recurrenceTypes": {
         "none": "Pagamento unico",

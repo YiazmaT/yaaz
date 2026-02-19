@@ -63,8 +63,6 @@ export enum RecurrenceIntervalEnum {
 export enum BillStatusEnum {
   pending = "pending",
   paid = "paid",
-  overdue = "overdue",
-  cancelled = "cancelled",
 }
 
 export interface CategoriesFilters {

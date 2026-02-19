@@ -6,6 +6,7 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/lib/format-date";
 import {useFinanceConstants} from "../../constants";
 import {BillInstallment} from "../../types";
+import {isOverdue} from "../../utils";
 import PaymentIcon from "@mui/icons-material/Payment";
 import UndoIcon from "@mui/icons-material/Undo";
 import {BillsTableConfigProps} from "./types";
@@ -65,13 +66,16 @@ export function useBillsTableConfig(props: BillsTableConfigProps) {
         headerKey: "finance.bills.fields.status",
         width: "100px",
         align: "center",
-        render: (row) => (
-          <Chip
-            label={billStatuses[row.status as keyof typeof billStatuses]?.label}
-            size="small"
-            color={billStatuses[row.status as keyof typeof billStatuses]?.color || "default"}
-          />
-        ),
+        render: (row) => {
+          const overdue = isOverdue(row);
+          return (
+            <Chip
+              label={overdue ? translate("finance.bills.statuses.overdue") : billStatuses[row.status as keyof typeof billStatuses]?.label}
+              size="small"
+              color={overdue ? "error" : billStatuses[row.status as keyof typeof billStatuses]?.color || "default"}
+            />
+          );
+        },
       },
       {
         field: "actions",

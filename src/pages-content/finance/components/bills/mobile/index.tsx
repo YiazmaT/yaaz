@@ -10,6 +10,7 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/lib/format-date";
 import {BillInstallment} from "../../../types";
 import {useFinanceConstants} from "../../../constants";
+import {isOverdue} from "../../../utils";
 import {BillForm} from "../form";
 import {PayModal} from "../pay-modal";
 import {useBills} from "../use-bills";
@@ -36,9 +37,9 @@ export function BillsMobile() {
             )}
             <Box sx={{display: "flex", gap: 1, mt: 0.5, alignItems: "center"}}>
               <Chip
-                label={billStatuses[item.status as keyof typeof billStatuses]?.label}
+                label={isOverdue(item) ? translate("finance.bills.statuses.overdue") : billStatuses[item.status as keyof typeof billStatuses]?.label}
                 size="small"
-                color={billStatuses[item.status as keyof typeof billStatuses]?.color || "default"}
+                color={isOverdue(item) ? "error" : billStatuses[item.status as keyof typeof billStatuses]?.color || "default"}
               />
               {item.bill.recurrence_type !== "none" && (
                 <Typography variant="caption" color="text.secondary">
