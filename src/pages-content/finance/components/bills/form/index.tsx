@@ -35,6 +35,7 @@ export function BillForm(props: BillFormProps) {
               uniqueKey="id"
               buildLabel={(o) => o.name}
             />
+            {isEdit && <FormCurrencyInput fieldName="totalAmount" label="finance.bills.fields.amount" />}
             {!isEdit && (
               <>
                 <FormCurrencyInput fieldName="totalAmount" label="finance.bills.fields.totalAmount" />

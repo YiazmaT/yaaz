@@ -57,6 +57,7 @@ export function useBills() {
           installmentId: selectedInstallmentId,
           description: data.description,
           categoryId: data.category?.id || null,
+          amount: data.totalAmount,
           dueDate: data.dueDate,
         },
         onSuccess: () => {
@@ -111,7 +112,7 @@ export function useBills() {
     reset({
       description: row.bill.description,
       category: row.bill.category || null,
-      totalAmount: String(row.bill.total_amount),
+      totalAmount: String(row.amount),
       recurrenceType: row.bill.recurrence_type,
       recurrenceInterval: row.bill.recurrence_interval || "monthly",
       recurrenceCount: String(row.bill.recurrence_count || "1"),

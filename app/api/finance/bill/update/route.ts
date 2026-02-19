@@ -8,7 +8,7 @@ const ROUTE = "/api/finance/bill/update";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
-    const {id, installmentId, description, categoryId, dueDate} = await req.json();
+    const {id, installmentId, description, categoryId, amount, dueDate} = await req.json();
 
     if (!id || !description) return error("api.errors.missingRequiredFields", 400);
 
@@ -18,8 +18,10 @@ export async function PUT(req: NextRequest) {
     });
     if (!existing) return error("api.errors.notFound", 404, {id});
 
-    const hasPaid = existing.installments.some((i) => i.status === BillStatus.paid);
-    if (hasPaid) return error("finance.bills.errors.cannotEditWithPaidInstallments", 400);
+    if (installmentId) {
+      const installment = existing.installments.find((i) => i.id === installmentId);
+      if (installment?.status === BillStatus.paid) return error("finance.bills.errors.cannotEditPaidInstallment", 400);
+    }
 
     const bill = await prisma.bill.update({
       where: {id, tenant_id: auth.tenant_id},
@@ -31,11 +33,12 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    if (installmentId && dueDate) {
+    if (installmentId) {
       await prisma.billInstallment.update({
         where: {id: installmentId, tenant_id: auth.tenant_id},
         data: {
-          due_date: new Date(dueDate),
+          ...(amount !== undefined && {amount: parseFloat(amount)}),
+          ...(dueDate && {due_date: new Date(dueDate)}),
           last_edit_date: new Date(),
           last_editor_id: auth.user.id,
         },

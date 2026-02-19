@@ -712,6 +712,7 @@
       },
       "errors": {
         "cannotEditWithPaidInstallments": "Nao e possivel editar uma conta com parcelas pagas.",
+        "cannotEditPaidInstallment": "Nao e possivel editar uma parcela que ja foi paga.",
         "cannotDeleteWithPaidInstallments": "Nao e possivel excluir uma conta com parcelas pagas.",
         "alreadyPaid": "Esta parcela ja foi paga.",
         "notPaid": "Esta parcela nao esta paga.",
