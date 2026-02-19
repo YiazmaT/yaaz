@@ -4,6 +4,7 @@ import {DataTable} from "@/src/components/data-table";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {Bill} from "../../types";
 import {BillForm} from "./form";
+import {BillsFilters} from "./filters";
 import {PayModal} from "./pay-modal";
 import {useBills} from "./use-bills";
 
@@ -14,6 +15,7 @@ export function BillsDesktop() {
   return (
     <>
       <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
+        <BillsFilters onFilterChange={bills.handleFilterChange} />
         <Box sx={{flex: 1, minHeight: 0}}>
           <DataTable<Bill>
             apiRoute="/api/finance/bill/paginated-list"

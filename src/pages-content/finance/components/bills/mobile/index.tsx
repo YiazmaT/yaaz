@@ -12,6 +12,7 @@ import {Bill} from "../../../types";
 import {useFinanceConstants} from "../../../constants";
 import {isOverdue} from "../../../utils";
 import {BillForm} from "../form";
+import {BillsFilters} from "../filters";
 import {PayModal} from "../pay-modal";
 import {useBills} from "../use-bills";
 
@@ -101,6 +102,7 @@ export function BillsMobile() {
         hideEdit={(row) => row.status === "paid"}
         onDelete={bills.handleDelete}
         filters={bills.filters}
+        headerContent={<BillsFilters onFilterChange={bills.handleFilterChange} />}
       />
       <Fab color="primary" size="small" onClick={bills.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
         <AddIcon sx={{color: "white"}} />

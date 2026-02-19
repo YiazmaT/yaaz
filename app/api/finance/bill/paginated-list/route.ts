@@ -17,6 +17,8 @@ export async function GET(req: NextRequest) {
     const categoryId = searchParams.get("categoryId") || "";
     const dueDateFrom = searchParams.get("dueDateFrom") || "";
     const dueDateTo = searchParams.get("dueDateTo") || "";
+    const valueFrom = searchParams.get("valueFrom") || "";
+    const valueTo = searchParams.get("valueTo") || "";
     const skip = (page - 1) * limit;
 
     const where: any = {tenant_id: auth.tenant_id};
@@ -29,12 +31,22 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    if (status) {
+    if (status === "overdue") {
+      const timezone = auth.tenant.time_zone;
+      where.status = "pending";
+      where.due_date = {...(where.due_date || {}), lt: fromZonedTime(startOfDay(new Date()), timezone)};
+    } else if (status) {
       where.status = status;
     }
 
     if (categoryId) {
       where.category_id = categoryId;
+    }
+
+    if (valueFrom || valueTo) {
+      where.amount = {};
+      if (valueFrom) where.amount.gte = parseFloat(valueFrom);
+      if (valueTo) where.amount.lte = parseFloat(valueTo);
     }
 
     if (dueDateFrom || dueDateTo) {

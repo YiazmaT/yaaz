@@ -1,4 +1,4 @@
-import {Autocomplete, Grid, TextField} from "@mui/material";
+import {Autocomplete, Grid, InputAdornment, TextField} from "@mui/material";
 import {Controller} from "react-hook-form";
 import {DropdownProps, FormDropdownProps} from "./types";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -6,6 +6,8 @@ import {useFormContext} from "@/src/contexts/form-context";
 
 export function Dropdown<T extends object>(props: DropdownProps<T>) {
   const {translate} = useTranslate();
+  const hasCustomRender = !!props.renderOption;
+  const hasValue = !!props.value;
 
   function getOptionLabel(option: T) {
     if (props.buildLabel) {
@@ -26,9 +28,32 @@ export function Dropdown<T extends object>(props: DropdownProps<T>) {
       getOptionLabel={getOptionLabel}
       isOptionEqualToValue={isOptionEqualToValue}
       disabled={props.disabled}
-      renderInput={(params) => (
+      renderOption={
+        hasCustomRender
+          ? (htmlProps, option) => (
+              <li {...htmlProps} key={String(option[props.uniqueKey])}>
+                {props.renderOption!(option)}
+              </li>
+            )
+          : undefined
+      }
+      renderInput={({InputProps, inputProps, ...rest}) => (
         <TextField
-          {...params}
+          {...rest}
+          slotProps={{
+            input: {
+              ...InputProps,
+              ...(hasCustomRender && hasValue
+                ? {
+                    startAdornment: <InputAdornment position="start">{props.renderOption!(props.value!)}</InputAdornment>,
+                  }
+                : {}),
+            },
+            htmlInput: {
+              ...inputProps,
+              ...(hasCustomRender && hasValue ? {style: {color: "transparent", caretColor: "transparent"}} : {}),
+            },
+          }}
           label={props.label ? translate(props.label) : undefined}
           error={!!props.error}
           helperText={props.error}

@@ -7,6 +7,7 @@ import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
 import {Bill} from "../../types";
 import {BillFormValues, useBillFormConfig} from "./form-config";
+import {BillsFilters} from "./filters/types";
 import {useBillsTableConfig} from "./table-config";
 
 const API_ROUTE = "/api/finance/bill/paginated-list";
@@ -14,7 +15,7 @@ const API_ROUTE = "/api/finance/bill/paginated-list";
 export function useBills() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [filters, setFilters] = useState<BillsFilters>({});
   const [selectedBillId, setSelectedBillId] = useState<string | null>(null);
   const [payBill, setPayBill] = useState<Bill | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
@@ -148,7 +149,7 @@ export function useBills() {
     });
   }
 
-  function handleFilterChange(newFilters: Record<string, string>) {
+  function handleFilterChange(newFilters: BillsFilters) {
     setFilters(newFilters);
   }
 

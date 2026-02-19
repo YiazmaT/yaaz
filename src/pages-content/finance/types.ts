@@ -44,6 +44,7 @@ export interface Bill {
 export enum BillStatusEnum {
   pending = "pending",
   paid = "paid",
+  overdue = "overdue",
 }
 
 export interface CategoriesFilters {

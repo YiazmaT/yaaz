@@ -693,6 +693,23 @@
         "paidDate": "Data do Pagamento",
         "balanceAfterPayment": "Saldo após o pagamento"
       },
+      "filters": {
+        "open": "Abrir Filtros",
+        "close": "Fechar Filtros",
+        "clear": "Limpar",
+        "apply": "Aplicar",
+        "clearTooltip": "Limpar Filtros",
+        "category": "Categoria",
+        "allCategories": "Todas",
+        "status": "Status",
+        "allStatuses": "Todos",
+        "dueDateFrom": "Vencimento Inicial",
+        "dueDateTo": "Vencimento Final",
+        "valueFrom": "Valor Mínimo",
+        "valueTo": "Valor Máximo",
+        "dateFromGreaterThanTo": "A data inicial não pode ser maior que a data final",
+        "valueFromGreaterThanTo": "O valor mínimo não pode ser maior que o valor máximo"
+      },
       "errors": {
         "cannotEditPaidInstallment": "Nao e possivel editar uma conta que ja foi paga.",
         "cannotDeletePaidBill": "Nao e possivel excluir uma conta que ja foi paga.",

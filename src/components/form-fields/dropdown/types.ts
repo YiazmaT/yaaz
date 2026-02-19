@@ -1,3 +1,4 @@
+import {ReactNode} from "react";
 import {FormInputProps} from "@/src/@types/global-types";
 
 export interface DropdownProps<T extends object> {
@@ -8,6 +9,7 @@ export interface DropdownProps<T extends object> {
   label?: string;
   error?: string;
   buildLabel?: (option: T) => string;
+  renderOption?: (option: T) => ReactNode;
   disabled?: boolean;
 }
 
