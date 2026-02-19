@@ -106,11 +106,13 @@ export function StatementDrawer(props: StatementDrawerProps) {
               <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                 <Chip label={getTransactionTypeLabel(t.type)} size="small" sx={{backgroundColor: getTransactionTypeColor(t.type), color: "white"}} />
                 <Typography variant="body2" color="text.secondary">
-                  {formatDate(t.date)}
+                  {formatDate(t.date, true)}
                 </Typography>
               </Box>
               <Typography variant="body2" noWrap sx={{mt: 0.5}}>
-                {t.description || (t.bill ? `${t.bill.description} #${t.bill.code}` : "-")}
+                {t.bill
+                  ? `#${t.bill.code} ${t.bill.description} ${t.bill.installment_count > 1 ? ` (${t.bill.installment_number}/${t.bill.installment_count})` : ""}`
+                  : t.description || "-"}
               </Typography>
               {t.category && (
                 <Typography variant="caption" color="text.secondary">

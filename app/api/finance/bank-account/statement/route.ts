@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
           date: true,
           bill_id: true,
           category: {select: {id: true, name: true}},
-          bill: {select: {code: true, description: true}},
+          bill: {select: {code: true, description: true, installment_number: true, installment_count: true}},
         },
       }),
       prisma.bankTransaction.count({where}),
