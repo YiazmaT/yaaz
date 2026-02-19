@@ -17,7 +17,7 @@ export function usePayFormConfig() {
 
   const defaultValues: PayFormValues = {
     bankAccount: null,
-    paidDate: moment().format("YYYY-MM-DD"),
+    paidDate: moment().format("YYYY-MM-DDTHH:mm"),
   };
 
   return {schema, defaultValues};

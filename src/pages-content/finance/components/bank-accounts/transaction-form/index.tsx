@@ -5,7 +5,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import {Button, Grid, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {FormCurrencyInput} from "@/src/components/form-fields/currency-input";
-import {FormDatePicker} from "@/src/components/form-fields/date-picker";
+import {FormDateTimePicker} from "@/src/components/form-fields/date-time-picker";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -84,7 +84,7 @@ export function TransactionForm(props: TransactionFormProps) {
               />
             </Grid>
             <FormCurrencyInput fieldName="amount" label="finance.bank.fields.amount" />
-            <FormDatePicker fieldName="date" label="finance.bank.fields.date" />
+            <FormDateTimePicker fieldName="date" label="finance.bank.fields.date" />
             <FormTextInput fieldName="description" label="finance.bank.fields.description" />
             <FormDropdown<FinanceCategory>
               fieldName="category"

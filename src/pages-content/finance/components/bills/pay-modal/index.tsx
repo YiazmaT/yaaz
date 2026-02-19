@@ -1,5 +1,5 @@
 "use client";
-import {FormDatePicker} from "@/src/components/form-fields/date-picker";
+import {FormDateTimePicker} from "@/src/components/form-fields/date-time-picker";
 import {FormDropdown} from "@/src/components/form-fields/dropdown";
 import {GenericModal} from "@/src/components/generic-modal";
 import {FormContextProvider} from "@/src/contexts/form-context";
@@ -84,7 +84,7 @@ export function PayModal(props: PayModalProps) {
               uniqueKey="id"
               buildLabel={(o) => `${o.name} (${formatCurrency(String(o.balance))})`}
             />
-            <FormDatePicker fieldName="paidDate" label="finance.bills.fields.paidDate" />
+            <FormDateTimePicker fieldName="paidDate" label="finance.bills.fields.paidDate" />
           </Grid>
         </form>
       </FormContextProvider>

@@ -62,6 +62,13 @@ export function useBillsTableConfig(props: BillsTableConfigProps) {
         render: (row) => formatDate(row.due_date),
       },
       {
+        field: "paid_date",
+        headerKey: "finance.bills.fields.paidDate",
+        width: "12%",
+        align: "center",
+        render: (row) => (row.paid_date ? formatDate(row.paid_date, true) : "-"),
+      },
+      {
         field: "status",
         headerKey: "finance.bills.fields.status",
         width: "100px",

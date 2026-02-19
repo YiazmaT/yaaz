@@ -1,5 +1,6 @@
 import {useTranslate} from "@/src/contexts/translation-context";
 import * as yup from "yup";
+import moment from "moment";
 import {FinanceCategory} from "../../../types";
 
 export interface TransactionFormValues {
@@ -23,7 +24,7 @@ export function useTransactionFormConfig() {
     type: "deposit",
     amount: "0",
     description: "",
-    date: new Date().toISOString().split("T")[0],
+    date: moment().format("YYYY-MM-DDTHH:mm"),
     category: null,
   };
 
