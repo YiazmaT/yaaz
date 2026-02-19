@@ -1,23 +1,10 @@
-import {
-  AppBar,
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  IconButton,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import {AppBar, Box, Button, Divider, Drawer, IconButton, Toolbar, Typography} from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import Link from "next/link";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {MobileViewProps} from "./types";
+import {MenuItems} from "./components/menu-items/menu-items";
 
 export function MobileView(props: MobileViewProps) {
   const {layout, children} = props;
@@ -68,23 +55,7 @@ export function MobileView(props: MobileViewProps) {
           <Divider sx={{width: "100%", marginBottom: 2}} />
 
           <Box sx={{flex: 1, width: "100%"}}>
-            {layout.menuItems.map((item) => (
-              <ListItem
-                key={item.route}
-                disablePadding
-                sx={{
-                  marginBottom: 1,
-                  borderRadius: 1,
-                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-                  border: `1px solid ${layout.theme.palette.divider}`,
-                }}
-              >
-                <ListItemButton component={Link} href={item.route} onClick={layout.handleMobileMenuToggle}>
-                  <ListItemIcon sx={{minWidth: 40}}>{item.icon}</ListItemIcon>
-                  <ListItemText primary={layout.translate(item.name)} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            <MenuItems layout={layout} variant="mobile" onNavigate={layout.handleMobileMenuToggle} />
           </Box>
 
           <Button

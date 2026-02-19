@@ -55,9 +55,3 @@ export interface CategoriesFilters {
 export interface BankAccountsFilters {
   showInactives?: boolean;
 }
-
-export enum FinanceTab {
-  BILLS = 0,
-  BANK = 1,
-  CATEGORIES = 2,
-}

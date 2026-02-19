@@ -3,8 +3,9 @@ import {useAuthenticatedLayout} from "./use-authenticated-layout";
 
 export interface MenuItem {
   name: string;
-  route: string;
+  route?: string;
   icon: ReactNode;
+  children?: MenuItem[];
 }
 
 export interface MobileViewProps extends PropsWithChildren {

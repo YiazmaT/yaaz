@@ -583,9 +583,12 @@
   },
   "finance": {
     "title": "Financeiro",
+    "billsToPayTitle": "Contas a Pagar",
+    "banksTitle": "Contas Bancárias",
+    "categoriesTitle": "Categorias Financeiras",
     "tabs": {
       "bills": "Contas a Pagar",
-      "bank": "Contas Bancarias",
+      "bank": "Contas Bancárias",
       "categories": "Categorias"
     },
     "categories": {

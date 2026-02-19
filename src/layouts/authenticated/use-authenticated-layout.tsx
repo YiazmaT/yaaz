@@ -1,5 +1,7 @@
+"use client";
 import {useState} from "react";
 import {useTheme} from "@mui/material";
+import {usePathname} from "next/navigation";
 import {useNavigate} from "@/src/hooks/use-navigate";
 import {useAuth} from "@/src/contexts/auth-context";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -12,10 +14,21 @@ import TakeoutDiningOutlinedIcon from "@mui/icons-material/TakeoutDiningOutlined
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
+import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 
 const menuItems: MenuItem[] = [
   {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
-  {name: "global.finance", route: "/finance", icon: <AccountBalanceWalletOutlinedIcon />},
+  {
+    name: "global.finance",
+    icon: <AccountBalanceWalletOutlinedIcon />,
+    children: [
+      {name: "finance.tabs.bills", route: "/finance/bills-to-pay", icon: <ReceiptLongOutlinedIcon />},
+      {name: "finance.tabs.bank", route: "/finance/banks", icon: <AccountBalanceOutlinedIcon />},
+      {name: "finance.tabs.categories", route: "/finance/categories", icon: <LabelOutlinedIcon />},
+    ],
+  },
   {name: "global.products", route: "/products", icon: <Inventory2OutlinedIcon />},
   {name: "global.ingredients", route: "/ingredients", icon: <CategoryOutlinedIcon />},
   {name: "global.packages", route: "/packages", icon: <TakeoutDiningOutlinedIcon />},
@@ -29,11 +42,13 @@ const DEFAULT_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME || "";
 export function useAuthenticatedLayout() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const {logout} = useAuth();
   const {tenant} = useTenant();
   const {navigate} = useNavigate();
   const {translate} = useTranslate();
   const theme = useTheme();
+  const pathname = usePathname();
 
   const tenantLogo = tenant?.logo || DEFAULT_LOGO;
   const tenantName = tenant?.name || DEFAULT_NAME;
@@ -60,6 +75,22 @@ export function useAuthenticatedLayout() {
     logout();
   }
 
+  function toggleExpandedMenu(menuName: string) {
+    setExpandedMenu((prev) => (prev === menuName ? null : menuName));
+  }
+
+  function isMenuExpanded(item: MenuItem): boolean {
+    if (expandedMenu === item.name) return true;
+    if (item.children) {
+      return item.children.some((child) => child.route && pathname.startsWith(child.route));
+    }
+    return false;
+  }
+
+  function isActiveRoute(route: string): boolean {
+    return pathname === route || pathname.startsWith(route + "/");
+  }
+
   return {
     isCollapsed,
     mobileMenuOpen,
@@ -68,11 +99,16 @@ export function useAuthenticatedLayout() {
     translate,
     tenantLogo,
     tenantName,
+    pathname,
     toggleCollapse,
     handleMobileMenuToggle,
     handleNavigate,
     handleMobileNavigate,
     handleMobileLogout,
     logout,
+    expandedMenu,
+    toggleExpandedMenu,
+    isMenuExpanded,
+    isActiveRoute,
   };
 }
