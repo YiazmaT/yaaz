@@ -16,6 +16,7 @@ export function useBills() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [selectedBillId, setSelectedBillId] = useState<string | null>(null);
+  const [selectedInstallmentId, setSelectedInstallmentId] = useState<string | null>(null);
   const [payInstallment, setPayInstallment] = useState<BillInstallment | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useBillFormConfig();
@@ -53,8 +54,10 @@ export function useBills() {
       await api.fetch("PUT", "/api/finance/bill/update", {
         body: {
           id: selectedBillId,
+          installmentId: selectedInstallmentId,
           description: data.description,
           categoryId: data.category?.id || null,
+          dueDate: data.dueDate,
         },
         onSuccess: () => {
           toast.successToast("finance.bills.updateSuccess");
@@ -93,6 +96,7 @@ export function useBills() {
     setShowDrawer(false);
     reset(defaultValues);
     setSelectedBillId(null);
+    setSelectedInstallmentId(null);
   }
 
   function handleCreate() {
@@ -103,6 +107,7 @@ export function useBills() {
 
   function handleEdit(row: BillInstallment) {
     setSelectedBillId(row.bill.id);
+    setSelectedInstallmentId(row.id);
     reset({
       description: row.bill.description,
       category: row.bill.category || null,

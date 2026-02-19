@@ -1,5 +1,6 @@
 import moment from "moment";
 
 export function formatDate(date: string | Date, withTime?: boolean) {
-  return moment(date).format(withTime ? "DD/MM/YYYY HH:mm:ss" : "DD/MM/YYYY");
+  if (withTime) return moment(date).format("DD/MM/YYYY HH:mm:ss");
+  return moment.utc(date).format("DD/MM/YYYY");
 }

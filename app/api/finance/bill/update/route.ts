@@ -8,7 +8,7 @@ const ROUTE = "/api/finance/bill/update";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
-    const {id, description, categoryId} = await req.json();
+    const {id, installmentId, description, categoryId, dueDate} = await req.json();
 
     if (!id || !description) return error("api.errors.missingRequiredFields", 400);
 
@@ -30,6 +30,17 @@ export async function PUT(req: NextRequest) {
         last_editor_id: auth.user.id,
       },
     });
+
+    if (installmentId && dueDate) {
+      await prisma.billInstallment.update({
+        where: {id: installmentId, tenant_id: auth.tenant_id},
+        data: {
+          due_date: new Date(dueDate),
+          last_edit_date: new Date(),
+          last_editor_id: auth.user.id,
+        },
+      });
+    }
 
     return success("update", bill, {before: existing, after: bill});
   });

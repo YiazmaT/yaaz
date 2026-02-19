@@ -71,9 +71,9 @@ export function BillForm(props: BillFormProps) {
                 {(bills.recurrenceType === "installment" || bills.recurrenceType === "recurring") && (
                   <FormIntegerInput fieldName="recurrenceCount" label="finance.bills.fields.recurrenceCount" />
                 )}
-                <FormDatePicker fieldName="dueDate" label="finance.bills.fields.dueDate" />
               </>
             )}
+            <FormDatePicker fieldName="dueDate" label="finance.bills.fields.dueDate" />
           </Grid>
           <Grid container spacing={2} sx={{mt: 1}}>
             <Grid size={12}>
