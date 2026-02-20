@@ -1,27 +1,11 @@
 "use client";
 import {useRef, useMemo} from "react";
-import {
-  Box,
-  Button,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  Grid,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import {Box, Button, Checkbox, Divider, FormControlLabel, Grid, TableCell, TableRow, Typography} from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ClearIcon from "@mui/icons-material/Clear";
 import Decimal from "decimal.js";
 import {GenericModal} from "@/src/components/generic-modal";
+import {DefaultTable} from "@/src/components/core-table";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
@@ -33,6 +17,7 @@ import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {BankAccount} from "../../../types";
 import {NfeFormItem} from "../form-config";
+import {useNfeItemsTableConfig} from "../table-config";
 import {ItemOption, NfeModalProps} from "./types";
 
 const ACCEPT = "image/*,.pdf";
@@ -42,7 +27,6 @@ export function NfeModal(props: NfeModalProps) {
   const {translate} = useTranslate();
   const {data: accountsData} = useApiQuery<BankAccount[]>({route: "/api/finance/bank-account/list", queryKey: ["/api/finance/bank-account/list"]});
   const formatCurrency = useFormatCurrency();
-  const theme = useTheme();
   const accounts = accountsData || [];
   const isCreate = nfe.formType === "create";
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -52,6 +36,16 @@ export function NfeModal(props: NfeModalProps) {
   const stockAdded = nfe.watch("stockAdded");
   const bankDeducted = nfe.watch("bankDeducted");
   const selectedAccount = nfe.watch("bankAccount") as BankAccount | null;
+
+  const {generateItemsConfig} = useNfeItemsTableConfig({
+    onRemove: (index) => {
+      nfe.setValue(
+        "items",
+        items.filter((_: NfeFormItem, i: number) => i !== index),
+        {shouldValidate: true},
+      );
+    },
+  });
 
   const totalAmount = useMemo(() => {
     return items.reduce((sum: Decimal, item: NfeFormItem) => {
@@ -82,22 +76,6 @@ export function NfeModal(props: NfeModalProps) {
     nfe.setValue("items", [...items, newItem], {shouldValidate: true});
   }
 
-  function removeItem(id: string) {
-    nfe.setValue(
-      "items",
-      items.filter((i: NfeFormItem) => i.id !== id),
-      {shouldValidate: true},
-    );
-  }
-
-  function updateItem(id: string, field: "quantity" | "unitPrice", value: string) {
-    nfe.setValue(
-      "items",
-      items.map((i: NfeFormItem) => (i.id === id ? {...i, [field]: value} : i)),
-      {shouldValidate: true},
-    );
-  }
-
   function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
@@ -109,17 +87,28 @@ export function NfeModal(props: NfeModalProps) {
     nfe.setValue("file", null);
   }
 
-  const itemTypeLabels: Record<string, string> = {
-    ingredient: translate("global.ingredients"),
-    product: translate("global.products"),
-    package: translate("global.packages"),
-  };
+  const footerRow =
+    items.length > 0 ? (
+      <TableRow>
+        <TableCell colSpan={4} align="right">
+          <Typography variant="subtitle2" fontWeight={600}>
+            {translate("finance.nfe.fields.totalAmount")}
+          </Typography>
+        </TableCell>
+        <TableCell align="right">
+          <Typography variant="subtitle2" fontWeight={600}>
+            {formatCurrency(totalAmount.toDecimalPlaces(2).toString())}
+          </Typography>
+        </TableCell>
+        <TableCell />
+      </TableRow>
+    ) : undefined;
 
   return (
     <GenericModal title={isCreate ? "finance.nfe.createTitle" : "finance.nfe.editTitle"} open={nfe.showModal} onClose={nfe.closeModal} maxWidth="lg">
       <FormContextProvider control={nfe.control} errors={nfe.errors} formType={nfe.formType}>
         <form id="nfe-form" onSubmit={nfe.handleSubmit(nfe.submit)}>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{marginTop: 2}}>
             <FormTextInput fieldName="description" label="finance.nfe.fields.description" size={4} />
             <FormTextInput fieldName="supplier" label="finance.nfe.fields.supplier" size={3} />
             <FormTextInput fieldName="nfeNumber" label="finance.nfe.fields.nfeNumber" size={2} />
@@ -164,99 +153,10 @@ export function NfeModal(props: NfeModalProps) {
             </Grid>
           </Grid>
 
-          {items.length > 0 ? (
-            <TableContainer sx={{mb: 2, border: `1px solid ${theme.palette.divider}`, borderRadius: 1}}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>{translate("finance.nfe.items.type")}</TableCell>
-                    <TableCell>{translate("finance.nfe.items.name")}</TableCell>
-                    <TableCell align="right" sx={{width: 120}}>
-                      {translate("finance.nfe.items.quantity")}
-                    </TableCell>
-                    <TableCell align="right" sx={{width: 140}}>
-                      {translate("finance.nfe.items.unitPrice")}
-                    </TableCell>
-                    <TableCell align="right" sx={{width: 140}}>
-                      {translate("finance.nfe.items.totalPrice")}
-                    </TableCell>
-                    <TableCell align="center" sx={{width: 50}} />
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {items.map((item: NfeFormItem) => {
-                    const qty = Number(item.quantity) || 0;
-                    const price = Number(item.unitPrice) || 0;
-                    const itemTotal = new Decimal(qty).times(price);
-                    return (
-                      <TableRow key={item.id}>
-                        <TableCell>{itemTypeLabels[item.itemType]}</TableCell>
-                        <TableCell>{item.name}</TableCell>
-                        <TableCell align="right">
-                          <input
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) => updateItem(item.id, "quantity", e.target.value)}
-                            style={{
-                              width: 100,
-                              textAlign: "right",
-                              border: `1px solid ${theme.palette.divider}`,
-                              borderRadius: 4,
-                              padding: "4px 8px",
-                            }}
-                            min="0"
-                            step="any"
-                          />
-                        </TableCell>
-                        <TableCell align="right">
-                          <input
-                            type="number"
-                            value={item.unitPrice}
-                            onChange={(e) => updateItem(item.id, "unitPrice", e.target.value)}
-                            style={{
-                              width: 120,
-                              textAlign: "right",
-                              border: `1px solid ${theme.palette.divider}`,
-                              borderRadius: 4,
-                              padding: "4px 8px",
-                            }}
-                            min="0"
-                            step="any"
-                          />
-                        </TableCell>
-                        <TableCell align="right">{formatCurrency(itemTotal.toDecimalPlaces(2).toString())}</TableCell>
-                        <TableCell align="center">
-                          <IconButton size="small" onClick={() => removeItem(item.id)} color="error">
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  <TableRow>
-                    <TableCell colSpan={4} align="right">
-                      <Typography variant="subtitle2" fontWeight={600}>
-                        {translate("finance.nfe.fields.totalAmount")}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="subtitle2" fontWeight={600}>
-                        {formatCurrency(totalAmount.toDecimalPlaces(2).toString())}
-                      </Typography>
-                    </TableCell>
-                    <TableCell />
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2, textAlign: "center", py: 2}}>
-              {translate("finance.nfe.items.noItems")}
-            </Typography>
-          )}
+          <DefaultTable<NfeFormItem> data={items} columns={generateItemsConfig()} emptyMessageKey="finance.nfe.items.noItems" footerRow={footerRow} />
 
           {nfe.errors.items && typeof nfe.errors.items.message === "string" && (
-            <Typography variant="caption" color="error" sx={{mb: 1, display: "block"}}>
+            <Typography variant="caption" color="error" sx={{mt: 1, display: "block"}}>
               {nfe.errors.items.message}
             </Typography>
           )}

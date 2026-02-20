@@ -1,12 +1,18 @@
-import {Badge, Chip} from "@mui/material";
+import {Badge, Chip, IconButton} from "@mui/material";
+import Decimal from "decimal.js";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DescriptionIcon from "@mui/icons-material/Description";
+import {CoreTableColumn} from "@/src/components/core-table/types";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
+import {FormDecimalInput} from "@/src/components/form-fields/decimal-input";
+import {FormCurrencyInput} from "@/src/components/form-fields/currency-input";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/lib/format-date";
 import {Nfe} from "../../types";
-import DescriptionIcon from "@mui/icons-material/Description";
-import {NfeTableConfigProps} from "./types";
+import {NfeFormItem} from "./form-config";
+import {NfeItemsTableConfigProps, NfeTableConfigProps} from "./types";
 
 export function useNfeTableConfig(props: NfeTableConfigProps) {
   const {translate} = useTranslate();
@@ -95,4 +101,57 @@ export function useNfeTableConfig(props: NfeTableConfigProps) {
   }
 
   return {generateConfig};
+}
+
+export function useNfeItemsTableConfig(props: NfeItemsTableConfigProps) {
+  const {translate} = useTranslate();
+  const formatCurrency = useFormatCurrency();
+
+  const itemTypeLabels: Record<string, string> = {
+    ingredient: translate("global.ingredients"),
+    product: translate("global.products"),
+    package: translate("global.packages"),
+  };
+
+  function generateItemsConfig(): CoreTableColumn<NfeFormItem>[] {
+    return [
+      {field: "itemType", headerKey: "finance.nfe.items.type", render: (row) => itemTypeLabels[row.itemType]},
+      {field: "name", headerKey: "finance.nfe.items.name"},
+      {
+        field: "quantity",
+        headerKey: "finance.nfe.items.quantity",
+        width: "160px",
+        render: (_, index) => <FormDecimalInput fieldName={`items.${index}.quantity`} grid={false} />,
+      },
+      {
+        field: "unitPrice",
+        headerKey: "finance.nfe.items.unitPrice",
+        width: "180px",
+        render: (_, index) => <FormCurrencyInput fieldName={`items.${index}.unitPrice`} grid={false} />,
+      },
+      {
+        field: "total",
+        headerKey: "finance.nfe.items.totalPrice",
+        width: "140px",
+        align: "right",
+        render: (row) => {
+          const itemTotal = new Decimal(Number(row.quantity) || 0).times(Number(row.unitPrice) || 0);
+          return formatCurrency(itemTotal.toDecimalPlaces(2).toString());
+        },
+      },
+      {
+        field: "actions",
+        headerKey: "",
+        width: "50px",
+        align: "center",
+        render: (_, index) => (
+          <IconButton size="small" onClick={() => props.onRemove(index)} color="error">
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        ),
+      },
+    ];
+  }
+
+  return {generateItemsConfig};
 }

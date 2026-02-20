@@ -1,13 +1,7 @@
 import {ReactNode} from "react";
+import {CoreTableColumn} from "@/src/components/core-table/types";
 
-export interface DataTableColumn<T = any> {
-  field: keyof T | string;
-  headerKey: string;
-  width?: string;
-  align?: "left" | "center" | "right";
-  render?: (row: T) => ReactNode;
-  hideOnMobile?: boolean;
-}
+export type DataTableColumn<T = any> = CoreTableColumn<T>;
 
 export interface DataTableProps<T = any> {
   apiRoute: string;

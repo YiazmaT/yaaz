@@ -1,9 +1,9 @@
 "use client";
 
-import {Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography, useTheme} from "@mui/material";
+import {Box, Paper, TablePagination, useTheme} from "@mui/material";
 import {useState} from "react";
-import {Loader} from "@/src/components/loader";
 import {SearchInput} from "@/src/components/search-input";
+import {DefaultTable} from "@/src/components/core-table";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {ApiResponse, DataTableProps} from "./types";
@@ -42,12 +42,6 @@ export function DataTable<T = any>(props: DataTableProps<T>) {
     setPage(0);
   }
 
-  function handleRowClick(row: T) {
-    if (props.onRowClick) {
-      props.onRowClick(row);
-    }
-  }
-
   function handleSearch(value: string) {
     setSearch(value);
     setPage(0);
@@ -71,72 +65,8 @@ export function DataTable<T = any>(props: DataTableProps<T>) {
           {props.renderOpositeSearch}
         </Box>
       )}
-      <Box sx={{flex: 1, overflow: "hidden", position: "relative"}}>
-        <TableContainer sx={{height: "100%", overflow: "auto"}}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                {props.columns.map((column, index) => (
-                  <TableCell
-                    key={index}
-                    align={column.align ?? "left"}
-                    sx={{
-                      width: column.width,
-                      fontWeight: 600,
-                      backgroundColor: "#fafbfc",
-                      borderBottom: "2px solid #e0e0e0",
-                    }}
-                  >
-                    {translate(column.headerKey)}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {!isFetching && data.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={props.columns.length} align="center">
-                    <Typography color="text.secondary">{translate("global.noDataFound")}</Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                data.map((row, rowIndex) => (
-                  <TableRow
-                    key={rowIndex}
-                    hover={!!props.onRowClick}
-                    onClick={() => handleRowClick(row)}
-                    sx={{
-                      cursor: props.onRowClick ? "pointer" : "default",
-                      transition: "background-color 0.2s ease",
-                      "&:hover": props.onRowClick ? {backgroundColor: "rgba(0, 0, 0, 0.02)"} : {},
-                    }}
-                  >
-                    {props.columns.map((column, colIndex) => (
-                      <TableCell key={colIndex} align={column.align ?? "left"}>
-                        {column.render ? column.render(row) : String((row as any)[column.field] ?? "")}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {isFetching && (
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              top: 57,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "rgba(255, 255, 255, 0.8)",
-            }}
-          >
-            <Loader size={80} />
-          </Box>
-        )}
+      <Box sx={{flex: 1, overflow: "hidden"}}>
+        <DefaultTable<T> data={data} columns={props.columns} loading={isFetching} onRowClick={props.onRowClick} />
       </Box>
       <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: `1px solid ${theme.palette.divider}`}}>
         <Box>{props.footerLeftContent}</Box>
