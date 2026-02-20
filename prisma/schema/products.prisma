@@ -28,6 +28,7 @@ model Product {
   packages             ProductPackage[]
   sale_items           SaleItem[]
   stock_changes        ProductStockChange[]
+  nfe_items            NfeItem[]
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())

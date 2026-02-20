@@ -25,6 +25,7 @@ model Ingredient {
   products        ProductIngredient[]
   costs           IngredientCost[]
   stock_changes   IngredientStockChange[]
+  nfe_items       NfeItem[]
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())

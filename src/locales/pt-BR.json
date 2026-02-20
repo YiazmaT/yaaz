@@ -35,6 +35,8 @@
     "clients": "Clientes",
     "finance": "Financeiro",
     "packages": "Embalagens",
+    "yes": "Sim",
+    "no": "Não",
     "total": "Total",
     "actions": {
       "label": "Ações",
@@ -589,7 +591,8 @@
     "tabs": {
       "bills": "Contas a Pagar",
       "bank": "Contas Bancárias",
-      "categories": "Categorias"
+      "categories": "Categorias",
+      "nfe": "Notas Fiscais"
     },
     "categories": {
       "title": "Categorias",
@@ -641,7 +644,8 @@
       "transactionTypes": {
         "deposit": "Deposito",
         "withdrawal": "Retirada",
-        "bill_payment": "Pagamento de Conta"
+        "bill_payment": "Pagamento de Conta",
+        "nfe_payment": "Pagamento de NFE"
       },
       "fields": {
         "name": "Nome",
@@ -737,6 +741,58 @@
         "invalidFileType": "Tipo de arquivo inválido. Envie uma imagem ou PDF.",
         "fileTooLarge": "O arquivo excede o tamanho máximo permitido."
       }
+    },
+    "nfeTitle": "Notas Fiscais de Entrada",
+    "nfe": {
+      "title": "Notas Fiscais de Entrada",
+      "createTitle": "Nova Nota Fiscal",
+      "editTitle": "Editar Nota Fiscal",
+      "createSuccess": "Nota fiscal criada com sucesso!",
+      "updateSuccess": "Nota fiscal atualizada com sucesso!",
+      "deleteSuccess": "Nota fiscal excluída com sucesso!",
+      "deleteConfirm": "Tem certeza que deseja excluir esta nota fiscal? Estoque e transações bancárias vinculadas serão revertidos.",
+      "fields": {
+        "code": "Código",
+        "description": "Descrição",
+        "supplier": "Fornecedor",
+        "nfeNumber": "Nº da Nota",
+        "date": "Data",
+        "totalAmount": "Valor Total",
+        "items": "Itens",
+        "file": "Arquivo",
+        "fileAttached": "Arquivo anexado",
+        "attachFile": "Anexar Arquivo",
+        "addStock": "Adicionar ao Estoque",
+        "deductBank": "Debitar de Conta",
+        "bankAccount": "Conta Bancária",
+        "balanceAfterDeduction": "Saldo após o débito"
+      },
+      "items": {
+        "add": "Adicionar Itens",
+        "type": "Tipo",
+        "name": "Nome",
+        "quantity": "Quantidade",
+        "unitPrice": "Preço Unit.",
+        "totalPrice": "Total",
+        "noItems": "Nenhum item adicionado. Selecione insumos, produtos ou embalagens acima."
+      },
+      "errors": {
+        "minOneItem": "Adicione pelo menos um item.",
+        "quantityPositive": "A quantidade deve ser maior que zero.",
+        "pricePositive": "O preço deve ser maior que zero.",
+        "bankAccountRequired": "Selecione uma conta bancária.",
+        "invalidFileType": "Tipo de arquivo inválido. Envie uma imagem ou PDF."
+      },
+      "fileTitle": "Arquivo da Nota Fiscal",
+      "noFile": "Nenhum arquivo anexado.",
+      "uploadFile": "Anexar Arquivo",
+      "replaceFile": "Substituir Arquivo",
+      "viewFile": "Visualizar Arquivo",
+      "deleteFile": "Excluir Arquivo",
+      "uploadFileSuccess": "Arquivo enviado com sucesso!",
+      "deleteFileSuccess": "Arquivo excluído com sucesso!",
+      "replaceFileConfirm": "Já existe um arquivo anexado. Deseja substituí-lo?",
+      "deleteFileConfirm": "Tem certeza que deseja excluir o arquivo anexado?"
     }
   }
 }

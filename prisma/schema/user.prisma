@@ -37,6 +37,8 @@ model User {
   created_bank_transactions  BankTransaction[] @relation("BankTransactionCreator")
   created_bills              Bill[]            @relation("BillCreator")
   edited_bills               Bill[]            @relation("BillEditor")
+  created_nfes               Nfe[]             @relation("NfeCreator")
+  edited_nfes                Nfe[]             @relation("NfeEditor")
 
   @@map("user")
   @@schema("data")

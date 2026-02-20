@@ -1,0 +1,52 @@
+model Nfe {
+  id                  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id           String       @db.Uuid
+  code                Int
+  description         String
+  supplier            String?
+  nfe_number          String?
+  date                DateTime
+  total_amount        Decimal      @db.Decimal
+  file_url            String?
+  stock_added         Boolean      @default(false)
+  bank_deducted       Boolean      @default(false)
+  bank_account_id     String?      @db.Uuid
+  bank_transaction_id String?      @unique @db.Uuid
+  active              Boolean      @default(true)
+  tenant              Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  bank_account        BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  bank_transaction    BankTransaction? @relation(fields: [bank_transaction_id], references: [id], onDelete: SetNull)
+  items               NfeItem[]
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("NfeCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("NfeEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@unique([tenant_id, code])
+  @@map("nfe")
+  @@schema("data")
+}
+
+model NfeItem {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id     String      @db.Uuid
+  nfe_id        String      @db.Uuid
+  item_type     String
+  ingredient_id String?     @db.Uuid
+  product_id    String?     @db.Uuid
+  package_id    String?     @db.Uuid
+  quantity      Decimal     @db.Decimal
+  unit_price    Decimal     @db.Decimal
+  total_price   Decimal     @db.Decimal
+  tenant        Tenant      @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  nfe           Nfe         @relation(fields: [nfe_id], references: [id], onDelete: Cascade)
+  ingredient    Ingredient? @relation(fields: [ingredient_id], references: [id], onDelete: SetNull)
+  product       Product?    @relation(fields: [product_id], references: [id], onDelete: SetNull)
+  package       Package?    @relation(fields: [package_id], references: [id], onDelete: SetNull)
+
+  @@map("nfe_item")
+  @@schema("data")
+}

@@ -17,6 +17,7 @@ import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalance
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
 import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
 const menuItems: MenuItem[] = [
   {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
@@ -27,6 +28,7 @@ const menuItems: MenuItem[] = [
       {name: "finance.tabs.bills", route: "/finance/bills-to-pay", icon: <ReceiptLongOutlinedIcon />},
       {name: "finance.tabs.bank", route: "/finance/banks", icon: <AccountBalanceOutlinedIcon />},
       {name: "finance.tabs.categories", route: "/finance/categories", icon: <LabelOutlinedIcon />},
+      {name: "finance.tabs.nfe", route: "/finance/nfe", icon: <DescriptionOutlinedIcon />},
     ],
   },
   {name: "global.products", route: "/products", icon: <Inventory2OutlinedIcon />},

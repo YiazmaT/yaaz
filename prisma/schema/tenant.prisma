@@ -31,6 +31,8 @@ model Tenant {
   bank_accounts            BankAccount[]
   bank_transactions        BankTransaction[]
   bills                    Bill[]
+  nfes                     Nfe[]
+  nfe_items                NfeItem[]
 
   @@map("tenant")
   @@schema("data")

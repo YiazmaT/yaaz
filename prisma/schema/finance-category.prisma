@@ -1,0 +1,21 @@
+model FinanceCategory {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id String  @db.Uuid
+  name      String
+  active    Boolean @default(true)
+  tenant    Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("FinanceCategoryCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("FinanceCategoryEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  bills             Bill[]
+  bank_transactions BankTransaction[]
+
+  @@unique([tenant_id, name])
+  @@map("finance_category")
+  @@schema("data")
+}

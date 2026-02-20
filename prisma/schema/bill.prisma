@@ -1,0 +1,39 @@
+enum BillStatus {
+  pending
+  paid
+
+  @@schema("data")
+}
+
+model Bill {
+  id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id          String           @db.Uuid
+  code               Int
+  description        String
+  category_id        String?          @db.Uuid
+  amount             Decimal          @db.Decimal
+  due_date           DateTime
+  installment_number Int              @default(1)
+  installment_count  Int              @default(1)
+  status             BillStatus       @default(pending)
+  paid_date          DateTime?
+  bank_account_id    String?          @db.Uuid
+  receipt_url        String?
+  active             Boolean          @default(true)
+  tenant             Tenant           @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  category           FinanceCategory? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  bank_account       BankAccount?     @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("BillCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("BillEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  bank_transaction BankTransaction?
+
+  @@unique([tenant_id, code, installment_number])
+  @@map("bill")
+  @@schema("data")
+}

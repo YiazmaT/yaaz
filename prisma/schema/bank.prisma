@@ -1,0 +1,56 @@
+enum BankTransactionType {
+  deposit
+  withdrawal
+  bill_payment
+  nfe_payment
+
+  @@schema("data")
+}
+
+model BankAccount {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id String  @db.Uuid
+  name      String
+  balance   Decimal @default(0) @db.Decimal
+  active    Boolean @default(true)
+  tenant    Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("BankAccountCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("BankAccountEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  transactions BankTransaction[]
+  bills        Bill[]
+  nfes         Nfe[]
+
+  @@unique([tenant_id, name])
+  @@map("bank_account")
+  @@schema("data")
+}
+
+model BankTransaction {
+  id              String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id       String              @db.Uuid
+  bank_account_id String              @db.Uuid
+  type            BankTransactionType
+  amount          Decimal             @db.Decimal
+  description     String?
+  date            DateTime
+  category_id     String?             @db.Uuid
+  bill_id         String?             @unique @db.Uuid
+  tenant          Tenant              @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  bank_account    BankAccount         @relation(fields: [bank_account_id], references: [id], onDelete: Cascade)
+  category        FinanceCategory?    @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  bill            Bill?               @relation(fields: [bill_id], references: [id], onDelete: SetNull)
+  nfe             Nfe?
+
+  creator_id    String?  @db.Uuid
+  creation_date DateTime @default(now())
+  creator       User?    @relation("BankTransactionCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+
+  @@map("bank_transaction")
+  @@schema("data")
+}
