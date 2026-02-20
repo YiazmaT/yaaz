@@ -19,6 +19,11 @@ export function ProductsSelector(props: ProductsSelectorProps) {
   function handleAddProduct(product: Product | null) {
     if (!product) return;
 
+    if (props.onSelect) {
+      props.onSelect(product);
+      return;
+    }
+
     const cleanProduct: Product = {
       id: product.id,
       code: product.code,
@@ -66,7 +71,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
         disabled={disabled}
       />
 
-      {value.length > 0 && (
+      {!props.onSelect && value.length > 0 && (
         <Box sx={{display: "flex", flexDirection: "column", gap: 1, marginTop: 2}}>
           {value.map((item) =>
             isMobile ? (

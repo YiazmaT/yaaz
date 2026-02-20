@@ -17,6 +17,11 @@ export function PackagesSelector(props: PackagesSelectorProps) {
   function handleAddPackage(pkg: CompositionPackage | null) {
     if (!pkg) return;
 
+    if (props.onSelect) {
+      props.onSelect(pkg);
+      return;
+    }
+
     const alreadyExists = props.value.some((item) => item.package.id === pkg.id);
     if (alreadyExists) return;
 
@@ -55,7 +60,7 @@ export function PackagesSelector(props: PackagesSelectorProps) {
         extraQueryParams={props.typeFilter ? `type=${props.typeFilter}` : undefined}
       />
 
-      {props.value.length > 0 && (
+      {!props.onSelect && props.value.length > 0 && (
         <Box sx={{display: "flex", flexDirection: "column", gap: 1, marginTop: 2}}>
           {props.value.map((item) =>
             isMobile ? (

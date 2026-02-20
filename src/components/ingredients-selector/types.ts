@@ -19,6 +19,7 @@ export interface IngredientsSelectorProps {
   onChange: (value: CompositionItem[]) => void;
   disabled?: boolean;
   showCostField?: boolean;
+  onSelect?: (ingredient: CompositionIngredient) => void;
 }
 
 export interface IngredientRowProps {

@@ -12,6 +12,7 @@ export interface ProductsSelectorProps {
   disabled?: boolean;
   incrementOnDuplicate?: boolean;
   priceChangeText?: string;
+  onSelect?: (product: Product) => void;
 }
 
 export interface ProductRowProps {

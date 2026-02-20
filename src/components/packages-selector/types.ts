@@ -22,6 +22,7 @@ export interface PackagesSelectorProps {
   disabled?: boolean;
   showCostField?: boolean;
   typeFilter?: PackageType;
+  onSelect?: (pkg: CompositionPackage) => void;
 }
 
 export interface PackageRowProps {

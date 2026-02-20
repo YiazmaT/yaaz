@@ -13,12 +13,17 @@ import {useApiQuery} from "@/src/hooks/use-api";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {FormDatePicker} from "@/src/components/form-fields/date-picker";
 import {FormDropdown} from "@/src/components/form-fields/dropdown";
-import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
+import {IngredientsSelector} from "@/src/components/ingredients-selector";
+import {ProductsSelector} from "@/src/components/products-selector";
+import {PackagesSelector} from "@/src/components/packages-selector";
+import {CompositionIngredient} from "@/src/components/ingredients-selector/types";
+import {Product} from "@/src/pages-content/products/types";
+import {CompositionPackage} from "@/src/components/packages-selector/types";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {BankAccount} from "../../../types";
 import {NfeFormItem} from "../form-config";
 import {useNfeItemsTableConfig} from "../table-config";
-import {ItemOption, NfeModalProps} from "./types";
+import {NfeModalProps} from "./types";
 
 const ACCEPT = "image/*,.pdf";
 
@@ -60,8 +65,7 @@ export function NfeModal(props: NfeModalProps) {
     return Number(selectedAccount.balance) - totalAmount.toNumber();
   }, [selectedAccount, totalAmount]);
 
-  function addItem(option: ItemOption | null, itemType: "ingredient" | "product" | "package") {
-    if (!option) return;
+  function addItem(option: {id: string; name: string}, itemType: "ingredient" | "product" | "package") {
     const alreadyExists = items.some((i: NfeFormItem) => i.itemId === option.id && i.itemType === itemType);
     if (alreadyExists) return;
 
@@ -122,33 +126,24 @@ export function NfeModal(props: NfeModalProps) {
           </Typography>
           <Grid container spacing={2} sx={{mb: 2}}>
             <Grid size={4}>
-              <AsyncDropdown<ItemOption>
-                apiRoute="/api/ingredient/paginated-list"
-                uniqueKey="id"
-                buildLabel={(o) => o.name}
-                label="global.ingredients"
-                value={null}
-                onChange={(v) => addItem(v, "ingredient")}
+              <IngredientsSelector
+                value={[]}
+                onChange={() => {}}
+                onSelect={(ingredient: CompositionIngredient) => addItem(ingredient, "ingredient")}
               />
             </Grid>
             <Grid size={4}>
-              <AsyncDropdown<ItemOption>
-                apiRoute="/api/product/paginated-list"
-                uniqueKey="id"
-                buildLabel={(o) => o.name}
-                label="global.products"
-                value={null}
-                onChange={(v) => addItem(v, "product")}
+              <ProductsSelector
+                value={[]}
+                onChange={() => {}}
+                onSelect={(product: Product) => addItem(product, "product")}
               />
             </Grid>
             <Grid size={4}>
-              <AsyncDropdown<ItemOption>
-                apiRoute="/api/package/paginated-list"
-                uniqueKey="id"
-                buildLabel={(o) => o.name}
-                label="global.packages"
-                value={null}
-                onChange={(v) => addItem(v, "package")}
+              <PackagesSelector
+                value={[]}
+                onChange={() => {}}
+                onSelect={(pkg: CompositionPackage) => addItem(pkg, "package")}
               />
             </Grid>
           </Grid>

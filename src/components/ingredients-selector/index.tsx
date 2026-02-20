@@ -18,6 +18,11 @@ export function IngredientsSelector(props: IngredientsSelectorProps) {
   function handleAddIngredient(ingredient: CompositionIngredient | null) {
     if (!ingredient) return;
 
+    if (props.onSelect) {
+      props.onSelect(ingredient);
+      return;
+    }
+
     const alreadyExists = props.value.some((item) => item.ingredient.id === ingredient.id);
     if (alreadyExists) return;
 
@@ -55,7 +60,7 @@ export function IngredientsSelector(props: IngredientsSelectorProps) {
         disabled={props.disabled}
       />
 
-      {props.value.length > 0 && (
+      {!props.onSelect && props.value.length > 0 && (
         <Box sx={{display: "flex", flexDirection: "column", gap: 1, marginTop: 2}}>
           {props.value.map((item) =>
             isMobile ? (
