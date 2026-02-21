@@ -74,9 +74,9 @@ export interface NfeItem {
   ingredient_id?: string;
   product_id?: string;
   package_id?: string;
-  ingredient?: {id: string; name: string; unit_of_measure: string};
-  product?: {id: string; name: string};
-  package?: {id: string; name: string};
+  ingredient?: {id: string; name: string; image: string | null; unit_of_measure: string};
+  product?: {id: string; name: string; image: string | null};
+  package?: {id: string; name: string; image: string | null};
   quantity: number;
   unit_price: number;
   total_price: number;

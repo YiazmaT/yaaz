@@ -8,6 +8,7 @@ export interface NfeFormItem {
   itemType: "ingredient" | "product" | "package";
   itemId: string;
   name: string;
+  image?: string | null;
   quantity: string;
   unitPrice: string;
 }

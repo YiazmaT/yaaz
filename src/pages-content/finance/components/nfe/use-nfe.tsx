@@ -117,6 +117,7 @@ export function useNfe() {
         itemType: item.item_type,
         itemId: item.ingredient_id || item.product_id || item.package_id || "",
         name: item.ingredient?.name || item.product?.name || item.package?.name || "",
+        image: item.ingredient?.image || item.product?.image || item.package?.image || null,
         quantity: String(item.quantity),
         unitPrice: String(item.unit_price),
       })),

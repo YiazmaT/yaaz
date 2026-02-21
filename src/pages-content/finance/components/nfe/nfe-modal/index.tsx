@@ -65,7 +65,7 @@ export function NfeModal(props: NfeModalProps) {
     return Number(selectedAccount.balance) - totalAmount.toNumber();
   }, [selectedAccount, totalAmount]);
 
-  function addItem(option: {id: string; name: string}, itemType: "ingredient" | "product" | "package") {
+  function addItem(option: {id: string; name: string; image?: string | null}, itemType: "ingredient" | "product" | "package") {
     const alreadyExists = items.some((i: NfeFormItem) => i.itemId === option.id && i.itemType === itemType);
     if (alreadyExists) return;
 
@@ -74,6 +74,7 @@ export function NfeModal(props: NfeModalProps) {
       itemType,
       itemId: option.id,
       name: option.name,
+      image: option.image,
       quantity: "1",
       unitPrice: "0",
     };

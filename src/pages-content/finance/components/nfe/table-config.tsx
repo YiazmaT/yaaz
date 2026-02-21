@@ -1,4 +1,4 @@
-import {Badge, Chip, IconButton} from "@mui/material";
+import {Badge, Box, Chip, IconButton, Typography} from "@mui/material";
 import Decimal from "decimal.js";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DescriptionIcon from "@mui/icons-material/Description";
@@ -7,6 +7,7 @@ import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
 import {FormDecimalInput} from "@/src/components/form-fields/decimal-input";
 import {FormCurrencyInput} from "@/src/components/form-fields/currency-input";
+import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/lib/format-date";
@@ -116,7 +117,16 @@ export function useNfeItemsTableConfig(props: NfeItemsTableConfigProps) {
   function generateItemsConfig(): CoreTableColumn<NfeFormItem>[] {
     return [
       {field: "itemType", headerKey: "finance.nfe.items.type", render: (row) => itemTypeLabels[row.itemType]},
-      {field: "name", headerKey: "finance.nfe.items.name"},
+      {
+        field: "name",
+        headerKey: "finance.nfe.items.name",
+        render: (row) => (
+          <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+            <ImagePreview url={row.image} alt={row.name} width={30} height={30} borderRadius={1} />
+            <Typography variant="body2">{row.name}</Typography>
+          </Box>
+        ),
+      },
       {
         field: "quantity",
         headerKey: "finance.nfe.items.quantity",
