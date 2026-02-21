@@ -3,7 +3,7 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
-import {NfeItemPayload, NfeUpdatePayload} from "@/src/pages-content/finance/components/nfe/dto";
+import {NfeItemPayload, NfeUpdatePayload} from "@/src/pages-content/finance/nfe/dto";
 
 const ROUTE = "/api/finance/nfe/update";
 

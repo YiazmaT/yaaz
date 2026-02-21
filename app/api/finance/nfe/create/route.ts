@@ -4,7 +4,7 @@ import {prisma} from "@/src/lib/prisma";
 import {uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
-import {NfeCreatePayload, NfeItemPayload} from "@/src/pages-content/finance/components/nfe/dto";
+import {NfeCreatePayload, NfeItemPayload} from "@/src/pages-content/finance/nfe/dto";
 
 const ROUTE = "/api/finance/nfe/create";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
