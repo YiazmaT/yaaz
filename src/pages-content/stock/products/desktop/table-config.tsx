@@ -33,9 +33,15 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
         render: (row) => <ImagePreviewColumn image={row.image} alt={row.name} />,
       },
       {
+        field: "unity_of_measure",
+        headerKey: "products.fields.unityOfMeasure",
+        width: "90px",
+        render: (row) => row.unity_of_measure?.unity ?? "-",
+      },
+      {
         field: "name",
         headerKey: "products.fields.name",
-        width: "25%",
+        width: "22%",
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             {!row.active && <Chip label={translate("products.inactive")} size="small" color="error" />}

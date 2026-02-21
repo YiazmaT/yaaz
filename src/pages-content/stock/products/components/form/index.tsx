@@ -1,5 +1,6 @@
 "use client";
 import {Button, Divider, Grid} from "@mui/material";
+import {FormDropdown} from "@/src/components/form-fields/dropdown";
 import {FormImageInput} from "@/src/components/form-fields/image-input";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {FormCurrencyInput} from "@/src/components/form-fields/currency-input";
@@ -31,6 +32,13 @@ export function Form(props: FormProps) {
             <FormImageInput fieldName="image" label="products.fields.image" imageSize={imageSize} />
             <FormTextInput fieldName="name" label="products.fields.name" />
             <FormCurrencyInput fieldName="price" label="products.fields.price" />
+            <FormDropdown
+              fieldName="unitOfMeasure"
+              label="products.fields.unityOfMeasure"
+              options={products.unitOptions}
+              uniqueKey="id"
+              buildLabel={(o) => o.unity}
+            />
             <FormTextInput fieldName="description" label="products.fields.description" multiline />
             <FormDecimalInput fieldName="min_stock" label="products.fields.minStock" />
             <Grid size={12}>

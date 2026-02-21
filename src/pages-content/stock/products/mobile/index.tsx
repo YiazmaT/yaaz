@@ -49,6 +49,9 @@ export function MobileView(props: MobileViewProps) {
               {item.description || "-"}
             </Typography>
             <Typography variant="caption" color="text.secondary">
+              {translate("products.fields.unityOfMeasure")}: {item.unity_of_measure?.unity ?? "-"}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
               {translate("products.fields.price")}: {formatCurrency(item.price)}
             </Typography>
             <Typography variant="caption" color="text.secondary">

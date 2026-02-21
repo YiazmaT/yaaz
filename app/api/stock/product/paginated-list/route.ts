@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
         orderBy: {name: "asc"},
         omit: {creation_date: true, creator_id: true, last_edit_date: true, last_editor_id: true},
         include: {
+          unity_of_measure: {select: {id: true, unity: true}},
           composition: {
             include: {
               ingredient: {

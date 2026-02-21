@@ -6,12 +6,14 @@ import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useApi} from "@/src/hooks/use-api";
+import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {Package, PackagesFilters} from "./types";
 import {PackageFormValues, usePackageFormConfig} from "./form-config";
 import {usePackagesTableConfig} from "./desktop/table-config";
+import {UnityOfMeasure} from "../unity-of-measure/types";
 
 const API_ROUTE = "/api/stock/package/paginated-list";
+const UNITS_ROUTE = "/api/stock/unity-of-measure/paginated-list";
 
 export function usePackages() {
   const [formType, setFormType] = useState("create");
@@ -28,6 +30,13 @@ export function usePackages() {
   const api = useApi();
   const toast = useToaster();
   const queryClient = useQueryClient();
+
+  const {data: unitsData} = useApiQuery<{data: UnityOfMeasure[]}>({
+    queryKey: [UNITS_ROUTE, {limit: 100}],
+    route: `${UNITS_ROUTE}?limit=100`,
+  });
+
+  const unitOptions: UnityOfMeasure[] = unitsData?.data ?? [];
 
   const {
     control,
@@ -96,6 +105,7 @@ export function usePackages() {
     formData.append("description", data.description || "");
     formData.append("type", data.type);
     formData.append("min_stock", data.min_stock || "0");
+    formData.append("unitOfMeasureId", data.unitOfMeasure?.id || "");
 
     if (data.image instanceof File) {
       formData.append("image", data.image);
@@ -143,6 +153,7 @@ export function usePackages() {
       image: row.image,
       type: row.type,
       min_stock: row.min_stock?.toString() || "0",
+      unitOfMeasure: row.unity_of_measure ?? null,
     });
   }
 
@@ -284,6 +295,7 @@ export function usePackages() {
     showDrawer,
     control,
     errors,
+    unitOptions,
     generateConfig,
     handleSubmit,
     submit,

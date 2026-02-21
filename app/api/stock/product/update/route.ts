@@ -18,10 +18,11 @@ export async function PUT(req: NextRequest) {
     const image = formData.get("image") as File | null;
     const compositionJson = formData.get("composition") as string;
     const packagesJson = formData.get("packages") as string;
+    const unitOfMeasureId = formData.get("unitOfMeasureId") as string | null;
     const displayLandingPageRaw = formData.get("displayLandingPage") as string | null;
     const displayLandingPage = displayLandingPageRaw !== null ? displayLandingPageRaw === "true" : undefined;
 
-    if (!id || !name || isNaN(price)) return error("api.errors.missingRequiredFields", 400);
+    if (!id || !name || isNaN(price) || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
     const existingProduct = await prisma.product.findUnique({where: {id, tenant_id: auth.tenant_id}});
     if (!existingProduct) return error("api.errors.notFound", 404, {id});
@@ -68,6 +69,7 @@ export async function PUT(req: NextRequest) {
         description: description || null,
         min_stock,
         image: imageUrl,
+        unit_of_measure_id: unitOfMeasureId || null,
         ...(displayLandingPage !== undefined && {display_landing_page: displayLandingPage}),
         last_edit_date: new Date(),
         last_editor_id: auth.user.id,
@@ -87,6 +89,7 @@ export async function PUT(req: NextRequest) {
         },
       },
       include: {
+        unity_of_measure: {select: {id: true, unity: true}},
         composition: {
           include: {
             ingredient: true,

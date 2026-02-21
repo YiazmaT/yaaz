@@ -15,8 +15,9 @@ export async function POST(req: NextRequest) {
     const type = formData.get("type") as PackageType;
     const min_stock = formData.get("min_stock") as string | null;
     const image = formData.get("image") as File | null;
+    const unitOfMeasureId = formData.get("unitOfMeasureId") as string | null;
 
-    if (!name || !type) return error("api.errors.missingRequiredFields", 400);
+    if (!name || !type || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
     let imageUrl: string | null = null;
 
@@ -41,8 +42,10 @@ export async function POST(req: NextRequest) {
         type,
         min_stock: min_stock || "0",
         image: imageUrl,
+        unit_of_measure_id: unitOfMeasureId || null,
         creator_id: auth.user.id,
       },
+      include: {unity_of_measure: {select: {id: true, unity: true}}},
     });
 
     return success("create", {package: pkg});

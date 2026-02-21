@@ -1,10 +1,12 @@
 model UnityOfMeasure {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenant_id String  @db.Uuid
-  unity     String
-  active    Boolean @default(true)
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id   String       @db.Uuid
+  unity       String
+  active      Boolean      @default(true)
   tenant      Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   ingredients Ingredient[]
+  products    Product[]
+  packages    Package[]
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())

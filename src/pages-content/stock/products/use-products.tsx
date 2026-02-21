@@ -6,12 +6,13 @@ import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useApi} from "@/src/hooks/use-api";
-import {CompositionItem, PackageCompositionItem, Product, ProductsFilters} from "./types";
+import {useApi, useApiQuery} from "@/src/hooks/use-api";
+import {CompositionItem, PackageCompositionItem, Product, ProductsFilters, UnityOfMeasure} from "./types";
 import {ProductFormValues, useProductFormConfig} from "./form-config";
 import {useProductsTableConfig} from "./desktop/table-config";
 
 const API_ROUTE = "/api/stock/product/paginated-list";
+const UNITS_ROUTE = "/api/stock/unity-of-measure/paginated-list";
 
 export function useProducts() {
   const [formType, setFormType] = useState("create");
@@ -27,6 +28,13 @@ export function useProducts() {
   const api = useApi();
   const toast = useToaster();
   const queryClient = useQueryClient();
+
+  const {data: unitsData} = useApiQuery<{data: UnityOfMeasure[]}>({
+    queryKey: [UNITS_ROUTE, {limit: 100}],
+    route: `${UNITS_ROUTE}?limit=100`,
+  });
+
+  const unitOptions: UnityOfMeasure[] = unitsData?.data ?? [];
 
   const {
     control,
@@ -101,6 +109,7 @@ export function useProducts() {
     formData.append("min_stock", data.min_stock || "0");
     formData.append("composition", JSON.stringify(data.composition || []));
     formData.append("packages", JSON.stringify(data.packages || []));
+    formData.append("unitOfMeasureId", data.unitOfMeasure?.id || "");
 
     if (data.image instanceof File) {
       formData.append("image", data.image);
@@ -150,6 +159,7 @@ export function useProducts() {
       composition: row.composition || [],
       packages: row.packages || [],
       min_stock: row.min_stock?.toString() || "0",
+      unitOfMeasure: row.unity_of_measure ?? null,
     });
   }
 
@@ -233,6 +243,7 @@ export function useProducts() {
         formData.append("min_stock", row.min_stock?.toString() || "0");
         formData.append("composition", JSON.stringify(row.composition || []));
         formData.append("packages", JSON.stringify(row.packages || []));
+        formData.append("unitOfMeasureId", row.unity_of_measure?.id || "");
         formData.append("displayLandingPage", String(!row.displayLandingPage));
 
         await api.fetch("PUT", "/api/stock/product/update", {
@@ -307,6 +318,7 @@ export function useProducts() {
     setComposition,
     packages,
     setPackages,
+    unitOptions,
     generateConfig,
     handleSubmit,
     submit,

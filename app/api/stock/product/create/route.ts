@@ -17,8 +17,9 @@ export async function POST(req: NextRequest) {
     const image = formData.get("image") as File | null;
     const compositionJson = formData.get("composition") as string;
     const packagesJson = formData.get("packages") as string;
+    const unitOfMeasureId = formData.get("unitOfMeasureId") as string | null;
 
-    if (!name || isNaN(price)) return error("api.errors.missingRequiredFields", 400);
+    if (!name || isNaN(price) || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
     let imageUrl: string | null = null;
 
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
         description: description || null,
         min_stock,
         image: imageUrl,
+        unit_of_measure_id: unitOfMeasureId || null,
         creator_id: auth.user.id,
         composition: {
           create: composition.map((item) => ({
@@ -63,6 +65,7 @@ export async function POST(req: NextRequest) {
         },
       },
       include: {
+        unity_of_measure: {select: {id: true, unity: true}},
         composition: {
           include: {
             ingredient: true,

@@ -1,3 +1,5 @@
+import {UnityOfMeasure} from "../unity-of-measure/types";
+
 export enum PackageType {
   sale = "sale",
   product = "product",
@@ -20,6 +22,8 @@ export interface Package {
   type: PackageType;
   stock: string;
   min_stock?: string;
+  unit_of_measure_id?: string | null;
+  unity_of_measure?: UnityOfMeasure | null;
   active: boolean;
   costs?: PackageCost[];
   lastCost?: number | null;

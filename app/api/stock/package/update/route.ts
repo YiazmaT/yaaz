@@ -16,8 +16,9 @@ export async function PUT(req: NextRequest) {
     const type = formData.get("type") as PackageType;
     const min_stock = formData.get("min_stock") as string | null;
     const image = formData.get("image") as File | null;
+    const unitOfMeasureId = formData.get("unitOfMeasureId") as string | null;
 
-    if (!id || !name || !type) return error("api.errors.missingRequiredFields", 400);
+    if (!id || !name || !type || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
     const existingPackage = await prisma.package.findUnique({where: {id, tenant_id: auth.tenant_id}});
     if (!existingPackage) return error("api.errors.notFound", 404, {id});
@@ -49,9 +50,11 @@ export async function PUT(req: NextRequest) {
         type,
         min_stock: min_stock || "0",
         image: imageUrl,
+        unit_of_measure_id: unitOfMeasureId || null,
         last_edit_date: new Date(),
         last_editor_id: auth.user.id,
       },
+      include: {unity_of_measure: {select: {id: true, unity: true}}},
     });
 
     return success("update", {package: pkg}, {before: existingPackage, after: pkg});

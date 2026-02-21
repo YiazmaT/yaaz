@@ -1,7 +1,8 @@
 import {CompositionItem} from "@/src/components/ingredients-selector/types";
 import {PackageCompositionItem} from "@/src/components/packages-selector/types";
+import {UnityOfMeasure} from "../unity-of-measure/types";
 
-export type {CompositionItem, PackageCompositionItem};
+export type {CompositionItem, PackageCompositionItem, UnityOfMeasure};
 
 export enum ProductStockChangeReason {
   stolen = "stolen",
@@ -25,6 +26,8 @@ export interface Product {
   composition?: CompositionItem[];
   packages?: PackageCompositionItem[];
   approximateCost?: number;
+  unit_of_measure_id?: string | null;
+  unity_of_measure?: UnityOfMeasure | null;
   files?: string[];
   displayLandingPage: boolean;
   active: boolean;

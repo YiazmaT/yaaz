@@ -18,12 +18,14 @@ model Product {
   price                Decimal              @db.Decimal
   description          String?
   image                String?
+  unit_of_measure_id   String?              @db.Uuid
   stock                Int                  @default(0)
   min_stock            Int                  @default(0)
   display_landing_page Boolean              @default(false)
   active               Boolean              @default(true)
   files                String[]             @default([])
   tenant               Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  unity_of_measure     UnityOfMeasure?      @relation(fields: [unit_of_measure_id], references: [id], onDelete: SetNull)
   composition          ProductIngredient[]
   packages             ProductPackage[]
   sale_items           SaleItem[]
@@ -73,18 +75,18 @@ model ProductPackage {
 }
 
 model ProductStockChange {
-  id             String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenant_id      String                   @db.Uuid
-  product_id     String                   @db.Uuid
+  id             String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String                    @db.Uuid
+  product_id     String                    @db.Uuid
   previous_stock Int
   new_stock      Int
   reason         ProductStockChangeReason?
   comment        String?
-  tenant         Tenant                   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  product        Product                  @relation(fields: [product_id], references: [id], onDelete: Cascade)
-  creator_id     String?                  @db.Uuid
-  creation_date  DateTime                 @default(now())
-  creator        User?                    @relation("ProductStockChangeCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  tenant         Tenant                    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  product        Product                   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  creator_id     String?                   @db.Uuid
+  creation_date  DateTime                  @default(now())
+  creator        User?                     @relation("ProductStockChangeCreator", fields: [creator_id], references: [id], onDelete: SetNull)
 
   @@map("product_stock_change")
   @@schema("data")

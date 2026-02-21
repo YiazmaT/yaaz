@@ -40,6 +40,9 @@ export function MobileView(props: MobileViewProps) {
             <Typography variant="body2" color="text.secondary" noWrap>
               {item.description || "-"}
             </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {translate("packages.fields.unityOfMeasure")}: {item.unity_of_measure?.unity ?? "-"}
+            </Typography>
 
             <Typography
               variant="caption"

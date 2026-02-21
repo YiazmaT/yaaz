@@ -32,9 +32,15 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
         render: (row) => <ImagePreviewColumn image={row.image} alt={row.name} />,
       },
       {
+        field: "unity_of_measure",
+        headerKey: "packages.fields.unityOfMeasure",
+        width: "90px",
+        render: (row) => row.unity_of_measure?.unity ?? "-",
+      },
+      {
         field: "name",
         headerKey: "packages.fields.name",
-        width: "18%",
+        width: "16%",
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             {!row.active && <Chip label={translate("packages.inactive")} size="small" color="error" />}
