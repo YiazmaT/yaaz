@@ -1,0 +1,18 @@
+model UnityOfMeasure {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id String  @db.Uuid
+  unity     String
+  active    Boolean @default(true)
+  tenant    Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("UnityOfMeasureCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("UnityOfMeasureEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@unique([tenant_id, unity])
+  @@map("unity_of_measure")
+  @@schema("data")
+}

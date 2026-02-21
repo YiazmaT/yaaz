@@ -33,6 +33,7 @@ model Tenant {
   bills                    Bill[]
   nfes                     Nfe[]
   nfe_items                NfeItem[]
+  unity_of_measures        UnityOfMeasure[]
 
   @@map("tenant")
   @@schema("data")

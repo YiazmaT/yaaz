@@ -35,6 +35,7 @@
     "clients": "Clientes",
     "finance": "Financeiro",
     "packages": "Embalagens",
+    "unityOfMeasure": "Unidades de Medida",
     "yes": "Sim",
     "no": "Não",
     "total": "Total",
@@ -793,6 +794,32 @@
       "deleteFileSuccess": "Arquivo excluído com sucesso!",
       "replaceFileConfirm": "Já existe um arquivo anexado. Deseja substituí-lo?",
       "deleteFileConfirm": "Tem certeza que deseja excluir o arquivo anexado?"
+    }
+  },
+  "unityOfMeasure": {
+    "title": "Unidades de Medida",
+    "createTitle": "Nova Unidade de Medida",
+    "editTitle": "Editar Unidade de Medida",
+    "detailsTitle": "Detalhes da Unidade de Medida",
+    "createSuccess": "Unidade de medida criada com sucesso!",
+    "updateSuccess": "Unidade de medida atualizada com sucesso!",
+    "deleteSuccess": "Unidade de medida excluída com sucesso!",
+    "activateSuccess": "Unidade de medida ativada com sucesso!",
+    "deactivateSuccess": "Unidade de medida desativada com sucesso!",
+    "deleteConfirm": "Tem certeza que deseja excluir esta unidade de medida?",
+    "activateConfirm": "Tem certeza que deseja ativar esta unidade de medida?",
+    "deactivateConfirm": "Tem certeza que deseja desativar esta unidade de medida?",
+    "inactive": "Inativa",
+    "tooltipActivate": "Ativar unidade",
+    "tooltipDeactivate": "Desativar unidade",
+    "fields": {
+      "unity": "Unidade"
+    },
+    "filters": {
+      "showInactives": "Mostrar unidades inativas"
+    },
+    "errors": {
+      "alreadyExists": "Já existe uma unidade de medida com este nome."
     }
   }
 }

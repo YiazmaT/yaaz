@@ -1,0 +1,153 @@
+import {useState} from "react";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {useQueryClient} from "@tanstack/react-query";
+import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
+import {useToaster} from "@/src/contexts/toast-context";
+import {useApi} from "@/src/hooks/use-api";
+import {UnityOfMeasure, UnityOfMeasureFilters} from "./types";
+import {UnityOfMeasureFormValues, useUnityOfMeasureFormConfig} from "./form-config";
+import {useUnityOfMeasureTableConfig} from "./desktop/table-config";
+
+const API_ROUTE = "/api/stock/unity-of-measure/paginated-list";
+
+export function useUnityOfMeasure() {
+  const [formType, setFormType] = useState("create");
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [filters, setFilters] = useState<UnityOfMeasureFilters>({});
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const {show: showConfirmModal} = useConfirmModal();
+  const {defaultValues, schema} = useUnityOfMeasureFormConfig();
+  const api = useApi();
+  const toast = useToaster();
+  const queryClient = useQueryClient();
+
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+    reset,
+  } = useForm<UnityOfMeasureFormValues>({
+    mode: "onChange",
+    resolver: yupResolver(schema) as any,
+    defaultValues,
+  });
+
+  const {generateConfig} = useUnityOfMeasureTableConfig({
+    onEdit: (row) => handleEdit(row),
+    onDelete: (row) => handleDelete(row),
+    onToggleActive: (row) => handleToggleActive(row),
+  });
+
+  function refreshTable() {
+    queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
+  async function submit(data: UnityOfMeasureFormValues) {
+    if (formType === "edit" && selectedId) {
+      await api.fetch("PUT", "/api/stock/unity-of-measure/update", {
+        body: {id: selectedId, unity: data.unity},
+        onSuccess: () => {
+          toast.successToast("unityOfMeasure.updateSuccess");
+          reset();
+          closeDrawer();
+          refreshTable();
+        },
+      });
+    } else {
+      await api.fetch("POST", "/api/stock/unity-of-measure/create", {
+        body: {unity: data.unity},
+        onSuccess: () => {
+          toast.successToast("unityOfMeasure.createSuccess");
+          reset();
+          closeDrawer();
+          refreshTable();
+        },
+      });
+    }
+  }
+
+  function openDrawer(type: string) {
+    setFormType(type);
+    setShowDrawer(true);
+  }
+
+  function closeDrawer() {
+    setShowDrawer(false);
+    reset(defaultValues);
+    setSelectedId(null);
+  }
+
+  function populateForm(row: UnityOfMeasure) {
+    reset({
+      unity: row.unity,
+    });
+  }
+
+  function handleCreate() {
+    setSelectedId(null);
+    reset(defaultValues);
+    openDrawer("create");
+  }
+
+  function handleEdit(row: UnityOfMeasure) {
+    setSelectedId(row.id);
+    populateForm(row);
+    openDrawer("edit");
+  }
+
+  function handleDelete(row: UnityOfMeasure) {
+    showConfirmModal({
+      message: "unityOfMeasure.deleteConfirm",
+      onConfirm: async () => {
+        await api.fetch("DELETE", "/api/stock/unity-of-measure/delete", {
+          body: {id: row.id},
+          onSuccess: () => {
+            toast.successToast("unityOfMeasure.deleteSuccess");
+            refreshTable();
+          },
+        });
+      },
+    });
+  }
+
+  function handleToggleActive(row: UnityOfMeasure) {
+    const messageKey = row.active ? "unityOfMeasure.deactivateConfirm" : "unityOfMeasure.activateConfirm";
+    const successKey = row.active ? "unityOfMeasure.deactivateSuccess" : "unityOfMeasure.activateSuccess";
+
+    showConfirmModal({
+      message: messageKey,
+      onConfirm: async () => {
+        await api.fetch("PUT", "/api/stock/unity-of-measure/toggle-active", {
+          body: {id: row.id},
+          onSuccess: () => {
+            toast.successToast(successKey);
+            refreshTable();
+          },
+        });
+      },
+    });
+  }
+
+  function handleFilterChange(newFilters: UnityOfMeasureFilters) {
+    setFilters(newFilters);
+  }
+
+  return {
+    formType,
+    showDrawer,
+    control,
+    errors,
+    generateConfig,
+    handleSubmit,
+    submit,
+    closeDrawer,
+    handleCreate,
+    handleEdit,
+    handleDelete,
+    handleToggleActive,
+    refreshTable,
+    filters,
+    handleFilterChange,
+  };
+}

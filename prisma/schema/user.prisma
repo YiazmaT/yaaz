@@ -39,6 +39,8 @@ model User {
   edited_bills               Bill[]            @relation("BillEditor")
   created_nfes               Nfe[]             @relation("NfeCreator")
   edited_nfes                Nfe[]             @relation("NfeEditor")
+  created_unity_of_measures  UnityOfMeasure[]  @relation("UnityOfMeasureCreator")
+  edited_unity_of_measures   UnityOfMeasure[]  @relation("UnityOfMeasureEditor")
 
   @@map("user")
   @@schema("data")

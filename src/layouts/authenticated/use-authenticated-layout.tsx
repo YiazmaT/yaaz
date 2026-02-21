@@ -19,6 +19,7 @@ import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlin
 import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
+import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
 
 const menuItems: MenuItem[] = [
   {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
@@ -39,6 +40,7 @@ const menuItems: MenuItem[] = [
       {name: "global.products", route: "/stock/products", icon: <Inventory2OutlinedIcon />},
       {name: "global.ingredients", route: "/stock/ingredients", icon: <CategoryOutlinedIcon />},
       {name: "global.packages", route: "/stock/packages", icon: <TakeoutDiningOutlinedIcon />},
+      {name: "global.unityOfMeasure", route: "/stock/unity-of-measure", icon: <StraightenOutlinedIcon />},
     ],
   },
   {name: "global.clients", route: "/clients", icon: <PersonOutlineIcon />},
