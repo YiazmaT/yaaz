@@ -18,8 +18,8 @@ export function StockAlertsCard() {
   const hasAlerts = data && (data.products.length > 0 || data.ingredients.length > 0 || data.packages.length > 0);
 
   return (
-    <Card sx={{flex: 1}}>
-      <CardContent>
+    <Card sx={{flex: 3, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0}}>
+      <CardContent sx={{flex: 1, display: "flex", flexDirection: "column", overflow: "hidden"}}>
         <Box sx={{display: "flex", alignItems: "center", gap: 1, marginBottom: 2}}>
           <WarningAmberIcon sx={{color: hasAlerts ? theme.palette.error.main : "primary.main"}} />
           <Typography variant="h6" sx={{color: hasAlerts ? theme.palette.error.main : undefined}}>
@@ -32,13 +32,13 @@ export function StockAlertsCard() {
             <CircularProgress />
           </Box>
         ) : (
-          <Box>
+          <Box sx={{flex: 1, display: "flex", flexDirection: "column", overflow: "hidden"}}>
             {hasAlerts ? (
               <>
                 <Typography variant="subtitle1" fontWeight={600} sx={{marginBottom: 1}}>
                   {translate("dashboard.minStock")}
                 </Typography>
-                <Box sx={{maxHeight: 200, overflowY: "auto"}}>
+                <Box sx={{flex: 1, overflowY: "auto"}}>
                   <AlertSection title={translate("global.products")} items={data!.products} />
                   <AlertSection title={translate("global.ingredients")} items={data!.ingredients} />
                   <AlertSection title={translate("global.packages")} items={data!.packages} />

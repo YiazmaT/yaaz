@@ -10,7 +10,7 @@ export function WelcomeCard() {
   if (!tenant || !user) return null;
 
   return (
-    <Card sx={{flex: 1, display: "flex", alignItems: "flex-start"}}>
+    <Card sx={{flex: 1, display: "flex", alignItems: "flex-start", minHeight: 0}}>
       <CardContent sx={{display: "flex", alignItems: "center", gap: 2, width: "100%"}}>
         {tenant.logo && (
           <Box
