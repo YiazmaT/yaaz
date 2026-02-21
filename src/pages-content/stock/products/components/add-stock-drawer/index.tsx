@@ -2,8 +2,8 @@
 import {forwardRef, useImperativeHandle, useState} from "react";
 import {Box, Button, Checkbox, FormControlLabel, Grid, Typography} from "@mui/material";
 import {GenericDrawer} from "@/src/components/generic-drawer";
-import {ProductsSelector} from "@/src/components/products-selector";
-import {ProductItem} from "@/src/components/products-selector/types";
+import {ProductsSelector} from "@/src/components/selectors/products-selector";
+import {ProductItem} from "@/src/components/selectors/products-selector/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
@@ -58,12 +58,7 @@ export const AddStockDrawer = forwardRef<AddStockDrawerRef, AddStockDrawerProps>
       if (hasIngredientWarnings || hasPackageWarnings) {
         showConfirmModal({
           message: "products.negativeStockWarningGeneral",
-          content: (
-            <CombinedWarningsList
-              ingredientWarnings={result?.ingredientWarnings || []}
-              packageWarnings={result?.packageWarnings || []}
-            />
-          ),
+          content: <CombinedWarningsList ingredientWarnings={result?.ingredientWarnings || []} packageWarnings={result?.packageWarnings || []} />,
           onConfirm: () => handleSubmit(true),
         });
       }

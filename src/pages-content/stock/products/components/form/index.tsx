@@ -8,8 +8,8 @@ import {FormDecimalInput} from "@/src/components/form-fields/decimal-input";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {IngredientsSelector} from "@/src/components/ingredients-selector";
-import {PackagesSelector} from "@/src/components/packages-selector";
+import {IngredientsSelector} from "@/src/components/selectors/ingredients-selector";
+import {PackagesSelector} from "@/src/components/selectors/packages-selector";
 import {FormProps} from "./types";
 import {PackageType} from "@/src/pages-content/stock/packages/types";
 

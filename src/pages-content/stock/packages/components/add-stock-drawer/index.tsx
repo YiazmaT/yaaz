@@ -2,8 +2,8 @@
 import {useState} from "react";
 import {Button, Grid} from "@mui/material";
 import {GenericDrawer} from "@/src/components/generic-drawer";
-import {PackagesSelector} from "@/src/components/packages-selector";
-import {PackageCompositionItem} from "@/src/components/packages-selector/types";
+import {PackagesSelector} from "@/src/components/selectors/packages-selector";
+import {PackageCompositionItem} from "@/src/components/selectors/packages-selector/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";

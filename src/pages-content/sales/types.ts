@@ -1,5 +1,5 @@
-import {ProductItem} from "@/src/components/products-selector/types";
-import {PackageCompositionItem} from "@/src/components/packages-selector/types";
+import {ProductItem} from "@/src/components/selectors/products-selector/types";
+import {PackageCompositionItem} from "@/src/components/selectors/packages-selector/types";
 import {Client} from "@/src/pages-content/client/types";
 
 export type ItemSale = ProductItem;

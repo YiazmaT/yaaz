@@ -9,7 +9,7 @@ import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
-import {PackageCompositionItem} from "@/src/components/packages-selector/types";
+import {PackageCompositionItem} from "@/src/components/selectors/packages-selector/types";
 import {Sale, ItemSale} from "./types";
 import {SaleFormValues, useSaleFormConfig} from "./form-config";
 import {useSalesTableConfig} from "./desktop/table-config";

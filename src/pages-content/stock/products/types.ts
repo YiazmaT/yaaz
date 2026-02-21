@@ -1,5 +1,5 @@
-import {CompositionItem} from "@/src/components/ingredients-selector/types";
-import {PackageCompositionItem} from "@/src/components/packages-selector/types";
+import {CompositionItem} from "@/src/components/selectors/ingredients-selector/types";
+import {PackageCompositionItem} from "@/src/components/selectors/packages-selector/types";
 import {UnityOfMeasure} from "../unity-of-measure/types";
 
 export type {CompositionItem, PackageCompositionItem, UnityOfMeasure};
