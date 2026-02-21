@@ -24,7 +24,7 @@ export function DesktopView(props: DesktopViewProps) {
           <PackagesFiltersComponent onFilterChange={packages.handleFilterChange} />
           <Box sx={{flex: 1, minHeight: 0}}>
             <DataTable<Package>
-              apiRoute="/api/package/paginated-list"
+              apiRoute="/api/stock/package/paginated-list"
               columns={packages.generateConfig()}
               filters={packages.filters.showInactives ? {showInactives: "true"} : undefined}
               footerLeftContent={

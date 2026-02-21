@@ -5,7 +5,7 @@ import {uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/package/create";
+const ROUTE = "/api/stock/package/create";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {

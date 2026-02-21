@@ -4,7 +4,7 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/package/toggle-active";
+const ROUTE = "/api/stock/package/toggle-active";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {

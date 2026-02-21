@@ -11,7 +11,7 @@ import {Package, PackagesFilters} from "./types";
 import {PackageFormValues, usePackageFormConfig} from "./form-config";
 import {usePackagesTableConfig} from "./desktop/table-config";
 
-const API_ROUTE = "/api/package/paginated-list";
+const API_ROUTE = "/api/stock/package/paginated-list";
 
 export function usePackages() {
   const [formType, setFormType] = useState("create");
@@ -103,7 +103,7 @@ export function usePackages() {
 
     if (formType === "edit" && selectedId) {
       formData.append("id", selectedId);
-      await api.fetch("PUT", "/api/package/update", {
+      await api.fetch("PUT", "/api/stock/package/update", {
         formData,
         onSuccess: () => {
           toast.successToast("packages.updateSuccess");
@@ -113,7 +113,7 @@ export function usePackages() {
         },
       });
     } else {
-      await api.fetch("POST", "/api/package/create", {
+      await api.fetch("POST", "/api/stock/package/create", {
         formData,
         onSuccess: () => {
           toast.successToast("packages.createSuccess");
@@ -172,7 +172,7 @@ export function usePackages() {
     showConfirmModal({
       message: "packages.deleteConfirm",
       onConfirm: async () => {
-        await api.fetch("DELETE", "/api/package/delete", {
+        await api.fetch("DELETE", "/api/stock/package/delete", {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast("packages.deleteSuccess");
@@ -186,7 +186,7 @@ export function usePackages() {
                   message: "packages.deactivateInstead",
                   content,
                   onConfirm: async () => {
-                    await api.fetch("PUT", "/api/package/toggle-active", {
+                    await api.fetch("PUT", "/api/stock/package/toggle-active", {
                       body: {id: row.id},
                       onSuccess: () => {
                         toast.successToast("packages.deactivateSuccess");
@@ -207,7 +207,7 @@ export function usePackages() {
                   message: "packages.deactivateInstead",
                   content,
                   onConfirm: async () => {
-                    await api.fetch("PUT", "/api/package/toggle-active", {
+                    await api.fetch("PUT", "/api/stock/package/toggle-active", {
                       body: {id: row.id},
                       onSuccess: () => {
                         toast.successToast("packages.deactivateSuccess");
@@ -240,7 +240,7 @@ export function usePackages() {
     showConfirmModal({
       message: messageKey,
       onConfirm: async () => {
-        await api.fetch("PUT", "/api/package/toggle-active", {
+        await api.fetch("PUT", "/api/stock/package/toggle-active", {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast(successKey);

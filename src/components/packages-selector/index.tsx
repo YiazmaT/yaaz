@@ -50,7 +50,7 @@ export function PackagesSelector(props: PackagesSelectorProps) {
   return (
     <Grid size={12}>
       <AsyncDropdown<CompositionPackage>
-        apiRoute="/api/package/paginated-list"
+        apiRoute="/api/stock/package/paginated-list"
         uniqueKey="id"
         label="global.packages"
         buildLabel={(option) => buildName(option)}

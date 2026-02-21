@@ -4,7 +4,7 @@ import {withAuth} from "@/src/lib/route-handler";
 import {AddStockDto} from "@/src/pages-content/stock/packages/dto";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/package/add-stock";
+const ROUTE = "/api/stock/package/add-stock";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {

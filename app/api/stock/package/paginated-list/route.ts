@@ -5,7 +5,7 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/package/paginated-list";
+const ROUTE = "/api/stock/package/paginated-list";
 
 export async function GET(req: NextRequest) {
   return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success}) => {

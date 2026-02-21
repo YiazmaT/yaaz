@@ -5,7 +5,7 @@ import {deleteFromR2, extractR2KeyFromUrl, uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/package/update";
+const ROUTE = "/api/stock/package/update";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {

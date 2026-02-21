@@ -16,7 +16,7 @@ export function CostHistoryModal(props: CostHistoryModalProps) {
 
   const {data: result, isLoading} = useApiQuery<CostHistoryItem[]>({
     queryKey: ["cost-history", "package", props.packageId],
-    route: `/api/package/${props.packageId}/cost-history`,
+    route: `/api/stock/package/${props.packageId}/cost-history`,
     enabled: props.open && !!props.packageId,
   });
 

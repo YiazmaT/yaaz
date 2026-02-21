@@ -113,7 +113,7 @@ export function MobileView(props: MobileViewProps) {
     <Box sx={{display: "flex", flexDirection: "column", height: "100%", position: "relative"}}>
       <MobileList<Package>
         title="packages.title"
-        apiRoute="/api/package/paginated-list"
+        apiRoute="/api/stock/package/paginated-list"
         renderRow={renderRow}
         onView={packages.handleView}
         onEdit={packages.handleEdit}

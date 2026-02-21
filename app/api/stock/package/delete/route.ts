@@ -6,7 +6,7 @@ import {withAuth} from "@/src/lib/route-handler";
 import {DeletePackageDto} from "@/src/pages-content/stock/packages/dto";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/package/delete";
+const ROUTE = "/api/stock/package/delete";
 
 export async function DELETE(req: NextRequest) {
   return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {

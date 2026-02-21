@@ -36,7 +36,7 @@ export function AddStockModal(props: AddStockModalProps) {
       cost: item.cost || undefined,
     }));
 
-    await api.fetch("POST", "/api/package/add-stock", {
+    await api.fetch("POST", "/api/stock/package/add-stock", {
       body: {items},
       onSuccess: () => {
         toast.successToast("packages.addStockSuccess");
