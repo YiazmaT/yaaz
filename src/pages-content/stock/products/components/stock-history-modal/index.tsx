@@ -16,7 +16,7 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
 
   const {data: history = [], isLoading} = useApiQuery<StockHistoryItem[]>({
     queryKey: ["stock-history", "product", props.productId],
-    route: `/api/product/stock-history?productId=${props.productId}`,
+    route: `/api/stock/product/stock-history?productId=${props.productId}`,
     enabled: props.open && !!props.productId,
   });
 

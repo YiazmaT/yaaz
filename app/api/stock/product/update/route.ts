@@ -5,7 +5,7 @@ import {withAuth} from "@/src/lib/route-handler";
 import {CompositionItemDto, PackageCompositionItemDto} from "@/src/pages-content/stock/products/dto";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/product/update";
+const ROUTE = "/api/stock/product/update";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {

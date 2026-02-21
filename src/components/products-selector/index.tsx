@@ -62,7 +62,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
   return (
     <Grid size={12}>
       <AsyncDropdown<Product>
-        apiRoute="/api/product/paginated-list"
+        apiRoute="/api/stock/product/paginated-list"
         uniqueKey="id"
         label="global.products"
         buildLabel={(option) => buildName(option)}

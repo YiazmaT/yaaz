@@ -3,7 +3,7 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/product/stock-history";
+const ROUTE = "/api/stock/product/stock-history";
 
 export async function GET(req: NextRequest) {
   return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {

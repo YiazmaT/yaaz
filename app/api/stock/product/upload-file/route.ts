@@ -4,7 +4,7 @@ import {uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/product/upload-file";
+const ROUTE = "/api/stock/product/upload-file";
 const MAX_FILES = 5;
 
 export async function POST(req: NextRequest) {

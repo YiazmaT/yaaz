@@ -5,7 +5,7 @@ import {StockChangeDto} from "@/src/pages-content/stock/products/dto";
 import {ProductStockChangeReason} from "@/src/pages-content/stock/products/types";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/product/stock-change";
+const ROUTE = "/api/stock/product/stock-change";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {

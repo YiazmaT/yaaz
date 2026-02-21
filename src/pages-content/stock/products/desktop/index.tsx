@@ -29,7 +29,7 @@ export function DesktopView(props: DesktopViewProps) {
           <ProductsFiltersComponent onFilterChange={products.handleFilterChange} />
           <Box sx={{flex: 1, minHeight: 0}}>
             <DataTable<Product>
-              apiRoute="/api/product/paginated-list"
+              apiRoute="/api/stock/product/paginated-list"
               columns={products.generateConfig()}
               filters={products.filters.showInactives ? {showInactives: "true"} : undefined}
               footerLeftContent={

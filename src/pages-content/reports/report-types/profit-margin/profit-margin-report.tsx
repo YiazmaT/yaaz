@@ -57,7 +57,7 @@ export function ProfitMarginReport() {
             <FormAsyncDropdown<ProductOption>
               fieldName="product"
               label="reports.filters.product"
-              apiRoute="/api/product/paginated-list"
+              apiRoute="/api/stock/product/paginated-list"
               uniqueKey="id"
               buildLabel={(opt) => buildName(opt)}
               size={4}

@@ -11,7 +11,7 @@ import {CompositionItem, PackageCompositionItem, Product, ProductsFilters} from 
 import {ProductFormValues, useProductFormConfig} from "./form-config";
 import {useProductsTableConfig} from "./desktop/table-config";
 
-const API_ROUTE = "/api/product/paginated-list";
+const API_ROUTE = "/api/stock/product/paginated-list";
 
 export function useProducts() {
   const [formType, setFormType] = useState("create");
@@ -108,7 +108,7 @@ export function useProducts() {
 
     if (formType === "edit" && selectedId) {
       formData.append("id", selectedId);
-      await api.fetch("PUT", "/api/product/update", {
+      await api.fetch("PUT", "/api/stock/product/update", {
         formData,
         onSuccess: () => {
           toast.successToast("products.updateSuccess");
@@ -118,7 +118,7 @@ export function useProducts() {
         },
       });
     } else {
-      await api.fetch("POST", "/api/product/create", {
+      await api.fetch("POST", "/api/stock/product/create", {
         formData,
         onSuccess: () => {
           toast.successToast("products.createSuccess");
@@ -179,7 +179,7 @@ export function useProducts() {
     showConfirmModal({
       message: "products.deleteConfirm",
       onConfirm: async () => {
-        await api.fetch("DELETE", "/api/product/delete", {
+        await api.fetch("DELETE", "/api/stock/product/delete", {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast("products.deleteSuccess");
@@ -193,7 +193,7 @@ export function useProducts() {
                   message: "products.deactivateInstead",
                   content,
                   onConfirm: async () => {
-                    await api.fetch("PUT", "/api/product/toggle-active", {
+                    await api.fetch("PUT", "/api/stock/product/toggle-active", {
                       body: {id: row.id},
                       onSuccess: () => {
                         toast.successToast("products.deactivateSuccess");
@@ -235,7 +235,7 @@ export function useProducts() {
         formData.append("packages", JSON.stringify(row.packages || []));
         formData.append("displayLandingPage", String(!row.displayLandingPage));
 
-        await api.fetch("PUT", "/api/product/update", {
+        await api.fetch("PUT", "/api/stock/product/update", {
           formData,
           onSuccess: () => {
             toast.successToast(successKey);
@@ -270,7 +270,7 @@ export function useProducts() {
     showConfirmModal({
       message: messageKey,
       onConfirm: async () => {
-        await api.fetch("PUT", "/api/product/toggle-active", {
+        await api.fetch("PUT", "/api/stock/product/toggle-active", {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast(successKey);

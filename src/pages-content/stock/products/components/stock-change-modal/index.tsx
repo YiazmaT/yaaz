@@ -45,7 +45,7 @@ export function StockChangeModal(props: StockChangeModalProps) {
       return;
     }
 
-    await api.fetch("POST", "/api/product/stock-change", {
+    await api.fetch("POST", "/api/stock/product/stock-change", {
       body: {
         productId: item.id,
         newStock,

@@ -47,7 +47,7 @@ export const AddStockDrawer = forwardRef<AddStockDrawerRef, AddStockDrawerProps>
       quantity: item.quantity,
     }));
 
-    const result = await api.fetch<AddStockResponse>("POST", "/api/product/add-stock", {
+    const result = await api.fetch<AddStockResponse>("POST", "/api/stock/product/add-stock", {
       body: {items, deductIngredients, deductPackages, force},
     });
 

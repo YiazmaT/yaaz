@@ -5,7 +5,7 @@ import {withAuth} from "@/src/lib/route-handler";
 import {CompositionItemDto, PackageCompositionItemDto} from "@/src/pages-content/stock/products/dto";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/product/create";
+const ROUTE = "/api/stock/product/create";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {

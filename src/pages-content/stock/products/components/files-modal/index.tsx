@@ -44,7 +44,7 @@ export function FilesModal(props: FilesModalProps) {
     formData.append("productId", props.productId);
     formData.append("file", file);
 
-    await api.fetch("POST", "/api/product/upload-file", {
+    await api.fetch("POST", "/api/stock/product/upload-file", {
       formData,
       onSuccess: (data: string[]) => {
         toast.successToast("products.files.uploadSuccess");
@@ -104,7 +104,7 @@ export function FilesModal(props: FilesModalProps) {
     showConfirmModal({
       message: "products.files.deleteConfirm",
       onConfirm: async () => {
-        await api.fetch("DELETE", "/api/product/delete-file", {
+        await api.fetch("DELETE", "/api/stock/product/delete-file", {
           body: {productId: props.productId, fileUrl},
           onSuccess: (data: string[]) => {
             toast.successToast("products.files.deleteSuccess");
