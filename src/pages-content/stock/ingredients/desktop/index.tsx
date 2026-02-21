@@ -59,7 +59,7 @@ export function DesktopView(props: DesktopViewProps) {
           onClose={ingredients.closeStockHistoryModal}
           ingredientId={ingredients.stockHistoryItem.id}
           ingredientName={ingredients.stockHistoryItem.name}
-          unitOfMeasure={ingredients.stockHistoryItem.unit_of_measure}
+          unitOfMeasure={ingredients.stockHistoryItem.unity_of_measure?.unity ?? ""}
         />
       )}
     </>

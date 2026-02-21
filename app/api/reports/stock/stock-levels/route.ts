@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     if (type === "all" || type === "ingredients") {
       const ingredients = await prisma.ingredient.findMany({
         where: {tenant_id: auth.tenant_id},
-        select: {id: true, name: true, stock: true, min_stock: true, unit_of_measure: true},
+        select: {id: true, name: true, stock: true, min_stock: true, unity_of_measure: {select: {unity: true}}},
         orderBy: {name: "asc"},
       });
 
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
           type: "ingredient",
           currentStock: current.toFixed(2),
           minStock: min.toFixed(2),
-          unit: ing.unit_of_measure,
+          unit: ing.unity_of_measure?.unity ?? "",
           status,
         });
       });

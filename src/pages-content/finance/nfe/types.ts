@@ -1,3 +1,4 @@
+import {UnityOfMeasure} from "../../stock/unity-of-measure/types";
 import {BankAccount} from "../bank-accounts/types";
 
 export interface Nfe {
@@ -26,7 +27,7 @@ export interface NfeItem {
   ingredient_id?: string;
   product_id?: string;
   package_id?: string;
-  ingredient?: {id: string; name: string; image: string | null; unit_of_measure: string};
+  ingredient?: {id: string; name: string; image: string | null; unity_of_measure: UnityOfMeasure | null};
   product?: {id: string; name: string; image: string | null};
   package?: {id: string; name: string; image: string | null};
   quantity: number;

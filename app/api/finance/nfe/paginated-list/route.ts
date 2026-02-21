@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
           _count: {select: {items: true}},
           items: {
             include: {
-              ingredient: {select: {id: true, name: true, image: true, unit_of_measure: true}},
+              ingredient: {select: {id: true, name: true, image: true, unity_of_measure: {select: {id: true, unity: true}}}},
               product: {select: {id: true, name: true, image: true}},
               package: {select: {id: true, name: true, image: true}},
             },

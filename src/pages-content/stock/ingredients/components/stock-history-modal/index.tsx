@@ -8,11 +8,11 @@ import moment from "moment";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {GenericModal} from "@/src/components/generic-modal";
 import {useIngredientsConstants} from "../../constants";
-import {StockHistoryModalProps, StockHistoryResponse, StockHistoryItem} from "./types";
+import {StockHistoryModalProps, StockHistoryItem} from "./types";
 
 export function StockHistoryModal(props: StockHistoryModalProps) {
   const {translate} = useTranslate();
-  const {stockChangeReasons, unitOfMeasures} = useIngredientsConstants();
+  const {stockChangeReasons} = useIngredientsConstants();
 
   const {data: history = [], isLoading} = useApiQuery<StockHistoryItem[]>({
     queryKey: ["stock-history", "ingredient", props.ingredientId],
@@ -26,7 +26,7 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
     return reasonObj?.label ?? reason;
   }
 
-  const unitLabel = unitOfMeasures[props.unitOfMeasure as keyof typeof unitOfMeasures]?.label ?? translate("ingredients.stockChange.units");
+  const unitLabel = props.unitOfMeasure || translate("ingredients.stockChange.units");
 
   return (
     <GenericModal open={props.open} onClose={props.onClose} title={`${translate("ingredients.stockHistory.title")} - ${props.ingredientName}`}>

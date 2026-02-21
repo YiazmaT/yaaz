@@ -6,11 +6,10 @@ import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useApi} from "@/src/hooks/use-api";
+import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {Ingredient, IngredientsFilters} from "./types";
 import {IngredientFormValues, useIngredientFormConfig} from "./form-config";
 import {useIngredientsTableConfig} from "./desktop/table-config";
-import {useIngredientsConstants} from "./constants";
 
 const API_ROUTE = "/api/stock/ingredient/paginated-list";
 
@@ -25,11 +24,17 @@ export function useIngredients() {
   const [stockHistoryItem, setStockHistoryItem] = useState<Ingredient | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {translate} = useTranslate();
-  const {unitOfMeasures} = useIngredientsConstants();
   const {defaultValues, schema} = useIngredientFormConfig();
   const api = useApi();
   const toast = useToaster();
   const queryClient = useQueryClient();
+
+  const {data: unitsData} = useApiQuery<{data: {id: string; unity: string}[]}>({
+    queryKey: ["/api/stock/unity-of-measure/paginated-list", {limit: 100}],
+    route: "/api/stock/unity-of-measure/paginated-list?limit=100",
+  });
+
+  const unitOptions = (unitsData?.data || []).map((u) => ({value: u.id, label: u.unity}));
 
   const {
     control,
@@ -78,7 +83,7 @@ export function useIngredients() {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description || "");
-    formData.append("unitOfMeasure", data.unitOfMeasure?.value || "");
+    formData.append("unitOfMeasureId", data.unitOfMeasure?.value || "");
     formData.append("min_stock", data.min_stock || "0");
 
     if (data.image instanceof File) {
@@ -125,7 +130,7 @@ export function useIngredients() {
       name: row.name,
       description: row.description || "",
       image: row.image,
-      unitOfMeasure: unitOfMeasures[row.unit_of_measure as keyof typeof unitOfMeasures] || null,
+      unitOfMeasure: row.unity_of_measure ? {value: row.unity_of_measure.id, label: row.unity_of_measure.unity} : null,
       min_stock: row.min_stock?.toString() || "0",
     });
   }
@@ -251,7 +256,7 @@ export function useIngredients() {
     showDrawer,
     control,
     errors,
-    unitOfMeasures,
+    unitOptions,
     generateConfig,
     handleSubmit,
     submit,

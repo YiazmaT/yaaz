@@ -1,3 +1,5 @@
+import {UnityOfMeasure} from "../unity-of-measure/types";
+
 export enum IngredientStockChangeReason {
   stolen = "stolen",
   expired = "expired",
@@ -14,7 +16,8 @@ export interface Ingredient {
   name: string;
   description: string | null;
   image: string | null;
-  unit_of_measure: string;
+  unit_of_measure_id: string | null;
+  unity_of_measure: UnityOfMeasure | null;
   stock: string;
   min_stock?: string;
   active: boolean;

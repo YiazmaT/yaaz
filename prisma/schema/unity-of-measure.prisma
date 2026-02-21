@@ -3,7 +3,8 @@ model UnityOfMeasure {
   tenant_id String  @db.Uuid
   unity     String
   active    Boolean @default(true)
-  tenant    Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  tenant      Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  ingredients Ingredient[]
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())

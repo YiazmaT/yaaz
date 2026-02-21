@@ -11,11 +11,11 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const name = formData.get("name") as string;
     const description = formData.get("description") as string | null;
-    const unitOfMeasure = formData.get("unitOfMeasure") as string;
+    const unitOfMeasureId = formData.get("unitOfMeasureId") as string;
     const min_stock = formData.get("min_stock") as string | null;
     const image = formData.get("image") as File | null;
 
-    if (!name || !unitOfMeasure) return error("api.errors.missingRequiredFields", 400);
+    if (!name || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
     let imageUrl: string | null = null;
 
@@ -37,11 +37,12 @@ export async function POST(req: NextRequest) {
         code: nextCode,
         name,
         description: description || null,
-        unit_of_measure: unitOfMeasure,
+        unit_of_measure_id: unitOfMeasureId,
         min_stock: min_stock || "0",
         image: imageUrl,
         creator_id: auth.user.id,
       },
+      include: {unity_of_measure: {select: {id: true, unity: true}}},
     });
 
     return success("create", ingredient);

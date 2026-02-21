@@ -18,7 +18,7 @@ export function StockChangeModal(props: StockChangeModalProps) {
   const [newStock, setNewStock] = useState<string>("0");
   const {translate} = useTranslate();
   const {item, onClose, onSuccess} = props;
-  const {stockChangeReasons, unitOfMeasures} = useIngredientsConstants();
+  const {stockChangeReasons} = useIngredientsConstants();
   const api = useApi();
   const toast = useToaster();
 
@@ -65,7 +65,7 @@ export function StockChangeModal(props: StockChangeModalProps) {
     label: r.label,
   }));
 
-  const unitLabel = item ? (unitOfMeasures[item.unit_of_measure as keyof typeof unitOfMeasures]?.label ?? translate("ingredients.stockChange.units")) : translate("ingredients.stockChange.units");
+  const unitLabel = item?.unity_of_measure?.unity ?? translate("ingredients.stockChange.units");
   const currentStock = Number(item?.stock ?? 0);
   const newStockNumber = Number(newStock);
   const stockDifference = newStockNumber - currentStock;

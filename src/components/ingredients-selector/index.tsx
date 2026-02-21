@@ -7,7 +7,6 @@ import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {CompositionIngredient, CompositionItem, IngredientsSelectorProps, IngredientRowProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
-import {useIngredientsConstants} from "@/src/pages-content/stock/ingredients/constants";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {buildName} from "@/src/pages-content/stock/ingredients/utils";
 
@@ -102,7 +101,6 @@ function DropdownOption(props: {image?: string | null; name: string}) {
 
 function IngredientRowMobile(props: IngredientRowProps) {
   const {translate} = useTranslate();
-  const {unitOfMeasures} = useIngredientsConstants();
   const theme = useTheme();
 
   return (
@@ -151,7 +149,7 @@ function IngredientRowMobile(props: IngredientRowProps) {
           {buildName(props.item.ingredient)}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {unitOfMeasures[props.item.ingredient.unit_of_measure as keyof typeof unitOfMeasures].label}
+          {props.item.ingredient.unity_of_measure?.unity ?? ""}
         </Typography>
       </Box>
     </Box>
@@ -160,7 +158,6 @@ function IngredientRowMobile(props: IngredientRowProps) {
 
 function IngredientRowDesktop(props: IngredientRowProps) {
   const {translate} = useTranslate();
-  const {unitOfMeasures} = useIngredientsConstants();
   const theme = useTheme();
 
   return (
@@ -209,7 +206,7 @@ function IngredientRowDesktop(props: IngredientRowProps) {
           {buildName(props.item.ingredient)}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {unitOfMeasures[props.item.ingredient.unit_of_measure as keyof typeof unitOfMeasures].label}
+          {props.item.ingredient.unity_of_measure?.unity ?? ""}
         </Typography>
       </Box>
     </Box>

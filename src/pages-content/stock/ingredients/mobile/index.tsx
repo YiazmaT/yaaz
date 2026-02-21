@@ -25,7 +25,7 @@ export function MobileView(props: MobileViewProps) {
   const theme = useTheme();
 
   function renderRow(item: Ingredient, actions: ReactNode) {
-    const unit_of_measure = ingredients.unitOfMeasures[item.unit_of_measure as keyof typeof ingredients.unitOfMeasures].label;
+    const unit_of_measure = item.unity_of_measure?.unity ?? "";
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
         <Box sx={{display: "flex", gap: 2}}>

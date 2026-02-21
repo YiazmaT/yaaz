@@ -12,11 +12,11 @@ export async function PUT(req: NextRequest) {
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
     const description = formData.get("description") as string | null;
-    const unitOfMeasure = formData.get("unitOfMeasure") as string;
+    const unitOfMeasureId = formData.get("unitOfMeasureId") as string;
     const min_stock = formData.get("min_stock") as string | null;
     const image = formData.get("image") as File | null;
 
-    if (!id || !name || !unitOfMeasure) return error("api.errors.missingRequiredFields", 400);
+    if (!id || !name || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
     const existingIngredient = await prisma.ingredient.findUnique({where: {id, tenant_id: auth.tenant_id}});
     if (!existingIngredient) return error("api.errors.notFound", 404, {id});
@@ -45,12 +45,13 @@ export async function PUT(req: NextRequest) {
       data: {
         name,
         description: description || null,
-        unit_of_measure: unitOfMeasure,
+        unit_of_measure_id: unitOfMeasureId,
         min_stock: min_stock || "0",
         image: imageUrl,
         last_edit_date: new Date(),
         last_editor_id: auth.user.id,
       },
+      include: {unity_of_measure: {select: {id: true, unity: true}}},
     });
 
     return success("update", ingredient, {before: existingIngredient, after: ingredient});

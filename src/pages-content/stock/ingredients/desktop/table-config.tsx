@@ -3,7 +3,6 @@ import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreviewColumn, ActionsColumn, TableButton} from "@/src/components/data-columns";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Ingredient} from "../types";
-import {useIngredientsConstants} from "../constants";
 import {IngredientsTableConfigProps} from "./types";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
@@ -13,7 +12,6 @@ import {LinkifyText} from "@/src/components/linkify-text";
 
 export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
   const {translate} = useTranslate();
-  const {unitOfMeasures} = useIngredientsConstants();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
 
@@ -58,9 +56,10 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
         align: "left",
         render: (row) => {
           const isLow = Number(row.min_stock || 0) > 0 && Number(row.stock) < Number(row.min_stock);
+          const unit = row.unity_of_measure?.unity ?? "";
           return (
             <TableButton onClick={() => props.onStockHistoryClick(row)} color={isLow ? theme.palette.error.main : undefined} minWidth={100}>
-              {`${Number(row.stock).toLocaleString("pt-BR")} ${unitOfMeasures[row.unit_of_measure as keyof typeof unitOfMeasures].label}`}
+              {`${Number(row.stock).toLocaleString("pt-BR")} ${unit}`}
             </TableButton>
           );
         },
@@ -72,9 +71,10 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
         align: "left",
         render: (row) => {
           const isLow = Number(row.min_stock || 0) > 0 && Number(row.stock) < Number(row.min_stock);
+          const unit = row.unity_of_measure?.unity ?? "";
           return (
             <Box component="span" sx={{color: isLow ? theme.palette.error.main : "inherit"}}>
-              {`${Number(row.min_stock || 0).toLocaleString("pt-BR")} ${unitOfMeasures[row.unit_of_measure as keyof typeof unitOfMeasures].label}`}
+              {`${Number(row.min_stock || 0).toLocaleString("pt-BR")} ${unit}`}
             </Box>
           );
         },
@@ -83,14 +83,16 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
         field: "lastCost",
         headerKey: "ingredients.fields.lastCost",
         width: "15%",
-        render: (row) =>
-          row.lastCost ? (
+        render: (row) => {
+          const unit = row.unity_of_measure?.unity ?? "";
+          return row.lastCost ? (
             <TableButton onClick={() => props.onCostClick?.(row)} minWidth={140}>
-              {formatCurrency(row.lastCost, 4)} / {unitOfMeasures[row.unit_of_measure as keyof typeof unitOfMeasures].label}
+              {formatCurrency(row.lastCost, 4)} / {unit}
             </TableButton>
           ) : (
             "-"
-          ),
+          );
+        },
       },
       {
         field: "actions",

@@ -3,7 +3,7 @@ import {IngredientStockChangeReason} from "./types";
 export interface CreateIngredientDto {
   name: string;
   description?: string | null;
-  unitOfMeasure: string;
+  unitOfMeasureId: string;
   image?: File | null;
 }
 

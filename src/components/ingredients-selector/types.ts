@@ -1,10 +1,12 @@
+import {UnityOfMeasure} from "@/src/pages-content/stock/unity-of-measure/types";
+
 export interface CompositionIngredient {
   id: string;
   code: number;
   name: string;
   description: string | null;
   image: string | null;
-  unit_of_measure: string;
+  unity_of_measure: UnityOfMeasure | null;
   active?: boolean;
 }
 

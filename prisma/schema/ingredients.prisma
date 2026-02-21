@@ -11,21 +11,22 @@ enum IngredientStockChangeReason {
 }
 
 model Ingredient {
-  id              String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenant_id       String                  @db.Uuid
-  code            Int
-  name            String
-  description     String?
-  image           String?
-  unit_of_measure String
-  stock           Decimal                 @default(0) @db.Decimal
-  min_stock       Decimal                 @default(0) @db.Decimal
-  active          Boolean                 @default(true)
-  tenant          Tenant                  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  products        ProductIngredient[]
-  costs           IngredientCost[]
-  stock_changes   IngredientStockChange[]
-  nfe_items       NfeItem[]
+  id                 String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id          String                  @db.Uuid
+  code               Int
+  name               String
+  description        String?
+  image              String?
+  unit_of_measure_id String?                 @db.Uuid
+  stock              Decimal                 @default(0) @db.Decimal
+  min_stock          Decimal                 @default(0) @db.Decimal
+  active             Boolean                 @default(true)
+  tenant             Tenant                  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  unity_of_measure   UnityOfMeasure?         @relation(fields: [unit_of_measure_id], references: [id], onDelete: SetNull)
+  products           ProductIngredient[]
+  costs              IngredientCost[]
+  stock_changes      IngredientStockChange[]
+  nfe_items          NfeItem[]
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())

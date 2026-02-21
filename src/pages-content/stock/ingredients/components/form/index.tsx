@@ -31,12 +31,7 @@ export function Form(props: FormProps) {
             <FormImageInput fieldName="image" label="ingredients.fields.image" imageSize={imageSize} />
             <FormTextInput fieldName="name" label="ingredients.fields.name" />
             <FormTextInput fieldName="description" label="ingredients.fields.description" multiline />
-            <FormDropdown
-              fieldName="unitOfMeasure"
-              label="ingredients.fields.unitOfMeasure"
-              options={Object.values(ingredients.unitOfMeasures)}
-              uniqueKey="label"
-            />
+            <FormDropdown fieldName="unitOfMeasure" label="ingredients.fields.unitOfMeasure" options={ingredients.unitOptions} uniqueKey="value" />
             <FormDecimalInput fieldName="min_stock" label="ingredients.fields.minStock" />
             {ingredients.formType !== "details" && (
               <Grid size={12}>
