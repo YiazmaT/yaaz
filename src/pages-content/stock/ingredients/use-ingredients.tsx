@@ -12,7 +12,7 @@ import {IngredientFormValues, useIngredientFormConfig} from "./form-config";
 import {useIngredientsTableConfig} from "./desktop/table-config";
 import {useIngredientsConstants} from "./constants";
 
-const API_ROUTE = "/api/ingredient/paginated-list";
+const API_ROUTE = "/api/stock/ingredient/paginated-list";
 
 export function useIngredients() {
   const [formType, setFormType] = useState("create");
@@ -87,7 +87,7 @@ export function useIngredients() {
 
     if (formType === "edit" && selectedId) {
       formData.append("id", selectedId);
-      await api.fetch("PUT", "/api/ingredient/update", {
+      await api.fetch("PUT", "/api/stock/ingredient/update", {
         formData,
         onSuccess: () => {
           toast.successToast("ingredients.updateSuccess");
@@ -97,7 +97,7 @@ export function useIngredients() {
         },
       });
     } else {
-      await api.fetch("POST", "/api/ingredient/create", {
+      await api.fetch("POST", "/api/stock/ingredient/create", {
         formData,
         onSuccess: () => {
           toast.successToast("ingredients.createSuccess");
@@ -156,7 +156,7 @@ export function useIngredients() {
     showConfirmModal({
       message: "ingredients.deleteConfirm",
       onConfirm: async () => {
-        await api.fetch("DELETE", "/api/ingredient/delete", {
+        await api.fetch("DELETE", "/api/stock/ingredient/delete", {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast("ingredients.deleteSuccess");
@@ -170,7 +170,7 @@ export function useIngredients() {
                   message: "ingredients.deactivateInstead",
                   content,
                   onConfirm: async () => {
-                    await api.fetch("PUT", "/api/ingredient/toggle-active", {
+                    await api.fetch("PUT", "/api/stock/ingredient/toggle-active", {
                       body: {id: row.id},
                       onSuccess: () => {
                         toast.successToast("ingredients.deactivateSuccess");
@@ -207,7 +207,7 @@ export function useIngredients() {
     showConfirmModal({
       message: messageKey,
       onConfirm: async () => {
-        await api.fetch("PUT", "/api/ingredient/toggle-active", {
+        await api.fetch("PUT", "/api/stock/ingredient/toggle-active", {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast(successKey);

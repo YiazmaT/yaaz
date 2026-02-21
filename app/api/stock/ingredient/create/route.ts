@@ -4,7 +4,7 @@ import {uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/ingredient/create";
+const ROUTE = "/api/stock/ingredient/create";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.INGREDIENT, ROUTE, async ({auth, success, error}) => {

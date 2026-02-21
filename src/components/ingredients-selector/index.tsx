@@ -51,7 +51,7 @@ export function IngredientsSelector(props: IngredientsSelectorProps) {
   return (
     <Grid size={12}>
       <AsyncDropdown<CompositionIngredient>
-        apiRoute="/api/ingredient/paginated-list"
+        apiRoute="/api/stock/ingredient/paginated-list"
         uniqueKey="id"
         label="global.ingredients"
         buildLabel={(option) => buildName(option)}

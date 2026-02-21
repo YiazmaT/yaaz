@@ -4,7 +4,7 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/ingredient/[id]/cost-history";
+const ROUTE = "/api/stock/ingredient/[id]/cost-history";
 
 export async function GET(_: NextRequest, {params}: {params: Promise<{id: string}>}) {
   return withAuth(LogModule.INGREDIENT, ROUTE, async ({auth, success}) => {

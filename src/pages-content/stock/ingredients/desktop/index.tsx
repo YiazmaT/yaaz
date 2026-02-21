@@ -24,7 +24,7 @@ export function DesktopView(props: DesktopViewProps) {
           <IngredientsFiltersComponent onFilterChange={ingredients.handleFilterChange} />
           <Box sx={{flex: 1, minHeight: 0}}>
             <DataTable<Ingredient>
-              apiRoute="/api/ingredient/paginated-list"
+              apiRoute="/api/stock/ingredient/paginated-list"
               columns={ingredients.generateConfig()}
               filters={ingredients.filters.showInactives ? {showInactives: "true"} : undefined}
               footerLeftContent={
