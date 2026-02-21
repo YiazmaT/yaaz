@@ -22,8 +22,8 @@ import {flexGenerator} from "@/src/utils/flex-generator";
 export function MobileView(props: MobileViewProps) {
   const {packages} = props;
   const {translate} = useTranslate();
-  const theme = useTheme();
   const {typeOfPackage} = usePackagesConstants();
+  const theme = useTheme();
 
   function renderRow(item: Package, actions: ReactNode) {
     return (
@@ -40,17 +40,13 @@ export function MobileView(props: MobileViewProps) {
             <Typography variant="body2" color="text.secondary" noWrap>
               {item.description || "-"}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {translate("packages.fields.unityOfMeasure")}: {item.unity_of_measure?.unity ?? "-"}
-            </Typography>
-
             <Typography
               variant="caption"
               sx={{
                 color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary",
               }}
             >
-              {`${translate("packages.fields.stock")}: ${Number(item.stock).toLocaleString("pt-BR")}`}
+              {`${translate("packages.fields.stock")}: ${Number(item.stock).toLocaleString("pt-BR")} (${item.unity_of_measure?.unity ?? ""})`}
             </Typography>
             <Typography
               variant="caption"
@@ -58,7 +54,7 @@ export function MobileView(props: MobileViewProps) {
                 color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary",
               }}
             >
-              {`${translate("packages.fields.minStock")}: ${Number(item.min_stock || 0).toLocaleString("pt-BR")}`}
+              {`${translate("packages.fields.minStock")}: ${Number(item.min_stock || 0).toLocaleString("pt-BR")} (${item.unity_of_measure?.unity ?? ""})`}
             </Typography>
           </Box>
         </Box>

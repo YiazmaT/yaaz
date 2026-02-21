@@ -83,7 +83,7 @@ export function useIngredients() {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description || "");
-    formData.append("unitOfMeasureId", data.unitOfMeasure?.value || "");
+    formData.append("unitOfMeasureId", data.unitOfMeasure?.id || "");
     formData.append("min_stock", data.min_stock || "0");
 
     if (data.image instanceof File) {
@@ -130,7 +130,7 @@ export function useIngredients() {
       name: row.name,
       description: row.description || "",
       image: row.image,
-      unitOfMeasure: row.unity_of_measure ? {value: row.unity_of_measure.id, label: row.unity_of_measure.unity} : null,
+      unitOfMeasure: row.unity_of_measure ?? null,
       min_stock: row.min_stock?.toString() || "0",
     });
   }

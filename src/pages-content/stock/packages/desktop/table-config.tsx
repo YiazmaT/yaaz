@@ -32,12 +32,6 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
         render: (row) => <ImagePreviewColumn image={row.image} alt={row.name} />,
       },
       {
-        field: "unity_of_measure",
-        headerKey: "packages.fields.unityOfMeasure",
-        width: "90px",
-        render: (row) => row.unity_of_measure?.unity ?? "-",
-      },
-      {
         field: "name",
         headerKey: "packages.fields.name",
         width: "16%",
@@ -78,7 +72,7 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
           const isLow = Number(row.min_stock || 0) > 0 && Number(row.stock) < Number(row.min_stock);
           return (
             <TableButton onClick={() => props.onStockHistoryClick(row)} color={isLow ? theme.palette.error.main : undefined}>
-              {Number(row.stock).toLocaleString("pt-BR")}
+              {`${Number(row.stock).toLocaleString("pt-BR")} (${row.unity_of_measure?.unity ?? ""})`}
             </TableButton>
           );
         },
@@ -92,7 +86,7 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
           const isLow = Number(row.min_stock || 0) > 0 && Number(row.stock) < Number(row.min_stock);
           return (
             <Box component="span" sx={{color: isLow ? theme.palette.error.main : "inherit"}}>
-              {Number(row.min_stock || 0).toLocaleString("pt-BR")}
+              {`${Number(row.min_stock || 0).toLocaleString("pt-BR")} (${row.unity_of_measure?.unity ?? ""})`}
             </Box>
           );
         },
@@ -101,14 +95,16 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
         field: "lastCost",
         headerKey: "packages.fields.lastCost",
         width: "15%",
-        render: (row) =>
-          row.lastCost ? (
+        render: (row) => {
+          const unit = row.unity_of_measure?.unity ?? "";
+          return row.lastCost ? (
             <TableButton onClick={() => props.onCostClick?.(row)} minWidth={140}>
-              {formatCurrency(row.lastCost, 4)}
+              {`${formatCurrency(row.lastCost, 4)} / (${unit})`}
             </TableButton>
           ) : (
             "-"
-          ),
+          );
+        },
       },
       {
         field: "actions",

@@ -1,17 +1,7 @@
-import {PackageType} from "@/src/pages-content/stock/packages/types";
-
-export interface CompositionPackage {
-  id: string;
-  code: number;
-  name: string;
-  description: string | null;
-  image: string | null;
-  lastCost?: string | null;
-  active?: boolean;
-}
+import {Package, PackageType} from "@/src/pages-content/stock/packages/types";
 
 export interface PackageCompositionItem {
-  package: CompositionPackage;
+  package: Package;
   quantity: string;
   cost?: string;
 }
@@ -22,7 +12,7 @@ export interface PackagesSelectorProps {
   disabled?: boolean;
   showCostField?: boolean;
   typeFilter?: PackageType;
-  onSelect?: (pkg: CompositionPackage) => void;
+  onSelect?: (pkg: Package) => void;
 }
 
 export interface PackageRowProps {

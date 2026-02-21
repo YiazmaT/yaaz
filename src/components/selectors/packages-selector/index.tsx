@@ -7,14 +7,15 @@ import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {buildName} from "@/src/pages-content/stock/packages/utils";
-import {CompositionPackage, PackageCompositionItem, PackagesSelectorProps, PackageRowProps} from "./types";
+import {PackageCompositionItem, PackagesSelectorProps, PackageRowProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
+import {Package} from "@/src/pages-content/stock/packages/types";
 
 export function PackagesSelector(props: PackagesSelectorProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  function handleAddPackage(pkg: CompositionPackage | null) {
+  function handleAddPackage(pkg: Package | null) {
     if (!pkg) return;
 
     if (props.onSelect) {
@@ -49,12 +50,12 @@ export function PackagesSelector(props: PackagesSelectorProps) {
 
   return (
     <Grid size={12}>
-      <AsyncDropdown<CompositionPackage>
+      <AsyncDropdown<Package>
         apiRoute="/api/stock/package/paginated-list"
         uniqueKey="id"
         label="global.packages"
         buildLabel={(option) => buildName(option)}
-        renderOption={(option) => <DropdownOption image={option.image} name={buildName(option)} />}
+        renderOption={(option) => <DropdownOption package={option} />}
         onChange={handleAddPackage}
         disabled={props.disabled}
         extraQueryParams={props.typeFilter ? `type=${props.typeFilter}` : undefined}
@@ -91,11 +92,14 @@ export function PackagesSelector(props: PackagesSelectorProps) {
   );
 }
 
-function DropdownOption(props: {image?: string | null; name: string}) {
+function DropdownOption(props: {package: Package}) {
   return (
     <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-      <ImagePreview url={props.image} alt={props.name} width={30} height={30} />
-      <Typography variant="body2">{props.name}</Typography>
+      <ImagePreview url={props.package.image} alt={buildName(props.package)} width={30} height={30} />
+      <Box sx={{...flexGenerator("c.flex-start")}}>
+        <Typography variant="body2">{buildName(props.package)}</Typography>
+        <Typography variant="caption" color="text.secondary">{`(${props.package.unity_of_measure?.unity ?? ""})`}</Typography>
+      </Box>
     </Box>
   );
 }
@@ -146,9 +150,12 @@ function PackageRowMobile(props: PackageRowProps) {
       <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
         {props.item.package.active === false && <Chip label={translate("packages.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
-        <Typography variant="body2" fontWeight={600}>
-          {buildName(props.item.package)}
-        </Typography>
+        <Box sx={{...flexGenerator("c.flex-start")}}>
+          <Typography variant="body2" fontWeight={600}>
+            {buildName(props.item.package)}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">{`(${props.item.package.unity_of_measure?.unity ?? ""})`}</Typography>
+        </Box>
       </Box>
     </Box>
   );
@@ -202,9 +209,12 @@ function PackageRowDesktop(props: PackageRowProps) {
       <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
         {props.item.package.active === false && <Chip label={translate("packages.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.package.image} alt={props.item.package.name} width={40} height={40} borderRadius={1} />
-        <Typography variant="body2" fontWeight={600}>
-          {buildName(props.item.package)}
-        </Typography>
+        <Box sx={{...flexGenerator("c.flex-start")}}>
+          <Typography variant="body2" fontWeight={600}>
+            {buildName(props.item.package)}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">{`(${props.item.package.unity_of_measure?.unity ?? ""})`}</Typography>
+        </Box>
       </Box>
     </Box>
   );

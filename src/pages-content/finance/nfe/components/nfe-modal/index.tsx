@@ -16,14 +16,14 @@ import {FormDropdown} from "@/src/components/form-fields/dropdown";
 import {IngredientsSelector} from "@/src/components/selectors/ingredients-selector";
 import {ProductsSelector} from "@/src/components/selectors/products-selector";
 import {PackagesSelector} from "@/src/components/selectors/packages-selector";
-import {CompositionIngredient} from "@/src/components/selectors/ingredients-selector/types";
 import {Product} from "@/src/pages-content/stock/products/types";
-import {CompositionPackage} from "@/src/components/selectors/packages-selector/types";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {NfeFormItem} from "../../form-config";
 import {useNfeItemsTableConfig} from "../../desktop/table-config";
 import {NfeModalProps} from "./types";
 import {BankAccount} from "../../../bank-accounts/types";
+import {Ingredient} from "@/src/pages-content/stock/ingredients/types";
+import {Package} from "@/src/pages-content/stock/packages/types";
 
 const ACCEPT = "image/*,.pdf";
 
@@ -127,17 +127,13 @@ export function NfeModal(props: NfeModalProps) {
           </Typography>
           <Grid container spacing={2} sx={{mb: 2}}>
             <Grid size={4}>
-              <IngredientsSelector
-                value={[]}
-                onChange={() => {}}
-                onSelect={(ingredient: CompositionIngredient) => addItem(ingredient, "ingredient")}
-              />
+              <IngredientsSelector value={[]} onChange={() => {}} onSelect={(ingredient: Ingredient) => addItem(ingredient, "ingredient")} />
             </Grid>
             <Grid size={4}>
               <ProductsSelector value={[]} onChange={() => {}} onSelect={(product: Product) => addItem(product, "product")} />
             </Grid>
             <Grid size={4}>
-              <PackagesSelector value={[]} onChange={() => {}} onSelect={(pkg: CompositionPackage) => addItem(pkg, "package")} />
+              <PackagesSelector value={[]} onChange={() => {}} onSelect={(pkg: Package) => addItem(pkg, "package")} />
             </Grid>
           </Grid>
 
