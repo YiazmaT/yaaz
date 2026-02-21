@@ -4,7 +4,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {StockAlertsResponse, StockAlertItem} from "../dto";
-import {buildName} from "@/src/pages-content/products/utils";
+import {buildName} from "@/src/pages-content/stock/products/utils";
 
 export function StockAlertsCard() {
   const {translate} = useTranslate();

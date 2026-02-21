@@ -18,6 +18,7 @@ import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
 import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 
 const menuItems: MenuItem[] = [
   {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
@@ -31,9 +32,15 @@ const menuItems: MenuItem[] = [
       {name: "finance.tabs.nfe", route: "/finance/nfe", icon: <DescriptionOutlinedIcon />},
     ],
   },
-  {name: "global.products", route: "/products", icon: <Inventory2OutlinedIcon />},
-  {name: "global.ingredients", route: "/ingredients", icon: <CategoryOutlinedIcon />},
-  {name: "global.packages", route: "/packages", icon: <TakeoutDiningOutlinedIcon />},
+  {
+    name: "global.stock",
+    icon: <WidgetsOutlinedIcon />,
+    children: [
+      {name: "global.products", route: "/stock/products", icon: <Inventory2OutlinedIcon />},
+      {name: "global.ingredients", route: "/stock/ingredients", icon: <CategoryOutlinedIcon />},
+      {name: "global.packages", route: "/stock/packages", icon: <TakeoutDiningOutlinedIcon />},
+    ],
+  },
   {name: "global.clients", route: "/clients", icon: <PersonOutlineIcon />},
   {name: "global.reports", route: "/reports", icon: <ReceiptOutlinedIcon />},
 ];

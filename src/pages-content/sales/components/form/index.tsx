@@ -9,7 +9,7 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {ImagePreview} from "@/src/components/image-preview";
 import {ProductsSelector} from "@/src/components/products-selector";
 import {PackagesSelector} from "@/src/components/packages-selector";
-import {PackageType} from "@/src/pages-content/packages/types";
+import {PackageType} from "@/src/pages-content/stock/packages/types";
 import {useWatch} from "react-hook-form";
 import {FormCheckBox} from "@/src/components/form-fields/check-box";
 import {Client} from "@/src/pages-content/client/types";

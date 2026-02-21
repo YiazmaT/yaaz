@@ -5,10 +5,10 @@ import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {IntegerInput} from "@/src/components/form-fields/integer-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
-import {Product} from "@/src/pages-content/products/types";
+import {Product} from "@/src/pages-content/stock/products/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {ProductsSelectorProps, ProductRowProps} from "./types";
-import {buildName} from "@/src/pages-content/products/utils";
+import {buildName} from "@/src/pages-content/stock/products/utils";
 
 export function ProductsSelector(props: ProductsSelectorProps) {
   const {value, onChange, disabled, incrementOnDuplicate, priceChangeText} = props;

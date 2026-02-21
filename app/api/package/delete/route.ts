@@ -3,7 +3,7 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
-import {DeletePackageDto} from "@/src/pages-content/packages/dto";
+import {DeletePackageDto} from "@/src/pages-content/stock/packages/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/package/delete";

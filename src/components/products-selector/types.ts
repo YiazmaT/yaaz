@@ -1,4 +1,4 @@
-import {Product} from "@/src/pages-content/products/types";
+import {Product} from "@/src/pages-content/stock/products/types";
 
 export interface ProductItem {
   product: Product;

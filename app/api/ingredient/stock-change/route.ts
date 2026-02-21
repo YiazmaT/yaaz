@@ -1,8 +1,8 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {StockChangeDto} from "@/src/pages-content/ingredients/dto";
-import {IngredientStockChangeReason} from "@/src/pages-content/ingredients/types";
+import {StockChangeDto} from "@/src/pages-content/stock/ingredients/dto";
+import {IngredientStockChangeReason} from "@/src/pages-content/stock/ingredients/types";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/ingredient/stock-change";

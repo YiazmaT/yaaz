@@ -10,7 +10,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {IngredientsSelector} from "@/src/components/ingredients-selector";
 import {PackagesSelector} from "@/src/components/packages-selector";
 import {FormProps} from "./types";
-import {PackageType} from "@/src/pages-content/packages/types";
+import {PackageType} from "@/src/pages-content/stock/packages/types";
 
 export function Form(props: FormProps) {
   const {products, imageSize = 150} = props;

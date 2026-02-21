@@ -7,9 +7,9 @@ import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {CompositionIngredient, CompositionItem, IngredientsSelectorProps, IngredientRowProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
-import {useIngredientsConstants} from "@/src/pages-content/ingredients/constants";
+import {useIngredientsConstants} from "@/src/pages-content/stock/ingredients/constants";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {buildName} from "@/src/pages-content/ingredients/utils";
+import {buildName} from "@/src/pages-content/stock/ingredients/utils";
 
 export function IngredientsSelector(props: IngredientsSelectorProps) {
   const theme = useTheme();

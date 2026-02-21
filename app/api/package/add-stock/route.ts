@@ -1,7 +1,7 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {AddStockDto} from "@/src/pages-content/packages/dto";
+import {AddStockDto} from "@/src/pages-content/stock/packages/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/package/add-stock";

@@ -1,4 +1,4 @@
-import {PackageType} from "@/src/pages-content/packages/types";
+import {PackageType} from "@/src/pages-content/stock/packages/types";
 
 export interface CompositionPackage {
   id: string;

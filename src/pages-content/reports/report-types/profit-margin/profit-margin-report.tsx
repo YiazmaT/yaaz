@@ -12,7 +12,7 @@ import {ReportCard} from "../../components/report-card";
 import {ProfitMarginResult} from "./result";
 import {useProfitMarginFormConfig} from "./form-config";
 import {ProfitMarginFilters, ProfitMarginRow, ProductOption} from "./types";
-import {buildName} from "@/src/pages-content/products/utils";
+import {buildName} from "@/src/pages-content/stock/products/utils";
 
 const today = moment().format("YYYY-MM-DD");
 

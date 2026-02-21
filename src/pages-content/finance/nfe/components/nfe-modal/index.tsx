@@ -17,7 +17,7 @@ import {IngredientsSelector} from "@/src/components/ingredients-selector";
 import {ProductsSelector} from "@/src/components/products-selector";
 import {PackagesSelector} from "@/src/components/packages-selector";
 import {CompositionIngredient} from "@/src/components/ingredients-selector/types";
-import {Product} from "@/src/pages-content/products/types";
+import {Product} from "@/src/pages-content/stock/products/types";
 import {CompositionPackage} from "@/src/components/packages-selector/types";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {NfeFormItem} from "../../form-config";

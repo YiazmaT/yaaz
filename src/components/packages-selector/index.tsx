@@ -6,7 +6,7 @@ import {CurrencyInput} from "@/src/components/form-fields/currency-input";
 import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {buildName} from "@/src/pages-content/packages/utils";
+import {buildName} from "@/src/pages-content/stock/packages/utils";
 import {CompositionPackage, PackageCompositionItem, PackagesSelectorProps, PackageRowProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
 
