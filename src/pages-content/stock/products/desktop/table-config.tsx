@@ -33,12 +33,6 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
         render: (row) => <ImagePreviewColumn image={row.image} alt={row.name} />,
       },
       {
-        field: "unity_of_measure",
-        headerKey: "products.fields.unityOfMeasure",
-        width: "90px",
-        render: (row) => row.unity_of_measure?.unity ?? "-",
-      },
-      {
         field: "name",
         headerKey: "products.fields.name",
         width: "22%",
@@ -65,7 +59,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
       {
         field: "description",
         headerKey: "products.fields.description",
-        width: "40%",
+        width: "35%",
         render: (row) => (
           <Tooltip title={row.description || "-"} placement="top">
             <Box
@@ -98,13 +92,13 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
       {
         field: "stock",
         headerKey: "products.fields.stock",
-        width: "6%",
+        width: "10%",
         align: "left",
         render: (row) => {
           const isLow = (row.min_stock ?? 0) > 0 && row.stock < (row.min_stock ?? 0);
           return (
             <TableButton onClick={() => props.onStockHistoryClick(row)} color={isLow ? theme.palette.error.main : undefined}>
-              {row.stock}
+              {`${row.stock} (${row.unity_of_measure?.unity ?? ""})`}
             </TableButton>
           );
         },
@@ -112,13 +106,13 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
       {
         field: "min_stock",
         headerKey: "products.fields.minStock",
-        width: "6%",
+        width: "10%",
         align: "left",
         render: (row) => {
           const isLow = (row.min_stock ?? 0) > 0 && row.stock < (row.min_stock ?? 0);
           return (
             <Box component="span" sx={{color: isLow ? theme.palette.error.main : "inherit"}}>
-              {row.min_stock ?? 0}
+              {`${row.min_stock ?? 0} (${row.unity_of_measure?.unity ?? ""})`}
             </Box>
           );
         },

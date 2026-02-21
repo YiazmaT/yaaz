@@ -61,13 +61,13 @@ export function MobileView(props: MobileViewProps) {
               variant="caption"
               sx={{color: (item.min_stock ?? 0) > 0 && item.stock < (item.min_stock ?? 0) ? theme.palette.error.main : "text.secondary"}}
             >
-              {`${translate("products.fields.stock")}: ${item.stock}`}
+              {`${translate("products.fields.stock")}: ${item.stock} (${item.unity_of_measure?.unity ?? ""})`}
             </Typography>
             <Typography
               variant="caption"
               sx={{color: (item.min_stock ?? 0) > 0 && item.stock < (item.min_stock ?? 0) ? theme.palette.error.main : "text.secondary"}}
             >
-              {`${translate("products.fields.minStock")}: ${item.min_stock ?? 0}`}
+              {`${translate("products.fields.minStock")}: ${item.min_stock ?? 0} (${item.unity_of_measure?.unity ?? ""})`}
             </Typography>
           </Box>
         </Box>

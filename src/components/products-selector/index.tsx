@@ -9,6 +9,7 @@ import {Product} from "@/src/pages-content/stock/products/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {ProductsSelectorProps, ProductRowProps} from "./types";
 import {buildName} from "@/src/pages-content/stock/products/utils";
+import {flexGenerator} from "@/src/utils/flex-generator";
 
 export function ProductsSelector(props: ProductsSelectorProps) {
   const {value, onChange, disabled, incrementOnDuplicate, priceChangeText} = props;
@@ -24,29 +25,17 @@ export function ProductsSelector(props: ProductsSelectorProps) {
       return;
     }
 
-    const cleanProduct: Product = {
-      id: product.id,
-      code: product.code,
-      name: product.name,
-      price: product.price,
-      description: product.description ?? null,
-      image: product.image ?? null,
-      stock: product.stock,
-      displayLandingPage: product.displayLandingPage,
-      active: product.active,
-    };
-
-    const existingItem = value.find((item) => item.product.id === cleanProduct.id);
+    const existingItem = value.find((item) => item.product.id === product.id);
 
     if (existingItem) {
       if (incrementOnDuplicate) {
-        const newItems = value.map((item) => (item.product.id === cleanProduct.id ? {...item, quantity: item.quantity + 1} : item));
+        const newItems = value.map((item) => (item.product.id === product.id ? {...item, quantity: item.quantity + 1} : item));
         onChange(newItems);
       }
       return;
     }
 
-    onChange([...value, {product: cleanProduct, quantity: 1}]);
+    onChange([...value, {product, quantity: 1}]);
   }
 
   function handleQuantityChange(productId: string, quantity: number) {
@@ -66,7 +55,7 @@ export function ProductsSelector(props: ProductsSelectorProps) {
         uniqueKey="id"
         label="global.products"
         buildLabel={(option) => buildName(option)}
-        renderOption={(option) => <DropdownOption image={option.image} name={buildName(option)} />}
+        renderOption={(option) => <DropdownOption product={option} />}
         onChange={handleAddProduct}
         disabled={disabled}
       />
@@ -99,6 +88,21 @@ export function ProductsSelector(props: ProductsSelectorProps) {
         </Box>
       )}
     </Grid>
+  );
+}
+
+function DropdownOption(props: {product: Product}) {
+  const formatCurrency = useFormatCurrency();
+  return (
+    <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+      <ImagePreview url={props.product.image} alt={buildName(props.product)} width={30} height={30} />
+      <Box sx={{...flexGenerator("c.flex-start")}}>
+        <Typography variant="body2">{buildName(props.product)}</Typography>
+        <Typography variant="caption" color="text.secondary">
+          {`${formatCurrency(Number(props.product.price))} (${props.product.unity_of_measure?.unity ?? ""})`}
+        </Typography>
+      </Box>
+    </Box>
   );
 }
 
@@ -138,27 +142,20 @@ function ProductRowMobile(props: ProductRowProps) {
       <Box sx={{display: "flex", alignItems: "center", gap: 1, width: "100%"}}>
         {!props.item.product.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
-        <Typography variant="body2" fontWeight={600}>
-          {buildName(props.item.product)}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {props.formatCurrency(Number(props.item.product.price))}
-        </Typography>
+        <Box sx={{...flexGenerator("c.flex-start")}}>
+          <Typography variant="body2" fontWeight={600}>
+            {buildName(props.item.product)}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {`${props.formatCurrency(Number(props.item.product.price))} (${props.item.product.unity_of_measure?.unity ?? ""})`}
+          </Typography>
+        </Box>
       </Box>
       {hasPriceChanged && (
         <Alert severity="warning" sx={{py: 0.5, alignItems: "center"}}>
           {props.priceChangeText} {props.formatCurrency(props.item.unit_price)}
         </Alert>
       )}
-    </Box>
-  );
-}
-
-function DropdownOption(props: {image?: string | null; name: string}) {
-  return (
-    <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-      <ImagePreview url={props.image} alt={props.name} width={30} height={30} />
-      <Typography variant="body2">{props.name}</Typography>
     </Box>
   );
 }
@@ -196,15 +193,17 @@ function ProductRowDesktop(props: ProductRowProps) {
           </IconButton>
         )}
       </Box>
-      <Box sx={{display: "flex", alignItems: "center", gap: 1, width: "100%"}}>
+      <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
         {!props.item.product.active && <Chip label={translate("products.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.product.image} alt={props.item.product.name} width={40} height={40} borderRadius={1} />
-        <Typography variant="body2" fontWeight={600}>
-          {buildName(props.item.product)}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {props.formatCurrency(Number(props.item.product.price))}
-        </Typography>
+        <Box sx={{...flexGenerator("c.flex-start")}}>
+          <Typography variant="body2" fontWeight={600}>
+            {buildName(props.item.product)}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {`${props.formatCurrency(Number(props.item.product.price))} (${props.item.product.unity_of_measure?.unity ?? ""})`}
+          </Typography>
+        </Box>
       </Box>
       {hasPriceChanged && (
         <Alert severity="warning" sx={{py: 0.5, alignItems: "center"}}>
