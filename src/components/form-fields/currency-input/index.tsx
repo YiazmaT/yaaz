@@ -1,5 +1,6 @@
-import {Grid, TextField} from "@mui/material";
+import {Grid, InputAdornment, TextField, Tooltip} from "@mui/material";
 import {Controller} from "react-hook-form";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import {CurrencyInputProps, FormCurrencyInputProps} from "./types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormContext} from "@/src/contexts/form-context";
@@ -29,10 +30,21 @@ export function CurrencyInput(props: CurrencyInputProps) {
       onChange={handleChange}
       size="medium"
       error={!!props.error}
-      helperText={props.error}
+      helperText={props.errorAsIcon ? undefined : props.error}
       fullWidth={props.fullWidth}
       disabled={props.disabled}
-      slotProps={{htmlInput: {inputMode: "numeric"}}}
+      slotProps={{
+        htmlInput: {inputMode: "numeric"},
+        input: {
+          startAdornment: props.errorAsIcon && props.error ? (
+            <InputAdornment position="start">
+              <Tooltip title={props.error}>
+                <ErrorOutlineIcon fontSize="small" sx={{color: "error.main"}} />
+              </Tooltip>
+            </InputAdornment>
+          ) : undefined,
+        },
+      }}
     />
   );
 }
@@ -45,7 +57,8 @@ export function FormCurrencyInput(props: FormCurrencyInputProps) {
   function hasError() {
     const err = props.errors ? props.errors : formContext.errors;
     if (err) {
-      if (err[props.fieldName]?.message) return err[props.fieldName]?.message as string;
+      const resolved = props.fieldName.split(".").reduce<any>((acc, key) => acc?.[key], err);
+      if (resolved?.message) return resolved.message as string;
     }
     return "";
   }

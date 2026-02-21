@@ -131,13 +131,13 @@ export function useNfeItemsTableConfig(props: NfeItemsTableConfigProps) {
         field: "quantity",
         headerKey: "finance.nfe.items.quantity",
         width: "160px",
-        render: (_, index) => <FormDecimalInput fieldName={`items.${index}.quantity`} grid={false} />,
+        render: (_, index) => <FormDecimalInput fieldName={`items.${index}.quantity`} grid={false} errorAsIcon />,
       },
       {
         field: "unitPrice",
         headerKey: "finance.nfe.items.unitPrice",
         width: "180px",
-        render: (_, index) => <FormCurrencyInput fieldName={`items.${index}.unitPrice`} grid={false} />,
+        render: (_, index) => <FormCurrencyInput fieldName={`items.${index}.unitPrice`} grid={false} errorAsIcon />,
       },
       {
         field: "total",

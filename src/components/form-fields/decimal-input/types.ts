@@ -6,6 +6,7 @@ export interface DecimalInputProps {
   label?: string;
   fullWidth?: boolean;
   error?: string;
+  errorAsIcon?: boolean;
   disabled?: boolean;
 }
 

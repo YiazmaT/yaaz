@@ -14,64 +14,53 @@ export function DefaultTable<T = any>(props: CoreTableProps<T>) {
   };
 
   return (
-    <Box sx={{position: "relative"}}>
-      <TableContainer>
-        <Table stickyHeader>
-          <TableHead>
+    <TableContainer sx={{height: "100%"}}>
+      <Table stickyHeader sx={{height: props.loading || props.data.length === 0 ? "100%" : undefined}}>
+        <TableHead>
+          <TableRow>
+            {props.columns.map((column, index) => (
+              <TableCell key={index} align={column.align ?? "left"} sx={{...headerCellSx, width: column.width}}>
+                {translate(column.headerKey)}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {props.loading ? (
             <TableRow>
-              {props.columns.map((column, index) => (
-                <TableCell key={index} align={column.align ?? "left"} sx={{...headerCellSx, width: column.width}}>
-                  {translate(column.headerKey)}
-                </TableCell>
-              ))}
+              <TableCell colSpan={props.columns.length} align="center" sx={{border: 0, verticalAlign: "middle"}}>
+                <Loader size={80} />
+              </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {!props.loading && props.data.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={props.columns.length} align="center">
-                  <Typography color="text.secondary">{translate(props.emptyMessageKey ?? "global.noDataFound")}</Typography>
-                </TableCell>
+          ) : props.data.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={props.columns.length} align="center" sx={{verticalAlign: "middle"}}>
+                <Typography color="text.secondary">{translate(props.emptyMessageKey ?? "global.noDataFound")}</Typography>
+              </TableCell>
+            </TableRow>
+          ) : (
+            props.data.map((row, rowIndex) => (
+              <TableRow
+                key={rowIndex}
+                hover={!!props.onRowClick}
+                onClick={() => props.onRowClick?.(row)}
+                sx={{
+                  cursor: props.onRowClick ? "pointer" : "default",
+                  transition: "background-color 0.2s ease",
+                  "&:hover": props.onRowClick ? {backgroundColor: "rgba(0, 0, 0, 0.02)"} : {},
+                }}
+              >
+                {props.columns.map((column, colIndex) => (
+                  <TableCell key={colIndex} align={column.align ?? "left"}>
+                    {column.render ? column.render(row, rowIndex) : String((row as any)[column.field] ?? "")}
+                  </TableCell>
+                ))}
               </TableRow>
-            ) : (
-              props.data.map((row, rowIndex) => (
-                <TableRow
-                  key={rowIndex}
-                  hover={!!props.onRowClick}
-                  onClick={() => props.onRowClick?.(row)}
-                  sx={{
-                    cursor: props.onRowClick ? "pointer" : "default",
-                    transition: "background-color 0.2s ease",
-                    "&:hover": props.onRowClick ? {backgroundColor: "rgba(0, 0, 0, 0.02)"} : {},
-                  }}
-                >
-                  {props.columns.map((column, colIndex) => (
-                    <TableCell key={colIndex} align={column.align ?? "left"}>
-                      {column.render ? column.render(row, rowIndex) : String((row as any)[column.field] ?? "")}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            )}
-            {props.footerRow}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {props.loading && (
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            top: 57,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-          }}
-        >
-          <Loader size={80} />
-        </Box>
-      )}
-    </Box>
+            ))
+          )}
+          {props.footerRow}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }

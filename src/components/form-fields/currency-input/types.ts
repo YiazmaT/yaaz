@@ -6,6 +6,7 @@ export interface CurrencyInputProps {
   label?: string;
   fullWidth?: boolean;
   error?: string;
+  errorAsIcon?: boolean;
   disabled?: boolean;
 }
 

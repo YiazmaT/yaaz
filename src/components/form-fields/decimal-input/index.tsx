@@ -1,10 +1,11 @@
 import {useState, useEffect} from "react";
-import {Grid, IconButton, InputAdornment, TextField} from "@mui/material";
+import {Grid, IconButton, InputAdornment, TextField, Tooltip} from "@mui/material";
 import {Controller} from "react-hook-form";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import {KeyboardArrowUp, KeyboardArrowDown} from "@mui/icons-material";
 import {DecimalInputProps, FormDecimalInputProps} from "./types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormContext} from "@/src/contexts/form-context";
-import {KeyboardArrowUp, KeyboardArrowDown} from "@mui/icons-material";
 
 function formatBrazilian(value: string | number | null | undefined): string {
   if (value === null || value === undefined) return "0";
@@ -62,12 +63,19 @@ export function DecimalInput(props: DecimalInputProps & {step?: number}) {
       onBlur={handleBlur}
       size="medium"
       error={!!props.error}
-      helperText={props.error}
+      helperText={props.errorAsIcon ? undefined : props.error}
       fullWidth={props.fullWidth}
       disabled={props.disabled}
       slotProps={{
         htmlInput: {inputMode: "decimal"},
         input: {
+          startAdornment: props.errorAsIcon && props.error ? (
+            <InputAdornment position="start">
+              <Tooltip title={props.error}>
+                <ErrorOutlineIcon fontSize="small" sx={{color: "error.main"}} />
+              </Tooltip>
+            </InputAdornment>
+          ) : undefined,
           endAdornment: !props.disabled && (
             <InputAdornment position="end" sx={{flexDirection: "column", ml: 0}}>
               <IconButton size="small" onClick={() => handleStep(step)} sx={{p: 0, height: "18px"}}>
@@ -92,7 +100,8 @@ export function FormDecimalInput(props: FormDecimalInputProps) {
   function hasError() {
     const err = props.errors ? props.errors : formContext.errors;
     if (err) {
-      if (err[props.fieldName]?.message) return err[props.fieldName]?.message as string;
+      const resolved = props.fieldName.split(".").reduce<any>((acc, key) => acc?.[key], err);
+      if (resolved?.message) return resolved.message as string;
     }
     return "";
   }
