@@ -59,7 +59,7 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
           const unit = row.unity_of_measure?.unity ?? "";
           return (
             <TableButton onClick={() => props.onStockHistoryClick(row)} color={isLow ? theme.palette.error.main : undefined} minWidth={100}>
-              {`${Number(row.stock).toLocaleString("pt-BR")} ${unit}`}
+              {`${Number(row.stock).toLocaleString("pt-BR")} (${unit})`}
             </TableButton>
           );
         },
@@ -74,7 +74,7 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
           const unit = row.unity_of_measure?.unity ?? "";
           return (
             <Box component="span" sx={{color: isLow ? theme.palette.error.main : "inherit"}}>
-              {`${Number(row.min_stock || 0).toLocaleString("pt-BR")} ${unit}`}
+              {`${Number(row.min_stock || 0).toLocaleString("pt-BR")} (${unit})`}
             </Box>
           );
         },
@@ -87,7 +87,7 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
           const unit = row.unity_of_measure?.unity ?? "";
           return row.lastCost ? (
             <TableButton onClick={() => props.onCostClick?.(row)} minWidth={140}>
-              {formatCurrency(row.lastCost, 4)} / {unit}
+              {`${formatCurrency(row.lastCost, 4)} / (${unit})`}
             </TableButton>
           ) : (
             "-"

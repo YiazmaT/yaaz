@@ -1,17 +1,13 @@
 import {ImageInputValue} from "@/src/components/form-fields/image-input/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import * as yup from "yup";
-
-export interface UnitOfMeasure {
-  value: string;
-  label: string;
-}
+import {UnityOfMeasure} from "../unity-of-measure/types";
 
 export interface IngredientFormValues {
   name: string;
   description: string;
   image: ImageInputValue;
-  unitOfMeasure: UnitOfMeasure | null;
+  unitOfMeasure: UnityOfMeasure | null;
   min_stock: string;
 }
 

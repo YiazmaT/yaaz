@@ -1,17 +1,7 @@
-import {UnityOfMeasure} from "@/src/pages-content/stock/unity-of-measure/types";
-
-export interface CompositionIngredient {
-  id: string;
-  code: number;
-  name: string;
-  description: string | null;
-  image: string | null;
-  unity_of_measure: UnityOfMeasure | null;
-  active?: boolean;
-}
+import {Ingredient} from "@/src/pages-content/stock/ingredients/types";
 
 export interface CompositionItem {
-  ingredient: CompositionIngredient;
+  ingredient: Ingredient;
   quantity: string;
   cost?: string;
 }
@@ -21,7 +11,7 @@ export interface IngredientsSelectorProps {
   onChange: (value: CompositionItem[]) => void;
   disabled?: boolean;
   showCostField?: boolean;
-  onSelect?: (ingredient: CompositionIngredient) => void;
+  onSelect?: (ingredient: Ingredient) => void;
 }
 
 export interface IngredientRowProps {

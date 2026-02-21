@@ -50,7 +50,7 @@ export function MobileView(props: MobileViewProps) {
                 color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary",
               }}
             >
-              {`${translate("ingredients.fields.stock")}: ${Number(item.stock).toLocaleString("pt-BR")} ${unit_of_measure}`}
+              {`${translate("ingredients.fields.stock")}: ${Number(item.stock).toLocaleString("pt-BR")} (${unit_of_measure})`}
             </Typography>
             <Typography
               variant="caption"
@@ -58,7 +58,7 @@ export function MobileView(props: MobileViewProps) {
                 color: Number(item.min_stock || 0) > 0 && Number(item.stock) < Number(item.min_stock) ? theme.palette.error.main : "text.secondary",
               }}
             >
-              {`${translate("ingredients.fields.minStock")}: ${Number(item.min_stock || 0).toLocaleString("pt-BR")} ${unit_of_measure}`}
+              {`${translate("ingredients.fields.minStock")}: ${Number(item.min_stock || 0).toLocaleString("pt-BR")} (${unit_of_measure})`}
             </Typography>
           </Box>
         </Box>

@@ -5,16 +5,17 @@ import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {CurrencyInput} from "@/src/components/form-fields/currency-input";
 import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {ImagePreview} from "@/src/components/image-preview";
-import {CompositionIngredient, CompositionItem, IngredientsSelectorProps, IngredientRowProps} from "./types";
+import {CompositionItem, IngredientsSelectorProps, IngredientRowProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {buildName} from "@/src/pages-content/stock/ingredients/utils";
+import {Ingredient} from "@/src/pages-content/stock/ingredients/types";
 
 export function IngredientsSelector(props: IngredientsSelectorProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  function handleAddIngredient(ingredient: CompositionIngredient | null) {
+  function handleAddIngredient(ingredient: Ingredient | null) {
     if (!ingredient) return;
 
     if (props.onSelect) {
@@ -49,12 +50,12 @@ export function IngredientsSelector(props: IngredientsSelectorProps) {
 
   return (
     <Grid size={12}>
-      <AsyncDropdown<CompositionIngredient>
+      <AsyncDropdown<Ingredient>
         apiRoute="/api/stock/ingredient/paginated-list"
         uniqueKey="id"
         label="global.ingredients"
         buildLabel={(option) => buildName(option)}
-        renderOption={(option) => <DropdownOption image={option.image} name={buildName(option)} />}
+        renderOption={(option) => <DropdownOption ingredient={option} />}
         onChange={handleAddIngredient}
         disabled={props.disabled}
       />
@@ -90,11 +91,16 @@ export function IngredientsSelector(props: IngredientsSelectorProps) {
   );
 }
 
-function DropdownOption(props: {image?: string | null; name: string}) {
+function DropdownOption(props: {ingredient: Ingredient}) {
   return (
     <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-      <ImagePreview url={props.image} alt={props.name} width={30} height={30} />
-      <Typography variant="body2">{props.name}</Typography>
+      <ImagePreview url={props.ingredient.image} alt={buildName(props.ingredient)} width={30} height={30} />
+      <Box sx={{...flexGenerator("c.flex-start")}}>
+        <Typography variant="body2">{buildName(props.ingredient)}</Typography>
+        <Typography variant="caption" color="text.secondary">
+          {`(${props.ingredient.unity_of_measure?.unity ?? ""})`}
+        </Typography>
+      </Box>
     </Box>
   );
 }
@@ -145,12 +151,14 @@ function IngredientRowMobile(props: IngredientRowProps) {
       <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
         {props.item.ingredient.active === false && <Chip label={translate("ingredients.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
-        <Typography variant="body2" fontWeight={600}>
-          {buildName(props.item.ingredient)}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {props.item.ingredient.unity_of_measure?.unity ?? ""}
-        </Typography>
+        <Box sx={{...flexGenerator("c.flex-start")}}>
+          <Typography variant="body2" fontWeight={600}>
+            {buildName(props.item.ingredient)}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {`(${props.item.ingredient.unity_of_measure?.unity ?? ""})`}
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
@@ -202,12 +210,14 @@ function IngredientRowDesktop(props: IngredientRowProps) {
       <Box sx={{...flexGenerator("r.center"), gap: 1, width: "100%"}}>
         {props.item.ingredient.active === false && <Chip label={translate("ingredients.inactive")} size="small" color="error" />}
         <ImagePreview url={props.item.ingredient.image} alt={props.item.ingredient.name} width={40} height={40} borderRadius={1} />
-        <Typography variant="body2" fontWeight={600}>
-          {buildName(props.item.ingredient)}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {props.item.ingredient.unity_of_measure?.unity ?? ""}
-        </Typography>
+        <Box sx={{...flexGenerator("c.flex-start")}}>
+          <Typography variant="body2" fontWeight={600}>
+            {buildName(props.item.ingredient)}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {`(${props.item.ingredient.unity_of_measure?.unity ?? ""})`}
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
