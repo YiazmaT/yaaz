@@ -21,8 +21,8 @@ export interface Product {
   price: string;
   description?: string | null;
   image?: string | null;
-  stock: number;
-  min_stock?: number;
+  stock: string;
+  min_stock?: string;
   composition?: CompositionItem[];
   packages?: PackageCompositionItem[];
   approximateCost?: number;

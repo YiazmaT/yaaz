@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         productsMap.set(product.id, {
           id: product.id,
           name: product.name,
-          stock: product.stock,
+          stock: Number(product.stock),
           price: product.price.toString(),
         });
       }
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         .filter((i) => productsMap.has(i.product_id))
         .map((i) => {
           const p = productsMap.get(i.product_id)!;
-          return {id: p.id, name: p.name, stock: p.stock, quantity: i.quantity};
+          return {id: p.id, name: p.name, stock: p.stock, quantity: Number(i.quantity)};
         });
 
       let packageStockItems: {id: string; name: string; stock: number; quantity: number}[] = [];
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         packageStockItems = packages
           .map((pkg) => {
             const dbPkg = dbPackages.find((p) => p.id === pkg.package_id);
-            return dbPkg ? {id: dbPkg.id, name: dbPkg.name, stock: new Decimal(dbPkg.stock).toNumber(), quantity: pkg.quantity} : null;
+            return dbPkg ? {id: dbPkg.id, name: dbPkg.name, stock: new Decimal(dbPkg.stock).toNumber(), quantity: Number(pkg.quantity)} : null;
           })
           .filter((x): x is NonNullable<typeof x> => x !== null);
       }
@@ -118,8 +118,8 @@ export async function POST(req: NextRequest) {
       if (!is_quote) {
         await decrementStock(
           tx,
-          hasItems ? items.map((i) => ({id: i.product_id, quantity: i.quantity})) : [],
-          hasPackages ? packages.map((p) => ({id: p.package_id, quantity: p.quantity})) : [],
+          hasItems ? items.map((i) => ({id: i.product_id, quantity: Number(i.quantity)})) : [],
+          hasPackages ? packages.map((p) => ({id: p.package_id, quantity: Number(p.quantity)})) : [],
         );
       }
 

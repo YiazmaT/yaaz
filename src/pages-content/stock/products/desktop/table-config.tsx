@@ -95,7 +95,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
         width: "10%",
         align: "left",
         render: (row) => {
-          const isLow = (row.min_stock ?? 0) > 0 && row.stock < (row.min_stock ?? 0);
+          const isLow = Number(row.min_stock ?? 0) > 0 && Number(row.stock) < Number(row.min_stock ?? 0);
           return (
             <TableButton onClick={() => props.onStockHistoryClick(row)} color={isLow ? theme.palette.error.main : undefined}>
               {`${row.stock} (${row.unity_of_measure?.unity ?? ""})`}
@@ -109,7 +109,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
         width: "10%",
         align: "left",
         render: (row) => {
-          const isLow = (row.min_stock ?? 0) > 0 && row.stock < (row.min_stock ?? 0);
+          const isLow = Number(row.min_stock ?? 0) > 0 && Number(row.stock) < Number(row.min_stock ?? 0);
           return (
             <Box component="span" sx={{color: isLow ? theme.palette.error.main : "inherit"}}>
               {`${row.min_stock ?? 0} (${row.unity_of_measure?.unity ?? ""})`}

@@ -2,7 +2,7 @@
 import {Box, Chip, Grid, IconButton, Tooltip, Typography, useMediaQuery, useTheme, Alert} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {AsyncDropdown} from "@/src/components/form-fields/async-dropdown";
-import {IntegerInput} from "@/src/components/form-fields/integer-input";
+import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Product} from "@/src/pages-content/stock/products/types";
@@ -35,10 +35,10 @@ export function ProductsSelector(props: ProductsSelectorProps) {
       return;
     }
 
-    onChange([...value, {product, quantity: 1}]);
+    onChange([...value, {product, quantity: "1"}]);
   }
 
-  function handleQuantityChange(productId: string, quantity: number) {
+  function handleQuantityChange(productId: string, quantity: string) {
     const updated = value.map((item) => (item.product.id === productId ? {...item, quantity} : item));
     onChange(updated);
   }
@@ -125,7 +125,7 @@ function ProductRowMobile(props: ProductRowProps) {
     >
       <Box sx={{display: "flex", alignItems: "center", gap: 1.5, width: "100%"}}>
         <Box sx={{flex: 1}}>
-          <IntegerInput
+          <DecimalInput
             value={props.item.quantity}
             onChange={(quantity) => props.handleQuantityChange(props.item.product.id, quantity)}
             disabled={props.disabled}
@@ -179,7 +179,7 @@ function ProductRowDesktop(props: ProductRowProps) {
     >
       <Box sx={{display: "flex", alignItems: "center", gap: 1.5, width: "100%"}}>
         <Box sx={{flex: 1}}>
-          <IntegerInput
+          <DecimalInput
             value={props.item.quantity}
             onChange={(quantity) => props.handleQuantityChange(props.item.product.id, quantity)}
             disabled={props.disabled}

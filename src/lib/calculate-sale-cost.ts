@@ -3,12 +3,12 @@ import {prisma} from "@/src/lib/prisma";
 
 interface SaleItemInput {
   product_id: string;
-  quantity: number;
+  quantity: number | string;
 }
 
 interface SalePackageInput {
   package_id: string;
-  quantity: number;
+  quantity: number | string;
 }
 
 export async function calculateApproximateCost(items: SaleItemInput[], packages: SalePackageInput[], tenantId: string): Promise<string> {

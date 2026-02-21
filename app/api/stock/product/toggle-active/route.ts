@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest) {
     const existingProduct = await prisma.product.findUnique({where: {id, tenant_id: auth.tenant_id}});
     if (!existingProduct) return error("api.errors.dataNotFound", 404, {id});
 
-    if (existingProduct.active && existingProduct.stock !== 0) {
+    if (existingProduct.active && Number(existingProduct.stock) !== 0) {
       return error("products.errors.cannotDeactivateWithStock", 400, {id, stock: existingProduct.stock});
     }
 

@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const history = stockChanges.map((change) => ({
       id: change.id,
       type: "stock_change" as const,
-      amount: change.new_stock - change.previous_stock,
+      amount: Number(change.new_stock) - Number(change.previous_stock),
       reason: change.reason,
       comment: change.comment,
       date: change.creation_date,

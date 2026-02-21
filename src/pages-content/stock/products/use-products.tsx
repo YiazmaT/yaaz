@@ -158,7 +158,7 @@ export function useProducts() {
       image: row.image,
       composition: row.composition || [],
       packages: row.packages || [],
-      min_stock: row.min_stock?.toString() || "0",
+      min_stock: row.min_stock ?? "0",
       unitOfMeasure: row.unity_of_measure ?? null,
     });
   }
@@ -181,7 +181,7 @@ export function useProducts() {
   }
 
   function handleDelete(row: Product) {
-    if (row.stock !== 0) {
+    if (Number(row.stock) !== 0) {
       toast.errorToast("products.errors.cannotDeleteWithStock");
       return;
     }
@@ -240,7 +240,7 @@ export function useProducts() {
         formData.append("name", row.name);
         formData.append("price", String(row.price));
         formData.append("description", row.description || "");
-        formData.append("min_stock", row.min_stock?.toString() || "0");
+        formData.append("min_stock", row.min_stock ?? "0");
         formData.append("composition", JSON.stringify(row.composition || []));
         formData.append("packages", JSON.stringify(row.packages || []));
         formData.append("unitOfMeasureId", row.unity_of_measure?.id || "");
@@ -270,7 +270,7 @@ export function useProducts() {
   }
 
   function handleToggleActive(row: Product) {
-    if (row.active && row.stock !== 0) {
+    if (row.active && Number(row.stock) !== 0) {
       toast.errorToast("products.errors.cannotDeactivateWithStock");
       return;
     }

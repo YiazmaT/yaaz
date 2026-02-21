@@ -36,7 +36,7 @@ export const AddStockDrawer = forwardRef<AddStockDrawerRef, AddStockDrawerProps>
   async function handleSubmit(force: boolean = false) {
     if (stockItems.length === 0) return;
 
-    const hasInvalidQuantity = stockItems.some((item) => item.quantity <= 0);
+    const hasInvalidQuantity = stockItems.some((item) => Number(item.quantity) <= 0);
     if (hasInvalidQuantity) {
       toast.errorToast("products.errors.quantityMustBeGreaterThanZero");
       return;

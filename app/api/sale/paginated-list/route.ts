@@ -66,12 +66,16 @@ export async function GET(req: NextRequest) {
         include: {
           items: {
             include: {
-              product: true,
+              product: {
+                include: {unity_of_measure: {select: {id: true, unity: true}}},
+              },
             },
           },
           packages: {
             include: {
-              package: true,
+              package: {
+                include: {unity_of_measure: {select: {id: true, unity: true}}},
+              },
             },
           },
           client: true,

@@ -25,7 +25,7 @@ export async function DELETE(req: NextRequest) {
     });
 
     if (!product) return error("api.errors.notFound", 404, {id});
-    if (product.stock !== 0) return error("products.errors.cannotDeleteWithStock", 400, {id, name: product.name, stock: product.stock});
+    if (Number(product.stock) !== 0) return error("products.errors.cannotDeleteWithStock", 400, {id, name: product.name, stock: product.stock});
 
     if (product.sale_items.length > 0) {
       const total = await prisma.saleItem.count({where: {product_id: id, tenant_id: auth.tenant_id}});

@@ -4,7 +4,7 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {checkStockWarnings, decrementStock} from "@/src/lib/sale-stock";
 import {ConvertQuoteDto} from "@/src/pages-content/sales/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/sale/convert-quote";
 
@@ -31,14 +31,14 @@ export async function PUT(req: NextRequest) {
       id: item.product.id,
       name: item.product.name,
       stock: new Decimal(item.product.stock).toNumber(),
-      quantity: item.quantity,
+      quantity: Number(item.quantity),
     }));
 
     const packageStockItems = existingSale.packages.map((pkg) => ({
       id: pkg.package.id,
       name: pkg.package.name,
       stock: new Decimal(pkg.package.stock).toNumber(),
-      quantity: pkg.quantity,
+      quantity: Number(pkg.quantity),
     }));
 
     const {stockWarnings, packageWarnings, hasWarnings} = checkStockWarnings(stockItems, packageStockItems);
@@ -62,8 +62,8 @@ export async function PUT(req: NextRequest) {
 
       await decrementStock(
         tx,
-        existingSale.items.map((i) => ({id: i.product_id, quantity: i.quantity})),
-        existingSale.packages.map((p) => ({id: p.package_id, quantity: p.quantity})),
+        existingSale.items.map((i) => ({id: i.product_id, quantity: Number(i.quantity)})),
+        existingSale.packages.map((p) => ({id: p.package_id, quantity: Number(p.quantity)})),
       );
 
       return updatedSale;

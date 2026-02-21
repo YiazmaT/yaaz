@@ -165,27 +165,27 @@ export function useSales() {
       return;
     }
 
-    const hasZeroQuantityItem = data.items.some((item) => item.quantity <= 0);
+    const hasZeroQuantityItem = data.items.some((item) => Number(item.quantity) <= 0);
     const hasZeroQuantityPackage = data.packages.some((pkg) => Number(pkg.quantity) <= 0);
     if (hasZeroQuantityItem || hasZeroQuantityPackage) {
       toast.errorToast("sales.errors.zeroQuantity");
       return;
     }
 
-    const cleanItems: {product_id: string; quantity: number; unit_price: string}[] = [];
+    const cleanItems: {product_id: string; quantity: string; unit_price: string}[] = [];
     for (let i = 0; i < data.items.length; i++) {
       cleanItems.push({
         product_id: String(data.items[i].product.id),
-        quantity: Number(data.items[i].quantity),
+        quantity: data.items[i].quantity,
         unit_price: data.items[i].unit_price || data.items[i].product.price.toString(),
       });
     }
 
-    const cleanPackages: {package_id: string; quantity: number}[] = [];
+    const cleanPackages: {package_id: string; quantity: string}[] = [];
     for (let i = 0; i < data.packages.length; i++) {
       cleanPackages.push({
         package_id: String(data.packages[i].package.id),
-        quantity: Math.floor(Number(data.packages[i].quantity)),
+        quantity: data.packages[i].quantity,
       });
     }
 

@@ -34,12 +34,12 @@ export async function PUT(req: NextRequest) {
 
     const oldItemsMap = new Map<string, number>();
     for (const item of existingSale.items) {
-      oldItemsMap.set(item.product_id, item.quantity);
+      oldItemsMap.set(item.product_id, Number(item.quantity));
     }
 
     const oldPackagesMap = new Map<string, number>();
     for (const pkg of existingSale.packages) {
-      oldPackagesMap.set(pkg.package_id, pkg.quantity);
+      oldPackagesMap.set(pkg.package_id, Number(pkg.quantity));
     }
 
     const productStockChanges: {productId: string; change: number}[] = [];
@@ -48,7 +48,7 @@ export async function PUT(req: NextRequest) {
     if (hasItems) {
       for (const item of items) {
         const oldQty = oldItemsMap.get(item.product_id) || 0;
-        const newQty = item.quantity;
+        const newQty = Number(item.quantity);
         const change = oldQty - newQty;
         if (change !== 0) {
           productStockChanges.push({productId: item.product_id, change});
@@ -64,7 +64,7 @@ export async function PUT(req: NextRequest) {
     if (hasPackages) {
       for (const pkg of packages) {
         const oldQty = oldPackagesMap.get(pkg.package_id) || 0;
-        const newQty = pkg.quantity;
+        const newQty = Number(pkg.quantity);
         const change = oldQty - newQty;
         if (change !== 0) {
           packageStockChanges.push({packageId: pkg.package_id, change});

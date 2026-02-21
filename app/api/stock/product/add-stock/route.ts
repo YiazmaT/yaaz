@@ -115,13 +115,13 @@ export async function POST(req: NextRequest) {
       ),
       ...items.map((item) => {
         const product = products.find((p) => p.id === item.productId);
-        const previousStock = product?.stock ?? 0;
+        const previousStock = new Decimal(String(product?.stock ?? 0));
         return prisma.productStockChange.create({
           data: {
             tenant_id: auth.tenant_id,
             product_id: item.productId,
             previous_stock: previousStock,
-            new_stock: previousStock + item.quantity,
+            new_stock: previousStock.plus(item.quantity),
             reason: null,
             creator_id: auth.user.id,
           },

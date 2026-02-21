@@ -4,7 +4,7 @@ import {Box, Button, Grid, TextField, Typography} from "@mui/material";
 import {ImagePreview} from "@/src/components/image-preview";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {RadioGroup} from "@/src/components/form-fields/radio-group";
-import {IntegerInput} from "@/src/components/form-fields/integer-input";
+import {DecimalInput} from "@/src/components/form-fields/decimal-input";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
@@ -15,7 +15,7 @@ import {StockChangeModalProps} from "./types";
 export function StockChangeModal(props: StockChangeModalProps) {
   const [reason, setReason] = useState<string>("");
   const [comment, setComment] = useState<string>("");
-  const [newStock, setNewStock] = useState<number>(0);
+  const [newStock, setNewStock] = useState<string>("0");
   const {item, onClose, onSuccess} = props;
   const {translate} = useTranslate();
   const {stockChangeReasons} = useProductsConstants();
@@ -30,8 +30,9 @@ export function StockChangeModal(props: StockChangeModalProps) {
     }
   }, [item]);
 
+
   function handleClose() {
-    setNewStock(0);
+    setNewStock("0");
     setReason("");
     setComment("");
     onClose();
@@ -65,8 +66,8 @@ export function StockChangeModal(props: StockChangeModalProps) {
     label: r.label,
   }));
 
-  const currentStock = item?.stock ?? 0;
-  const stockDifference = newStock - currentStock;
+  const currentStock = item?.stock ?? "0";
+  const stockDifference = Number(newStock) - Number(currentStock);
   const hasNoChange = stockDifference === 0;
   const isAdding = stockDifference > 0;
 
@@ -84,12 +85,12 @@ export function StockChangeModal(props: StockChangeModalProps) {
 
         <Grid size={12}>
           <Typography variant="body1" color="text.secondary">
-            {translate("products.stockChange.currentStock")}: <strong>{currentStock}</strong>
+            {translate("products.stockChange.currentStock")}: <strong>{Number(currentStock).toLocaleString("pt-BR")}</strong>
           </Typography>
         </Grid>
 
         <Grid size={12}>
-          <IntegerInput label="products.stockChange.newStock" value={newStock} onChange={setNewStock} fullWidth />
+          <DecimalInput label="products.stockChange.newStock" value={newStock} onChange={setNewStock} fullWidth />
         </Grid>
 
         {!hasNoChange && (

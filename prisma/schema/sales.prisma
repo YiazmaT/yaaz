@@ -37,7 +37,7 @@ model SaleItem {
   tenant_id  String  @db.Uuid
   sale_id    String  @db.Uuid
   product_id String  @db.Uuid
-  quantity   Int
+  quantity   Decimal @db.Decimal
   unit_price Decimal @db.Decimal
   tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   sale       Sale    @relation(fields: [sale_id], references: [id], onDelete: Cascade)
@@ -52,7 +52,7 @@ model SalePackage {
   tenant_id  String  @db.Uuid
   sale_id    String  @db.Uuid
   package_id String  @db.Uuid
-  quantity   Int
+  quantity   Decimal @db.Decimal
   tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   sale       Sale    @relation(fields: [sale_id], references: [id], onDelete: Cascade)
   package    Package @relation(fields: [package_id], references: [id], onDelete: Cascade)

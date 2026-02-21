@@ -112,14 +112,14 @@ export async function GET(req: NextRequest) {
       const itemCost = productCost.times(item.quantity);
 
       if (existing) {
-        existing.quantitySold += item.quantity;
+        existing.quantitySold += Number(item.quantity);
         existing.revenue = existing.revenue.plus(itemRevenue);
         existing.cost = existing.cost.plus(itemCost);
       } else {
         productMap.set(product.id, {
           productId: product.id,
           productName: product.name,
-          quantitySold: item.quantity,
+          quantitySold: Number(item.quantity),
           revenue: itemRevenue,
           cost: itemCost,
         });

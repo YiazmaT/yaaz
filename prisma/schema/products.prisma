@@ -19,8 +19,8 @@ model Product {
   description          String?
   image                String?
   unit_of_measure_id   String?              @db.Uuid
-  stock                Int                  @default(0)
-  min_stock            Int                  @default(0)
+  stock                Decimal              @default(0) @db.Decimal
+  min_stock            Decimal              @default(0) @db.Decimal
   display_landing_page Boolean              @default(false)
   active               Boolean              @default(true)
   files                String[]             @default([])
@@ -78,8 +78,8 @@ model ProductStockChange {
   id             String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenant_id      String                    @db.Uuid
   product_id     String                    @db.Uuid
-  previous_stock Int
-  new_stock      Int
+  previous_stock Decimal                   @db.Decimal
+  new_stock      Decimal                   @db.Decimal
   reason         ProductStockChangeReason?
   comment        String?
   tenant         Tenant                    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)

@@ -1,12 +1,12 @@
 export interface SaleItemDto {
   product_id: string;
-  quantity: number;
+  quantity: string;
   unit_price: string;
 }
 
 export interface SalePackageDto {
   package_id: string;
-  quantity: number;
+  quantity: string;
 }
 
 export interface CreateSaleDto {

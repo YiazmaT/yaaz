@@ -2,7 +2,7 @@ import {Product} from "@/src/pages-content/stock/products/types";
 
 export interface ProductItem {
   product: Product;
-  quantity: number;
+  quantity: string;
   unit_price?: string;
 }
 
@@ -17,7 +17,7 @@ export interface ProductsSelectorProps {
 
 export interface ProductRowProps {
   item: ProductItem;
-  handleQuantityChange: (productId: string, quantity: number) => void;
+  handleQuantityChange: (productId: string, quantity: string) => void;
   handleRemove: (productId: string) => void;
   disabled?: boolean;
   formatCurrency: (value: number | string | null | undefined, maxDecimals?: number) => string;

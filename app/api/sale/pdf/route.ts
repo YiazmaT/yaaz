@@ -52,13 +52,13 @@ export async function GET(req: NextRequest) {
         <td>${item.product.name}</td>
         <td class="center">${item.quantity}</td>
         <td class="right">${formatCurrency(Number(item.unit_price), 2, currency)}</td>
-        <td class="right">${formatCurrency(Number(item.unit_price) * item.quantity, 2, currency)}</td>
+        <td class="right">${formatCurrency(Number(item.unit_price) * Number(item.quantity), 2, currency)}</td>
       </tr>
     `,
       )
       .join("");
 
-    const itemsTotal = sale.items.reduce((acc, item) => acc + Number(item.unit_price) * item.quantity, 0);
+    const itemsTotal = sale.items.reduce((acc, item) => acc + Number(item.unit_price) * Number(item.quantity), 0);
 
     let packagesSection = "";
     if (sale.packages.length > 0) {

@@ -29,7 +29,7 @@ export interface DeleteProductDto {
 
 export interface ProductStockItem {
   productId: string;
-  quantity: number;
+  quantity: string;
 }
 
 export interface AddProductStockDto {
@@ -57,7 +57,7 @@ export interface PackageStockWarning {
 
 export interface StockChangeDto {
   productId: string;
-  newStock: number;
+  newStock: string;
   reason: ProductStockChangeReason;
   comment?: string;
 }
