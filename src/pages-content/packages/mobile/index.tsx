@@ -34,7 +34,7 @@ export function MobileView(props: MobileViewProps) {
             {!item.active && <Chip label={translate("packages.inactive")} size="small" color="error" />}
           </Box>
           <Box sx={{...flexGenerator("c"), minWidth: 0}}>
-            <Typography variant="subtitle1" fontWeight={600} noWrap>
+            <Typography variant="subtitle1" fontWeight={600}>
               {buildName(item)}
             </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
