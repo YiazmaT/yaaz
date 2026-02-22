@@ -820,8 +820,11 @@
     "filters": {
       "showInactives": "Mostrar unidades inativas"
     },
+    "deactivateInstead": "Esta unidade de medida está em uso e não pode ser excluída. Deseja desativá-la em vez disso?",
+    "totalDependencies": "Total de registros vinculados: ",
     "errors": {
-      "alreadyExists": "Já existe uma unidade de medida com este nome."
+      "alreadyExists": "Já existe uma unidade de medida com este nome.",
+      "inUse": "Esta unidade de medida está em uso e não pode ser excluída."
     }
   }
 }

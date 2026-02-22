@@ -2,8 +2,10 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useQueryClient} from "@tanstack/react-query";
+import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
 import {UnityOfMeasure, UnityOfMeasureFilters} from "./types";
 import {UnityOfMeasureFormValues, useUnityOfMeasureFormConfig} from "./form-config";
@@ -16,6 +18,7 @@ export function useUnityOfMeasure() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [filters, setFilters] = useState<UnityOfMeasureFilters>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const {translate} = useTranslate();
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useUnityOfMeasureFormConfig();
   const api = useApi();
@@ -41,6 +44,25 @@ export function useUnityOfMeasure() {
 
   function refreshTable() {
     queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
+  function buildDependenciesContent(data?: {products: string[]; packages: string[]; ingredients: string[]; total: number}) {
+    const allNames = [...(data?.products ?? []), ...(data?.packages ?? []), ...(data?.ingredients ?? [])];
+    if (!allNames.length) return undefined;
+    return (
+      <Box sx={{marginTop: 1, width: "100%"}}>
+        <Box>
+          {allNames.map((name, i) => (
+            <Typography key={i} variant="body2" sx={{marginY: 0.5}}>
+              · {name}
+            </Typography>
+          ))}
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{marginTop: 1}}>
+          {`${translate("unityOfMeasure.totalDependencies")}${data?.total}`}
+        </Typography>
+      </Box>
+    );
   }
 
   async function submit(data: UnityOfMeasureFormValues) {
@@ -105,6 +127,34 @@ export function useUnityOfMeasure() {
           onSuccess: () => {
             toast.successToast("unityOfMeasure.deleteSuccess");
             refreshTable();
+          },
+          onError: (error, data) => {
+            if (error === "unityOfMeasure.errors.inUse") {
+              const content = buildDependenciesContent(data);
+              if (row.active) {
+                showConfirmModal({
+                  message: "unityOfMeasure.deactivateInstead",
+                  content,
+                  onConfirm: async () => {
+                    await api.fetch("PUT", "/api/stock/unity-of-measure/toggle-active", {
+                      body: {id: row.id},
+                      onSuccess: () => {
+                        toast.successToast("unityOfMeasure.deactivateSuccess");
+                        refreshTable();
+                      },
+                    });
+                  },
+                });
+              } else {
+                showConfirmModal({
+                  message: "unityOfMeasure.errors.inUse",
+                  content,
+                  hideCancel: true,
+                });
+              }
+              return true;
+            }
+            return false;
           },
         });
       },
