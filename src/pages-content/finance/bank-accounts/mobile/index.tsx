@@ -75,6 +75,7 @@ export function BankAccountsMobile() {
         renderRow={renderRow}
         onEdit={bankAccounts.handleEdit}
         hideEdit={(row) => !row.active}
+        onDelete={bankAccounts.handleDelete}
         filters={bankAccounts.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<BankAccountsFiltersComponent onFilterChange={bankAccounts.handleFilterChange} />}
       />

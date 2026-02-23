@@ -2,8 +2,10 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useQueryClient} from "@tanstack/react-query";
+import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
 import {BankAccountFormValues, useBankAccountFormConfig} from "./form-config";
 import {useBankAccountsTableConfig} from "./desktop/table-config";
@@ -17,6 +19,7 @@ export function useBankAccounts() {
   const [filters, setFilters] = useState<BankAccountsFilters>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [statementAccount, setStatementAccount] = useState<BankAccount | null>(null);
+  const {translate} = useTranslate();
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useBankAccountFormConfig();
   const api = useApi();
@@ -38,6 +41,7 @@ export function useBankAccounts() {
     onEdit: (row) => handleEdit(row),
     onToggleActive: (row) => handleToggleActive(row),
     onStatement: (row) => handleStatement(row),
+    onDelete: (row) => handleDelete(row),
   });
 
   function refreshTable() {
@@ -121,6 +125,60 @@ export function useBankAccounts() {
     setStatementAccount(null);
   }
 
+  function buildStatementContent(data?: {transactionCount: number}) {
+    if (!data) return undefined;
+    return (
+      <Box sx={{marginTop: 1, width: "100%"}}>
+        <Typography variant="body2" sx={{marginY: 0.5}}>
+          · {translate("finance.bank.usedInTransactions")}: {data.transactionCount}
+        </Typography>
+      </Box>
+    );
+  }
+
+  function handleDelete(row: BankAccount) {
+    showConfirmModal({
+      message: "finance.bank.deleteConfirm",
+      onConfirm: async () => {
+        await api.fetch("DELETE", "/api/finance/bank-account/delete", {
+          body: {id: row.id},
+          onSuccess: () => {
+            toast.successToast("finance.bank.deleteSuccess");
+            refreshTable();
+          },
+          onError: (error, data) => {
+            if (error === "finance.bank.errors.inUse") {
+              const content = buildStatementContent(data);
+              if (row.active) {
+                showConfirmModal({
+                  message: "finance.bank.deactivateInstead",
+                  content,
+                  onConfirm: async () => {
+                    await api.fetch("PUT", "/api/finance/bank-account/toggle-active", {
+                      body: {id: row.id},
+                      onSuccess: () => {
+                        toast.successToast("finance.bank.deactivateSuccess");
+                        refreshTable();
+                      },
+                    });
+                  },
+                });
+              } else {
+                showConfirmModal({
+                  message: "finance.bank.errors.inUse",
+                  content,
+                  hideCancel: true,
+                });
+              }
+              return true;
+            }
+            return false;
+          },
+        });
+      },
+    });
+  }
+
   return {
     formType,
     showDrawer,
@@ -133,6 +191,7 @@ export function useBankAccounts() {
     handleCreate,
     handleEdit,
     handleToggleActive,
+    handleDelete,
     filters,
     handleFilterChange,
     statementAccount,

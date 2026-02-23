@@ -673,10 +673,15 @@
         "clearTooltip": "Limpar Filtros",
         "showInactives": "Mostrar contas inativas"
       },
+      "deleteConfirm": "Tem certeza que deseja excluir esta conta bancária?",
+      "deleteSuccess": "Conta bancária excluída com sucesso!",
+      "deactivateInstead": "Esta conta possui transações registradas e não pode ser excluída. Deseja desativá-la em vez disso?",
+      "usedInTransactions": "Transações registradas",
       "errors": {
         "nameAlreadyExists": "Ja existe uma conta com este nome.",
         "cannotDeleteBillTransaction": "Nao e possivel excluir uma transacao vinculada a uma conta a pagar.",
-        "amountMustBePositive": "O valor deve ser maior que zero."
+        "amountMustBePositive": "O valor deve ser maior que zero.",
+        "inUse": "Esta conta possui transações e não pode ser excluída."
       }
     },
     "bills": {

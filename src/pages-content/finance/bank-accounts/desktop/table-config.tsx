@@ -45,6 +45,7 @@ export function useBankAccountsTableConfig(props: BankAccountsTableConfigProps) 
             row={row}
             onEdit={props.onEdit}
             hideEdit={(r) => !r.active}
+            onDelete={props.onDelete}
             customActions={[
               {
                 icon: () => <ReceiptLongIcon fontSize="small" />,

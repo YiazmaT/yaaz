@@ -7,3 +7,7 @@ export interface UpdateBankAccountDto {
   id: string;
   name: string;
 }
+
+export interface DeleteBankAccountDto {
+  id: string;
+}
