@@ -599,7 +599,7 @@
       "bills": "Contas a Pagar",
       "bank": "Contas Bancárias",
       "categories": "Categorias",
-      "nfe": "Notas Fiscais"
+      "nfe": "Notas Fiscais de Entrada"
     },
     "categories": {
       "title": "Categorias",
@@ -791,7 +791,7 @@
         "type": "Tipo",
         "name": "Nome",
         "quantity": "Quantidade",
-        "unitPrice": "Preço Unit.",
+        "unitPrice": "Preço Unitário",
         "totalPrice": "Total",
         "noItems": "Nenhum item adicionado. Selecione insumos, produtos ou embalagens acima."
       },

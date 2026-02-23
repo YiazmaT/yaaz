@@ -63,7 +63,7 @@ export function MenuItems(props: MenuItemsProps) {
                 }}
                 sx={{
                   ...flexGenerator("r.center.center"),
-                  height: "48px",
+                  minHeight: "48px",
                   paddingLeft: 2,
                   paddingRight: 2,
                 }}
@@ -80,7 +80,7 @@ export function MenuItems(props: MenuItemsProps) {
                 </ListItemIcon>
                 <ListItemText
                   primary={layout.translate(item.name)}
-                  sx={{overflow: "hidden", whiteSpace: "nowrap", transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"}}
+                  sx={{overflow: "hidden", transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"}}
                 />
                 {(!isDesktop || !layout.isCollapsed) && (isExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />)}
               </ListItemButton>
@@ -106,7 +106,7 @@ export function MenuItems(props: MenuItemsProps) {
                         onClick={onNavigate}
                         sx={{
                           ...flexGenerator("r.center.center"),
-                          height: "40px",
+                          minHeight: "40px",
                           paddingLeft: 1.5,
                           paddingRight: 1.5,
                         }}
@@ -124,7 +124,7 @@ export function MenuItems(props: MenuItemsProps) {
                         <ListItemText
                           primary={layout.translate(child.name)}
                           slotProps={{primary: {variant: "body2"}}}
-                          sx={{overflow: "hidden", whiteSpace: "nowrap"}}
+                          sx={{overflow: "hidden"}}
                         />
                       </ListItemButton>
                     </ListItem>
@@ -148,7 +148,7 @@ export function MenuItems(props: MenuItemsProps) {
             onClick={onNavigate}
             sx={{
               ...flexGenerator("r.center.center"),
-              height: "48px",
+              minHeight: "48px",
               paddingLeft: 2,
               paddingRight: 2,
             }}
@@ -165,7 +165,7 @@ export function MenuItems(props: MenuItemsProps) {
             </ListItemIcon>
             <ListItemText
               primary={layout.translate(item.name)}
-              sx={{overflow: "hidden", whiteSpace: "nowrap", transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"}}
+              sx={{overflow: "hidden", transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"}}
             />
           </ListItemButton>
         </ListItem>
