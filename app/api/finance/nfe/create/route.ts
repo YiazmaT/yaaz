@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         code: nextCode,
         description,
         supplier: supplier || null,
-        nfe_number: nfeNumber || null,
+        nfe_number: nfeNumber,
         date: new Date(date),
         total_amount: totalAmount.toDecimalPlaces(2).toString(),
         file_url: fileUrl,

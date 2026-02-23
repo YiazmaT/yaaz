@@ -87,7 +87,7 @@ export async function PUT(req: NextRequest) {
         data: {
           description,
           supplier: supplier || null,
-          nfe_number: nfeNumber || null,
+          nfe_number: nfeNumber,
           date: new Date(date),
           total_amount: totalAmount.toDecimalPlaces(2).toString(),
           last_edit_date: new Date(),
