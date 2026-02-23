@@ -10,3 +10,7 @@ export interface UpdateCategoryDto {
 export interface ToggleCategoryActiveDto {
   id: string;
 }
+
+export interface DeleteCategoryDto {
+  id: string;
+}

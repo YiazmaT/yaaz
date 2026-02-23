@@ -621,8 +621,15 @@
         "clearTooltip": "Limpar Filtros",
         "showInactives": "Mostrar categorias inativas"
       },
+      "deleteConfirm": "Tem certeza que deseja excluir esta categoria?",
+      "deleteSuccess": "Categoria excluída com sucesso!",
+      "deactivateInstead": "Esta categoria está em uso e não pode ser excluída. Deseja desativá-la em vez disso?",
+      "usedInBills": "Contas a pagar",
+      "usedInTransactions": "Transações bancárias",
+      "totalUsage": "Total de registros: ",
       "errors": {
-        "nameAlreadyExists": "Já existe uma categoria com este nome."
+        "nameAlreadyExists": "Já existe uma categoria com este nome.",
+        "inUse": "Esta categoria está em uso e não pode ser excluída."
       }
     },
     "bank": {

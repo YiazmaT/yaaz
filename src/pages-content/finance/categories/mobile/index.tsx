@@ -56,6 +56,7 @@ export function CategoriesMobile() {
         renderRow={renderRow}
         onEdit={categories.handleEdit}
         hideEdit={(row) => !row.active}
+        onDelete={categories.handleDelete}
         filters={categories.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<CategoriesFiltersComponent onFilterChange={categories.handleFilterChange} />}
       />

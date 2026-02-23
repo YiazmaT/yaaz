@@ -33,6 +33,7 @@ export function useCategoriesTableConfig(props: CategoriesTableConfigProps) {
             row={row}
             onEdit={props.onEdit}
             hideEdit={(r) => !r.active}
+            onDelete={props.onDelete}
             customActions={[
               {
                 icon: (r) =>
