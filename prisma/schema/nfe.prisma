@@ -4,7 +4,7 @@ model Nfe {
   code                Int
   description         String
   supplier            String?
-  nfe_number          String?
+  nfe_number          String   @default("")
   date                DateTime
   total_amount        Decimal      @db.Decimal
   file_url            String?

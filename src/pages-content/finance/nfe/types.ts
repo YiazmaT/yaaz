@@ -5,7 +5,7 @@ export interface Nfe {
   code: number;
   description: string;
   supplier?: string;
-  nfe_number?: string;
+  nfe_number: string;
   date: string;
   total_amount: number;
   file_url?: string;

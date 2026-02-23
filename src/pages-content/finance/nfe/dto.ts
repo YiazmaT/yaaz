@@ -8,7 +8,7 @@ export interface NfeItemPayload {
 export interface NfeCreatePayload {
   description: string;
   supplier?: string;
-  nfeNumber?: string;
+  nfeNumber: string;
   date: string;
   items: NfeItemPayload[];
 }

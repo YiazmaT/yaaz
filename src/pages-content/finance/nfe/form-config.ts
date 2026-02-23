@@ -26,6 +26,7 @@ export function useNfeFormConfig() {
 
   const schema = yup.object().shape({
     description: yup.string().required().label(translate("finance.nfe.fields.description")),
+    nfeNumber: yup.string().required().label(translate("finance.nfe.fields.nfeNumber")),
     date: yup.string().required().label(translate("finance.nfe.fields.date")),
     items: yup
       .array()

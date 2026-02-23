@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File | null;
     const {description, supplier, nfeNumber, date, items} = jsonData;
 
-    if (!description || !date || !items || !Array.isArray(items) || items.length === 0) {
+    if (!description || !nfeNumber || !date || !items || !Array.isArray(items) || items.length === 0) {
       return error("api.errors.missingRequiredFields", 400);
     }
 

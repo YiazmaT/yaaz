@@ -11,7 +11,7 @@ export async function PUT(req: NextRequest) {
   return withAuth(LogModule.NFE, ROUTE, async ({auth, success, error}) => {
     const {id, description, supplier, nfeNumber, date, items}: NfeUpdatePayload = await req.json();
 
-    if (!id || !description || !date || !items || !Array.isArray(items) || items.length === 0) {
+    if (!id || !description || !nfeNumber || !date || !items || !Array.isArray(items) || items.length === 0) {
       return error("api.errors.missingRequiredFields", 400);
     }
 
