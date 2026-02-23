@@ -70,3 +70,17 @@ export interface StockAlertRow {
   stock: number;
   min_stock: number;
 }
+
+export interface BillAlertItem {
+  id: string;
+  code: number;
+  description: string;
+  amount: number;
+  due_date: string;
+  category: {name: string} | null;
+}
+
+export interface BillsAlertsResponse {
+  overdue: BillAlertItem[];
+  dueToday: BillAlertItem[];
+}

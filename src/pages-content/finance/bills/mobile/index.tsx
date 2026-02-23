@@ -8,7 +8,7 @@ import UndoIcon from "@mui/icons-material/Undo";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
-import {formatDate} from "@/src/lib/format-date";
+import {formatDate} from "@/src/utils/format-date";
 import {useFinanceConstants} from "../constants";
 import {isOverdue} from "../utils";
 import {BillForm} from "../components/form";
@@ -16,7 +16,7 @@ import {BillsFilters} from "../components/filters";
 import {PayModal} from "../components/pay-modal";
 import {ReceiptModal} from "../components/receipt-modal";
 import {useBills} from "../use-bills";
-import { Bill } from "../types";
+import {Bill} from "../types";
 
 export function BillsMobile() {
   const {translate} = useTranslate();

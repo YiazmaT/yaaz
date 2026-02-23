@@ -3,7 +3,7 @@ import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
-import {formatDate} from "@/src/lib/format-date";
+import {formatDate} from "@/src/utils/format-date";
 import {useFinanceConstants} from "../constants";
 import {isOverdue} from "../utils";
 import PaymentIcon from "@mui/icons-material/Payment";

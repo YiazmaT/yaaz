@@ -6,7 +6,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
-import {formatDate} from "@/src/lib/format-date";
+import {formatDate} from "@/src/utils/format-date";
 import {Nfe} from "../types";
 import {NfeModal} from "../components/nfe-modal";
 import {NfeFileModal} from "../components/file-modal";

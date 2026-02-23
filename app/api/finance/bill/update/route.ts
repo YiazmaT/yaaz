@@ -4,6 +4,8 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
+import {parseDateUTC} from "@/src/utils/parse-date";
+
 const ROUTE = "/api/finance/bill/update";
 
 export async function PUT(req: NextRequest) {
@@ -22,7 +24,7 @@ export async function PUT(req: NextRequest) {
         description,
         category_id: categoryId || null,
         ...(amount !== undefined && {amount: parseFloat(amount)}),
-        ...(dueDate && {due_date: new Date(dueDate)}),
+        ...(dueDate && {due_date: parseDateUTC(dueDate)}),
         last_edit_date: new Date(),
         last_editor_id: auth.user.id,
       },

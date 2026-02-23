@@ -10,7 +10,7 @@ import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useQueryClient} from "@tanstack/react-query";
-import {formatDate} from "@/src/lib/format-date";
+import {formatDate} from "@/src/utils/format-date";
 import {TransactionForm} from "../transaction-form";
 import {StatementDrawerProps} from "./types";
 import {BankTransaction} from "../../types";

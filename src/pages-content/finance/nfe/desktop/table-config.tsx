@@ -10,7 +10,7 @@ import {FormCurrencyInput} from "@/src/components/form-fields/currency-input";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
-import {formatDate} from "@/src/lib/format-date";
+import {formatDate} from "@/src/utils/format-date";
 import {Nfe} from "../types";
 import {NfeFormItem} from "../form-config";
 import {NfeItemsTableConfigProps, NfeTableConfigProps} from "./types";

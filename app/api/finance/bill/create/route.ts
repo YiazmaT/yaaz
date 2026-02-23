@@ -4,6 +4,8 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
+import {parseDateUTC} from "@/src/utils/parse-date";
+
 const ROUTE = "/api/finance/bill/create";
 
 export async function POST(req: NextRequest) {
@@ -23,7 +25,7 @@ export async function POST(req: NextRequest) {
     const totalAmount = new Decimal(amount);
     const installmentAmount = totalAmount.div(count).toDecimalPlaces(2);
     const remainder = totalAmount.minus(installmentAmount.times(count));
-    const firstDueDate = new Date(dueDate);
+    const firstDueDate = parseDateUTC(dueDate);
 
     const bills = [];
     for (let i = 0; i < count; i++) {
