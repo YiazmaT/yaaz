@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const jsonData: NfeCreatePayload = JSON.parse(formData.get("data") as string);
     const file = formData.get("file") as File | null;
-    const {description, supplier, nfeNumber, date, items, stockAdded, bankDeducted, bankAccountId} = jsonData;
+    const {description, supplier, nfeNumber, date, items} = jsonData;
 
-    if (!description || !date || !items || !Array.isArray(items) || items.length === 0 || (bankDeducted && !bankAccountId)) {
+    if (!description || !date || !items || !Array.isArray(items) || items.length === 0) {
       return error("api.errors.missingRequiredFields", 400);
     }
 
@@ -49,9 +49,6 @@ export async function POST(req: NextRequest) {
         date: new Date(date),
         total_amount: totalAmount.toDecimalPlaces(2).toString(),
         file_url: fileUrl,
-        stock_added: !!stockAdded,
-        bank_deducted: !!bankDeducted,
-        bank_account_id: bankDeducted ? bankAccountId : null,
         creator_id: auth.user.id,
         items: {
           create: items.map((item: NfeItemPayload) => {
@@ -71,78 +68,6 @@ export async function POST(req: NextRequest) {
       },
       include: {items: true},
     });
-
-    if (stockAdded) {
-      const ops = [];
-
-      for (const item of items) {
-        const qty = new Decimal(item.quantity);
-        const price = new Decimal(item.unitPrice);
-
-        switch (item.itemType) {
-          case "ingredient":
-            ops.push(prisma.ingredient.update({where: {id: item.itemId, tenant_id: auth.tenant_id}, data: {stock: {increment: qty.toNumber()}}}));
-            ops.push(
-              prisma.ingredientCost.create({
-                data: {
-                  tenant_id: auth.tenant_id,
-                  ingredient_id: item.itemId,
-                  quantity: qty.toString(),
-                  price: price.toString(),
-                  creator_id: auth.user.id,
-                },
-              }),
-            );
-            break;
-          case "product":
-            ops.push(
-              prisma.product.update({where: {id: item.itemId, tenant_id: auth.tenant_id}, data: {stock: {increment: Math.round(qty.toNumber())}}}),
-            );
-            break;
-          case "package":
-            ops.push(prisma.package.update({where: {id: item.itemId, tenant_id: auth.tenant_id}, data: {stock: {increment: qty.toNumber()}}}));
-            ops.push(
-              prisma.packageCost.create({
-                data: {
-                  tenant_id: auth.tenant_id,
-                  package_id: item.itemId,
-                  quantity: qty.toString(),
-                  price: price.toString(),
-                  creator_id: auth.user.id,
-                },
-              }),
-            );
-            break;
-        }
-      }
-
-      if (ops.length > 0) await prisma.$transaction(ops);
-    }
-
-    if (bankDeducted && bankAccountId) {
-      const account = await prisma.bankAccount.findUnique({where: {id: bankAccountId, tenant_id: auth.tenant_id}});
-      if (!account) return error("api.errors.notFound", 404);
-
-      const bankTx = await prisma.bankTransaction.create({
-        data: {
-          tenant_id: auth.tenant_id,
-          bank_account_id: bankAccountId,
-          type: "nfe_payment",
-          amount: totalAmount.toDecimalPlaces(2).toNumber(),
-          description: `NFE #${nextCode} - ${description}`,
-          date: new Date(date),
-          creator_id: auth.user.id,
-        },
-      });
-
-      await prisma.$transaction([
-        prisma.nfe.update({where: {id: nfe.id, tenant_id: auth.tenant_id}, data: {bank_transaction_id: bankTx.id}}),
-        prisma.bankAccount.update({
-          where: {id: bankAccountId, tenant_id: auth.tenant_id},
-          data: {balance: {decrement: totalAmount.toDecimalPlaces(2).toNumber()}},
-        }),
-      ]);
-    }
 
     return success("create", nfe);
   });

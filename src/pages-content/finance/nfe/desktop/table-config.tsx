@@ -1,7 +1,8 @@
-import {Badge, Box, Chip, IconButton, Typography} from "@mui/material";
+import {Badge, Box, IconButton, Typography} from "@mui/material";
 import Decimal from "decimal.js";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DescriptionIcon from "@mui/icons-material/Description";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {CoreTableColumn} from "@/src/components/core-table/types";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
@@ -62,28 +63,16 @@ export function useNfeTableConfig(props: NfeTableConfigProps) {
         render: (row) => row._count?.items ?? 0,
       },
       {
-        field: "stock_added",
-        headerKey: "finance.nfe.fields.addStock",
-        width: "80px",
-        align: "center",
-        render: (row) => (
-          <Chip
-            label={row.stock_added ? translate("global.yes") : translate("global.no")}
-            size="small"
-            color={row.stock_added ? "success" : "default"}
-          />
-        ),
-      },
-      {
         field: "actions",
         headerKey: "global.actions.label",
-        width: "130px",
+        width: "150px",
         align: "center",
         render: (row) => (
           <ActionsColumn
             row={row}
             onEdit={props.onEdit}
             onDelete={props.onDelete}
+            onView={props.onViewDetails}
             customActions={[
               {
                 icon: (r: Nfe) => (

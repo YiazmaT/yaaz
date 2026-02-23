@@ -1,6 +1,6 @@
 "use client";
 import {useRef, useMemo} from "react";
-import {Box, Button, Checkbox, Divider, FormControlLabel, Grid, TableCell, TableRow, Typography} from "@mui/material";
+import {Box, Button, Divider, Grid, TableCell, TableRow, Typography} from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ClearIcon from "@mui/icons-material/Clear";
 import Decimal from "decimal.js";
@@ -9,10 +9,8 @@ import {DefaultTable} from "@/src/components/core-table";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
-import {useApiQuery} from "@/src/hooks/use-api";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {FormDatePicker} from "@/src/components/form-fields/date-picker";
-import {FormDropdown} from "@/src/components/form-fields/dropdown";
 import {IngredientsSelector} from "@/src/components/selectors/ingredients-selector";
 import {ProductsSelector} from "@/src/components/selectors/products-selector";
 import {PackagesSelector} from "@/src/components/selectors/packages-selector";
@@ -21,7 +19,6 @@ import {flexGenerator} from "@/src/utils/flex-generator";
 import {NfeFormItem} from "../../form-config";
 import {useNfeItemsTableConfig} from "../../desktop/table-config";
 import {NfeModalProps} from "./types";
-import {BankAccount} from "../../../bank-accounts/types";
 import {Ingredient} from "@/src/pages-content/stock/ingredients/types";
 import {Package} from "@/src/pages-content/stock/packages/types";
 
@@ -30,17 +27,13 @@ const ACCEPT = "image/*,.pdf";
 export function NfeModal(props: NfeModalProps) {
   const {nfe} = props;
   const {translate} = useTranslate();
-  const {data: accountsData} = useApiQuery<BankAccount[]>({route: "/api/finance/bank-account/list", queryKey: ["/api/finance/bank-account/list"]});
   const formatCurrency = useFormatCurrency();
-  const accounts = accountsData || [];
   const isCreate = nfe.formType === "create";
+  const isView = nfe.formType === "view";
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const file = nfe.watch("file");
   const items = nfe.watch("items");
-  const stockAdded = nfe.watch("stockAdded");
-  const bankDeducted = nfe.watch("bankDeducted");
-  const selectedAccount = nfe.watch("bankAccount") as BankAccount | null;
 
   const {generateItemsConfig} = useNfeItemsTableConfig({
     onRemove: (index) => {
@@ -59,11 +52,6 @@ export function NfeModal(props: NfeModalProps) {
       return sum.plus(new Decimal(qty).times(price));
     }, new Decimal(0));
   }, [items]);
-
-  const balanceAfterDeduction = useMemo(() => {
-    if (!selectedAccount) return null;
-    return Number(selectedAccount.balance) - totalAmount.toNumber();
-  }, [selectedAccount, totalAmount]);
 
   function addItem(option: {id: string; name: string; image?: string | null}, itemType: "ingredient" | "product" | "package") {
     const alreadyExists = items.some((i: NfeFormItem) => i.itemId === option.id && i.itemType === itemType);
@@ -92,6 +80,12 @@ export function NfeModal(props: NfeModalProps) {
     nfe.setValue("file", null);
   }
 
+  function getModalTitle() {
+    if (isCreate) return "finance.nfe.createTitle";
+    if (isView) return "finance.nfe.detailsTitle";
+    return "finance.nfe.editTitle";
+  }
+
   const footerRow =
     items.length > 0 ? (
       <TableRow>
@@ -110,113 +104,94 @@ export function NfeModal(props: NfeModalProps) {
     ) : undefined;
 
   return (
-    <GenericModal title={isCreate ? "finance.nfe.createTitle" : "finance.nfe.editTitle"} open={nfe.showModal} onClose={nfe.closeModal} maxWidth="lg">
+    <GenericModal title={getModalTitle()} open={nfe.showModal} onClose={nfe.closeModal} maxWidth="lg">
       <FormContextProvider control={nfe.control} errors={nfe.errors} formType={nfe.formType}>
         <form id="nfe-form" onSubmit={nfe.handleSubmit(nfe.submit)}>
-          <Grid container spacing={2} sx={{marginTop: 2}}>
-            <FormTextInput fieldName="description" label="finance.nfe.fields.description" size={4} />
-            <FormTextInput fieldName="supplier" label="finance.nfe.fields.supplier" size={3} />
-            <FormTextInput fieldName="nfeNumber" label="finance.nfe.fields.nfeNumber" size={2} />
-            <FormDatePicker fieldName="date" label="finance.nfe.fields.date" size={3} />
-          </Grid>
-
-          <Divider sx={{my: 2}} />
-
-          <Typography variant="subtitle2" sx={{mb: 1}}>
-            {translate("finance.nfe.items.add")}
-          </Typography>
-          <Grid container spacing={2} sx={{mb: 2}}>
-            <Grid size={4}>
-              <IngredientsSelector value={[]} onChange={() => {}} onSelect={(ingredient: Ingredient) => addItem(ingredient, "ingredient")} />
+          <fieldset disabled={isView} style={{border: "none", padding: 0, margin: 0}}>
+            <Grid container spacing={2} sx={{marginTop: 2}}>
+              <FormTextInput fieldName="description" label="finance.nfe.fields.description" size={4} />
+              <FormTextInput fieldName="supplier" label="finance.nfe.fields.supplier" size={3} />
+              <FormTextInput fieldName="nfeNumber" label="finance.nfe.fields.nfeNumber" size={2} />
+              <FormDatePicker fieldName="date" label="finance.nfe.fields.date" size={3} />
             </Grid>
-            <Grid size={4}>
-              <ProductsSelector value={[]} onChange={() => {}} onSelect={(product: Product) => addItem(product, "product")} />
-            </Grid>
-            <Grid size={4}>
-              <PackagesSelector value={[]} onChange={() => {}} onSelect={(pkg: Package) => addItem(pkg, "package")} />
-            </Grid>
-          </Grid>
 
-          <DefaultTable<NfeFormItem> data={items} columns={generateItemsConfig()} emptyMessageKey="finance.nfe.items.noItems" footerRow={footerRow} />
+            <Divider sx={{my: 2}} />
 
-          {nfe.errors.items && typeof nfe.errors.items.message === "string" && (
-            <Typography variant="caption" color="error" sx={{mt: 1, display: "block"}}>
-              {nfe.errors.items.message}
-            </Typography>
-          )}
-
-          <Divider sx={{my: 2}} />
-
-          {isCreate && (
-            <>
-              <input ref={fileInputRef} type="file" accept={ACCEPT} hidden onChange={handleFileSelected} />
-              <Box sx={{mb: 2}}>
-                {file ? (
-                  <Box sx={{...flexGenerator("r.center.space-between"), p: 1, border: "1px solid", borderColor: "divider", borderRadius: 1}}>
-                    <Box sx={{...flexGenerator("r.center"), gap: 1, minWidth: 0}}>
-                      <AttachFileIcon fontSize="small" color="primary" />
-                      <Typography variant="body2" noWrap>
-                        {file.name}
-                      </Typography>
-                    </Box>
-                    <Button size="small" onClick={removeFile} startIcon={<ClearIcon />}>
-                      {translate("global.actions.remove")}
-                    </Button>
-                  </Box>
-                ) : (
-                  <Button variant="outlined" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()} size="small">
-                    {translate("finance.nfe.fields.attachFile")}
-                  </Button>
-                )}
-              </Box>
-            </>
-          )}
-
-          <Grid container spacing={2}>
-            <Grid size={6}>
-              <FormControlLabel
-                control={<Checkbox checked={stockAdded} onChange={(_, checked) => nfe.setValue("stockAdded", checked)} />}
-                label={translate("finance.nfe.fields.addStock")}
-              />
-            </Grid>
-            <Grid size={6}>
-              <FormControlLabel
-                control={<Checkbox checked={bankDeducted} onChange={(_, checked) => nfe.setValue("bankDeducted", checked)} />}
-                label={translate("finance.nfe.fields.deductBank")}
-              />
-            </Grid>
-          </Grid>
-
-          {bankDeducted && (
-            <Grid container spacing={2} sx={{mt: 1}}>
-              <FormDropdown<BankAccount>
-                fieldName="bankAccount"
-                label="finance.nfe.fields.bankAccount"
-                options={accounts}
-                uniqueKey="id"
-                buildLabel={(o) => `${o.name} (${formatCurrency(String(o.balance))})`}
-                size={6}
-              />
-              {balanceAfterDeduction !== null && (
-                <Grid size={6} sx={{display: "flex", alignItems: "center"}}>
-                  <Typography
-                    variant="body2"
-                    sx={{color: balanceAfterDeduction < 0 || Number(selectedAccount?.balance) < 0 ? "error.main" : "text.secondary"}}
-                  >
-                    {translate("finance.nfe.fields.balanceAfterDeduction")}: {formatCurrency(String(balanceAfterDeduction))}
-                  </Typography>
+            {!isView && (
+              <>
+                <Typography variant="subtitle2" sx={{mb: 1}}>
+                  {translate("finance.nfe.items.add")}
+                </Typography>
+                <Grid container spacing={2} sx={{mb: 2}}>
+                  <Grid size={4}>
+                    <IngredientsSelector value={[]} onChange={() => {}} onSelect={(ingredient: Ingredient) => addItem(ingredient, "ingredient")} />
+                  </Grid>
+                  <Grid size={4}>
+                    <ProductsSelector value={[]} onChange={() => {}} onSelect={(product: Product) => addItem(product, "product")} />
+                  </Grid>
+                  <Grid size={4}>
+                    <PackagesSelector value={[]} onChange={() => {}} onSelect={(pkg: Package) => addItem(pkg, "package")} />
+                  </Grid>
                 </Grid>
-              )}
-            </Grid>
-          )}
+              </>
+            )}
+
+            {isView && (
+              <Typography variant="subtitle2" sx={{mb: 1}}>
+                {translate("finance.nfe.fields.items")}
+              </Typography>
+            )}
+
+            <DefaultTable<NfeFormItem> data={items} columns={generateItemsConfig()} emptyMessageKey="finance.nfe.items.noItems" footerRow={footerRow} />
+
+            {nfe.errors.items && typeof nfe.errors.items.message === "string" && (
+              <Typography variant="caption" color="error" sx={{mt: 1, display: "block"}}>
+                {nfe.errors.items.message}
+              </Typography>
+            )}
+
+            {isCreate && (
+              <>
+                <Divider sx={{my: 2}} />
+                <input ref={fileInputRef} type="file" accept={ACCEPT} hidden onChange={handleFileSelected} />
+                <Box sx={{mb: 2}}>
+                  {file ? (
+                    <Box sx={{...flexGenerator("r.center.space-between"), p: 1, border: "1px solid", borderColor: "divider", borderRadius: 1}}>
+                      <Box sx={{...flexGenerator("r.center"), gap: 1, minWidth: 0}}>
+                        <AttachFileIcon fontSize="small" color="primary" />
+                        <Typography variant="body2" noWrap>
+                          {file.name}
+                        </Typography>
+                      </Box>
+                      <Button size="small" onClick={removeFile} startIcon={<ClearIcon />}>
+                        {translate("global.actions.remove")}
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Button variant="outlined" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()} size="small">
+                      {translate("finance.nfe.fields.attachFile")}
+                    </Button>
+                  )}
+                </Box>
+              </>
+            )}
+          </fieldset>
 
           <Box sx={{...flexGenerator("r.center.center"), gap: 1, mt: 3}}>
-            <Button variant="contained" type="submit" form="nfe-form">
-              {translate("global.confirm")}
-            </Button>
-            <Button onClick={nfe.closeModal} variant="outlined">
-              {translate("global.cancel")}
-            </Button>
+            {isView ? (
+              <Button onClick={nfe.closeModal} variant="outlined">
+                {translate("global.close")}
+              </Button>
+            ) : (
+              <>
+                <Button variant="contained" type="submit" form="nfe-form">
+                  {translate("global.confirm")}
+                </Button>
+                <Button onClick={nfe.closeModal} variant="outlined">
+                  {translate("global.cancel")}
+                </Button>
+              </>
+            )}
           </Box>
         </form>
       </FormContextProvider>

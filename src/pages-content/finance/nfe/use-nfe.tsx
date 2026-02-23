@@ -39,6 +39,7 @@ export function useNfe() {
     onEdit: (row) => handleEdit(row),
     onDelete: (row) => handleDelete(row),
     onViewFile: (row) => handleViewFile(row),
+    onViewDetails: (row) => handleViewDetails(row),
   });
 
   function refreshTable() {
@@ -58,9 +59,6 @@ export function useNfe() {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
       })),
-      stockAdded: data.stockAdded,
-      bankDeducted: data.bankDeducted,
-      bankAccountId: data.bankAccount?.id || null,
     };
 
     if (formType === "create") {
@@ -105,7 +103,7 @@ export function useNfe() {
     setShowModal(true);
   }
 
-  function handleEdit(row: Nfe) {
+  function loadNfeIntoForm(row: Nfe) {
     setSelectedNfeId(row.id);
     reset({
       description: row.description,
@@ -121,12 +119,19 @@ export function useNfe() {
         quantity: String(item.quantity),
         unitPrice: String(item.unit_price),
       })),
-      stockAdded: row.stock_added,
-      bankDeducted: row.bank_deducted,
-      bankAccount: row.bank_account || null,
       file: null,
     });
+  }
+
+  function handleEdit(row: Nfe) {
+    loadNfeIntoForm(row);
     setFormType("edit");
+    setShowModal(true);
+  }
+
+  function handleViewDetails(row: Nfe) {
+    loadNfeIntoForm(row);
+    setFormType("view");
     setShowModal(true);
   }
 
@@ -169,6 +174,7 @@ export function useNfe() {
     closeModal,
     handleCreate,
     handleEdit,
+    handleViewDetails,
     handleDelete,
     handleViewFile,
     refreshTable,

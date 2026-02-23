@@ -1,5 +1,4 @@
 import {UnityOfMeasure} from "../../stock/unity-of-measure/types";
-import {BankAccount} from "../bank-accounts/types";
 
 export interface Nfe {
   id: string;
@@ -10,11 +9,6 @@ export interface Nfe {
   date: string;
   total_amount: number;
   file_url?: string;
-  stock_added: boolean;
-  bank_deducted: boolean;
-  bank_account_id?: string;
-  bank_account?: BankAccount;
-  bank_transaction_id?: string;
   active: boolean;
   items: NfeItem[];
   _count?: {items: number};

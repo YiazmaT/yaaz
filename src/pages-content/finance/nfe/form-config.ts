@@ -1,7 +1,6 @@
 import {useTranslate} from "@/src/contexts/translation-context";
 import * as yup from "yup";
 import moment from "moment";
-import { BankAccount } from "../bank-accounts/types";
 
 export interface NfeFormItem {
   id: string;
@@ -19,9 +18,6 @@ export interface NfeFormValues {
   nfeNumber: string;
   date: string;
   items: NfeFormItem[];
-  stockAdded: boolean;
-  bankDeducted: boolean;
-  bankAccount: BankAccount | null;
   file: File | null;
 }
 
@@ -46,13 +42,6 @@ export function useNfeFormConfig() {
             .test("positive", translate("finance.nfe.errors.pricePositive"), (v) => Number(v) > 0),
         }),
       ),
-    bankAccount: yup
-      .object()
-      .nullable()
-      .when("bankDeducted", {
-        is: true,
-        then: (s) => s.required(translate("finance.nfe.errors.bankAccountRequired")),
-      }),
   });
 
   const defaultValues: NfeFormValues = {
@@ -61,9 +50,6 @@ export function useNfeFormConfig() {
     nfeNumber: "",
     date: moment().format("YYYY-MM-DD"),
     items: [],
-    stockAdded: false,
-    bankDeducted: false,
-    bankAccount: null,
     file: null,
   };
 

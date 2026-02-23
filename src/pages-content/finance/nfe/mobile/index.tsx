@@ -1,8 +1,9 @@
 "use client";
 import {ReactNode} from "react";
-import {Badge, Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
+import {Badge, Box, CardContent, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DescriptionIcon from "@mui/icons-material/Description";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
@@ -31,10 +32,6 @@ export function NfeMobile() {
                 {item.supplier}
               </Typography>
             )}
-            <Box sx={{display: "flex", gap: 1, mt: 0.5, alignItems: "center"}}>
-              {item.stock_added && <Chip label={translate("finance.nfe.fields.addStock")} size="small" color="success" />}
-              {item.bank_deducted && <Chip label={translate("finance.nfe.fields.deductBank")} size="small" color="warning" />}
-            </Box>
           </Box>
           <Box sx={{textAlign: "right"}}>
             <Typography variant="body1" fontWeight={600}>
@@ -46,6 +43,17 @@ export function NfeMobile() {
           </Box>
         </Box>
         <Box sx={{display: "flex", justifyContent: "flex-end", gap: 0.5, mt: 1, pt: 1, borderTop: `1px solid ${theme.palette.divider}`}}>
+          <Tooltip title={translate("global.actions.view")}>
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                nfe.handleViewDetails(item);
+              }}
+            >
+              <VisibilityIcon fontSize="small" color="action" />
+            </IconButton>
+          </Tooltip>
           <Tooltip title={translate("finance.nfe.fields.file")}>
             <IconButton
               size="small"

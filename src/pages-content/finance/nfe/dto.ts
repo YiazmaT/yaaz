@@ -11,9 +11,6 @@ export interface NfeCreatePayload {
   nfeNumber?: string;
   date: string;
   items: NfeItemPayload[];
-  stockAdded?: boolean;
-  bankDeducted?: boolean;
-  bankAccountId?: string;
 }
 
 export interface NfeUpdatePayload extends NfeCreatePayload {
