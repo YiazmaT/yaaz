@@ -109,8 +109,8 @@ export function NfeModal(props: NfeModalProps) {
         <form id="nfe-form" onSubmit={nfe.handleSubmit(nfe.submit)}>
           <Grid container spacing={2} sx={{marginTop: 2}}>
             <FormTextInput fieldName="description" label="finance.nfe.fields.description" size={4} />
-            <FormTextInput fieldName="supplier" label="finance.nfe.fields.supplier" size={3} />
             <FormTextInput fieldName="nfeNumber" label="finance.nfe.fields.nfeNumber" size={2} />
+            <FormTextInput fieldName="supplier" label="finance.nfe.fields.supplier" size={3} />
             <FormDatePicker fieldName="date" label="finance.nfe.fields.date" size={3} />
           </Grid>
 
@@ -141,7 +141,12 @@ export function NfeModal(props: NfeModalProps) {
             </Typography>
           )}
 
-          <DefaultTable<NfeFormItem> data={items} columns={generateItemsConfig(isDetails)} emptyMessageKey="finance.nfe.items.noItems" footerRow={footerRow} />
+          <DefaultTable<NfeFormItem>
+            data={items}
+            columns={generateItemsConfig(isDetails)}
+            emptyMessageKey="finance.nfe.items.noItems"
+            footerRow={footerRow}
+          />
 
           {nfe.errors.items && typeof nfe.errors.items.message === "string" && (
             <Typography variant="caption" color="error" sx={{mt: 1, display: "block"}}>
