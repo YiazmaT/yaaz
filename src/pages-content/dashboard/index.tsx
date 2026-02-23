@@ -1,7 +1,6 @@
 "use client";
 import {Box, Grid, Typography} from "@mui/material";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {WelcomeCard} from "./components/welcome-card";
 import {StockAlertsCard} from "./components/stock-alerts-card";
 import {TodaySalesCard} from "./components/today-sales-card";
 import {WeeklySalesCard} from "./components/weekly-sales-card";
@@ -19,10 +18,7 @@ export function DashboardScreen() {
 
       <Grid container spacing={3}>
         <Grid size={{xs: 12, md: 3}}>
-          <Box sx={{display: "flex", flexDirection: "column", gap: 3, height: "100%"}}>
-            <WelcomeCard />
-            <StockAlertsCard />
-          </Box>
+          <StockAlertsCard />
         </Grid>
         <Grid size={{xs: 12, md: 3}}>
           <TodaySalesCard />
