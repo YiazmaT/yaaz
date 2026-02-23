@@ -6,7 +6,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/finance/bank-account/paginated-list";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success}) => {
+  return withAuth(LogModule.BANK_ACCOUNT, ROUTE, async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");

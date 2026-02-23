@@ -7,7 +7,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/finance/bill/delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BILL, ROUTE, async ({auth, success, error}) => {
     const {id} = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

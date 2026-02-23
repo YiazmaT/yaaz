@@ -7,7 +7,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/finance/nfe/paginated-list";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success}) => {
+  return withAuth(LogModule.NFE, ROUTE, async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");

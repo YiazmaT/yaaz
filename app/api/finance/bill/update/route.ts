@@ -7,7 +7,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/finance/bill/update";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BILL, ROUTE, async ({auth, success, error}) => {
     const {id, description, categoryId, amount, dueDate} = await req.json();
 
     if (!id || !description) return error("api.errors.missingRequiredFields", 400);

@@ -7,7 +7,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/finance/bill/create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BILL, ROUTE, async ({auth, success, error}) => {
     const {description, categoryId, amount, installmentCount, dueDate} = await req.json();
 
     if (!description || !amount || !dueDate) {

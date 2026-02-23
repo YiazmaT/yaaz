@@ -40,8 +40,11 @@ export enum LogModule {
   REPORTS = "reports",
   TENANT = "tenant",
   CLIENT = "client",
-  FINANCE = "finance",
   UNITY_OF_MEASURE = "unity_of_measure",
+  BILL = "bill",
+  BANK_ACCOUNT = "bank_account",
+  CATEGORIES = "categories",
+  NFE = "nfe",
 }
 
 interface LogParams {

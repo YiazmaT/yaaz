@@ -7,7 +7,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/finance/bank-transaction/create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BANK_ACCOUNT, ROUTE, async ({auth, success, error}) => {
     const {bankAccountId, type, amount, description, date, categoryId} = await req.json();
 
     if (!bankAccountId || !type || !amount || !date || (type !== "deposit" && type !== "withdrawal"))

@@ -8,7 +8,7 @@ const ROUTE = "/api/finance/bill/upload-receipt";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BILL, ROUTE, async ({auth, success, error}) => {
     const formData = await req.formData();
     const billId = formData.get("billId") as string;
     const file = formData.get("file") as File | null;

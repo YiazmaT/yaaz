@@ -10,7 +10,7 @@ const ROUTE = "/api/finance/nfe/create";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.NFE, ROUTE, async ({auth, success, error}) => {
     const formData = await req.formData();
     const jsonData: NfeCreatePayload = JSON.parse(formData.get("data") as string);
     const file = formData.get("file") as File | null;

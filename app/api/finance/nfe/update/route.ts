@@ -8,7 +8,7 @@ import {NfeItemPayload, NfeUpdatePayload} from "@/src/pages-content/finance/nfe/
 const ROUTE = "/api/finance/nfe/update";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.FINANCE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.NFE, ROUTE, async ({auth, success, error}) => {
     const {id, description, supplier, nfeNumber, date, items, stockAdded, bankDeducted, bankAccountId}: NfeUpdatePayload = await req.json();
 
     if (!id || !description || !date || !items || !Array.isArray(items) || items.length === 0 || (bankDeducted && !bankAccountId)) {
