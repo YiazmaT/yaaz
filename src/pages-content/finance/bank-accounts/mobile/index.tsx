@@ -12,7 +12,7 @@ import {BankAccountForm} from "../components/form";
 import {BankAccountsFiltersComponent} from "../components/filters";
 import {StatementDrawer} from "../components/statement-drawer";
 import {useBankAccounts} from "../use-bank-accounts";
-import { BankAccount } from "../types";
+import {BankAccount} from "../types";
 
 export function BankAccountsMobile() {
   const {translate} = useTranslate();
