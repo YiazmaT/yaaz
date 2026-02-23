@@ -2,7 +2,6 @@ import {Badge, Box, IconButton, Typography} from "@mui/material";
 import Decimal from "decimal.js";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DescriptionIcon from "@mui/icons-material/Description";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import {CoreTableColumn} from "@/src/components/core-table/types";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";

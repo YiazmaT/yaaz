@@ -17,13 +17,20 @@ export async function GET(req: NextRequest) {
     const where: Prisma.NfeWhereInput = {tenant_id: auth.tenant_id, active: true};
 
     if (search) {
-      const searchAsNumber = parseInt(search);
-      where.OR = [
-        {description: {contains: search, mode: "insensitive"}},
-        {supplier: {contains: search, mode: "insensitive"}},
-        {nfe_number: {contains: search, mode: "insensitive"}},
-        ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : []),
-      ];
+      if (search.startsWith("#")) {
+        const codeSearch = parseInt(search.slice(1));
+        if (!isNaN(codeSearch)) {
+          where.code = codeSearch;
+        }
+      } else {
+        const searchAsNumber = parseInt(search);
+        where.OR = [
+          {description: {contains: search, mode: "insensitive"}},
+          {supplier: {contains: search, mode: "insensitive"}},
+          {nfe_number: {contains: search, mode: "insensitive"}},
+          ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : []),
+        ];
+      }
     }
 
     const [data, total] = await Promise.all([
@@ -33,7 +40,6 @@ export async function GET(req: NextRequest) {
         take: limit,
         orderBy: {creation_date: "desc"},
         include: {
-          bank_account: {select: {id: true, name: true, balance: true}},
           _count: {select: {items: true}},
           items: {
             include: {
