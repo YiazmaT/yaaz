@@ -131,7 +131,7 @@ export function useNfe() {
 
   function handleViewDetails(row: Nfe) {
     loadNfeIntoForm(row);
-    setFormType("view");
+    setFormType("details");
     setShowModal(true);
   }
 
