@@ -53,7 +53,10 @@ export function NfeModal(props: NfeModalProps) {
     }, new Decimal(0));
   }, [items]);
 
-  function addItem(option: {id: string; name: string; image?: string | null}, itemType: "ingredient" | "product" | "package") {
+  function addItem(
+    option: {id: string; name: string; image?: string | null; unity_of_measure?: {unity: string} | null},
+    itemType: "ingredient" | "product" | "package",
+  ) {
     const alreadyExists = items.some((i: NfeFormItem) => i.itemId === option.id && i.itemType === itemType);
     if (alreadyExists) return;
 
@@ -63,6 +66,7 @@ export function NfeModal(props: NfeModalProps) {
       itemId: option.id,
       name: option.name,
       image: option.image,
+      unityOfMeasure: option.unity_of_measure?.unity || "",
       quantity: "1",
       unitPrice: "0",
     };

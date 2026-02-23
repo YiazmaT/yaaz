@@ -22,8 +22,8 @@ export interface NfeItem {
   product_id?: string;
   package_id?: string;
   ingredient?: {id: string; name: string; image: string | null; unity_of_measure: UnityOfMeasure | null};
-  product?: {id: string; name: string; image: string | null};
-  package?: {id: string; name: string; image: string | null};
+  product?: {id: string; name: string; image: string | null; unity_of_measure: UnityOfMeasure | null};
+  package?: {id: string; name: string; image: string | null; unity_of_measure: UnityOfMeasure | null};
   quantity: number;
   unit_price: number;
   total_price: number;

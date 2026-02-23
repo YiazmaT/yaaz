@@ -29,7 +29,14 @@ export function useNfeItemsTableConfig(props: NfeItemsTableConfigProps) {
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             <ImagePreview url={row.image} alt={row.name} width={30} height={30} borderRadius={1} />
-            <Typography variant="body2">{row.name}</Typography>
+            <Box>
+              <Typography variant="body2">{row.name}</Typography>
+              {row.unityOfMeasure && (
+                <Typography variant="caption" color="text.secondary">
+                  ({row.unityOfMeasure})
+                </Typography>
+              )}
+            </Box>
           </Box>
         ),
       },

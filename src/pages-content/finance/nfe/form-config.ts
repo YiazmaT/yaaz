@@ -8,6 +8,7 @@ export interface NfeFormItem {
   itemId: string;
   name: string;
   image?: string | null;
+  unityOfMeasure: string;
   quantity: string;
   unitPrice: string;
 }

@@ -28,6 +28,12 @@ export function useNfeTableConfig(props: NfeTableConfigProps) {
         render: (row) => row.description,
       },
       {
+        field: "nfe_number",
+        headerKey: "finance.nfe.fields.nfeNumber",
+        width: "10%",
+        render: (row) => row.nfe_number || "-",
+      },
+      {
         field: "supplier",
         headerKey: "finance.nfe.fields.supplier",
         width: "15%",
