@@ -22,12 +22,19 @@ export async function GET(req: NextRequest) {
     }
 
     if (search) {
-      const searchAsNumber = parseInt(search);
-      where.OR = [
-        {name: {contains: search, mode: "insensitive" as const}},
-        {description: {contains: search, mode: "insensitive" as const}},
-        ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : []),
-      ];
+      if (search.startsWith("#")) {
+        const codeSearch = parseInt(search.slice(1));
+        if (!isNaN(codeSearch)) {
+          where.code = codeSearch;
+        }
+      } else {
+        const searchAsNumber = parseInt(search);
+        where.OR = [
+          {name: {contains: search, mode: "insensitive" as const}},
+          {description: {contains: search, mode: "insensitive" as const}},
+          ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : []),
+        ];
+      }
     }
 
     const [products, total] = await Promise.all([
