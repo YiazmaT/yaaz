@@ -1,11 +1,11 @@
 "use client";
-import {useRef, useState} from "react";
-import {Box, Button, CircularProgress, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import {useState} from "react";
+import {Box, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import {GenericModal} from "@/src/components/generic-modal";
+import {FileUploader} from "@/src/components/file-uploader";
 import {useApi} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
@@ -25,7 +25,6 @@ export function NfeFileModal(props: NfeFileModalProps) {
   const theme = useTheme();
   const toast = useToaster();
   const fileUrl = nfe?.file_url;
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function uploadFile(file: File) {
     if (!nfe) return;
@@ -45,23 +44,15 @@ export function NfeFileModal(props: NfeFileModalProps) {
     setUploading(false);
   }
 
-  function handleUploadClick() {
-    if (!nfe) return;
+  function handleNewFile(file: File) {
     if (fileUrl) {
       showConfirmModal({
         message: "finance.nfe.replaceFileConfirm",
-        onConfirm: () => fileInputRef.current?.click(),
+        onConfirm: () => uploadFile(file),
       });
     } else {
-      fileInputRef.current?.click();
+      uploadFile(file);
     }
-  }
-
-  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    await uploadFile(file);
   }
 
   function handleView() {
@@ -90,10 +81,8 @@ export function NfeFileModal(props: NfeFileModalProps) {
 
   return (
     <GenericModal open={!!nfe} onClose={onClose} title={translate("finance.nfe.fileTitle")} maxWidth="sm">
-      <input ref={fileInputRef} type="file" accept={ACCEPT} hidden onChange={handleFileSelected} />
-
       {fileUrl ? (
-        <Box sx={{...flexGenerator("c.center.center"), gap: 2}}>
+        <Box sx={{...flexGenerator("c.center.center"), gap: 2, mb: 2}}>
           {isImage(fileUrl) ? (
             <Box
               component="img"
@@ -113,11 +102,12 @@ export function NfeFileModal(props: NfeFileModalProps) {
                 borderRadius: 2,
                 cursor: "pointer",
                 width: "100%",
+                overflow: "hidden",
                 "&:hover": {backgroundColor: theme.palette.action.hover},
               }}
             >
               <InsertDriveFileIcon sx={{fontSize: 48, color: "text.secondary"}} />
-              <Typography variant="body2" noWrap>
+              <Typography variant="body2" sx={{width: "100%", textAlign: "center", wordBreak: "break-all"}}>
                 {extractFileName(fileUrl)}
               </Typography>
             </Box>
@@ -136,23 +126,17 @@ export function NfeFileModal(props: NfeFileModalProps) {
             </Tooltip>
           </Box>
         </Box>
-      ) : (
-        <Box sx={{...flexGenerator("c.center.center"), gap: 1, py: 2}}>
-          <Typography color="text.secondary">{translate("finance.nfe.noFile")}</Typography>
-        </Box>
-      )}
+      ) : null}
 
-      <Box sx={{...flexGenerator("r.center.center")}}>
-        <Button
-          variant="outlined"
-          startIcon={uploading ? <CircularProgress size={16} /> : <UploadFileIcon />}
-          onClick={handleUploadClick}
-          disabled={uploading}
-          sx={{mt: 2}}
-        >
-          {translate(fileUrl ? "finance.nfe.replaceFile" : "finance.nfe.uploadFile")}
-        </Button>
-      </Box>
+      <FileUploader
+        value={null}
+        onChange={(file) => {
+          if (file) handleNewFile(file);
+        }}
+        uploading={uploading}
+        accept={ACCEPT}
+        height={90}
+      />
     </GenericModal>
   );
 }
