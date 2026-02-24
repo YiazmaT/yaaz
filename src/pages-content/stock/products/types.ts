@@ -26,6 +26,7 @@ export interface Product {
   composition?: CompositionItem[];
   packages?: PackageCompositionItem[];
   approximateCost?: number;
+  lastCost?: number | null;
   unit_of_measure_id?: string | null;
   unity_of_measure?: UnityOfMeasure | null;
   files?: string[];

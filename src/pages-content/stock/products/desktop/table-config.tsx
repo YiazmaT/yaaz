@@ -85,9 +85,30 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
       },
       {
         field: "approximateCost",
-        headerKey: "products.fields.approximateCost",
-        width: "12%",
-        render: (row) => formatCurrency(row.approximateCost ?? 0),
+        headerKey: "products.fields.manufactureCost",
+        width: "10%",
+        render: (row) => {
+          const hasComposition = (row.composition?.length ?? 0) > 0 || (row.packages?.length ?? 0) > 0;
+          if (!hasComposition) return <Box sx={{color: "text.disabled"}}>-</Box>;
+          return (
+            <TableButton onClick={() => props.onManufactureCostClick(row)}>
+              {formatCurrency(row.approximateCost ?? 0)}
+            </TableButton>
+          );
+        },
+      },
+      {
+        field: "lastCost",
+        headerKey: "products.fields.lastCost",
+        width: "10%",
+        render: (row) => {
+          if (row.lastCost == null) return <Box sx={{color: "text.disabled"}}>-</Box>;
+          return (
+            <TableButton onClick={() => props.onCostClick(row)}>
+              {formatCurrency(row.lastCost)}
+            </TableButton>
+          );
+        },
       },
       {
         field: "stock",

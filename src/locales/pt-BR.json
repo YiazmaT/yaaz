@@ -297,7 +297,18 @@
       "quantity": "Quantidade",
       "stock": "Estoque",
       "minStock": "Estoque Mínimo",
-      "approximateCost": "Custo Aproximado"
+      "approximateCost": "Custo Aproximado",
+      "manufactureCost": "Custo Fabricação",
+      "lastCost": "Custo"
+    },
+    "manufactureCostModal": {
+      "title": "Custo de Fabricação",
+      "item": "Item",
+      "unity": "Unidade",
+      "quantity": "Qtd.",
+      "unitCost": "Custo Unit.",
+      "totalCost": "Custo Total",
+      "total": "Total"
     },
     "stockChange": {
       "title": "Ajustar Estoque",

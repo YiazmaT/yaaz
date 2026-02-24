@@ -54,6 +54,16 @@ export function buildNfeStockOps(items: NfeStockItem[], tenantId: string, userId
             creator_id: userId,
           },
         }),
+        prisma.productCost.create({
+          data: {
+            tenant_id: tenantId,
+            product_id: item.product_id,
+            quantity: qty,
+            price: totalPrice,
+            comment,
+            creator_id: userId,
+          },
+        }),
       );
     } else if (item.item_type === "package" && item.package_id) {
       ops.push(

@@ -12,4 +12,6 @@ export interface ProductTableConfigProps extends TableConfigProps<Product> {
   onStockHistoryClick: (row: Product) => void;
   onToggleActive: (row: Product) => void;
   onOpenFiles: (row: Product) => void;
+  onManufactureCostClick: (row: Product) => void;
+  onCostClick: (row: Product) => void;
 }

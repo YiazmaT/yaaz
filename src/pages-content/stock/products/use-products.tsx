@@ -21,7 +21,9 @@ export function useProducts() {
   const [filesItem, setFilesItem] = useState<Product | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stockChangeItem, setStockChangeItem] = useState<Product | null>(null);
+  const [costHistoryItem, setCostHistoryItem] = useState<Product | null>(null);
   const [stockHistoryItem, setStockHistoryItem] = useState<Product | null>(null);
+  const [manufactureCostItem, setManufactureCostItem] = useState<Product | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {translate} = useTranslate();
   const {defaultValues, schema} = useProductFormConfig();
@@ -67,6 +69,8 @@ export function useProducts() {
     onToggleLandingPage: (row: Product) => handleToggleLandingPage(row),
     onStockChange: (row: Product) => handleStockChange(row),
     onStockHistoryClick: (row: Product) => setStockHistoryItem(row),
+    onManufactureCostClick: (row: Product) => setManufactureCostItem(row),
+    onCostClick: (row: Product) => setCostHistoryItem(row),
     onToggleActive: (row: Product) => handleToggleActive(row),
     onOpenFiles: (row: Product) => handleOpenFiles(row),
   });
@@ -269,6 +273,14 @@ export function useProducts() {
     setStockHistoryItem(null);
   }
 
+  function closeManufactureCostModal() {
+    setManufactureCostItem(null);
+  }
+
+  function closeCostHistoryModal() {
+    setCostHistoryItem(null);
+  }
+
   function handleToggleActive(row: Product) {
     if (row.active && Number(row.stock) !== 0) {
       toast.errorToast("products.errors.cannotDeactivateWithStock");
@@ -334,6 +346,10 @@ export function useProducts() {
     closeStockChangeModal,
     stockHistoryItem,
     closeStockHistoryModal,
+    manufactureCostItem,
+    closeManufactureCostModal,
+    costHistoryItem,
+    closeCostHistoryModal,
     filesItem,
     handleOpenFiles,
     closeFilesModal,

@@ -12,6 +12,8 @@ import {AddStockDrawerRef} from "../components/add-stock-drawer/types";
 import {StockChangeModal} from "../components/stock-change-modal";
 import {StockHistoryModal} from "../components/stock-history-modal";
 import {FilesModal} from "../components/files-modal";
+import {CostHistoryModal} from "../components/cost-history-modal";
+import {ManufactureCostModal} from "../components/manufacture-cost-modal";
 import {ProductsFiltersComponent} from "../components/filters";
 import {useTenant} from "@/src/contexts/tenant-context";
 import {DesktopViewProps} from "./types";
@@ -58,6 +60,17 @@ export function DesktopView(props: DesktopViewProps) {
           productName={products.stockHistoryItem.name}
         />
       )}
+      <ManufactureCostModal
+        open={!!products.manufactureCostItem}
+        onClose={products.closeManufactureCostModal}
+        product={products.manufactureCostItem}
+      />
+      <CostHistoryModal
+        open={!!products.costHistoryItem}
+        onClose={products.closeCostHistoryModal}
+        productId={products.costHistoryItem?.id ?? ""}
+        productName={products.costHistoryItem?.name ?? ""}
+      />
       {products.filesItem && (
         <FilesModal
           open={!!products.filesItem}

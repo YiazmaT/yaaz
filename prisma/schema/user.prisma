@@ -22,6 +22,7 @@ model User {
   edited_products                  Product[]               @relation("ProductEditor")
   created_sales                    Sale[]                  @relation("SaleCreator")
   edited_sales                     Sale[]                  @relation("SaleEditor")
+  created_product_costs            ProductCost[]           @relation("ProductCostCreator")
   created_product_stock_changes    ProductStockChange[]    @relation("ProductStockChangeCreator")
   created_ingredient_stock_changes IngredientStockChange[] @relation("IngredientStockChangeCreator")
   created_package_stock_changes    PackageStockChange[]    @relation("PackageStockChangeCreator")

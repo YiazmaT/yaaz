@@ -46,6 +46,11 @@ export async function GET(req: NextRequest) {
         omit: {creation_date: true, creator_id: true, last_edit_date: true, last_editor_id: true},
         include: {
           unity_of_measure: {select: {id: true, unity: true}},
+          costs: {
+            where: {price: {gt: 0}},
+            orderBy: {creation_date: "desc"},
+            take: 1,
+          },
           composition: {
             include: {
               ingredient: {
@@ -98,10 +103,14 @@ export async function GET(req: NextRequest) {
         }
       }
 
+      const latestCost = product.costs[0];
+      const lastCost = latestCost ? new Decimal(latestCost.price).div(latestCost.quantity).toNumber() : null;
+
       return {
         ...product,
         displayLandingPage: product.display_landing_page,
         approximateCost: approximateCost.toNumber(),
+        lastCost,
       };
     });
 

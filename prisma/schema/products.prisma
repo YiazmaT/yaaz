@@ -32,12 +32,13 @@ model Product {
   stock_changes        ProductStockChange[]
   nfe_items            NfeItem[]
 
-  creator_id     String?   @db.Uuid
-  creation_date  DateTime  @default(now())
-  creator        User?     @relation("ProductCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  creator_id     String?       @db.Uuid
+  creation_date  DateTime      @default(now())
+  creator        User?         @relation("ProductCreator", fields: [creator_id], references: [id], onDelete: SetNull)
   last_edit_date DateTime?
-  last_editor_id String?   @db.Uuid
-  last_editor    User?     @relation("ProductEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+  last_editor_id String?       @db.Uuid
+  last_editor    User?         @relation("ProductEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+  costs          ProductCost[]
 
   @@unique([tenant_id, code])
   @@map("product")
@@ -71,6 +72,24 @@ model ProductPackage {
 
   @@unique([product_id, package_id])
   @@map("product_package")
+  @@schema("data")
+}
+
+model ProductCost {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String  @db.Uuid
+  product_id String  @db.Uuid
+  quantity   Decimal @db.Decimal
+  price      Decimal @db.Decimal
+  comment    String?
+  tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  creator_id    String?  @db.Uuid
+  creation_date DateTime @default(now())
+  creator       User?    @relation("ProductCostCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+
+  @@map("product_cost")
   @@schema("data")
 }
 

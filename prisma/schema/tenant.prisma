@@ -22,6 +22,7 @@ model Tenant {
   sales                    Sale[]
   sale_items               SaleItem[]
   sale_packages            SalePackage[]
+  product_costs            ProductCost[]
   product_stock_changes    ProductStockChange[]
   ingredient_stock_changes IngredientStockChange[]
   package_stock_changes    PackageStockChange[]
