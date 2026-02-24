@@ -1,5 +1,5 @@
 "use client";
-import {useMemo} from "react";
+import {} from "react";
 import {Box, Button, Divider, Grid, TableCell, TableRow, Typography} from "@mui/material";
 import Decimal from "decimal.js";
 import {GenericModal} from "@/src/components/generic-modal";
@@ -44,13 +44,11 @@ export function NfeModal(props: NfeModalProps) {
     },
   });
 
-  const totalAmount = useMemo(() => {
-    return items.reduce((sum: Decimal, item: NfeFormItem) => {
-      const qty = Number(item.quantity) || 0;
-      const price = Number(item.unitPrice) || 0;
-      return sum.plus(new Decimal(qty).times(price));
-    }, new Decimal(0));
-  }, [items]);
+  const totalAmount = items.reduce((sum: Decimal, item: NfeFormItem) => {
+    const qty = Number(item.quantity) || 0;
+    const price = Number(item.unitPrice) || 0;
+    return sum.plus(new Decimal(qty).times(price));
+  }, new Decimal(0));
 
   function addItem(
     option: {id: string; name: string; image?: string | null; unity_of_measure?: {unity: string} | null; stock?: string},

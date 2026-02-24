@@ -1,11 +1,11 @@
 "use client";
-import {useRef, useState} from "react";
-import {Box, Button, CircularProgress, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import {useState} from "react";
+import {Box, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import {GenericModal} from "@/src/components/generic-modal";
+import {FileUploader} from "@/src/components/file-uploader";
 import {useApi} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
@@ -25,7 +25,6 @@ export function ReceiptModal(props: ReceiptModalProps) {
   const theme = useTheme();
   const toast = useToaster();
   const receiptUrl = bill?.receipt_url;
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function uploadFile(file: File) {
     if (!bill) return;
@@ -45,23 +44,15 @@ export function ReceiptModal(props: ReceiptModalProps) {
     setUploading(false);
   }
 
-  function handleUploadClick() {
-    if (!bill) return;
+  function handleNewFile(file: File) {
     if (receiptUrl) {
       showConfirmModal({
         message: "finance.bills.replaceReceiptConfirm",
-        onConfirm: () => fileInputRef.current?.click(),
+        onConfirm: () => uploadFile(file),
       });
     } else {
-      fileInputRef.current?.click();
+      uploadFile(file);
     }
-  }
-
-  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    await uploadFile(file);
   }
 
   function handleView() {
@@ -90,10 +81,8 @@ export function ReceiptModal(props: ReceiptModalProps) {
 
   return (
     <GenericModal open={!!bill} onClose={onClose} title={translate("finance.bills.receiptTitle")} maxWidth="sm">
-      <input ref={fileInputRef} type="file" accept={ACCEPT} hidden onChange={handleFileSelected} />
-
       {receiptUrl ? (
-        <Box sx={{...flexGenerator("c.center.center"), gap: 2}}>
+        <Box sx={{...flexGenerator("c.center.center"), gap: 2, mb: 2}}>
           {isImage(receiptUrl) ? (
             <Box
               component="img"
@@ -136,23 +125,15 @@ export function ReceiptModal(props: ReceiptModalProps) {
             </Tooltip>
           </Box>
         </Box>
-      ) : (
-        <Box sx={{...flexGenerator("c.center.center"), gap: 1, py: 2}}>
-          <Typography color="text.secondary">{translate("finance.bills.noReceipt")}</Typography>
-        </Box>
-      )}
+      ) : null}
 
-      <Box sx={{...flexGenerator("r.center.center")}}>
-        <Button
-          variant="outlined"
-          startIcon={uploading ? <CircularProgress size={16} /> : <UploadFileIcon />}
-          onClick={handleUploadClick}
-          disabled={uploading}
-          sx={{mt: 2}}
-        >
-          {translate(receiptUrl ? "finance.bills.replaceReceipt" : "finance.bills.uploadReceipt")}
-        </Button>
-      </Box>
+      <FileUploader
+        value={null}
+        onChange={(file) => { if (file) handleNewFile(file); }}
+        uploading={uploading}
+        accept={ACCEPT}
+        height={90}
+      />
     </GenericModal>
   );
 }

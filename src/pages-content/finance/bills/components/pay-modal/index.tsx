@@ -1,5 +1,5 @@
 "use client";
-import {useRef, useState} from "react";
+import {useState} from "react";
 import {FormDateTimePicker} from "@/src/components/form-fields/date-time-picker";
 import {FormDropdown} from "@/src/components/form-fields/dropdown";
 import {GenericModal} from "@/src/components/generic-modal";
@@ -8,11 +8,10 @@ import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
+import {FileUploader} from "@/src/components/file-uploader";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {Box, Button, Grid, Typography} from "@mui/material";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import ClearIcon from "@mui/icons-material/Clear";
 import {useMemo, useEffect} from "react";
 import {useForm, useWatch} from "react-hook-form";
 import {usePayFormConfig} from "./form-config";
@@ -31,8 +30,6 @@ export function PayModal(props: PayModalProps) {
   const toast = useToaster();
   const accounts = accountsData || [];
   const formatCurrency = useFormatCurrency();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const {
     control,
     handleSubmit,
@@ -59,12 +56,12 @@ export function PayModal(props: PayModalProps) {
   }, [bill, accounts]);
 
   async function submit(data: PayFormValues) {
-    if (!bill || !data.bankAccount) return;
+    if (!bill) return;
 
     await api.fetch("POST", "/api/finance/bill/pay", {
       body: {
         billId: bill.id,
-        bankAccountId: data.bankAccount.id,
+        bankAccountId: data.bankAccount?.id ?? null,
         paidDate: data.paidDate,
       },
       onSuccess: async () => {
@@ -79,13 +76,6 @@ export function PayModal(props: PayModalProps) {
         onSuccess();
       },
     });
-  }
-
-  function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    setReceiptFile(file);
   }
 
   return (
@@ -110,25 +100,8 @@ export function PayModal(props: PayModalProps) {
         </form>
       </FormContextProvider>
 
-      <input ref={fileInputRef} type="file" accept={ACCEPT} hidden onChange={handleFileSelected} />
       <Box sx={{mt: 2}}>
-        {receiptFile ? (
-          <Box sx={{...flexGenerator("r.center.space-between"), p: 1, border: "1px solid", borderColor: "divider", borderRadius: 1}}>
-            <Box sx={{...flexGenerator("r.center"), gap: 1, minWidth: 0}}>
-              <AttachFileIcon fontSize="small" color="primary" />
-              <Typography variant="body2" noWrap>
-                {receiptFile.name}
-              </Typography>
-            </Box>
-            <Button size="small" onClick={() => setReceiptFile(null)} startIcon={<ClearIcon />}>
-              {translate("global.actions.remove")}
-            </Button>
-          </Box>
-        ) : (
-          <Button variant="outlined" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()} fullWidth size="small">
-            {translate("finance.bills.attachReceipt")}
-          </Button>
-        )}
+        <FileUploader value={receiptFile} onChange={setReceiptFile} accept={ACCEPT} height={90} />
       </Box>
 
       {balanceAfterPayment !== null && (

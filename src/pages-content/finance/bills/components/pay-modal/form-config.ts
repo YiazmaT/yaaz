@@ -7,11 +7,6 @@ export function usePayFormConfig() {
   const {translate} = useTranslate();
 
   const schema = yup.object().shape({
-    bankAccount: yup
-      .object()
-      .required()
-      .nullable()
-      .test("required", translate("finance.bills.errors.selectAccount"), (v) => !!v),
     paidDate: yup.string().required().label(translate("finance.bills.fields.paidDate")),
   });
 
