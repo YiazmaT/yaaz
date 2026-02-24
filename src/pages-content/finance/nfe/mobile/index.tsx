@@ -10,7 +10,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/utils/format-date";
 import {Nfe} from "../types";
-import {NfeModal} from "../components/nfe-modal";
+import {NfeDrawer} from "../components/nfe-drawer";
 import {NfeFileModal} from "../components/file-modal";
 import {useNfe} from "../use-nfe";
 
@@ -100,7 +100,7 @@ export function NfeMobile() {
       <Fab color="primary" size="small" onClick={nfe.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
         <AddIcon sx={{color: "white"}} />
       </Fab>
-      <NfeModal nfe={nfe} />
+      <NfeDrawer nfe={nfe} />
       <NfeFileModal nfe={nfe.fileNfe} onClose={nfe.closeFileModal} onFileChange={nfe.handleFileChange} />
     </Box>
   );
