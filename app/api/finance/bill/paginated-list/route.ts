@@ -24,8 +24,15 @@ export async function GET(req: NextRequest) {
     const where: any = {tenant_id: auth.tenant_id};
 
     if (search) {
-      const searchAsNumber = parseInt(search);
-      where.OR = [{description: {contains: search, mode: "insensitive"}}, ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : [])];
+      if (search.startsWith("#")) {
+        const codeSearch = parseInt(search.slice(1));
+        if (!isNaN(codeSearch)) {
+          where.code = codeSearch;
+        }
+      } else {
+        const searchAsNumber = parseInt(search);
+        where.OR = [{description: {contains: search, mode: "insensitive"}}, ...(!isNaN(searchAsNumber) ? [{code: searchAsNumber}] : [])];
+      }
     }
 
     if (status === "overdue") {
