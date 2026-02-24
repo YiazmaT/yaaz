@@ -8,6 +8,7 @@ import {useApi} from "@/src/hooks/use-api";
 import {Nfe} from "./types";
 import {NfeFormValues, useNfeFormConfig} from "./form-config";
 import {useNfeTableConfig} from "./desktop/table-config";
+import {NfeLaunchContent} from "./components/launch-content";
 
 const API_ROUTE = "/api/finance/nfe/paginated-list";
 
@@ -40,6 +41,7 @@ export function useNfe() {
     onDelete: (row) => handleDelete(row),
     onViewFile: (row) => handleViewFile(row),
     onViewDetails: (row) => handleViewDetails(row),
+    onLaunch: (row) => handleLaunch(row),
   });
 
   function refreshTable() {
@@ -116,7 +118,8 @@ export function useNfe() {
         itemId: item.ingredient_id || item.product_id || item.package_id || "",
         name: item.ingredient?.name || item.product?.name || item.package?.name || "",
         image: item.ingredient?.image || item.product?.image || item.package?.image || null,
-        unityOfMeasure: item.ingredient?.unity_of_measure?.unity || item.product?.unity_of_measure?.unity || item.package?.unity_of_measure?.unity || "",
+        unityOfMeasure:
+          item.ingredient?.unity_of_measure?.unity || item.product?.unity_of_measure?.unity || item.package?.unity_of_measure?.unity || "",
         quantity: String(item.quantity),
         unitPrice: String(item.unit_price),
       })),
@@ -138,12 +141,29 @@ export function useNfe() {
 
   function handleDelete(row: Nfe) {
     showConfirmModal({
-      message: "finance.nfe.deleteConfirm",
+      message: row.stock_added ? "finance.nfe.deleteConfirmWithStock" : "finance.nfe.deleteConfirm",
       onConfirm: async () => {
         await api.fetch("DELETE", "/api/finance/nfe/delete", {
           body: {id: row.id},
           onSuccess: () => {
             toast.successToast("finance.nfe.deleteSuccess");
+            refreshTable();
+          },
+        });
+      },
+    });
+  }
+
+  function handleLaunch(row: Nfe) {
+    showConfirmModal({
+      message: "finance.nfe.launchConfirm",
+      content: <NfeLaunchContent items={row.items} />,
+      maxWidth: 650,
+      onConfirm: async () => {
+        await api.fetch("POST", "/api/finance/nfe/launch", {
+          body: {id: row.id},
+          onSuccess: () => {
+            toast.successToast("finance.nfe.launchSuccess");
             refreshTable();
           },
         });
@@ -177,6 +197,7 @@ export function useNfe() {
     handleEdit,
     handleViewDetails,
     handleDelete,
+    handleLaunch,
     handleViewFile,
     refreshTable,
     watch,

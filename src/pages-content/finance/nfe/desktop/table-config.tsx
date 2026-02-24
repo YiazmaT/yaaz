@@ -1,5 +1,6 @@
 import {Badge} from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -71,6 +72,7 @@ export function useNfeTableConfig(props: NfeTableConfigProps) {
             onEdit={props.onEdit}
             onDelete={props.onDelete}
             onView={props.onViewDetails}
+            hideEdit={(r) => r.stock_added}
             customActions={[
               {
                 icon: (r: Nfe) => (
@@ -80,6 +82,12 @@ export function useNfeTableConfig(props: NfeTableConfigProps) {
                 ),
                 tooltip: () => translate("finance.nfe.fields.file"),
                 onClick: props.onViewFile,
+              },
+              {
+                icon: () => <Inventory2Icon fontSize="small" color="success" />,
+                tooltip: () => translate("finance.nfe.launch"),
+                onClick: props.onLaunch,
+                hidden: (r: Nfe) => r.stock_added,
               },
             ]}
           />

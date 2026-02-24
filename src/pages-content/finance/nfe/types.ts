@@ -1,4 +1,6 @@
-import {UnityOfMeasure} from "../../stock/unity-of-measure/types";
+import {Ingredient} from "../../stock/ingredients/types";
+import {Package} from "../../stock/packages/types";
+import {Product} from "../../stock/products/types";
 
 export interface Nfe {
   id: string;
@@ -9,6 +11,7 @@ export interface Nfe {
   date: string;
   total_amount: number;
   file_url?: string;
+  stock_added: boolean;
   active: boolean;
   items: NfeItem[];
   _count?: {items: number};
@@ -21,9 +24,9 @@ export interface NfeItem {
   ingredient_id?: string;
   product_id?: string;
   package_id?: string;
-  ingredient?: {id: string; name: string; image: string | null; unity_of_measure: UnityOfMeasure | null};
-  product?: {id: string; name: string; image: string | null; unity_of_measure: UnityOfMeasure | null};
-  package?: {id: string; name: string; image: string | null; unity_of_measure: UnityOfMeasure | null};
+  ingredient?: Ingredient;
+  product?: Product;
+  package?: Package;
   quantity: number;
   unit_price: number;
   total_price: number;

@@ -5,6 +5,7 @@ export interface NfeTableConfigProps {
   onDelete: (row: Nfe) => void;
   onViewFile: (row: Nfe) => void;
   onViewDetails: (row: Nfe) => void;
+  onLaunch: (row: Nfe) => void;
 }
 
 export interface NfeItemsTableConfigProps {

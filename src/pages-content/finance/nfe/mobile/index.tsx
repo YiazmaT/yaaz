@@ -3,6 +3,7 @@ import {ReactNode} from "react";
 import {Badge, Box, CardContent, Fab, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DescriptionIcon from "@mui/icons-material/Description";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -67,6 +68,19 @@ export function NfeMobile() {
               </Badge>
             </IconButton>
           </Tooltip>
+          {!item.stock_added && (
+            <Tooltip title={translate("finance.nfe.launch")}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nfe.handleLaunch(item);
+                }}
+              >
+                <Inventory2Icon fontSize="small" color="success" />
+              </IconButton>
+            </Tooltip>
+          )}
           {actions}
         </Box>
       </CardContent>
@@ -81,6 +95,7 @@ export function NfeMobile() {
         renderRow={renderRow}
         onEdit={nfe.handleEdit}
         onDelete={nfe.handleDelete}
+        hideEdit={(row) => row.stock_added}
       />
       <Fab color="primary" size="small" onClick={nfe.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
         <AddIcon sx={{color: "white"}} />

@@ -772,6 +772,18 @@
       "updateSuccess": "Nota fiscal atualizada com sucesso!",
       "deleteSuccess": "Nota fiscal excluída com sucesso!",
       "deleteConfirm": "Tem certeza que deseja excluir esta nota fiscal?",
+      "deleteConfirmWithStock": "Esta nota fiscal já foi lançada. Excluí-la irá reverter as movimentações de estoque de todos os itens. Deseja continuar?",
+      "launch": "Lançar",
+      "launchConfirm": "Esta ação irá adicionar estoque para todos os itens abaixo e não poderá ser desfeita.",
+      "launchSuccess": "Nota fiscal lançada com sucesso!",
+      "launchPreview": {
+        "currentStock": "Estoque Atual",
+        "adding": "Entrada",
+        "finalStock": "Estoque Final"
+      },
+      "errors": {
+        "alreadyLaunched": "Esta nota fiscal já foi lançada."
+      },
       "fields": {
         "code": "Código",
         "description": "Descrição",

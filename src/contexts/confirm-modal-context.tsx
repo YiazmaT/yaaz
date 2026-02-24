@@ -12,6 +12,7 @@ interface IOpenConfirmModalProps {
   title?: string;
   hideCloseButton?: boolean;
   hideCancel?: boolean;
+  maxWidth?: number;
   onConfirm?: () => void;
   onCancel?: () => void;
 }
@@ -60,7 +61,7 @@ export function ConfirmModalContextProvider(props: PropsWithChildren) {
   return (
     <ConfirmModalContext.Provider value={{open}}>
       <Modal open={showModal} onClose={close} sx={{...flexGenerator("r.center.center")}}>
-        <Card sx={{width: 400}}>
+        <Card sx={{width: modalValues.maxWidth ?? 400}}>
           <Box sx={{...flexGenerator("r.center.space-between")}}>
             <CardHeader title={translate(modalValues.title)} />
             {!modalValues.hideCloseButton && (

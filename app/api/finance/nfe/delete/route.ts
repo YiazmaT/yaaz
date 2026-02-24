@@ -26,7 +26,37 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    await prisma.nfe.delete({where: {id, tenant_id: auth.tenant_id}});
+    const ops = [];
+    if (nfe.stock_added) {
+      for (const item of nfe.items) {
+        if (item.item_type === "ingredient" && item.ingredient_id) {
+          ops.push(
+            prisma.ingredient.update({
+              where: {id: item.ingredient_id},
+              data: {stock: {decrement: item.quantity}},
+            }),
+          );
+        } else if (item.item_type === "product" && item.product_id) {
+          ops.push(
+            prisma.product.update({
+              where: {id: item.product_id},
+              data: {stock: {decrement: item.quantity}},
+            }),
+          );
+        } else if (item.item_type === "package" && item.package_id) {
+          ops.push(
+            prisma.package.update({
+              where: {id: item.package_id},
+              data: {stock: {decrement: item.quantity}},
+            }),
+          );
+        }
+      }
+    }
+
+    ops.push(prisma.nfe.delete({where: {id, tenant_id: auth.tenant_id}}));
+
+    await prisma.$transaction(ops);
 
     return success("delete", nfe);
   });
