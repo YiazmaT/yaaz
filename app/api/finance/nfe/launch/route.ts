@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     if (!nfe) return error("api.errors.notFound", 404, {id});
     if (nfe.stock_added) return error("finance.nfe.errors.alreadyLaunched", 400);
 
-    const ops = buildNfeStockOps(nfe.items, auth.tenant_id, auth.user.id);
+    const ops = buildNfeStockOps(nfe.items, auth.tenant_id, auth.user.id, nfe.code);
 
     ops.push(
       prisma.nfe.update({

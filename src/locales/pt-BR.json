@@ -149,6 +149,7 @@
       "added": "Adicionado",
       "removed": "Removido",
       "stockAddition": "Adição de estoque",
+        "stockAdditionNfe": "Adição de estoque por NFE",
       "by": "por"
     }
   },
@@ -230,6 +231,7 @@
       "added": "Adicionado",
       "removed": "Removido",
       "stockAddition": "Adição de estoque",
+        "stockAdditionNfe": "Adição de estoque por NFE",
       "by": "por"
     }
   },
@@ -323,6 +325,7 @@
       "added": "Adicionado",
       "removed": "Removido",
       "stockAddition": "Adição de estoque",
+        "stockAdditionNfe": "Adição de estoque por NFE",
       "by": "por"
     },
     "files": {

@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
           data: {
             tenant_id: auth.tenant_id,
             code: nextBillCode,
-            description: `NFE (${nextCode})`,
+            description: `NFE (#${nextCode})`,
             amount: totalAmount.toDecimalPlaces(2).toString(),
             due_date: new Date(date),
             creator_id: auth.user.id,
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
         total_price: new Decimal(item.quantity).times(new Decimal(item.unitPrice)).toDecimalPlaces(2).toString(),
         product: item.itemType === "product" ? {stock: productStockMap.get(item.itemId) ?? "0"} : null,
       }));
-      ops.push(...buildNfeStockOps(stockItems, auth.tenant_id, auth.user.id));
+      ops.push(...buildNfeStockOps(stockItems, auth.tenant_id, auth.user.id, nextCode));
     }
 
     const [nfe] = await prisma.$transaction(ops);

@@ -11,8 +11,9 @@ interface NfeStockItem {
   product?: {stock: Decimal | string | number} | null;
 }
 
-export function buildNfeStockOps(items: NfeStockItem[], tenantId: string, userId: string): any[] {
+export function buildNfeStockOps(items: NfeStockItem[], tenantId: string, userId: string, nfeCode?: number): any[] {
   const ops: any[] = [];
+  const comment = nfeCode != null ? `#${nfeCode}` : null;
 
   for (const item of items) {
     const qty = new Decimal(String(item.quantity));
@@ -30,6 +31,7 @@ export function buildNfeStockOps(items: NfeStockItem[], tenantId: string, userId
             ingredient_id: item.ingredient_id,
             quantity: qty,
             price: totalPrice,
+            comment,
             creator_id: userId,
           },
         }),
@@ -48,6 +50,7 @@ export function buildNfeStockOps(items: NfeStockItem[], tenantId: string, userId
             previous_stock: previousStock,
             new_stock: previousStock.plus(qty),
             reason: null,
+            comment,
             creator_id: userId,
           },
         }),
@@ -64,6 +67,7 @@ export function buildNfeStockOps(items: NfeStockItem[], tenantId: string, userId
             package_id: item.package_id,
             quantity: qty,
             price: totalPrice,
+            comment,
             creator_id: userId,
           },
         }),

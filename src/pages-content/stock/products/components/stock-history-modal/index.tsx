@@ -67,12 +67,18 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
                       </Typography>
                       {item.type === "stock_change" && (
                         <Typography variant="body2" color="text.secondary">
-                          ({item.reason ? getReasonLabel(item.reason) : translate("products.stockHistory.stockAddition")})
+                          ({item.reason
+                            ? getReasonLabel(item.reason)
+                            : item.comment
+                            ? `${translate("products.stockHistory.stockAdditionNfe")} (${item.comment})`
+                            : translate("products.stockHistory.stockAddition")})
                         </Typography>
                       )}
                       {item.type === "stock_cost" && (
                         <Typography variant="body2" color="text.secondary">
-                          ({translate("products.stockHistory.stockAddition")})
+                          ({item.comment
+                            ? `${translate("products.stockHistory.stockAdditionNfe")} (${item.comment})`
+                            : translate("products.stockHistory.stockAddition")})
                         </Typography>
                       )}
                     </Box>
@@ -83,7 +89,7 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
                         {moment(item.date).format("DD/MM/YYYY HH:mm")}
                         {item.userName && ` - ${translate("products.stockHistory.by")} ${item.userName}`}
                       </Typography>
-                      {item.comment && (
+                      {item.comment && item.reason && (
                         <Typography variant="caption" color="text.secondary" fontStyle="italic">
                           {item.comment}
                         </Typography>

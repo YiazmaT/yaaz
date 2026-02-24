@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
         type: "stock_cost" as const,
         amount: Number(cost.quantity),
         reason: null,
-        comment: null,
+        comment: cost.comment ?? null,
         date: cost.creation_date,
         userName: cost.creator?.name ?? null,
       })),

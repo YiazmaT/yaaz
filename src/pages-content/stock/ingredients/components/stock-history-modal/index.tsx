@@ -74,7 +74,9 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
                       )}
                       {item.type === "stock_cost" && (
                         <Typography variant="body2" color="text.secondary">
-                          ({translate("ingredients.stockHistory.stockAddition")})
+                          ({item.comment
+                            ? `${translate("ingredients.stockHistory.stockAdditionNfe")} (${item.comment})`
+                            : translate("ingredients.stockHistory.stockAddition")})
                         </Typography>
                       )}
                     </Box>
@@ -85,7 +87,7 @@ export function StockHistoryModal(props: StockHistoryModalProps) {
                         {moment(item.date).format("DD/MM/YYYY HH:mm")}
                         {item.userName && ` - ${translate("ingredients.stockHistory.by")} ${item.userName}`}
                       </Typography>
-                      {item.comment && (
+                      {item.comment && item.reason && (
                         <Typography variant="caption" color="text.secondary" fontStyle="italic">
                           {item.comment}
                         </Typography>

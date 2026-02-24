@@ -46,6 +46,7 @@ model IngredientCost {
   ingredient_id String     @db.Uuid
   quantity      Decimal    @db.Decimal
   price         Decimal    @db.Decimal
+  comment       String?
   tenant        Tenant     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   ingredient    Ingredient @relation(fields: [ingredient_id], references: [id], onDelete: Cascade)
 
