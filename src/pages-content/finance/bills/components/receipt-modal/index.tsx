@@ -102,11 +102,12 @@ export function ReceiptModal(props: ReceiptModalProps) {
                 borderRadius: 2,
                 cursor: "pointer",
                 width: "100%",
+                overflow: "hidden",
                 "&:hover": {backgroundColor: theme.palette.action.hover},
               }}
             >
               <InsertDriveFileIcon sx={{fontSize: 48, color: "text.secondary"}} />
-              <Typography variant="body2" noWrap>
+              <Typography variant="body2" sx={{width: "100%", textAlign: "center", wordBreak: "break-all"}}>
                 {extractFileName(receiptUrl)}
               </Typography>
             </Box>
@@ -129,7 +130,9 @@ export function ReceiptModal(props: ReceiptModalProps) {
 
       <FileUploader
         value={null}
-        onChange={(file) => { if (file) handleNewFile(file); }}
+        onChange={(file) => {
+          if (file) handleNewFile(file);
+        }}
         uploading={uploading}
         accept={ACCEPT}
         height={90}
