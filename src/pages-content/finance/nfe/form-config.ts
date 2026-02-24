@@ -9,6 +9,7 @@ export interface NfeFormItem {
   name: string;
   image?: string | null;
   unityOfMeasure: string;
+  stock?: number;
   quantity: string;
   unitPrice: string;
 }
@@ -21,6 +22,7 @@ export interface NfeFormValues {
   items: NfeFormItem[];
   file: File | null;
   createBill: boolean;
+  addToStock: boolean;
 }
 
 export function useNfeFormConfig() {
@@ -55,6 +57,7 @@ export function useNfeFormConfig() {
     items: [],
     file: null,
     createBill: false,
+    addToStock: false,
   };
 
   return {schema, defaultValues};

@@ -5,10 +5,11 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
-import {Nfe} from "./types";
-import {NfeFormValues, useNfeFormConfig} from "./form-config";
+import {Nfe, NfeItem} from "./types";
+import {NfeFormItem, NfeFormValues, useNfeFormConfig} from "./form-config";
 import {useNfeTableConfig} from "./desktop/table-config";
 import {NfeLaunchContent} from "./components/launch-content";
+import {LaunchPreviewItem} from "./components/launch-content/types";
 
 const API_ROUTE = "/api/finance/nfe/paginated-list";
 
@@ -48,9 +49,8 @@ export function useNfe() {
     queryClient.invalidateQueries({queryKey: [API_ROUTE]});
   }
 
-  async function submit(data: NfeFormValues) {
+  async function doCreate(data: NfeFormValues) {
     const jsonPayload = {
-      ...(selectedNfeId ? {id: selectedNfeId} : {}),
       description: data.description,
       supplier: data.supplier,
       nfeNumber: data.nfeNumber,
@@ -61,26 +61,54 @@ export function useNfe() {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
       })),
-      ...(formType === "create" ? {createBill: data.createBill} : {}),
+      createBill: data.createBill,
+      addToStock: data.addToStock,
     };
 
-    if (formType === "create") {
-      const formData = new FormData();
-      formData.append("data", JSON.stringify(jsonPayload));
-      if (data.file) {
-        formData.append("file", data.file);
-      }
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(jsonPayload));
+    if (data.file) {
+      formData.append("file", data.file);
+    }
 
-      await api.fetch("POST", "/api/finance/nfe/create", {
-        formData,
-        onSuccess: () => {
-          toast.successToast("finance.nfe.createSuccess");
-          reset(defaultValues);
-          closeModal();
-          refreshTable();
-        },
-      });
+    await api.fetch("POST", "/api/finance/nfe/create", {
+      formData,
+      onSuccess: () => {
+        toast.successToast("finance.nfe.createSuccess");
+        reset(defaultValues);
+        closeModal();
+        refreshTable();
+      },
+    });
+  }
+
+  async function submit(data: NfeFormValues) {
+    if (formType === "create") {
+      if (data.addToStock) {
+        showConfirmModal({
+          message: "finance.nfe.launchConfirm",
+          content: <NfeLaunchContent items={formItemsToPreview(data.items)} />,
+          maxWidth: 650,
+          onConfirm: () => doCreate(data),
+        });
+      } else {
+        await doCreate(data);
+      }
     } else {
+      const jsonPayload = {
+        id: selectedNfeId,
+        description: data.description,
+        supplier: data.supplier,
+        nfeNumber: data.nfeNumber,
+        date: data.date,
+        items: data.items.map((item) => ({
+          itemType: item.itemType,
+          itemId: item.itemId,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+        })),
+      };
+
       await api.fetch("PUT", "/api/finance/nfe/update", {
         body: jsonPayload,
         onSuccess: () => {
@@ -143,7 +171,7 @@ export function useNfe() {
   function handleDelete(row: Nfe) {
     showConfirmModal({
       message: row.stock_added ? "finance.nfe.deleteConfirmWithStock" : "finance.nfe.deleteConfirm",
-      ...(row.stock_added ? {content: <NfeLaunchContent items={row.items} mode="delete" />, maxWidth: 650} : {}),
+      ...(row.stock_added ? {content: <NfeLaunchContent items={toPreviewItems(row.items)} mode="delete" />, maxWidth: 650} : {}),
       onConfirm: async () => {
         await api.fetch("DELETE", "/api/finance/nfe/delete", {
           body: {id: row.id},
@@ -159,7 +187,7 @@ export function useNfe() {
   function handleLaunch(row: Nfe) {
     showConfirmModal({
       message: "finance.nfe.launchConfirm",
-      content: <NfeLaunchContent items={row.items} />,
+      content: <NfeLaunchContent items={toPreviewItems(row.items)} />,
       maxWidth: 650,
       onConfirm: async () => {
         await api.fetch("POST", "/api/finance/nfe/launch", {
@@ -208,4 +236,31 @@ export function useNfe() {
     closeFileModal,
     handleFileChange,
   };
+}
+
+function toPreviewItems(items: NfeItem[]): LaunchPreviewItem[] {
+  return items.map((item) => {
+    const entity = item.ingredient ?? item.product ?? item.package;
+    return {
+      id: item.id,
+      item_type: item.item_type,
+      name: entity?.name ?? "",
+      image: entity?.image ?? null,
+      unity: entity?.unity_of_measure?.unity ?? "",
+      stock: Number(entity?.stock ?? 0),
+      quantity: Number(item.quantity),
+    };
+  });
+}
+
+function formItemsToPreview(items: NfeFormItem[]): LaunchPreviewItem[] {
+  return items.map((item) => ({
+    id: item.id,
+    item_type: item.itemType,
+    name: item.name,
+    image: item.image ?? null,
+    unity: item.unityOfMeasure,
+    stock: item.stock ?? 0,
+    quantity: Number(item.quantity),
+  }));
 }

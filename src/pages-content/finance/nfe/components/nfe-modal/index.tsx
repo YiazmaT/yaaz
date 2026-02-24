@@ -53,7 +53,7 @@ export function NfeModal(props: NfeModalProps) {
   }, [items]);
 
   function addItem(
-    option: {id: string; name: string; image?: string | null; unity_of_measure?: {unity: string} | null},
+    option: {id: string; name: string; image?: string | null; unity_of_measure?: {unity: string} | null; stock?: string},
     itemType: "ingredient" | "product" | "package",
   ) {
     const alreadyExists = items.some((i: NfeFormItem) => i.itemId === option.id && i.itemType === itemType);
@@ -66,6 +66,7 @@ export function NfeModal(props: NfeModalProps) {
       name: option.name,
       image: option.image,
       unityOfMeasure: option.unity_of_measure?.unity || "",
+      stock: Number(option.stock ?? 0),
       quantity: "1",
       unitPrice: "0",
     };
@@ -152,6 +153,9 @@ export function NfeModal(props: NfeModalProps) {
               <FileUploader value={file} onChange={(f) => nfe.setValue("file", f)} accept={ACCEPT} />
               <Box sx={{mt: 1}}>
                 <FormCheckBox fieldName="createBill" label="finance.nfe.fields.createBill" grid={false} />
+              </Box>
+              <Box sx={{mt: 0.5}}>
+                <FormCheckBox fieldName="addToStock" label="finance.nfe.fields.addToStock" grid={false} />
               </Box>
             </>
           )}

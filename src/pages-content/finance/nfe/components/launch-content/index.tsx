@@ -45,18 +45,17 @@ export function NfeLaunchContent({items, mode = "launch"}: NfeLaunchContentProps
               </TableHead>
               <TableBody>
                 {group.map((item) => {
-                  const entity = item.ingredient ?? item.product ?? item.package;
-                  const unity = entity?.unity_of_measure?.unity ? `(${entity?.unity_of_measure?.unity})` : "";
-                  const current = new Decimal(String(entity?.stock ?? 0));
-                  const delta = new Decimal(String(item.quantity));
+                  const unity = item.unity ? `(${item.unity})` : "";
+                  const current = new Decimal(item.stock);
+                  const delta = new Decimal(item.quantity);
                   const final = isDelete ? current.minus(delta) : current.plus(delta);
 
                   return (
                     <TableRow key={item.id}>
                       <TableCell>
                         <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-                          <ImagePreview url={entity?.image ?? null} alt={entity?.name ?? ""} width={30} height={30} borderRadius={1} />
-                          <Typography variant="body2">{entity?.name ?? "-"}</Typography>
+                          <ImagePreview url={item.image ?? null} alt={item.name} width={30} height={30} borderRadius={1} />
+                          <Typography variant="body2">{item.name}</Typography>
                         </Box>
                       </TableCell>
                       <TableCell align="right">

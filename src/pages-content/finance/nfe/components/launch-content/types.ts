@@ -1,6 +1,14 @@
-import {NfeItem} from "../../types";
+export interface LaunchPreviewItem {
+  id: string;
+  item_type: "ingredient" | "product" | "package";
+  name: string;
+  image?: string | null;
+  unity: string;
+  stock: number;
+  quantity: number;
+}
 
 export interface NfeLaunchContentProps {
-  items: NfeItem[];
+  items: LaunchPreviewItem[];
   mode?: "launch" | "delete";
 }
