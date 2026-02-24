@@ -58,7 +58,7 @@ export function FileUploader({value, onChange, accept, width = "100%", height = 
         onDrop={handleDrop}
         sx={{
           width,
-          height,
+          minHeight: height,
           border: "2px dashed",
           borderColor: isDragOver ? "primary.main" : "divider",
           borderRadius: 2,
@@ -92,7 +92,7 @@ export function FileUploader({value, onChange, accept, width = "100%", height = 
             )}
           </Box>
         ) : (
-          <Box sx={{...flexGenerator("c.center.center"), gap: 0.5, color: isDragOver ? "primary.main" : "text.secondary", pointerEvents: "none"}}>
+          <Box sx={{...flexGenerator("c.center.center"), gap: 0.5, color: isDragOver ? "primary.main" : "text.secondary", pointerEvents: "none", py: 1, px: 1, textAlign: "center"}}>
             {uploading ? (
               <CircularProgress size={32} color="primary" />
             ) : (
