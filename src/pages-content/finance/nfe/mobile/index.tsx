@@ -44,17 +44,6 @@ export function NfeMobile() {
           </Box>
         </Box>
         <Box sx={{display: "flex", justifyContent: "flex-end", gap: 0.5, mt: 1, pt: 1, borderTop: `1px solid ${theme.palette.divider}`}}>
-          <Tooltip title={translate("global.actions.view")}>
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                nfe.handleViewDetails(item);
-              }}
-            >
-              <VisibilityIcon fontSize="small" color="action" />
-            </IconButton>
-          </Tooltip>
           <Tooltip title={translate("finance.nfe.fields.file")}>
             <IconButton
               size="small"
@@ -81,6 +70,17 @@ export function NfeMobile() {
               </IconButton>
             </Tooltip>
           )}
+          <Tooltip title={translate("global.actions.view")}>
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                nfe.handleViewDetails(item);
+              }}
+            >
+              <VisibilityIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
           {actions}
         </Box>
       </CardContent>

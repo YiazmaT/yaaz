@@ -1,13 +1,9 @@
 "use client";
-import {Box, IconButton, useTheme} from "@mui/material";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import {Box, IconButton} from "@mui/material";
+import {Visibility, Edit, Delete} from "@mui/icons-material";
 import {MobileListActionsProps} from "./types";
 
 export function MobileListActions<T = any>(props: MobileListActionsProps<T>) {
-  const theme = useTheme();
-
   function handleView(e: React.MouseEvent) {
     e.stopPropagation();
     if (props.onView) {
@@ -32,18 +28,18 @@ export function MobileListActions<T = any>(props: MobileListActionsProps<T>) {
   return (
     <Box sx={{display: "flex", gap: 1}}>
       {props.onView && (
-        <IconButton size="small" onClick={handleView} sx={{color: theme.palette.info.main}}>
-          <VisibilityOutlinedIcon fontSize="small" />
+        <IconButton size="small" onClick={handleView}>
+          <Visibility fontSize="small" />
         </IconButton>
       )}
       {props.onEdit && !props.hideEdit && (
-        <IconButton size="small" onClick={handleEdit} sx={{color: theme.palette.warning.main}}>
-          <EditOutlinedIcon fontSize="small" />
+        <IconButton size="small" onClick={handleEdit}>
+          <Edit fontSize="small" />
         </IconButton>
       )}
       {props.onDelete && (
-        <IconButton size="small" onClick={handleDelete} sx={{color: theme.palette.error.main}}>
-          <DeleteOutlineIcon fontSize="small" />
+        <IconButton size="small" onClick={handleDelete}>
+          <Delete fontSize="small" />
         </IconButton>
       )}
     </Box>
