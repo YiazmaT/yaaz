@@ -61,6 +61,7 @@ export function useNfe() {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
       })),
+      ...(formType === "create" ? {createBill: data.createBill} : {}),
     };
 
     if (formType === "create") {

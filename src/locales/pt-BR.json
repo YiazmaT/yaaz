@@ -796,6 +796,7 @@
         "file": "Arquivo",
         "fileAttached": "Arquivo anexado",
         "attachFile": "Anexar Arquivo",
+        "createBill": "Criar conta a pagar",
         "addStock": "Adicionar ao Estoque",
         "deductBank": "Debitar de Conta",
         "bankAccount": "Conta Bancária",

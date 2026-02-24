@@ -11,6 +11,7 @@ export interface NfeCreatePayload {
   nfeNumber: string;
   date: string;
   items: NfeItemPayload[];
+  createBill?: boolean;
 }
 
 export interface NfeUpdatePayload extends NfeCreatePayload {

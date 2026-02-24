@@ -20,6 +20,7 @@ export interface NfeFormValues {
   date: string;
   items: NfeFormItem[];
   file: File | null;
+  createBill: boolean;
 }
 
 export function useNfeFormConfig() {
@@ -53,6 +54,7 @@ export function useNfeFormConfig() {
     date: moment().format("YYYY-MM-DD"),
     items: [],
     file: null,
+    createBill: false,
   };
 
   return {schema, defaultValues};

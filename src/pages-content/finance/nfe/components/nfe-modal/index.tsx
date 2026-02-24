@@ -9,6 +9,7 @@ import {DefaultTable} from "@/src/components/core-table";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
+import {FormCheckBox} from "@/src/components/form-fields/check-box";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {FormDatePicker} from "@/src/components/form-fields/date-picker";
 import {IngredientsSelector} from "@/src/components/selectors/ingredients-selector";
@@ -162,9 +163,19 @@ export function NfeModal(props: NfeModalProps) {
             <>
               <Divider sx={{my: 2}} />
               <input ref={fileInputRef} type="file" accept={ACCEPT} hidden onChange={handleFileSelected} />
-              <Box sx={{mb: 2}}>
+              <Box sx={{...flexGenerator("r.center.space-between"), mb: 2}}>
                 {file ? (
-                  <Box sx={{...flexGenerator("r.center.space-between"), p: 1, border: "1px solid", borderColor: "divider", borderRadius: 1}}>
+                  <Box
+                    sx={{
+                      ...flexGenerator("r.center.space-between"),
+                      flex: 1,
+                      ml: 2,
+                      p: 1,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 1,
+                    }}
+                  >
                     <Box sx={{...flexGenerator("r.center"), gap: 1, minWidth: 0}}>
                       <AttachFileIcon fontSize="small" color="primary" />
                       <Typography variant="body2" noWrap>
@@ -181,6 +192,7 @@ export function NfeModal(props: NfeModalProps) {
                   </Button>
                 )}
               </Box>
+              <FormCheckBox fieldName="createBill" label="finance.nfe.fields.createBill" grid={false} />
             </>
           )}
 
