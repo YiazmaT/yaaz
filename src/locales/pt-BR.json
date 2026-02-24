@@ -1,6 +1,9 @@
 {
   "global": {
     "menu": "Menu",
+    "fileUploader": {
+      "dragOrClick": "Arraste um arquivo ou clique para selecionar"
+    },
     "confirm": "Confirmar",
     "cancel": "Cancelar",
     "close": "Fechar",

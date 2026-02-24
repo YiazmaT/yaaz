@@ -1,11 +1,10 @@
 "use client";
-import {useRef, useMemo} from "react";
+import {useMemo} from "react";
 import {Box, Button, Divider, Grid, TableCell, TableRow, Typography} from "@mui/material";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import ClearIcon from "@mui/icons-material/Clear";
 import Decimal from "decimal.js";
 import {GenericModal} from "@/src/components/generic-modal";
 import {DefaultTable} from "@/src/components/core-table";
+import {FileUploader} from "@/src/components/file-uploader";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
@@ -31,7 +30,6 @@ export function NfeModal(props: NfeModalProps) {
   const formatCurrency = useFormatCurrency();
   const isCreate = nfe.formType === "create";
   const isDetails = nfe.formType === "details";
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const file = nfe.watch("file");
   const items = nfe.watch("items");
@@ -72,17 +70,6 @@ export function NfeModal(props: NfeModalProps) {
       unitPrice: "0",
     };
     nfe.setValue("items", [...items, newItem], {shouldValidate: true});
-  }
-
-  function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    nfe.setValue("file", f);
-  }
-
-  function removeFile() {
-    nfe.setValue("file", null);
   }
 
   function getModalTitle() {
@@ -162,37 +149,10 @@ export function NfeModal(props: NfeModalProps) {
           {isCreate && (
             <>
               <Divider sx={{my: 2}} />
-              <input ref={fileInputRef} type="file" accept={ACCEPT} hidden onChange={handleFileSelected} />
-              <Box sx={{...flexGenerator("r.center.space-between"), mb: 2}}>
-                {file ? (
-                  <Box
-                    sx={{
-                      ...flexGenerator("r.center.space-between"),
-                      flex: 1,
-                      ml: 2,
-                      p: 1,
-                      border: "1px solid",
-                      borderColor: "divider",
-                      borderRadius: 1,
-                    }}
-                  >
-                    <Box sx={{...flexGenerator("r.center"), gap: 1, minWidth: 0}}>
-                      <AttachFileIcon fontSize="small" color="primary" />
-                      <Typography variant="body2" noWrap>
-                        {file.name}
-                      </Typography>
-                    </Box>
-                    <Button size="small" onClick={removeFile} startIcon={<ClearIcon />}>
-                      {translate("global.actions.remove")}
-                    </Button>
-                  </Box>
-                ) : (
-                  <Button variant="outlined" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()} size="small">
-                    {translate("finance.nfe.fields.attachFile")}
-                  </Button>
-                )}
+              <FileUploader value={file} onChange={(f) => nfe.setValue("file", f)} accept={ACCEPT} />
+              <Box sx={{mt: 1}}>
+                <FormCheckBox fieldName="createBill" label="finance.nfe.fields.createBill" grid={false} />
               </Box>
-              <FormCheckBox fieldName="createBill" label="finance.nfe.fields.createBill" grid={false} />
             </>
           )}
 

@@ -1,7 +1,6 @@
 "use client";
-import {useRef, useState} from "react";
-import {Box, CircularProgress, IconButton, List, ListItem, Tooltip, Typography, useMediaQuery, useTheme} from "@mui/material";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import {useState} from "react";
+import {Box, IconButton, List, ListItem, Tooltip, Typography, useMediaQuery, useTheme} from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -13,19 +12,18 @@ import {useToaster} from "@/src/contexts/toast-context";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {extractFileName} from "@/src/utils/extract-file-name";
 import {GenericModal} from "@/src/components/generic-modal";
+import {FileUploader} from "@/src/components/file-uploader";
 import {FilesModalProps} from "./types";
 
 const MAX_FILES = 5;
 
 export function FilesModal(props: FilesModalProps) {
   const [uploading, setUploading] = useState(false);
-  const [dragging, setDragging] = useState(false);
   const {translate} = useTranslate();
   const {show: showConfirmModal} = useConfirmModal();
   const api = useApi();
   const toast = useToaster();
   const theme = useTheme();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   async function uploadFile(file: File) {
@@ -52,35 +50,6 @@ export function FilesModal(props: FilesModalProps) {
       },
     });
     setUploading(false);
-  }
-
-  function handleUploadClick() {
-    fileInputRef.current?.click();
-  }
-
-  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    await uploadFile(file);
-  }
-
-  function handleDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    setDragging(true);
-  }
-
-  function handleDragLeave(e: React.DragEvent) {
-    e.preventDefault();
-    setDragging(false);
-  }
-
-  async function handleDrop(e: React.DragEvent) {
-    e.preventDefault();
-    setDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (!file) return;
-    await uploadFile(file);
   }
 
   function handleOpenInNewTab(fileUrl: string) {
@@ -117,37 +86,20 @@ export function FilesModal(props: FilesModalProps) {
 
   return (
     <GenericModal open={props.open} onClose={props.onClose} title={`${translate("products.files.title")} - ${props.productName}`}>
-      <Box onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+      <Box>
         <Box sx={{...flexGenerator("r.center.space-between"), mb: 2}}>
           <Typography variant="body2" color="text.secondary">
             {props.files.length}/{MAX_FILES} {translate("products.files.counter")}
           </Typography>
         </Box>
-        <Box
-          onClick={handleUploadClick}
-          sx={{
-            border: `2px dashed ${dragging ? theme.palette.primary.main : theme.palette.divider}`,
-            borderRadius: 2,
-            padding: 3,
-            mb: 2,
-            cursor: uploading || props.files.length >= MAX_FILES ? "default" : "pointer",
-            opacity: uploading || props.files.length >= MAX_FILES ? 0.5 : 1,
-            backgroundColor: dragging ? `${theme.palette.primary.main}10` : "transparent",
-            transition: "all 0.2s",
-            ...flexGenerator("c.center.center"),
-            gap: 1,
-          }}
-        >
-          {uploading ? (
-            <CircularProgress size={32} sx={{color: theme.palette.primary.main}} />
-          ) : (
-            <UploadFileIcon sx={{color: theme.palette.primary.main, fontSize: 32}} />
-          )}
-          <Typography variant="body2" color="text.secondary">
-            {translate("products.files.dropHere")}
-          </Typography>
+        <Box sx={{mb: 2}}>
+          <FileUploader
+            value={null}
+            onChange={(file) => { if (file) uploadFile(file); }}
+            uploading={uploading}
+            disabled={props.files.length >= MAX_FILES}
+          />
         </Box>
-        <input ref={fileInputRef} type="file" hidden onChange={handleFileSelected} />
 
         {props.files.length === 0 ? (
           <Box sx={{...flexGenerator("r.center.center"), padding: 4}}>
