@@ -7,8 +7,9 @@ import {NfeLaunchContentProps} from "./types";
 
 const ITEM_TYPE_ORDER = ["ingredient", "product", "package"] as const;
 
-export function NfeLaunchContent({items}: NfeLaunchContentProps) {
+export function NfeLaunchContent({items, mode = "launch"}: NfeLaunchContentProps) {
   const {translate} = useTranslate();
+  const isDelete = mode === "delete";
 
   const grouped = {
     ingredient: items.filter((i) => i.item_type === "ingredient"),
@@ -38,7 +39,7 @@ export function NfeLaunchContent({items}: NfeLaunchContentProps) {
                 <TableRow>
                   <TableCell>{translate("finance.nfe.items.name")}</TableCell>
                   <TableCell align="right">{translate("finance.nfe.launchPreview.currentStock")}</TableCell>
-                  <TableCell align="right">{translate("finance.nfe.launchPreview.adding")}</TableCell>
+                  <TableCell align="right">{translate(isDelete ? "finance.nfe.launchPreview.removing" : "finance.nfe.launchPreview.adding")}</TableCell>
                   <TableCell align="right">{translate("finance.nfe.launchPreview.finalStock")}</TableCell>
                 </TableRow>
               </TableHead>
@@ -47,8 +48,8 @@ export function NfeLaunchContent({items}: NfeLaunchContentProps) {
                   const entity = item.ingredient ?? item.product ?? item.package;
                   const unity = entity?.unity_of_measure?.unity ? `(${entity?.unity_of_measure?.unity})` : "";
                   const current = new Decimal(String(entity?.stock ?? 0));
-                  const adding = new Decimal(String(item.quantity));
-                  const final = current.plus(adding);
+                  const delta = new Decimal(String(item.quantity));
+                  const final = isDelete ? current.minus(delta) : current.plus(delta);
 
                   return (
                     <TableRow key={item.id}>
@@ -61,8 +62,8 @@ export function NfeLaunchContent({items}: NfeLaunchContentProps) {
                       <TableCell align="right">
                         {current.toDecimalPlaces(2).toString()} {unity}
                       </TableCell>
-                      <TableCell align="right" sx={{color: "success.main", fontWeight: 600}}>
-                        +{adding.toDecimalPlaces(2).toString()} {unity}
+                      <TableCell align="right" sx={{color: isDelete ? "error.main" : "success.main", fontWeight: 600}}>
+                        {isDelete ? "-" : "+"}{delta.toDecimalPlaces(2).toString()} {unity}
                       </TableCell>
                       <TableCell align="right" sx={{fontWeight: 600}}>
                         {final.toDecimalPlaces(2).toString()} {unity}

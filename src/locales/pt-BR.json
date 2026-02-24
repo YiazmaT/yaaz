@@ -779,6 +779,7 @@
       "launchPreview": {
         "currentStock": "Estoque Atual",
         "adding": "Entrada",
+        "removing": "Saída",
         "finalStock": "Estoque Final"
       },
       "errors": {

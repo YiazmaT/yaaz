@@ -142,6 +142,7 @@ export function useNfe() {
   function handleDelete(row: Nfe) {
     showConfirmModal({
       message: row.stock_added ? "finance.nfe.deleteConfirmWithStock" : "finance.nfe.deleteConfirm",
+      ...(row.stock_added ? {content: <NfeLaunchContent items={row.items} mode="delete" />, maxWidth: 650} : {}),
       onConfirm: async () => {
         await api.fetch("DELETE", "/api/finance/nfe/delete", {
           body: {id: row.id},
