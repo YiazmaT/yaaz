@@ -20,6 +20,11 @@ export async function calculateApproximateCost(items: SaleItemInput[], packages:
     const products = await prisma.product.findMany({
       where: {id: {in: productIds}, tenant_id: tenantId},
       include: {
+        costs: {
+          where: {price: {gt: 0}},
+          orderBy: {creation_date: "desc"},
+          take: 1,
+        },
         composition: {
           include: {
             ingredient: {
@@ -52,6 +57,13 @@ export async function calculateApproximateCost(items: SaleItemInput[], packages:
       if (!product) continue;
 
       const productQuantity = new Decimal(item.quantity);
+      const nfeCost = product.costs[0];
+
+      if (nfeCost) {
+        const costPerUnit = new Decimal(nfeCost.price).dividedBy(nfeCost.quantity);
+        totalCost = totalCost.plus(costPerUnit.times(productQuantity));
+        continue;
+      }
 
       for (const comp of product.composition) {
         const lastCost = comp.ingredient.costs[0];
