@@ -3,7 +3,6 @@ import {Box, Table, TableBody, TableCell, TableHead, TableRow, Typography} from 
 import Decimal from "decimal.js";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {NfeItem} from "../../types";
 import {NfeLaunchContentProps} from "./types";
 
 const ITEM_TYPE_ORDER = ["ingredient", "product", "package"] as const;
