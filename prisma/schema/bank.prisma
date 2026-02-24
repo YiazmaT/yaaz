@@ -24,7 +24,6 @@ model BankAccount {
 
   transactions BankTransaction[]
   bills        Bill[]
-  nfes         Nfe[]
 
   @@unique([tenant_id, name])
   @@map("bank_account")
@@ -45,7 +44,6 @@ model BankTransaction {
   bank_account    BankAccount         @relation(fields: [bank_account_id], references: [id], onDelete: Cascade)
   category        FinanceCategory?    @relation(fields: [category_id], references: [id], onDelete: SetNull)
   bill            Bill?               @relation(fields: [bill_id], references: [id], onDelete: SetNull)
-  nfe             Nfe?
 
   creator_id    String?  @db.Uuid
   creation_date DateTime @default(now())

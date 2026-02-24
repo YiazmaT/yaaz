@@ -9,13 +9,8 @@ model Nfe {
   total_amount        Decimal          @db.Decimal
   file_url            String?
   stock_added         Boolean          @default(false)
-  bank_deducted       Boolean          @default(false)
-  bank_account_id     String?          @db.Uuid
-  bank_transaction_id String?          @unique @db.Uuid
   active              Boolean          @default(true)
   tenant              Tenant           @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  bank_account        BankAccount?     @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
-  bank_transaction    BankTransaction? @relation(fields: [bank_transaction_id], references: [id], onDelete: SetNull)
   items               NfeItem[]
 
   creator_id     String?   @db.Uuid
