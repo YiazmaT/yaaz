@@ -8,7 +8,7 @@ import {formatDate} from "@/src/utils/format-date";
 import {StockAlertsResponse, StockAlertItem, BillAlertItem, BillsAlertsResponse} from "../dto";
 import {buildName} from "@/src/pages-content/stock/products/utils";
 
-export function StockAlertsCard() {
+export function AlertsCard() {
   const {translate} = useTranslate();
   const theme = useTheme();
 
@@ -29,7 +29,7 @@ export function StockAlertsCard() {
   const hasAlerts = hasBillAlerts || hasStockAlerts;
 
   return (
-    <Card sx={{flex: 3, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0}}>
+    <Card sx={{display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0, height: "100%"}}>
       <CardContent sx={{flex: 1, display: "flex", flexDirection: "column", overflow: "hidden"}}>
         <Box sx={{display: "flex", alignItems: "center", gap: 1, marginBottom: 2}}>
           <WarningAmberIcon sx={{color: hasAlerts ? theme.palette.error.main : "primary.main"}} />
