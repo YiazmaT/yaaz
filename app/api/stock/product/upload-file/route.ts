@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     }
 
     const updated = await prisma.product.update({
-      where: {id: productId},
+      where: {id: productId, tenant_id: auth.tenant_id},
       data: {
         files: {push: uploadResult.url!},
         last_edit_date: new Date(),
