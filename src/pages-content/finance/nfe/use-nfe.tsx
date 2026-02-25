@@ -2,6 +2,7 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useQueryClient} from "@tanstack/react-query";
+import {useMediaQuery, useTheme} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
@@ -18,8 +19,11 @@ export function useNfe() {
   const [showModal, setShowModal] = useState(false);
   const [fileNfe, setFileNfe] = useState<Nfe | null>(null);
   const [selectedNfeId, setSelectedNfeId] = useState<string | null>(null);
+  const [launchDrawer, setLaunchDrawer] = useState<{items: LaunchPreviewItem[]; mode: "launch" | "delete"; onConfirm: () => void} | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useNfeFormConfig();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const api = useApi();
   const toast = useToaster();
   const queryClient = useQueryClient();
@@ -47,6 +51,23 @@ export function useNfe() {
 
   function refreshTable() {
     queryClient.invalidateQueries({queryKey: [API_ROUTE]});
+  }
+
+  function openLaunchOrConfirm(items: LaunchPreviewItem[], mode: "launch" | "delete", onConfirm: () => void, message: string) {
+    if (isMobile) {
+      setLaunchDrawer({items, mode, onConfirm});
+    } else {
+      showConfirmModal({
+        message,
+        content: <NfeLaunchContent items={items} mode={mode} />,
+        maxWidth: 650,
+        onConfirm,
+      });
+    }
+  }
+
+  function closeLaunchDrawer() {
+    setLaunchDrawer(null);
   }
 
   async function doCreate(data: NfeFormValues) {
@@ -85,12 +106,7 @@ export function useNfe() {
   async function submit(data: NfeFormValues) {
     if (formType === "create") {
       if (data.addToStock) {
-        showConfirmModal({
-          message: "finance.nfe.launchConfirm",
-          content: <NfeLaunchContent items={formItemsToPreview(data.items)} />,
-          maxWidth: 650,
-          onConfirm: () => doCreate(data),
-        });
+        openLaunchOrConfirm(formItemsToPreview(data.items), "launch", () => doCreate(data), "finance.nfe.launchConfirm");
       } else {
         await doCreate(data);
       }
@@ -169,36 +185,39 @@ export function useNfe() {
   }
 
   function handleDelete(row: Nfe) {
-    showConfirmModal({
-      message: row.stock_added ? "finance.nfe.deleteConfirmWithStock" : "finance.nfe.deleteConfirm",
-      ...(row.stock_added ? {content: <NfeLaunchContent items={toPreviewItems(row.items)} mode="delete" />, maxWidth: 650} : {}),
-      onConfirm: async () => {
-        await api.fetch("DELETE", "/api/finance/nfe/delete", {
-          body: {id: row.id},
-          onSuccess: () => {
-            toast.successToast("finance.nfe.deleteSuccess");
-            refreshTable();
-          },
-        });
-      },
-    });
+    const doDelete = async () => {
+      await api.fetch("DELETE", "/api/finance/nfe/delete", {
+        body: {id: row.id},
+        onSuccess: () => {
+          toast.successToast("finance.nfe.deleteSuccess");
+          closeLaunchDrawer();
+          refreshTable();
+        },
+      });
+    };
+
+    if (row.stock_added) {
+      openLaunchOrConfirm(toPreviewItems(row.items), "delete", doDelete, "finance.nfe.deleteConfirmWithStock");
+    } else {
+      showConfirmModal({
+        message: "finance.nfe.deleteConfirm",
+        onConfirm: doDelete,
+      });
+    }
   }
 
   function handleLaunch(row: Nfe) {
-    showConfirmModal({
-      message: "finance.nfe.launchConfirm",
-      content: <NfeLaunchContent items={toPreviewItems(row.items)} />,
-      maxWidth: 650,
-      onConfirm: async () => {
-        await api.fetch("POST", "/api/finance/nfe/launch", {
-          body: {id: row.id},
-          onSuccess: () => {
-            toast.successToast("finance.nfe.launchSuccess");
-            refreshTable();
-          },
-        });
-      },
-    });
+    const doLaunch = async () => {
+      await api.fetch("POST", "/api/finance/nfe/launch", {
+        body: {id: row.id},
+        onSuccess: () => {
+          toast.successToast("finance.nfe.launchSuccess");
+          closeLaunchDrawer();
+          refreshTable();
+        },
+      });
+    };
+    openLaunchOrConfirm(toPreviewItems(row.items), "launch", doLaunch, "finance.nfe.launchConfirm");
   }
 
   function handleViewFile(row: Nfe) {
@@ -235,6 +254,8 @@ export function useNfe() {
     fileNfe,
     closeFileModal,
     handleFileChange,
+    launchDrawer,
+    closeLaunchDrawer,
   };
 }
 

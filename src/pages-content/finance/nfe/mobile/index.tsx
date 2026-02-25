@@ -11,6 +11,7 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/utils/format-date";
 import {Nfe} from "../types";
 import {NfeDrawer} from "../components/nfe-drawer";
+import {NfeLaunchDrawer} from "../components/launch-drawer";
 import {NfeFileModal} from "../components/file-modal";
 import {useNfe} from "../use-nfe";
 
@@ -102,6 +103,15 @@ export function NfeMobile() {
       </Fab>
       <NfeDrawer nfe={nfe} />
       <NfeFileModal nfe={nfe.fileNfe} onClose={nfe.closeFileModal} onFileChange={nfe.handleFileChange} />
+      {nfe.launchDrawer && (
+        <NfeLaunchDrawer
+          open={!!nfe.launchDrawer}
+          mode={nfe.launchDrawer.mode}
+          items={nfe.launchDrawer.items}
+          onConfirm={nfe.launchDrawer.onConfirm}
+          onClose={nfe.closeLaunchDrawer}
+        />
+      )}
     </Box>
   );
 }
