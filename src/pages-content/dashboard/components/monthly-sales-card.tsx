@@ -1,11 +1,12 @@
 "use client";
-import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@mui/material";
+import {Box, Card, CardContent, Typography, useTheme} from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import {LineChart} from "@mui/x-charts/LineChart";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {MonthlySalesResponse} from "../dto";
+import {ChartCardSkeleton} from "./skeletons";
 
 export function MonthlySalesCard() {
   const {translate} = useTranslate();
@@ -35,9 +36,7 @@ export function MonthlySalesCard() {
         </Box>
 
         {isLoading ? (
-          <Box sx={{display: "flex", justifyContent: "center", padding: 4}}>
-            <CircularProgress />
-          </Box>
+          <ChartCardSkeleton />
         ) : (
           <Box>
             <Box sx={{width: "100%", height: 250}}>

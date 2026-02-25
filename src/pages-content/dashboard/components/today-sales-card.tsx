@@ -1,10 +1,11 @@
 "use client";
-import {Box, Card, CardContent, CircularProgress, Typography} from "@mui/material";
+import {Box, Card, CardContent, Typography} from "@mui/material";
 import TodayIcon from "@mui/icons-material/Today";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {TodaySalesResponse} from "../dto";
+import {TodaySalesCardSkeleton} from "./skeletons";
 
 export function TodaySalesCard() {
   const {translate} = useTranslate();
@@ -29,9 +30,7 @@ export function TodaySalesCard() {
         </Box>
 
         {isLoading ? (
-          <Box sx={{display: "flex", justifyContent: "center", padding: 4}}>
-            <CircularProgress />
-          </Box>
+          <TodaySalesCardSkeleton />
         ) : (
           <Box>
             <Typography variant="h3" fontWeight={700} color="primary">

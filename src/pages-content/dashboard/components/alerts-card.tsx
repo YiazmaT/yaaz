@@ -1,5 +1,5 @@
 "use client";
-import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@mui/material";
+import {Box, Card, CardContent, Typography, useTheme} from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApiQuery} from "@/src/hooks/use-api";
@@ -7,6 +7,7 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/utils/format-date";
 import {StockAlertsResponse, StockAlertItem, BillAlertItem, BillsAlertsResponse} from "../dto";
 import {buildName} from "@/src/pages-content/stock/products/utils";
+import {AlertsCardSkeleton} from "./skeletons";
 
 export function AlertsCard() {
   const {translate} = useTranslate();
@@ -39,9 +40,7 @@ export function AlertsCard() {
         </Box>
 
         {isLoading ? (
-          <Box sx={{display: "flex", justifyContent: "center", padding: 4}}>
-            <CircularProgress />
-          </Box>
+          <AlertsCardSkeleton />
         ) : (
           <Box sx={{flex: 1, display: "flex", flexDirection: "column", overflow: "hidden"}}>
             {hasAlerts ? (

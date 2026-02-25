@@ -1,11 +1,12 @@
 "use client";
-import {Box, Card, CardContent, CircularProgress, Typography, useTheme} from "@mui/material";
+import {Box, Card, CardContent, Typography, useTheme} from "@mui/material";
 import CalendarViewWeekIcon from "@mui/icons-material/CalendarViewWeek";
 import {BarChart} from "@mui/x-charts/BarChart";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {WeeklySalesResponse} from "../dto";
+import {ChartCardSkeleton} from "./skeletons";
 
 export function WeeklySalesCard() {
   const {translate} = useTranslate();
@@ -50,9 +51,7 @@ export function WeeklySalesCard() {
         </Box>
 
         {isLoading ? (
-          <Box sx={{display: "flex", justifyContent: "center", padding: 4}}>
-            <CircularProgress />
-          </Box>
+          <ChartCardSkeleton />
         ) : (
           <Box>
             <Box sx={{width: "100%", height: 250}}>
