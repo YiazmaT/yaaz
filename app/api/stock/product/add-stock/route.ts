@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
     const transactionOperations = [
       ...items.map((item) =>
         prisma.product.update({
-          where: {id: item.productId},
+          where: {id: item.productId, tenant_id: auth.tenant_id},
           data: {stock: {increment: item.quantity}},
         }),
       ),
@@ -129,13 +129,13 @@ export async function POST(req: NextRequest) {
       }),
       ...Object.entries(ingredientRequirements).map(([ingredientId, data]) =>
         prisma.ingredient.update({
-          where: {id: ingredientId},
+          where: {id: ingredientId, tenant_id: auth.tenant_id},
           data: {stock: {decrement: data.required.toNumber()}},
         }),
       ),
       ...Object.entries(packageRequirements).map(([packageId, data]) =>
         prisma.package.update({
-          where: {id: packageId},
+          where: {id: packageId, tenant_id: auth.tenant_id},
           data: {stock: {decrement: data.required.toNumber()}},
         }),
       ),

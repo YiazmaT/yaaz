@@ -41,7 +41,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const ingredient = await prisma.ingredient.update({
-      where: {id},
+      where: {id, tenant_id: auth.tenant_id},
       data: {
         name,
         description: description || null,

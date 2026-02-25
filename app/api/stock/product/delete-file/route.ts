@@ -26,7 +26,7 @@ export async function DELETE(req: NextRequest) {
     const updatedFiles = product.files.filter((f) => f !== body.fileUrl);
 
     const updated = await prisma.product.update({
-      where: {id: body.productId},
+      where: {id: body.productId, tenant_id: auth.tenant_id},
       data: {
         files: updatedFiles,
         last_edit_date: new Date(),

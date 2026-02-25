@@ -48,7 +48,7 @@ export async function PUT(req: NextRequest) {
 
     const sale = await prisma.$transaction(async (tx) => {
       const updatedSale = await tx.sale.update({
-        where: {id},
+        where: {id, tenant_id: auth.tenant_id},
         data: {
           is_quote: false,
           last_edit_date: new Date(),
@@ -64,6 +64,7 @@ export async function PUT(req: NextRequest) {
         tx,
         existingSale.items.map((i) => ({id: i.product_id, quantity: Number(i.quantity)})),
         existingSale.packages.map((p) => ({id: p.package_id, quantity: Number(p.quantity)})),
+        auth.tenant_id,
       );
 
       return updatedSale;

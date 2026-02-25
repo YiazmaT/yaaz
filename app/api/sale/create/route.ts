@@ -120,6 +120,7 @@ export async function POST(req: NextRequest) {
           tx,
           hasItems ? items.map((i) => ({id: i.product_id, quantity: Number(i.quantity)})) : [],
           hasPackages ? packages.map((p) => ({id: p.package_id, quantity: Number(p.quantity)})) : [],
+          auth.tenant_id,
         );
       }
 

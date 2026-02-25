@@ -32,21 +32,21 @@ export async function DELETE(req: NextRequest) {
         if (item.item_type === "ingredient" && item.ingredient_id) {
           ops.push(
             prisma.ingredient.update({
-              where: {id: item.ingredient_id},
+              where: {id: item.ingredient_id, tenant_id: auth.tenant_id},
               data: {stock: {decrement: item.quantity}},
             }),
           );
         } else if (item.item_type === "product" && item.product_id) {
           ops.push(
             prisma.product.update({
-              where: {id: item.product_id},
+              where: {id: item.product_id, tenant_id: auth.tenant_id},
               data: {stock: {decrement: item.quantity}},
             }),
           );
         } else if (item.item_type === "package" && item.package_id) {
           ops.push(
             prisma.package.update({
-              where: {id: item.package_id},
+              where: {id: item.package_id, tenant_id: auth.tenant_id},
               data: {stock: {decrement: item.quantity}},
             }),
           );

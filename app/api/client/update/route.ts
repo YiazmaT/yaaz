@@ -49,7 +49,7 @@ export async function PUT(req: NextRequest) {
     const hasAddress = address && Object.values(address).some((v) => !!v);
 
     const client = await prisma.client.update({
-      where: {id},
+      where: {id, tenant_id: auth.tenant_id},
       data: {
         name,
         description: description || null,

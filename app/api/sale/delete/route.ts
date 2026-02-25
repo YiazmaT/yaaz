@@ -27,14 +27,14 @@ export async function DELETE(req: NextRequest) {
       if (!sale.is_quote) {
         for (const item of sale.items) {
           await tx.product.update({
-            where: {id: item.product_id},
+            where: {id: item.product_id, tenant_id: auth.tenant_id},
             data: {stock: {increment: item.quantity}},
           });
         }
 
         for (const pkg of sale.packages) {
           await tx.package.update({
-            where: {id: pkg.package_id},
+            where: {id: pkg.package_id, tenant_id: auth.tenant_id},
             data: {stock: {increment: pkg.quantity}},
           });
         }

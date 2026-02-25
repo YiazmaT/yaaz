@@ -48,17 +48,17 @@ interface DecrementItem {
   quantity: number;
 }
 
-export async function decrementStock(tx: any, items: DecrementItem[], packages: DecrementItem[]) {
+export async function decrementStock(tx: any, items: DecrementItem[], packages: DecrementItem[], tenantId: string) {
   for (const item of items) {
     await tx.product.update({
-      where: {id: item.id},
+      where: {id: item.id, tenant_id: tenantId},
       data: {stock: {decrement: item.quantity}},
     });
   }
 
   for (const pkg of packages) {
     await tx.package.update({
-      where: {id: pkg.id},
+      where: {id: pkg.id, tenant_id: tenantId},
       data: {stock: {decrement: pkg.quantity}},
     });
   }

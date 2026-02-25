@@ -19,7 +19,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const product = await prisma.product.update({
-      where: {id},
+      where: {id, tenant_id: auth.tenant_id},
       data: {
         active: !existingProduct.active,
         last_edit_date: new Date(),

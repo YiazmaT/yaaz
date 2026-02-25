@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     await prisma.$transaction([
       prisma.product.update({
-        where: {id: productId},
+        where: {id: productId, tenant_id: auth.tenant_id},
         data: {stock: newStock},
       }),
       prisma.productStockChange.create({

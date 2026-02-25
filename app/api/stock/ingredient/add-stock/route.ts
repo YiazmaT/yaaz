@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
     const stockUpdates = items.map((item) =>
       prisma.ingredient.update({
-        where: {id: item.ingredientId},
+        where: {id: item.ingredientId, tenant_id: auth.tenant_id},
         data: {stock: {increment: item.quantity}},
       }),
     );

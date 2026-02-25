@@ -185,7 +185,7 @@ export async function PUT(req: NextRequest) {
       await tx.salePackage.deleteMany({where: {sale_id: id}});
 
       const updatedSale = await tx.sale.update({
-        where: {id},
+        where: {id, tenant_id: auth.tenant_id},
         data: {
           payment_method: payment_method as any,
           total: finalTotal,
@@ -222,12 +222,12 @@ export async function PUT(req: NextRequest) {
       for (const change of productStockChanges) {
         if (change.change > 0) {
           await tx.product.update({
-            where: {id: change.productId},
+            where: {id: change.productId, tenant_id: auth.tenant_id},
             data: {stock: {increment: change.change}},
           });
         } else if (change.change < 0) {
           await tx.product.update({
-            where: {id: change.productId},
+            where: {id: change.productId, tenant_id: auth.tenant_id},
             data: {stock: {decrement: Math.abs(change.change)}},
           });
         }
@@ -236,12 +236,12 @@ export async function PUT(req: NextRequest) {
       for (const change of packageStockChanges) {
         if (change.change > 0) {
           await tx.package.update({
-            where: {id: change.packageId},
+            where: {id: change.packageId, tenant_id: auth.tenant_id},
             data: {stock: {increment: change.change}},
           });
         } else if (change.change < 0) {
           await tx.package.update({
-            where: {id: change.packageId},
+            where: {id: change.packageId, tenant_id: auth.tenant_id},
             data: {stock: {decrement: Math.abs(change.change)}},
           });
         }

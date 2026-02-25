@@ -62,7 +62,7 @@ export async function PUT(req: NextRequest) {
     await prisma.productPackage.deleteMany({where: {product_id: id}});
 
     const product = await prisma.product.update({
-      where: {id},
+      where: {id, tenant_id: auth.tenant_id},
       data: {
         name,
         price,
