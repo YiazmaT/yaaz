@@ -1,5 +1,5 @@
 import {LogModule} from "@/src/lib/logger";
-import {prisma} from "@/src/lib/prisma";
+import {prismaUnscoped} from "@/src/lib/prisma";
 import {createRouteLogger} from "@/src/lib/route-handler";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const {email, password} = await req.json();
-    const user = await prisma.user.findFirst({
+    const user = await prismaUnscoped.user.findFirst({
       where: {login: email.trim().toLowerCase()},
       include: {tenant: {select: {name: true, logo: true, primary_color: true, secondary_color: true, time_zone: true, currency_type: true}}},
     });
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       {expiresIn},
     );
 
-    await prisma.user.update({
+    await prismaUnscoped.user.update({
       data: {token_expires: now, current_token: token},
       where: {id: user.id},
     });

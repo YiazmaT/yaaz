@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import {cookies} from "next/headers";
 import {NextResponse} from "next/server";
-import {prisma} from "./prisma";
+import {prismaUnscoped} from "./prisma";
 import {logCritical, logError, LogModule, LogSource} from "./logger";
 import {Tenant} from "@/src/pages-content/tenants/types";
 
@@ -26,7 +26,7 @@ export async function authenticateRequest(module: LogModule, route?: string) {
   try {
     const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
-    const user = await prisma.user.findUnique({
+    const user = await prismaUnscoped.user.findUnique({
       where: {id: payload.id},
     });
 
