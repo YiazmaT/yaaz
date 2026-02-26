@@ -1,4 +1,5 @@
 import {S3Client, PutObjectCommand, DeleteObjectCommand} from "@aws-sdk/client-s3";
+import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 import {prisma} from "@/src/lib/prisma";
 
 const s3Client = new S3Client({
@@ -82,6 +83,15 @@ export async function deleteFromR2(key: string, tenantId: string): Promise<boole
     console.error("R2 delete error:", error);
     return false;
   }
+}
+
+export async function generatePresignedUploadUrl(key: string, fileType: string, expiresIn = 300): Promise<string> {
+  const command = new PutObjectCommand({
+    Bucket: process.env.R2_BUCKET_NAME!,
+    Key: key,
+    ContentType: fileType,
+  });
+  return getSignedUrl(s3Client, command, {expiresIn});
 }
 
 export async function noTenantUploadToR2(file: File, folder: string): Promise<UploadResult> {

@@ -46,6 +46,7 @@ export enum LogModule {
   CATEGORIES = "categories",
   NFE = "nfe",
   PAYMENT_METHOD = "payment_method",
+  UPLOAD = "upload",
 }
 
 interface LogParams {

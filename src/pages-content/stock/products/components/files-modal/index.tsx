@@ -1,11 +1,11 @@
 "use client";
-import {useState} from "react";
 import {Box, IconButton, List, ListItem, Tooltip, Typography, useMediaQuery, useTheme} from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import {useApi} from "@/src/hooks/use-api";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
@@ -18,8 +18,8 @@ import {FilesModalProps} from "./types";
 const MAX_FILES = 5;
 
 export function FilesModal(props: FilesModalProps) {
-  const [uploading, setUploading] = useState(false);
   const {translate} = useTranslate();
+  const {upload, deleteOrphan} = useR2Upload();
   const {show: showConfirmModal} = useConfirmModal();
   const api = useApi();
   const toast = useToaster();
@@ -37,19 +37,20 @@ export function FilesModal(props: FilesModalProps) {
       return;
     }
 
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("productId", props.productId);
-    formData.append("file", file);
+    const r2Result = await upload(file, "product-files");
+    if (!r2Result) return;
 
-    await api.fetch("POST", "/api/stock/product/upload-file", {
-      formData,
-      onSuccess: (data: string[]) => {
+    const registered = await api.fetch<string[]>("POST", "/api/stock/product/register-file", {
+      body: {productId: props.productId, key: r2Result.key},
+      onSuccess: (data) => {
         toast.successToast("products.files.uploadSuccess");
         props.onFilesChange(data);
       },
     });
-    setUploading(false);
+
+    if (!registered) {
+      await deleteOrphan(r2Result.url);
+    }
   }
 
   function handleOpenInNewTab(fileUrl: string) {
@@ -95,8 +96,9 @@ export function FilesModal(props: FilesModalProps) {
         <Box sx={{mb: 2}}>
           <FileUploader
             value={null}
-            onChange={(file) => { if (file) uploadFile(file); }}
-            uploading={uploading}
+            onChange={(file) => {
+              if (file) uploadFile(file);
+            }}
             disabled={props.files.length >= MAX_FILES}
           />
         </Box>
