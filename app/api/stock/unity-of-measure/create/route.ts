@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     if (!unity) return error("api.errors.missingRequiredFields", 400);
 
     const existing = await prisma.unityOfMeasure.findUnique({
-      where: {tenant_id_unity: {tenant_id: auth.tenant_id, unity}},
+      where: {tenant_id_unity: {tenant_id: auth.tenant_id, unity}, tenant_id: auth.tenant_id},
     });
 
     if (existing) return error("unityOfMeasure.errors.alreadyExists", 400, {unity});

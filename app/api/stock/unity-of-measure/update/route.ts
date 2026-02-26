@@ -15,7 +15,7 @@ export async function PUT(req: NextRequest) {
     if (!existing) return error("api.errors.dataNotFound", 404, {id});
 
     const duplicate = await prisma.unityOfMeasure.findUnique({
-      where: {tenant_id_unity: {tenant_id: auth.tenant_id, unity}},
+      where: {tenant_id_unity: {tenant_id: auth.tenant_id, unity}, tenant_id: auth.tenant_id},
     });
 
     if (duplicate && duplicate.id !== id) return error("unityOfMeasure.errors.alreadyExists", 400, {unity});
