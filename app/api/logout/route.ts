@@ -9,7 +9,7 @@ export async function POST() {
   return withAuth(LogModule.LOGIN, ROUTE, async ({auth, success}) => {
     await prisma.user.update({
       data: {current_token: null, token_expires: null},
-      where: {id: auth.user.id},
+      where: {id: auth.user.id, tenant_id: auth.tenant_id},
     });
 
     const response = success("important", undefined, {userId: auth.user.id});
