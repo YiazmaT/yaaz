@@ -18,7 +18,7 @@ export async function DELETE(req: NextRequest) {
     if (!paymentMethod) return error("api.errors.notFound", 404, {id});
 
     const saleCount = await prisma.sale.count({where: {payment_method_id: id, tenant_id: auth.tenant_id}});
-    if (saleCount > 0) return error("finance.paymentMethod.errors.inUse", 400, {saleCount});
+    if (saleCount > 0) return error("finance.paymentMethod.errors.inUse", 400, {id, saleCount}, {saleCount});
 
     await prisma.financePaymentMethod.delete({where: {id, tenant_id: auth.tenant_id}});
 

@@ -817,6 +817,8 @@
         "clearTooltip": "Limpar Filtros",
         "showInactives": "Mostrar formas de pagamento inativas"
       },
+      "usedInSales": "Utilizado em vendas",
+      "deactivateInstead": "Esta forma de pagamento está em uso e não pode ser excluída. Deseja desativá-la?",
       "errors": {
         "nameAlreadyExists": "Já existe uma forma de pagamento com este nome.",
         "inUse": "Esta forma de pagamento está vinculada a vendas e não pode ser excluída."

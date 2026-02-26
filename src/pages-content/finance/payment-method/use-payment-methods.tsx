@@ -1,9 +1,11 @@
 import {useState} from "react";
+import {Box, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
 import {PaymentMethodFormValues, usePaymentMethodFormConfig} from "./form-config";
 import {usePaymentMethodsTableConfig} from "./desktop/table-config";
@@ -19,6 +21,7 @@ export function usePaymentMethods() {
   const [originalBankAccountId, setOriginalBankAccountId] = useState<string | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = usePaymentMethodFormConfig();
+  const {translate} = useTranslate();
   const api = useApi();
   const toast = useToaster();
   const queryClient = useQueryClient();
@@ -134,6 +137,17 @@ export function usePaymentMethods() {
     });
   }
 
+  function buildUsageContent(data?: {saleCount: number}) {
+    if (!data) return undefined;
+    return (
+      <Box sx={{marginTop: 1, width: "100%"}}>
+        <Typography variant="body2" sx={{marginY: 0.5}}>
+          · {translate("finance.paymentMethod.usedInSales")}: {data.saleCount}
+        </Typography>
+      </Box>
+    );
+  }
+
   function handleDelete(row: PaymentMethod) {
     showConfirmModal({
       message: "finance.paymentMethod.deleteConfirm",
@@ -143,6 +157,34 @@ export function usePaymentMethods() {
           onSuccess: () => {
             toast.successToast("finance.paymentMethod.deleteSuccess");
             refreshTable();
+          },
+          onError: (errorKey, data) => {
+            if (errorKey === "finance.paymentMethod.errors.inUse") {
+              const content = buildUsageContent(data);
+              if (row.active) {
+                showConfirmModal({
+                  message: "finance.paymentMethod.deactivateInstead",
+                  content,
+                  onConfirm: async () => {
+                    await api.fetch("PUT", "/api/finance/payment-method/toggle-active", {
+                      body: {id: row.id},
+                      onSuccess: () => {
+                        toast.successToast("finance.paymentMethod.deactivateSuccess");
+                        refreshTable();
+                      },
+                    });
+                  },
+                });
+              } else {
+                showConfirmModal({
+                  message: "finance.paymentMethod.errors.inUse",
+                  content,
+                  hideCancel: true,
+                });
+              }
+              return true;
+            }
+            return false;
           },
         });
       },
