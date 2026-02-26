@@ -3,6 +3,7 @@ import {calculateApproximateCost} from "@/src/lib/calculate-sale-cost";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
+import {serverTranslate} from "@/src/lib/server-translate";
 import {UpdateSaleDto, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "@/src/pages-content/sales/dto";
 import {NextRequest, NextResponse} from "next/server";
 
@@ -30,6 +31,8 @@ export async function PUT(req: NextRequest) {
       include: {
         items: {include: {product: true}},
         packages: {include: {package: true}},
+        payment_method: {select: {bank_account_id: true}},
+        bank_transaction: {select: {id: true, bank_account_id: true, amount: true}},
       },
     });
 
@@ -249,6 +252,57 @@ export async function PUT(req: NextRequest) {
             where: {id: change.packageId, tenant_id: auth.tenant_id},
             data: {stock: {decrement: Math.abs(change.change)}},
           });
+        }
+      }
+
+      if (!existingSale.is_quote) {
+        const oldBankAccountId = existingSale.payment_method.bank_account_id;
+        const newBankAccountId = paymentMethod.bank_account_id;
+        const existingTx = existingSale.bank_transaction;
+
+        if (oldBankAccountId === newBankAccountId && newBankAccountId !== null) {
+          if (existingTx) {
+            const diff = new Decimal(finalTotal).minus(existingTx.amount.toString());
+            if (!diff.isZero()) {
+              await tx.bankTransaction.update({
+                where: {id: existingTx.id, tenant_id: auth.tenant_id},
+                data: {amount: new Decimal(finalTotal)},
+              });
+              if (diff.greaterThan(0)) {
+                await tx.bankAccount.update({where: {id: newBankAccountId, tenant_id: auth.tenant_id}, data: {balance: {increment: diff}}});
+              } else {
+                await tx.bankAccount.update({where: {id: newBankAccountId, tenant_id: auth.tenant_id}, data: {balance: {decrement: diff.abs()}}});
+              }
+            }
+          }
+        } else {
+          if (existingTx) {
+            await tx.bankTransaction.delete({where: {id: existingTx.id, tenant_id: auth.tenant_id}});
+            await tx.bankAccount.update({
+              where: {id: existingTx.bank_account_id, tenant_id: auth.tenant_id},
+              data: {balance: {decrement: existingTx.amount}},
+            });
+          }
+
+          if (newBankAccountId) {
+            const saleCode = id.split("-").pop()?.toUpperCase();
+            await tx.bankTransaction.create({
+              data: {
+                tenant_id: auth.tenant_id,
+                bank_account_id: newBankAccountId,
+                type: "deposit",
+                amount: new Decimal(finalTotal),
+                description: `${serverTranslate("sales.bankStatement.description")} #${saleCode}`,
+                date: new Date(),
+                sale_id: id,
+                creator_id: auth.user.id,
+              },
+            });
+            await tx.bankAccount.update({
+              where: {id: newBankAccountId, tenant_id: auth.tenant_id},
+              data: {balance: {increment: new Decimal(finalTotal)}},
+            });
+          }
         }
       }
 

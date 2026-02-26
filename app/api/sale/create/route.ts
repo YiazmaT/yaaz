@@ -4,6 +4,7 @@ import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {checkStockWarnings, decrementStock} from "@/src/lib/sale-stock";
+import {serverTranslate} from "@/src/lib/server-translate";
 import {CreateSaleDto} from "@/src/pages-content/sales/dto";
 import {NextRequest} from "next/server";
 
@@ -127,6 +128,26 @@ export async function POST(req: NextRequest) {
           hasPackages ? packages.map((p) => ({id: p.package_id, quantity: Number(p.quantity)})) : [],
           auth.tenant_id,
         );
+
+        if (paymentMethod.bank_account_id) {
+          const saleCode = newSale.id.split("-").pop()?.toUpperCase();
+          await tx.bankTransaction.create({
+            data: {
+              tenant_id: auth.tenant_id,
+              bank_account_id: paymentMethod.bank_account_id,
+              type: "deposit",
+              amount: new Decimal(total),
+              description: `${serverTranslate("sales.bankStatement.description")} #${saleCode}`,
+              date: new Date(),
+              sale_id: newSale.id,
+              creator_id: auth.user.id,
+            },
+          });
+          await tx.bankAccount.update({
+            where: {id: paymentMethod.bank_account_id, tenant_id: auth.tenant_id},
+            data: {balance: {increment: new Decimal(total)}},
+          });
+        }
       }
 
       return newSale;

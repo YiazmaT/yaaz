@@ -8,15 +8,21 @@ import {pt_BR} from "../yup-locales";
 setLocale(pt_BR);
 
 const TranslationContext = createContext({
-  translate: (key?: string) => key ?? "",
+  translate: (key?: string, vars?: Record<string, string>) => key ?? "",
 });
 
 export function TranslationContextProvider(props: PropsWithChildren) {
   const [ptBR, setPtBR] = useState(flattenObject(ptBRJSON));
 
-  function translate(key?: string) {
+  function translate(key?: string, vars?: Record<string, string>) {
     if (!key) return "";
-    return ptBR[key] ?? key;
+    let result = ptBR[key] ?? key;
+    if (vars) {
+      Object.entries(vars).forEach(([varKey, varValue]) => {
+        result = result.replace(new RegExp(`{{${varKey}}}`, "g"), varValue);
+      });
+    }
+    return result;
   }
 
   return <TranslationContext.Provider value={{translate}}>{props.children}</TranslationContext.Provider>;
@@ -28,9 +34,9 @@ export function useTranslate() {
     throw new Error("useTranslate must be used within a TranslationProvider");
   }
 
-  function handleTranslate(key?: string) {
+  function handleTranslate(key?: string, vars?: Record<string, string>) {
     if (!context.translate) return "";
-    return context.translate(key);
+    return context.translate(key, vars);
   }
 
   return {translate: handleTranslate};

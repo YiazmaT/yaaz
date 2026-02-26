@@ -24,6 +24,7 @@ export function useSales() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [filters, setFilters] = useState<SalesFilters>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [originalPaymentMethodId, setOriginalPaymentMethodId] = useState<string | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useSaleFormConfig();
 
@@ -207,6 +208,11 @@ export function useSales() {
     };
 
     if (formType === "edit" && selectedId) {
+      const oldPm = paymentMethods.find((pm) => pm.id === originalPaymentMethodId);
+      const newPm = paymentMethods.find((pm) => pm.id === data.payment_method_id);
+      const pmChanged = oldPm?.id !== newPm?.id;
+      const hasBankImpact = pmChanged && (!!oldPm?.bank_account_id || !!newPm?.bank_account_id);
+
       async function submitUpdate(updateBody: typeof body & {id: string; updatePrices?: boolean}) {
         const result = await api.fetch<CreateSaleResponse>("PUT", "/api/sale/update", {body: updateBody});
 
@@ -264,36 +270,64 @@ export function useSales() {
         return false;
       }
 
+      if (hasBankImpact) {
+        const formattedTotal = formatCurrency(Number(data.total));
+
+        let messageKey: string;
+        let messageVars: Record<string, string>;
+        if (oldPm?.bank_account_id && !newPm?.bank_account_id) {
+          messageKey = "sales.bankStatement.removeConfirm";
+          messageVars = {account: oldPm.bank_account_name ?? ""};
+        } else if (!oldPm?.bank_account_id && newPm?.bank_account_id) {
+          messageKey = "sales.bankStatement.addConfirm";
+          messageVars = {amount: formattedTotal, account: newPm.bank_account_name ?? ""};
+        } else {
+          messageKey = "sales.bankStatement.moveConfirm";
+          messageVars = {oldAccount: oldPm?.bank_account_name ?? "", amount: formattedTotal, newAccount: newPm?.bank_account_name ?? ""};
+        }
+
+        showConfirmModal({
+          title: "sales.bankStatement.title",
+          content: <Typography variant="body2">{translate(messageKey, messageVars)}</Typography>,
+          onConfirm: () => submitUpdate({...body, id: selectedId}),
+        });
+        return;
+      }
+
       await submitUpdate({...body, id: selectedId});
     } else {
-      const result = await api.fetch<CreateSaleResponse>("POST", "/api/sale/create", {body});
+      async function doCreate(createBody: typeof body) {
+        const result = await api.fetch<CreateSaleResponse>("POST", "/api/sale/create", {body: createBody});
 
-      if (result?.success === false) {
-        const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
-        const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
+        if (result?.success === false) {
+          const hasProductWarnings = result?.stockWarnings && result.stockWarnings.length > 0;
+          const hasPackageWarnings = result?.packageWarnings && result.packageWarnings.length > 0;
 
-        if (hasProductWarnings || hasPackageWarnings) {
-          const forceBody = {...body, force: true};
-          showConfirmModal({
-            message: "sales.negativeStockWarning",
-            content: <StockWarningsList productWarnings={result?.stockWarnings || []} packageWarnings={result?.packageWarnings || []} />,
-            onConfirm: async () => {
-              const forceResult = await api.fetch<CreateSaleResponse>("POST", "/api/sale/create", {body: forceBody});
-              if (forceResult) {
-                toast.successToast("sales.createSuccess");
-                reset();
-                closeDrawer();
-                refreshTable();
-              }
-            },
-          });
+          if (hasProductWarnings || hasPackageWarnings) {
+            const forceBody = {...createBody, force: true};
+            showConfirmModal({
+              message: "sales.negativeStockWarning",
+              content: <StockWarningsList productWarnings={result?.stockWarnings || []} packageWarnings={result?.packageWarnings || []} />,
+              onConfirm: async () => {
+                const forceResult = await api.fetch<CreateSaleResponse>("POST", "/api/sale/create", {body: forceBody});
+                if (forceResult) {
+                  toast.successToast("sales.createSuccess");
+                  reset();
+                  closeDrawer();
+                  refreshTable();
+                }
+              },
+            });
+          }
+        } else if (result) {
+          toast.successToast("sales.createSuccess");
+          reset();
+          closeDrawer();
+          refreshTable();
         }
-      } else if (result) {
-        toast.successToast("sales.createSuccess");
-        reset();
-        closeDrawer();
-        refreshTable();
       }
+
+      await doCreate(body);
     }
   }
 
@@ -306,6 +340,7 @@ export function useSales() {
     setShowDrawer(false);
     reset(defaultValues);
     setSelectedId(null);
+    setOriginalPaymentMethodId(null);
   }
 
   function populateForm(row: Sale) {
@@ -331,6 +366,7 @@ export function useSales() {
 
   function handleEdit(row: Sale) {
     setSelectedId(row.id);
+    setOriginalPaymentMethodId(row.payment_method_id);
     populateForm(row);
     openDrawer("edit");
   }

@@ -41,10 +41,12 @@ model BankTransaction {
   date            DateTime
   category_id     String?             @db.Uuid
   bill_id         String?             @unique @db.Uuid
+  sale_id         String?             @unique @db.Uuid
   tenant          Tenant              @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   bank_account    BankAccount         @relation(fields: [bank_account_id], references: [id], onDelete: Cascade)
   category        FinanceCategory?    @relation(fields: [category_id], references: [id], onDelete: SetNull)
   bill            Bill?               @relation(fields: [bill_id], references: [id], onDelete: SetNull)
+  sale            Sale?               @relation(fields: [sale_id], references: [id], onDelete: SetNull)
 
   creator_id    String?  @db.Uuid
   creation_date DateTime @default(now())

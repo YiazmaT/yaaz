@@ -424,6 +424,14 @@
       "type": "Tipo",
       "footer": "Documento gerado automaticamente pelo sistema. Não possui valor fiscal."
     },
+    "bankStatement": {
+      "title": "Lançamento Bancário",
+      "description": "Venda",
+      "createConfirm": "O método de pagamento {{method}} está vinculado à conta {{account}}. Será criado um depósito de {{amount}} para esta venda.",
+      "removeConfirm": "O lançamento bancário da conta {{account}} será removido.",
+      "addConfirm": "Será criado um depósito de {{amount}} na conta {{account}}.",
+      "moveConfirm": "O lançamento da conta {{oldAccount}} será removido e um novo depósito de {{amount}} será criado na conta {{newAccount}}."
+    },
     "priceChangeWarning": {
       "title": "Preços Alterados",
       "message": "Alguns produtos tiveram seus preços alterados desde esta venda. Clique em 'Confirmar' para atualizar os preços, ou 'Cancelar' para manter os preços originais.",

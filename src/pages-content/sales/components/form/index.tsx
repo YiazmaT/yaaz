@@ -21,7 +21,10 @@ export function Form(props: FormProps) {
   const {translate} = useTranslate();
   const formatCurrency = useFormatCurrency();
   const isDetails = sales.formType === "details";
-  const paymentMethodOptions = sales.paymentMethods.map((pm) => ({value: pm.id, label: pm.name}));
+  const paymentMethodOptions = sales.paymentMethods.map((pm) => ({
+    value: pm.id,
+    label: pm.bank_account_name ? `${pm.name} (${pm.bank_account_name})` : pm.name,
+  }));
   const selectedClient = useWatch({control: sales.control, name: "client"}) as Client | null;
 
   return (
