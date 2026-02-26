@@ -1,6 +1,20 @@
 "use client";
 import {useMemo} from "react";
-import {Box, Button, Card, CardContent, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography} from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import moment from "moment";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -10,21 +24,28 @@ import {SalesSummaryResultProps} from "./types";
 export function SalesSummaryResult(props: SalesSummaryResultProps) {
   const {translate} = useTranslate();
   const formatCurrency = useFormatCurrency();
+  const {paymentMethods, rows} = props.data;
 
   const totals = useMemo(() => {
-    return props.data.reduce(
-      (acc, row) => ({
-        totalSales: acc.totalSales + parseFloat(row.totalSales),
-        transactionCount: acc.transactionCount + row.transactionCount,
-        cash: acc.cash + parseFloat(row.cash),
-        credit: acc.credit + parseFloat(row.credit),
-        debit: acc.debit + parseFloat(row.debit),
-        pix: acc.pix + parseFloat(row.pix),
-        iFood: acc.iFood + parseFloat(row.iFood),
-      }),
-      {totalSales: 0, transactionCount: 0, cash: 0, credit: 0, debit: 0, pix: 0, iFood: 0}
+    return rows.reduce(
+      (acc, row) => {
+        const byPm: Record<string, number> = {...acc.byPaymentMethod};
+        paymentMethods.forEach((pm) => {
+          byPm[pm] = (byPm[pm] || 0) + parseFloat(row.byPaymentMethod[pm] || "0");
+        });
+        return {
+          totalSales: acc.totalSales + parseFloat(row.totalSales),
+          transactionCount: acc.transactionCount + row.transactionCount,
+          byPaymentMethod: byPm,
+        };
+      },
+      {
+        totalSales: 0,
+        transactionCount: 0,
+        byPaymentMethod: Object.fromEntries(paymentMethods.map((pm) => [pm, 0])),
+      },
     );
-  }, [props.data]);
+  }, [rows, paymentMethods]);
 
   const averageTicket = totals.transactionCount > 0 ? totals.totalSales / totals.transactionCount : 0;
 
@@ -66,50 +87,62 @@ export function SalesSummaryResult(props: SalesSummaryResultProps) {
             <TableHead>
               <TableRow>
                 <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}}>{translate("reports.columns.date")}</TableCell>
-                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">{translate("reports.columns.totalSales")}</TableCell>
-                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">{translate("reports.columns.transactions")}</TableCell>
-                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">{translate("reports.columns.averageTicket")}</TableCell>
-                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">{translate("global.cash")}</TableCell>
-                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">{translate("global.credit")}</TableCell>
-                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">{translate("global.debit")}</TableCell>
-                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">{translate("global.pix")}</TableCell>
-                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">{translate("global.iFood")}</TableCell>
+                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">
+                  {translate("reports.columns.totalSales")}
+                </TableCell>
+                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">
+                  {translate("reports.columns.transactions")}
+                </TableCell>
+                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">
+                  {translate("reports.columns.averageTicket")}
+                </TableCell>
+                {paymentMethods.map((pm) => (
+                  <TableCell key={pm} sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">
+                    {pm}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.data.map((row, index) => (
+              {rows.map((row, index) => (
                 <TableRow key={index} hover>
                   <TableCell>{moment(row.date).format("DD/MM/YYYY")}</TableCell>
                   <TableCell align="right">{formatCurrency(row.totalSales)}</TableCell>
                   <TableCell align="right">{row.transactionCount}</TableCell>
                   <TableCell align="right">{formatCurrency(row.averageTicket)}</TableCell>
-                  <TableCell align="right">{formatCurrency(row.cash)}</TableCell>
-                  <TableCell align="right">{formatCurrency(row.credit)}</TableCell>
-                  <TableCell align="right">{formatCurrency(row.debit)}</TableCell>
-                  <TableCell align="right">{formatCurrency(row.pix)}</TableCell>
-                  <TableCell align="right">{formatCurrency(row.iFood)}</TableCell>
+                  {paymentMethods.map((pm) => (
+                    <TableCell key={pm} align="right">
+                      {formatCurrency(row.byPaymentMethod[pm] || "0")}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
-              {props.data.length === 0 && (
+              {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} align="center">
+                  <TableCell colSpan={4 + paymentMethods.length} align="center">
                     <Typography color="text.secondary">{translate("global.noDataFound")}</Typography>
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
-            {props.data.length > 0 && (
+            {rows.length > 0 && (
               <TableFooter>
                 <TableRow sx={{backgroundColor: "#f5f5f5"}}>
                   <TableCell sx={{fontWeight: 600}}>{translate("global.total")}</TableCell>
-                  <TableCell sx={{fontWeight: 600}} align="right">{formatCurrency(totals.totalSales)}</TableCell>
-                  <TableCell sx={{fontWeight: 600}} align="right">{totals.transactionCount}</TableCell>
-                  <TableCell sx={{fontWeight: 600}} align="right">{formatCurrency(averageTicket)}</TableCell>
-                  <TableCell sx={{fontWeight: 600}} align="right">{formatCurrency(totals.cash)}</TableCell>
-                  <TableCell sx={{fontWeight: 600}} align="right">{formatCurrency(totals.credit)}</TableCell>
-                  <TableCell sx={{fontWeight: 600}} align="right">{formatCurrency(totals.debit)}</TableCell>
-                  <TableCell sx={{fontWeight: 600}} align="right">{formatCurrency(totals.pix)}</TableCell>
-                  <TableCell sx={{fontWeight: 600}} align="right">{formatCurrency(totals.iFood)}</TableCell>
+                  <TableCell sx={{fontWeight: 600}} align="right">
+                    {formatCurrency(totals.totalSales)}
+                  </TableCell>
+                  <TableCell sx={{fontWeight: 600}} align="right">
+                    {totals.transactionCount}
+                  </TableCell>
+                  <TableCell sx={{fontWeight: 600}} align="right">
+                    {formatCurrency(averageTicket)}
+                  </TableCell>
+                  {paymentMethods.map((pm) => (
+                    <TableCell key={pm} sx={{fontWeight: 600}} align="right">
+                      {formatCurrency(totals.byPaymentMethod[pm] || 0)}
+                    </TableCell>
+                  ))}
                 </TableRow>
               </TableFooter>
             )}

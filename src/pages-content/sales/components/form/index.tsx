@@ -14,16 +14,14 @@ import {useWatch} from "react-hook-form";
 import {FormCheckBox} from "@/src/components/form-fields/check-box";
 import {Client} from "@/src/pages-content/client/types";
 import {buildName} from "@/src/pages-content/client/utils";
-import {useSalesConstants} from "../../constants";
 import {FormProps} from "./types";
 
 export function Form(props: FormProps) {
   const {sales} = props;
   const {translate} = useTranslate();
-  const {payment_methods} = useSalesConstants();
   const formatCurrency = useFormatCurrency();
   const isDetails = sales.formType === "details";
-  const paymentMethodOptions = Object.values(payment_methods);
+  const paymentMethodOptions = sales.paymentMethods.map((pm) => ({value: pm.id, label: pm.name}));
   const selectedClient = useWatch({control: sales.control, name: "client"}) as Client | null;
 
   return (
@@ -35,7 +33,7 @@ export function Form(props: FormProps) {
       >
         <form onSubmit={sales.handleSubmit(sales.submit)}>
           <Grid container spacing={2}>
-            <FormRadioGroup fieldName="payment_method" label="sales.fields.paymentMethod" options={paymentMethodOptions} />
+            <FormRadioGroup fieldName="payment_method_id" label="sales.fields.paymentMethod" options={paymentMethodOptions} />
 
             <Grid size={12}>
               <Divider />

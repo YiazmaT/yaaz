@@ -810,7 +810,8 @@
         "showInactives": "Mostrar formas de pagamento inativas"
       },
       "errors": {
-        "nameAlreadyExists": "Já existe uma forma de pagamento com este nome."
+        "nameAlreadyExists": "Já existe uma forma de pagamento com este nome.",
+        "inUse": "Esta forma de pagamento está vinculada a vendas e não pode ser excluída."
       }
     },
     "nfeTitle": "Notas Fiscais de Entrada",

@@ -12,14 +12,19 @@ const ROUTE = "/api/sale/create";
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
     const body: CreateSaleDto = await req.json();
-    const {payment_method, total, items, packages, force, is_quote, client_id} = body;
+    const {payment_method_id, total, items, packages, force, is_quote, client_id} = body;
 
     const hasItems = items && items.length > 0;
     const hasPackages = packages && packages.length > 0;
 
-    if (!payment_method || total === undefined || (!hasItems && !hasPackages)) {
+    if (!payment_method_id || total === undefined || (!hasItems && !hasPackages)) {
       return error("api.errors.missingRequiredFields", 400);
     }
+
+    const paymentMethod = await prisma.financePaymentMethod.findUnique({
+      where: {id: payment_method_id, tenant_id: auth.tenant_id},
+    });
+    if (!paymentMethod) return error("api.errors.notFound", 404, {payment_method_id});
 
     const productsMap = new Map<string, {id: string; name: string; stock: number; price: string}>();
 
@@ -75,7 +80,7 @@ export async function POST(req: NextRequest) {
       const newSale = await tx.sale.create({
         data: {
           tenant_id: auth.tenant_id,
-          payment_method: payment_method as any,
+          payment_method_id,
           total,
           approximate_cost: approximateCost,
           is_quote: is_quote || false,

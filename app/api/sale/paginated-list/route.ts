@@ -64,6 +64,7 @@ export async function GET(req: NextRequest) {
         take: limit,
         orderBy: {creation_date: "desc"},
         include: {
+          payment_method: {select: {id: true, name: true}},
           items: {
             include: {
               product: {

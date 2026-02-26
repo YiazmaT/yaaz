@@ -7,10 +7,11 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useApi} from "@/src/hooks/use-api";
+import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {PackageCompositionItem} from "@/src/components/selectors/packages-selector/types";
 import {Sale, ItemSale} from "./types";
+import {PaymentMethod} from "../finance/payment-method/types";
 import {SaleFormValues, useSaleFormConfig} from "./form-config";
 import {useSalesTableConfig} from "./desktop/table-config";
 import {CreateSaleResponse, ConvertQuoteResponse, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "./dto";
@@ -25,6 +26,12 @@ export function useSales() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useSaleFormConfig();
+
+  const {data: paymentMethodsResponse} = useApiQuery<{data: PaymentMethod[]; total: number; page: number; limit: number}>({
+    queryKey: ["/api/finance/payment-method/paginated-list", "all-active"],
+    route: "/api/finance/payment-method/paginated-list?limit=100",
+  });
+  const paymentMethods = paymentMethodsResponse?.data ?? [];
   const {translate} = useTranslate();
   const api = useApi();
   const toast = useToaster();
@@ -190,7 +197,7 @@ export function useSales() {
     }
 
     const body = {
-      payment_method: String(data.payment_method),
+      payment_method_id: data.payment_method_id,
       total: data.total,
       items: cleanItems,
       packages: cleanPackages,
@@ -303,7 +310,7 @@ export function useSales() {
 
   function populateForm(row: Sale) {
     reset({
-      payment_method: row.payment_method,
+      payment_method_id: row.payment_method_id,
       items: row.items || [],
       packages: row.packages || [],
       total: row.total,
@@ -391,6 +398,7 @@ export function useSales() {
     packages,
     total,
     filters,
+    paymentMethods,
     setItems,
     setPackages,
     generateConfig,

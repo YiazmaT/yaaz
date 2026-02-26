@@ -10,12 +10,10 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Sale} from "../types";
 import {Form} from "../components/form";
 import {MobileViewProps} from "./types";
-import {useSalesConstants} from "../constants";
 
 export function MobileView(props: MobileViewProps) {
   const {sales} = props;
   const {translate} = useTranslate();
-  const {payment_methods} = useSalesConstants();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
 
@@ -44,7 +42,7 @@ export function MobileView(props: MobileViewProps) {
               <Chip label={translate("sales.quote")} size="small" color="warning" />
             )}
             <Chip
-              label={translate(payment_methods[item.payment_method]?.label || "")}
+              label={item.payment_method?.name ?? ""}
               size="small"
               color="primary"
               variant="outlined"

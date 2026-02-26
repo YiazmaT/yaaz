@@ -1,24 +1,15 @@
-enum PaymentMethod {
-  credit
-  debit
-  pix
-  cash
-  iFood
-
-  @@schema("data")
-}
-
 model Sale {
-  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenant_id        String        @db.Uuid
-  payment_method   PaymentMethod
-  total            Decimal       @db.Decimal
-  approximate_cost Decimal       @default(0) @db.Decimal
-  tenant           Tenant        @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  items            SaleItem[]
-  packages         SalePackage[]
-  client_id        String?       @db.Uuid
-  client           Client?       @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  id                String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id         String               @db.Uuid
+  payment_method_id String               @db.Uuid
+  total             Decimal              @db.Decimal
+  approximate_cost  Decimal              @default(0) @db.Decimal
+  tenant            Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  payment_method    FinancePaymentMethod @relation(fields: [payment_method_id], references: [id], onDelete: Restrict)
+  items             SaleItem[]
+  packages          SalePackage[]
+  client_id         String?              @db.Uuid
+  client            Client?              @relation(fields: [client_id], references: [id], onDelete: SetNull)
 
   creator_id     String?   @db.Uuid
   creation_date  DateTime  @default(now())

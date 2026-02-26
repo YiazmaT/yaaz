@@ -14,6 +14,8 @@ model FinancePaymentMethod {
   last_editor_id String?   @db.Uuid
   last_editor    User?     @relation("FinancePaymentMethodEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
 
+  sales Sale[]
+
   @@unique([tenant_id, name])
   @@map("payment_method")
   @@schema("data")

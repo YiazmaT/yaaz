@@ -8,14 +8,15 @@ export interface SalesSummaryRow {
   totalSales: string;
   transactionCount: number;
   averageTicket: string;
-  cash: string;
-  credit: string;
-  debit: string;
-  pix: string;
-  iFood: string;
+  byPaymentMethod: Record<string, string>;
+}
+
+export interface SalesSummaryData {
+  paymentMethods: string[];
+  rows: SalesSummaryRow[];
 }
 
 export interface SalesSummaryResultProps {
-  data: SalesSummaryRow[];
+  data: SalesSummaryData;
   filters: SalesSummaryFilters;
 }

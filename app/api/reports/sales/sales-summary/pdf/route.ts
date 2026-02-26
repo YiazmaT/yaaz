@@ -10,43 +10,55 @@ const ROUTE = "/api/reports/sales/sales-summary/pdf";
 export async function GET(req: NextRequest) {
   return withAuth(LogModule.REPORTS, ROUTE, async ({auth, log}) => {
     const {searchParams} = new URL(req.url);
-    const dataStr = searchParams.get("data") || "[]";
+    const dataStr = searchParams.get("data") || "{}";
     const generatedAt = searchParams.get("generatedAt") || "";
     const dateFrom = searchParams.get("dateFrom") || "";
     const dateTo = searchParams.get("dateTo") || "";
-    const data = JSON.parse(dataStr);
+    const {paymentMethods = [], rows = []} = JSON.parse(dataStr) as {paymentMethods: string[]; rows: any[]};
     const currency = auth.tenant.currency_type;
 
-    const rows = data
-      .map(
-        (row: any) => `
+    const pmHeaders = paymentMethods.map((pm: string) => `<th class="right">${pm}</th>`).join("");
+
+    const tableRows = rows
+      .map((row: any) => {
+        const pmCells = paymentMethods
+          .map((pm: string) => `<td class="right">${formatCurrency(row.byPaymentMethod?.[pm] || "0", 2, currency)}</td>`)
+          .join("");
+        return `
       <tr>
         <td>${moment(row.date).format("DD/MM/YYYY")}</td>
         <td class="right">${formatCurrency(row.totalSales, 2, currency)}</td>
         <td class="right">${row.transactionCount}</td>
         <td class="right">${formatCurrency(row.averageTicket, 2, currency)}</td>
-        <td class="right">${formatCurrency(row.cash, 2, currency)}</td>
-        <td class="right">${formatCurrency(row.credit, 2, currency)}</td>
-        <td class="right">${formatCurrency(row.debit, 2, currency)}</td>
-        <td class="right">${formatCurrency(row.pix, 2, currency)}</td>
-        <td class="right">${formatCurrency(row.iFood, 2, currency)}</td>
+        ${pmCells}
       </tr>
-    `,
-      )
+    `;
+      })
       .join("");
 
-    const totals = data.reduce(
-      (acc: any, row: any) => ({
-        totalSales: acc.totalSales + parseFloat(row.totalSales),
-        transactionCount: acc.transactionCount + row.transactionCount,
-        cash: acc.cash + parseFloat(row.cash),
-        credit: acc.credit + parseFloat(row.credit),
-        debit: acc.debit + parseFloat(row.debit),
-        pix: acc.pix + parseFloat(row.pix),
-        iFood: acc.iFood + parseFloat(row.iFood),
-      }),
-      {totalSales: 0, transactionCount: 0, cash: 0, credit: 0, debit: 0, pix: 0, iFood: 0},
+    const totals = rows.reduce(
+      (acc: any, row: any) => {
+        const byPm: Record<string, number> = {...acc.byPaymentMethod};
+        paymentMethods.forEach((pm: string) => {
+          byPm[pm] = (byPm[pm] || 0) + parseFloat(row.byPaymentMethod?.[pm] || "0");
+        });
+        return {
+          totalSales: acc.totalSales + parseFloat(row.totalSales),
+          transactionCount: acc.transactionCount + row.transactionCount,
+          byPaymentMethod: byPm,
+        };
+      },
+      {
+        totalSales: 0,
+        transactionCount: 0,
+        byPaymentMethod: Object.fromEntries(paymentMethods.map((pm: string) => [pm, 0])),
+      },
     );
+
+    const pmTotalCells = paymentMethods
+      .map((pm: string) => `<td class="right"><strong>${formatCurrency(totals.byPaymentMethod[pm] || 0, 2, currency)}</strong></td>`)
+      .join("");
+    const averageTicket = totals.transactionCount > 0 ? totals.totalSales / totals.transactionCount : 0;
 
     const content = `
       <h2>Resumo de Vendas</h2>
@@ -58,27 +70,19 @@ export async function GET(req: NextRequest) {
             <th class="right">Total</th>
             <th class="right">Transações</th>
             <th class="right">Ticket Médio</th>
-            <th class="right">Dinheiro</th>
-            <th class="right">Crédito</th>
-            <th class="right">Débito</th>
-            <th class="right">Pix</th>
-            <th class="right">iFood</th>
+            ${pmHeaders}
           </tr>
         </thead>
         <tbody>
-          ${rows}
+          ${tableRows}
         </tbody>
         <tfoot>
           <tr class="total-row">
             <td><strong>Total</strong></td>
             <td class="right"><strong>${formatCurrency(totals.totalSales, 2, currency)}</strong></td>
             <td class="right"><strong>${totals.transactionCount}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.transactionCount > 0 ? totals.totalSales / totals.transactionCount : 0, 2, currency)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.cash, 2, currency)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.credit, 2, currency)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.debit, 2, currency)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.pix, 2, currency)}</strong></td>
-            <td class="right"><strong>${formatCurrency(totals.iFood, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(averageTicket, 2, currency)}</strong></td>
+            ${pmTotalCells}
           </tr>
         </tfoot>
       </table>

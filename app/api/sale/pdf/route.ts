@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
     const sale = await prisma.sale.findFirst({
       where: {id: saleId, tenant_id: auth.tenant_id},
       include: {
+        payment_method: {select: {name: true}},
         items: {include: {product: true}},
         packages: {include: {package: true}},
         client: true,
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
         <td>${moment(sale.creation_date).format("DD/MM/YYYY HH:mm")}</td>
       </tr>
       ${sale.client ? `<tr><td><strong>${t("sales.fields.client")}</strong></td><td>${sale.client.name}</td></tr>` : ""}
-      ${!sale.is_quote ? `<tr><td><strong>${t("sales.fields.paymentMethod")}</strong></td><td>${t(`global.${sale.payment_method}`)}</td></tr>` : ""}
+      ${!sale.is_quote ? `<tr><td><strong>${t("sales.fields.paymentMethod")}</strong></td><td>${sale.payment_method.name}</td></tr>` : ""}
     `;
 
     const itemRows = sale.items

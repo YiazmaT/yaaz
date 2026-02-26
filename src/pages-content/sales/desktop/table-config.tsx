@@ -7,7 +7,6 @@ import {CustomAction} from "@/src/components/data-columns/types";
 import {TableConfigProps} from "@/src/@types/global-types";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Sale} from "../types";
-import {useSalesConstants} from "../constants";
 import {useTranslate} from "@/src/contexts/translation-context";
 
 interface SalesTableConfigProps extends TableConfigProps<Sale> {
@@ -16,7 +15,6 @@ interface SalesTableConfigProps extends TableConfigProps<Sale> {
 }
 
 export function useSalesTableConfig(props: SalesTableConfigProps) {
-  const {payment_methods} = useSalesConstants();
   const {translate} = useTranslate();
   const formatCurrency = useFormatCurrency();
 
@@ -54,7 +52,7 @@ export function useSalesTableConfig(props: SalesTableConfigProps) {
         field: "payment_method",
         headerKey: "sales.fields.paymentMethod",
         width: "20%",
-        render: (row) => translate(payment_methods[row.payment_method]?.label || ""),
+        render: (row) => row.payment_method?.name ?? "",
       },
       {
         field: "items",

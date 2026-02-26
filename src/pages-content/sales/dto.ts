@@ -10,7 +10,7 @@ export interface SalePackageDto {
 }
 
 export interface CreateSaleDto {
-  payment_method: string;
+  payment_method_id: string;
   total: string;
   items: SaleItemDto[];
   packages: SalePackageDto[];

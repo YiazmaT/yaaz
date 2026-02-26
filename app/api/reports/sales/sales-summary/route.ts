@@ -34,15 +34,17 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         total: true,
-        payment_method: true,
+        payment_method: {select: {name: true}},
         creation_date: true,
       },
       orderBy: {creation_date: "asc"},
     });
 
+    const paymentMethods = [...new Set(sales.map((s) => s.payment_method.name))];
+
     const days = eachDayOfInterval({start: parseISO(dateFrom), end: parseISO(dateTo)});
 
-    const result = days.map((day) => {
+    const rows = days.map((day) => {
       const dayStart = fromZonedTime(startOfDay(day), timezone);
       const dayEnd = fromZonedTime(endOfDay(day), timezone);
 
@@ -55,19 +57,11 @@ export async function GET(req: NextRequest) {
       const transactionCount = daySales.length;
       const averageTicket = transactionCount > 0 ? totalSales.div(transactionCount) : new Decimal(0);
 
-      const byPaymentMethod = {
-        cash: new Decimal(0),
-        credit: new Decimal(0),
-        debit: new Decimal(0),
-        pix: new Decimal(0),
-        iFood: new Decimal(0),
-      };
+      const byPaymentMethod: Record<string, Decimal> = Object.fromEntries(paymentMethods.map((pm) => [pm, new Decimal(0)]));
 
       daySales.forEach((sale) => {
-        const method = sale.payment_method as keyof typeof byPaymentMethod;
-        if (byPaymentMethod[method] !== undefined) {
-          byPaymentMethod[method] = byPaymentMethod[method].plus(new Decimal(sale.total.toString()));
-        }
+        const name = sale.payment_method.name;
+        byPaymentMethod[name] = byPaymentMethod[name].plus(new Decimal(sale.total.toString()));
       });
 
       return {
@@ -75,14 +69,10 @@ export async function GET(req: NextRequest) {
         totalSales: totalSales.toFixed(2),
         transactionCount,
         averageTicket: averageTicket.toFixed(2),
-        cash: byPaymentMethod.cash.toFixed(2),
-        credit: byPaymentMethod.credit.toFixed(2),
-        debit: byPaymentMethod.debit.toFixed(2),
-        pix: byPaymentMethod.pix.toFixed(2),
-        iFood: byPaymentMethod.iFood.toFixed(2),
+        byPaymentMethod: Object.fromEntries(Object.entries(byPaymentMethod).map(([key, val]) => [key, val.toFixed(2)])),
       };
     });
 
-    return success("get", result);
+    return success("get", {paymentMethods, rows});
   });
 }

@@ -11,14 +11,19 @@ const ROUTE = "/api/sale/update";
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
     const body: UpdateSaleDto = await req.json();
-    const {id, payment_method, total, items, packages, force, updatePrices, client_id} = body;
+    const {id, payment_method_id, total, items, packages, force, updatePrices, client_id} = body;
 
     const hasItems = items && items.length > 0;
     const hasPackages = packages && packages.length > 0;
 
-    if (!id || !payment_method || total === undefined || (!hasItems && !hasPackages)) {
+    if (!id || !payment_method_id || total === undefined || (!hasItems && !hasPackages)) {
       return error("api.errors.missingRequiredFields", 400);
     }
+
+    const paymentMethod = await prisma.financePaymentMethod.findUnique({
+      where: {id: payment_method_id, tenant_id: auth.tenant_id},
+    });
+    if (!paymentMethod) return error("api.errors.notFound", 404, {payment_method_id});
 
     const existingSale = await prisma.sale.findUnique({
       where: {id, tenant_id: auth.tenant_id},
@@ -187,7 +192,7 @@ export async function PUT(req: NextRequest) {
       const updatedSale = await tx.sale.update({
         where: {id, tenant_id: auth.tenant_id},
         data: {
-          payment_method: payment_method as any,
+          payment_method_id,
           total: finalTotal,
           approximate_cost: approximateCost,
           client_id: client_id || null,
