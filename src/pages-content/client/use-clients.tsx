@@ -7,6 +7,7 @@ import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi} from "@/src/hooks/use-api";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {Client, ClientsFilters} from "./types";
 import {ClientFormValues, useClientFormConfig} from "./form-config";
 import {useClientsTableConfig} from "./desktop/table-config";
@@ -20,6 +21,7 @@ export function useClients() {
   const [filters, setFilters] = useState<ClientsFilters>({});
   const {show: showConfirmModal} = useConfirmModal();
   const {translate} = useTranslate();
+  const {upload, deleteOrphan} = useR2Upload();
   const {defaultValues, schema} = useClientFormConfig();
   const api = useApi();
   const toast = useToaster();
@@ -67,24 +69,29 @@ export function useClients() {
   }
 
   async function submit(data: ClientFormValues) {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("description", data.description || "");
-    formData.append("email", data.email || "");
-    formData.append("phone", data.phone || "");
-    formData.append("cpf", data.cpf || "");
-    formData.append("cnpj", data.cnpj || "");
-    formData.append("isCompany", String(data.isCompany));
-    formData.append("address", JSON.stringify(data.address));
+    let imageUrl: string | null = typeof data.image === "string" ? data.image : null;
 
     if (data.image instanceof File) {
-      formData.append("image", data.image);
+      const r2Result = await upload(data.image, "clients");
+      if (!r2Result) return;
+      imageUrl = r2Result.url;
     }
 
+    const body = {
+      name: data.name,
+      description: data.description || null,
+      email: data.email || null,
+      phone: data.phone || null,
+      cpf: data.cpf || null,
+      cnpj: data.cnpj || null,
+      isCompany: data.isCompany,
+      address: data.address,
+      imageUrl,
+    };
+
     if (formType === "edit" && selectedId) {
-      formData.append("id", selectedId);
       await api.fetch("PUT", "/api/client/update", {
-        formData,
+        body: {...body, id: selectedId},
         onSuccess: () => {
           toast.successToast("clients.updateSuccess");
           reset();
@@ -93,8 +100,8 @@ export function useClients() {
         },
       });
     } else {
-      await api.fetch("POST", "/api/client/create", {
-        formData,
+      const result = await api.fetch("POST", "/api/client/create", {
+        body,
         onSuccess: () => {
           toast.successToast("clients.createSuccess");
           reset();
@@ -102,6 +109,9 @@ export function useClients() {
           refreshTable();
         },
       });
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     }
   }
 

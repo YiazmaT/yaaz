@@ -1,5 +1,4 @@
 "use client";
-import {useState} from "react";
 import {Box, IconButton, Tooltip, Typography, useTheme} from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -7,6 +6,7 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import {GenericModal} from "@/src/components/generic-modal";
 import {FileUploader} from "@/src/components/file-uploader";
 import {useApi} from "@/src/hooks/use-api";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
@@ -15,33 +15,40 @@ import {extractFileName} from "@/src/utils/extract-file-name";
 import {NfeFileModalProps} from "./types";
 
 const ACCEPT = "image/*,.pdf";
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
 
 export function NfeFileModal(props: NfeFileModalProps) {
-  const [uploading, setUploading] = useState(false);
   const {translate} = useTranslate();
   const {nfe, onClose, onFileChange} = props;
   const {show: showConfirmModal} = useConfirmModal();
   const api = useApi();
   const theme = useTheme();
   const toast = useToaster();
+  const {upload, deleteOrphan} = useR2Upload();
   const fileUrl = nfe?.file_url;
 
   async function uploadFile(file: File) {
     if (!nfe) return;
 
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("nfeId", nfe.id);
-    formData.append("file", file);
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      toast.errorToast("finance.nfe.errors.invalidFileType");
+      return;
+    }
 
-    await api.fetch("POST", "/api/finance/nfe/upload-file", {
-      formData,
+    const r2Result = await upload(file, "nfe-files");
+    if (!r2Result) return;
+
+    const registered = await api.fetch("POST", "/api/finance/nfe/register-file", {
+      body: {nfeId: nfe.id, url: r2Result.url},
       onSuccess: () => {
         toast.successToast("finance.nfe.uploadFileSuccess");
         onFileChange();
       },
     });
-    setUploading(false);
+
+    if (!registered) {
+      await deleteOrphan(r2Result.url);
+    }
   }
 
   function handleNewFile(file: File) {
@@ -133,7 +140,6 @@ export function NfeFileModal(props: NfeFileModalProps) {
         onChange={(file) => {
           if (file) handleNewFile(file);
         }}
-        uploading={uploading}
         accept={ACCEPT}
         height={90}
       />

@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl, uploadToR2} from "@/src/lib/r2";
+import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {CompositionItemDto, PackageCompositionItemDto} from "@/src/pages-content/stock/products/dto";
 import {NextRequest} from "next/server";
@@ -9,18 +9,7 @@ const ROUTE = "/api/stock/product/update";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
-    const formData = await req.formData();
-    const id = formData.get("id") as string;
-    const name = formData.get("name") as string;
-    const price = parseFloat(formData.get("price") as string);
-    const description = formData.get("description") as string | null;
-    const min_stock = parseInt(formData.get("min_stock") as string) || 0;
-    const image = formData.get("image") as File | null;
-    const compositionJson = formData.get("composition") as string;
-    const packagesJson = formData.get("packages") as string;
-    const unitOfMeasureId = formData.get("unitOfMeasureId") as string | null;
-    const displayLandingPageRaw = formData.get("displayLandingPage") as string | null;
-    const displayLandingPage = displayLandingPageRaw !== null ? displayLandingPageRaw === "true" : undefined;
+    const {id, name, price, description, min_stock, imageUrl, composition: compositionRaw, packages: packagesRaw, unitOfMeasureId, displayLandingPage} = await req.json();
 
     if (!id || !name || isNaN(price) || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
@@ -36,27 +25,8 @@ export async function PUT(req: NextRequest) {
       }
     }
 
-    let imageUrl: string | null = existingProduct.image;
-
-    if (image && image.size > 0) {
-      if (existingProduct.image) {
-        const oldKey = extractR2KeyFromUrl(existingProduct.image);
-        if (oldKey) {
-          const deleted = await deleteFromR2(oldKey, auth.tenant_id);
-          if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl: existingProduct.image});
-        }
-      }
-
-      const uploadResult = await uploadToR2(image, "products", auth.tenant_id);
-      if (!uploadResult.success) {
-        if (uploadResult.error === "FILE_TOO_LARGE") return error("global.errors.fileTooLarge", 400);
-        return error("api.errors.uploadFailed", 400, uploadResult);
-      }
-      imageUrl = uploadResult.url!;
-    }
-
-    const composition: CompositionItemDto[] = compositionJson ? JSON.parse(compositionJson) : [];
-    const packages: PackageCompositionItemDto[] = packagesJson ? JSON.parse(packagesJson) : [];
+    const composition: CompositionItemDto[] = compositionRaw || [];
+    const packages: PackageCompositionItemDto[] = packagesRaw || [];
 
     await prisma.productIngredient.deleteMany({where: {product_id: id, tenant_id: auth.tenant_id}});
     await prisma.productPackage.deleteMany({where: {product_id: id, tenant_id: auth.tenant_id}});
@@ -67,8 +37,8 @@ export async function PUT(req: NextRequest) {
         name,
         price,
         description: description || null,
-        min_stock,
-        image: imageUrl,
+        min_stock: min_stock || 0,
+        image: imageUrl ?? null,
         unit_of_measure_id: unitOfMeasureId || null,
         ...(displayLandingPage !== undefined && {display_landing_page: displayLandingPage}),
         last_edit_date: new Date(),
@@ -90,18 +60,15 @@ export async function PUT(req: NextRequest) {
       },
       include: {
         unity_of_measure: {select: {id: true, unity: true}},
-        composition: {
-          include: {
-            ingredient: true,
-          },
-        },
-        packages: {
-          include: {
-            package: true,
-          },
-        },
+        composition: {include: {ingredient: true}},
+        packages: {include: {package: true}},
       },
     });
+
+    if (existingProduct.image && existingProduct.image !== imageUrl) {
+      const oldKey = extractR2KeyFromUrl(existingProduct.image);
+      if (oldKey) await deleteFromR2(oldKey, auth.tenant_id);
+    }
 
     return success("update", product, {before: existingProduct, after: product});
   });

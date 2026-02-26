@@ -5,6 +5,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import {Box, Typography} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {Ingredient, IngredientsFilters} from "./types";
@@ -22,8 +23,9 @@ export function useIngredients() {
   const [costHistoryIngredient, setCostHistoryIngredient] = useState<Ingredient | null>(null);
   const [stockChangeItem, setStockChangeItem] = useState<Ingredient | null>(null);
   const [stockHistoryItem, setStockHistoryItem] = useState<Ingredient | null>(null);
-  const {show: showConfirmModal} = useConfirmModal();
   const {translate} = useTranslate();
+  const {upload, deleteOrphan} = useR2Upload();
+  const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useIngredientFormConfig();
   const api = useApi();
   const toast = useToaster();
@@ -80,20 +82,25 @@ export function useIngredients() {
   }
 
   async function submit(data: IngredientFormValues) {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("description", data.description || "");
-    formData.append("unitOfMeasureId", data.unitOfMeasure?.id || "");
-    formData.append("min_stock", data.min_stock || "0");
+    let imageUrl: string | null = typeof data.image === "string" ? data.image : null;
 
     if (data.image instanceof File) {
-      formData.append("image", data.image);
+      const r2Result = await upload(data.image, "ingredients");
+      if (!r2Result) return;
+      imageUrl = r2Result.url;
     }
 
+    const body = {
+      name: data.name,
+      description: data.description || null,
+      unitOfMeasureId: data.unitOfMeasure?.id || "",
+      min_stock: data.min_stock || "0",
+      imageUrl,
+    };
+
     if (formType === "edit" && selectedId) {
-      formData.append("id", selectedId);
       await api.fetch("PUT", "/api/stock/ingredient/update", {
-        formData,
+        body: {...body, id: selectedId},
         onSuccess: () => {
           toast.successToast("ingredients.updateSuccess");
           reset();
@@ -102,8 +109,8 @@ export function useIngredients() {
         },
       });
     } else {
-      await api.fetch("POST", "/api/stock/ingredient/create", {
-        formData,
+      const result = await api.fetch("POST", "/api/stock/ingredient/create", {
+        body,
         onSuccess: () => {
           toast.successToast("ingredients.createSuccess");
           reset();
@@ -111,6 +118,9 @@ export function useIngredients() {
           refreshTable();
         },
       });
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     }
   }
 

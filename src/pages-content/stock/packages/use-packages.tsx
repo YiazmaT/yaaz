@@ -7,6 +7,7 @@ import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {Package, PackagesFilters} from "./types";
 import {PackageFormValues, usePackageFormConfig} from "./form-config";
 import {usePackagesTableConfig} from "./desktop/table-config";
@@ -25,6 +26,7 @@ export function usePackages() {
   const [stockHistoryItem, setStockHistoryItem] = useState<Package | null>(null);
   const [costHistoryPackage, setCostHistoryPackage] = useState<Package | null>(null);
   const {translate} = useTranslate();
+  const {upload, deleteOrphan} = useR2Upload();
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = usePackageFormConfig();
   const api = useApi();
@@ -100,21 +102,26 @@ export function usePackages() {
   }
 
   async function submit(data: PackageFormValues) {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("description", data.description || "");
-    formData.append("type", data.type);
-    formData.append("min_stock", data.min_stock || "0");
-    formData.append("unitOfMeasureId", data.unitOfMeasure?.id || "");
+    let imageUrl: string | null = typeof data.image === "string" ? data.image : null;
 
     if (data.image instanceof File) {
-      formData.append("image", data.image);
+      const r2Result = await upload(data.image, "packages");
+      if (!r2Result) return;
+      imageUrl = r2Result.url;
     }
 
+    const body = {
+      name: data.name,
+      description: data.description || null,
+      type: data.type,
+      min_stock: data.min_stock || "0",
+      unitOfMeasureId: data.unitOfMeasure?.id || "",
+      imageUrl,
+    };
+
     if (formType === "edit" && selectedId) {
-      formData.append("id", selectedId);
       await api.fetch("PUT", "/api/stock/package/update", {
-        formData,
+        body: {...body, id: selectedId},
         onSuccess: () => {
           toast.successToast("packages.updateSuccess");
           reset();
@@ -123,8 +130,8 @@ export function usePackages() {
         },
       });
     } else {
-      await api.fetch("POST", "/api/stock/package/create", {
-        formData,
+      const result = await api.fetch("POST", "/api/stock/package/create", {
+        body,
         onSuccess: () => {
           toast.successToast("packages.createSuccess");
           reset();
@@ -132,6 +139,9 @@ export function usePackages() {
           refreshTable();
         },
       });
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     }
   }
 

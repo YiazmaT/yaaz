@@ -6,6 +6,7 @@ import {useMediaQuery, useTheme} from "@mui/material";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi} from "@/src/hooks/use-api";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {Nfe, NfeItem} from "./types";
 import {NfeFormItem, NfeFormValues, useNfeFormConfig} from "./form-config";
 import {useNfeTableConfig} from "./desktop/table-config";
@@ -20,6 +21,7 @@ export function useNfe() {
   const [fileNfe, setFileNfe] = useState<Nfe | null>(null);
   const [selectedNfeId, setSelectedNfeId] = useState<string | null>(null);
   const [launchDrawer, setLaunchDrawer] = useState<{items: LaunchPreviewItem[]; mode: "launch" | "delete"; onConfirm: () => void} | null>(null);
+  const {upload, deleteOrphan} = useR2Upload();
   const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useNfeFormConfig();
   const theme = useTheme();
@@ -71,29 +73,30 @@ export function useNfe() {
   }
 
   async function doCreate(data: NfeFormValues) {
-    const jsonPayload = {
-      description: data.description,
-      supplier: data.supplier,
-      nfeNumber: data.nfeNumber,
-      date: data.date,
-      items: data.items.map((item) => ({
-        itemType: item.itemType,
-        itemId: item.itemId,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-      })),
-      createBill: data.createBill,
-      addToStock: data.addToStock,
-    };
+    let fileUrl: string | null = null;
 
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(jsonPayload));
-    if (data.file) {
-      formData.append("file", data.file);
+    if (data.file instanceof File) {
+      const r2Result = await upload(data.file, "nfe-files");
+      if (!r2Result) return;
+      fileUrl = r2Result.url;
     }
 
-    await api.fetch("POST", "/api/finance/nfe/create", {
-      formData,
+    const result = await api.fetch("POST", "/api/finance/nfe/create", {
+      body: {
+        description: data.description,
+        supplier: data.supplier,
+        nfeNumber: data.nfeNumber,
+        date: data.date,
+        items: data.items.map((item) => ({
+          itemType: item.itemType,
+          itemId: item.itemId,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+        })),
+        createBill: data.createBill,
+        addToStock: data.addToStock,
+        fileUrl,
+      },
       onSuccess: () => {
         toast.successToast("finance.nfe.createSuccess");
         reset(defaultValues);
@@ -101,6 +104,10 @@ export function useNfe() {
         refreshTable();
       },
     });
+
+    if (!result && fileUrl) {
+      await deleteOrphan(fileUrl);
+    }
   }
 
   async function submit(data: NfeFormValues) {

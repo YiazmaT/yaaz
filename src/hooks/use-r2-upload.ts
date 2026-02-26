@@ -44,7 +44,7 @@ export function useR2Upload() {
 
       return {key: presignData.key, url: presignData.url};
     } catch {
-      toast.errorToast("api.errors.somethingWentWrong");
+      toast.errorToast("api.errors.somethingWentWrongUploadFile");
       return null;
     } finally {
       loader.hide();

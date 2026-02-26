@@ -7,6 +7,7 @@ import {FormContextProvider} from "@/src/contexts/form-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {FileUploader} from "@/src/components/file-uploader";
 import {flexGenerator} from "@/src/utils/flex-generator";
@@ -24,6 +25,7 @@ export function PayModal(props: PayModalProps) {
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const {translate} = useTranslate();
   const {bill, onClose, onSuccess} = props;
+  const {upload, deleteOrphan} = useR2Upload();
   const {schema, defaultValues} = usePayFormConfig();
   const {data: accountsData} = useApiQuery<BankAccount[]>({route: "/api/finance/bank-account/list", queryKey: ["/api/finance/bank-account/list"]});
   const api = useApi();
@@ -66,10 +68,14 @@ export function PayModal(props: PayModalProps) {
       },
       onSuccess: async () => {
         if (receiptFile) {
-          const formData = new FormData();
-          formData.append("billId", bill.id);
-          formData.append("file", receiptFile);
-          await api.fetch("POST", "/api/finance/bill/upload-receipt", {formData});
+          const r2Result = await upload(receiptFile, "bill-receipts");
+          if (r2Result) {
+            const registered = await api.fetch("POST", "/api/finance/bill/register-receipt", {
+              body: {billId: bill.id, url: r2Result.url},
+              hideLoader: true,
+            });
+            if (!registered) await deleteOrphan(r2Result.url);
+          }
         }
         toast.successToast("finance.bills.paySuccess");
         onClose();

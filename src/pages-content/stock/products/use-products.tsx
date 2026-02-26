@@ -7,6 +7,7 @@ import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {CompositionItem, PackageCompositionItem, Product, ProductsFilters, UnityOfMeasure} from "./types";
 import {ProductFormValues, useProductFormConfig} from "./form-config";
 import {useProductsTableConfig} from "./desktop/table-config";
@@ -24,8 +25,9 @@ export function useProducts() {
   const [costHistoryItem, setCostHistoryItem] = useState<Product | null>(null);
   const [stockHistoryItem, setStockHistoryItem] = useState<Product | null>(null);
   const [manufactureCostItem, setManufactureCostItem] = useState<Product | null>(null);
-  const {show: showConfirmModal} = useConfirmModal();
   const {translate} = useTranslate();
+  const {upload, deleteOrphan} = useR2Upload();
+  const {show: showConfirmModal} = useConfirmModal();
   const {defaultValues, schema} = useProductFormConfig();
   const api = useApi();
   const toast = useToaster();
@@ -106,23 +108,28 @@ export function useProducts() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("price", String(data.price));
-    formData.append("description", data.description || "");
-    formData.append("min_stock", data.min_stock || "0");
-    formData.append("composition", JSON.stringify(data.composition || []));
-    formData.append("packages", JSON.stringify(data.packages || []));
-    formData.append("unitOfMeasureId", data.unitOfMeasure?.id || "");
+    let imageUrl: string | null = typeof data.image === "string" ? data.image : null;
 
     if (data.image instanceof File) {
-      formData.append("image", data.image);
+      const r2Result = await upload(data.image, "products");
+      if (!r2Result) return;
+      imageUrl = r2Result.url;
     }
 
+    const body = {
+      name: data.name,
+      price: data.price,
+      description: data.description || null,
+      min_stock: data.min_stock || "0",
+      composition: data.composition || [],
+      packages: data.packages || [],
+      unitOfMeasureId: data.unitOfMeasure?.id || "",
+      imageUrl,
+    };
+
     if (formType === "edit" && selectedId) {
-      formData.append("id", selectedId);
       await api.fetch("PUT", "/api/stock/product/update", {
-        formData,
+        body: {...body, id: selectedId},
         onSuccess: () => {
           toast.successToast("products.updateSuccess");
           reset();
@@ -131,8 +138,8 @@ export function useProducts() {
         },
       });
     } else {
-      await api.fetch("POST", "/api/stock/product/create", {
-        formData,
+      const result = await api.fetch("POST", "/api/stock/product/create", {
+        body,
         onSuccess: () => {
           toast.successToast("products.createSuccess");
           reset();
@@ -140,6 +147,9 @@ export function useProducts() {
           refreshTable();
         },
       });
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     }
   }
 
@@ -239,19 +249,19 @@ export function useProducts() {
     showConfirmModal({
       message: messageKey,
       onConfirm: async () => {
-        const formData = new FormData();
-        formData.append("id", row.id);
-        formData.append("name", row.name);
-        formData.append("price", String(row.price));
-        formData.append("description", row.description || "");
-        formData.append("min_stock", row.min_stock ?? "0");
-        formData.append("composition", JSON.stringify(row.composition || []));
-        formData.append("packages", JSON.stringify(row.packages || []));
-        formData.append("unitOfMeasureId", row.unity_of_measure?.id || "");
-        formData.append("displayLandingPage", String(!row.displayLandingPage));
-
         await api.fetch("PUT", "/api/stock/product/update", {
-          formData,
+          body: {
+            id: row.id,
+            name: row.name,
+            price: row.price,
+            description: row.description || null,
+            min_stock: row.min_stock ?? "0",
+            composition: row.composition || [],
+            packages: row.packages || [],
+            unitOfMeasureId: row.unity_of_measure?.id || "",
+            imageUrl: row.image,
+            displayLandingPage: !row.displayLandingPage,
+          },
           onSuccess: () => {
             toast.successToast(successKey);
             refreshTable();

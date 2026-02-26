@@ -1,6 +1,5 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {uploadToR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
@@ -8,25 +7,9 @@ const ROUTE = "/api/stock/ingredient/create";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.INGREDIENT, ROUTE, async ({auth, success, error}) => {
-    const formData = await req.formData();
-    const name = formData.get("name") as string;
-    const description = formData.get("description") as string | null;
-    const unitOfMeasureId = formData.get("unitOfMeasureId") as string;
-    const min_stock = formData.get("min_stock") as string | null;
-    const image = formData.get("image") as File | null;
+    const {name, description, unitOfMeasureId, min_stock, imageUrl} = await req.json();
 
     if (!name || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
-
-    let imageUrl: string | null = null;
-
-    if (image && image.size > 0) {
-      const uploadResult = await uploadToR2(image, "ingredients", auth.tenant_id);
-      if (!uploadResult.success) {
-        if (uploadResult.error === "FILE_TOO_LARGE") return error("global.errors.fileTooLarge", 400);
-        return error("api.errors.uploadFailed", 400, uploadResult);
-      }
-      imageUrl = uploadResult.url!;
-    }
 
     const maxCode = await prisma.ingredient.aggregate({where: {tenant_id: auth.tenant_id}, _max: {code: true}});
     const nextCode = (maxCode._max.code || 0) + 1;
@@ -39,7 +22,7 @@ export async function POST(req: NextRequest) {
         description: description || null,
         unit_of_measure_id: unitOfMeasureId,
         min_stock: min_stock || "0",
-        image: imageUrl,
+        image: imageUrl || null,
         creator_id: auth.user.id,
       },
       include: {unity_of_measure: {select: {id: true, unity: true}}},
