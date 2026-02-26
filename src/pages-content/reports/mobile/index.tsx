@@ -4,7 +4,6 @@ import {ReportSelector} from "../components/report-selector";
 import {ReportType} from "../types";
 import {SalesSummaryReport} from "../report-types/sales-summary/sales-summary-report";
 import {StockLevelsReport} from "../report-types/stock-levels/stock-levels-report";
-import {ProfitMarginReport} from "../report-types/profit-margin/profit-margin-report";
 import {MobileViewProps} from "./types";
 
 export function MobileView(props: MobileViewProps) {
@@ -16,8 +15,6 @@ export function MobileView(props: MobileViewProps) {
         return <SalesSummaryReport />;
       case ReportType.STOCK_LEVELS:
         return <StockLevelsReport />;
-      case ReportType.PROFIT_MARGIN:
-        return <ProfitMarginReport />;
       default:
         return null;
     }

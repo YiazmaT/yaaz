@@ -10,11 +10,6 @@ export function useReportsConstants() {
       label: translate("reports.types.salesSummary"),
       description: translate("reports.descriptions.salesSummary"),
     },
-    {
-      value: ReportType.PROFIT_MARGIN,
-      label: translate("reports.types.profitMargin"),
-      description: translate("reports.descriptions.profitMargin"),
-    },
   ];
 
   const stockReportOptions: ReportOption[] = [
