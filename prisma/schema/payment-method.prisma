@@ -1,0 +1,20 @@
+model FinancePaymentMethod {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id       String       @db.Uuid
+  name            String
+  bank_account_id String?      @db.Uuid
+  active          Boolean      @default(true)
+  tenant          Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  bank_account    BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  creator        User?     @relation("FinancePaymentMethodCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+  last_editor    User?     @relation("FinancePaymentMethodEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@unique([tenant_id, name])
+  @@map("payment_method")
+  @@schema("data")
+}

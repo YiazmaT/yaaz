@@ -35,6 +35,7 @@ model Tenant {
   nfes                     Nfe[]
   nfe_items                NfeItem[]
   unity_of_measures        UnityOfMeasure[]
+  payment_methods          FinancePaymentMethod[]
 
   @@map("tenant")
   @@schema("data")

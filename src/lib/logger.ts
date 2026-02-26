@@ -45,6 +45,7 @@ export enum LogModule {
   BANK_ACCOUNT = "bank_account",
   CATEGORIES = "categories",
   NFE = "nfe",
+  PAYMENT_METHOD = "payment_method",
 }
 
 interface LogParams {

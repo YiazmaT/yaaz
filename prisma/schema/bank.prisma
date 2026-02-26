@@ -22,8 +22,9 @@ model BankAccount {
   last_editor_id String?   @db.Uuid
   last_editor    User?     @relation("BankAccountEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
 
-  transactions BankTransaction[]
-  bills        Bill[]
+  transactions    BankTransaction[]
+  bills           Bill[]
+  payment_methods FinancePaymentMethod[]
 
   @@unique([tenant_id, name])
   @@map("bank_account")

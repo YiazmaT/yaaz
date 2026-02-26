@@ -613,10 +613,12 @@
     "billsToPayTitle": "Contas a Pagar",
     "banksTitle": "Contas Bancárias",
     "categoriesTitle": "Categorias Financeiras",
+    "paymentMethodTitle": "Formas de Pagamento",
     "tabs": {
       "bills": "Contas a Pagar",
       "bank": "Contas Bancárias",
       "categories": "Categorias",
+      "paymentMethod": "Formas de Pagamento",
       "nfe": "Notas Fiscais de Entrada"
     },
     "categories": {
@@ -777,6 +779,38 @@
         "countMinOne": "A quantidade deve ser pelo menos 1.",
         "invalidFileType": "Tipo de arquivo inválido. Envie uma imagem ou PDF.",
         "fileTooLarge": "O arquivo excede o tamanho máximo permitido."
+      }
+    },
+    "paymentMethod": {
+      "title": "Formas de Pagamento",
+      "createTitle": "Incluir Forma de Pagamento",
+      "editTitle": "Editar Forma de Pagamento",
+      "createSuccess": "Forma de pagamento criada com sucesso!",
+      "updateSuccess": "Forma de pagamento atualizada com sucesso!",
+      "deleteSuccess": "Forma de pagamento excluída com sucesso!",
+      "deleteConfirm": "Tem certeza que deseja excluir esta forma de pagamento?",
+      "bankAccountConfirm": "Ao vincular uma conta bancária, cada uso desta forma de pagamento irá criar automaticamente um lançamento no extrato da conta. Deseja continuar?",
+      "inactive": "Inativa",
+      "deactivateConfirm": "Tem certeza que deseja desativar esta forma de pagamento?",
+      "activateConfirm": "Tem certeza que deseja ativar esta forma de pagamento?",
+      "deactivateSuccess": "Forma de pagamento desativada com sucesso!",
+      "activateSuccess": "Forma de pagamento ativada com sucesso!",
+      "tooltipDeactivate": "Desativar forma de pagamento",
+      "tooltipActivate": "Ativar forma de pagamento",
+      "fields": {
+        "name": "Nome",
+        "bankAccount": "Conta Bancária"
+      },
+      "filters": {
+        "open": "Abrir Filtros",
+        "close": "Fechar Filtros",
+        "clear": "Limpar",
+        "apply": "Aplicar",
+        "clearTooltip": "Limpar Filtros",
+        "showInactives": "Mostrar formas de pagamento inativas"
+      },
+      "errors": {
+        "nameAlreadyExists": "Já existe uma forma de pagamento com este nome."
       }
     },
     "nfeTitle": "Notas Fiscais de Entrada",

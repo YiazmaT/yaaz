@@ -18,6 +18,7 @@ import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
 import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
 
@@ -30,6 +31,7 @@ const menuItems: MenuItem[] = [
       {name: "finance.tabs.bills", route: "/finance/bills-to-pay", icon: <ReceiptLongOutlinedIcon />},
       {name: "finance.tabs.bank", route: "/finance/banks", icon: <AccountBalanceOutlinedIcon />},
       {name: "finance.tabs.categories", route: "/finance/categories", icon: <LabelOutlinedIcon />},
+      {name: "finance.tabs.paymentMethod", route: "/finance/payment-method", icon: <CreditCardOutlinedIcon />},
       {name: "finance.tabs.nfe", route: "/finance/nfe", icon: <DescriptionOutlinedIcon />},
     ],
   },
