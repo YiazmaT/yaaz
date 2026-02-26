@@ -181,8 +181,8 @@ export async function PUT(req: NextRequest) {
     }
 
     const sale = await prisma.$transaction(async (tx) => {
-      await tx.saleItem.deleteMany({where: {sale_id: id}});
-      await tx.salePackage.deleteMany({where: {sale_id: id}});
+      await tx.saleItem.deleteMany({where: {sale_id: id, tenant_id: auth.tenant_id}});
+      await tx.salePackage.deleteMany({where: {sale_id: id, tenant_id: auth.tenant_id}});
 
       const updatedSale = await tx.sale.update({
         where: {id, tenant_id: auth.tenant_id},

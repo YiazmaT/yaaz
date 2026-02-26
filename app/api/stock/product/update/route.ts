@@ -58,8 +58,8 @@ export async function PUT(req: NextRequest) {
     const composition: CompositionItemDto[] = compositionJson ? JSON.parse(compositionJson) : [];
     const packages: PackageCompositionItemDto[] = packagesJson ? JSON.parse(packagesJson) : [];
 
-    await prisma.productIngredient.deleteMany({where: {product_id: id}});
-    await prisma.productPackage.deleteMany({where: {product_id: id}});
+    await prisma.productIngredient.deleteMany({where: {product_id: id, tenant_id: auth.tenant_id}});
+    await prisma.productPackage.deleteMany({where: {product_id: id, tenant_id: auth.tenant_id}});
 
     const product = await prisma.product.update({
       where: {id, tenant_id: auth.tenant_id},
