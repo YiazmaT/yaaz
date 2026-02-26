@@ -21,7 +21,7 @@ export async function DELETE(req: NextRequest) {
       return error("finance.bank.errors.inUse", 400, {id, transactionCount}, {transactionCount});
     }
 
-    await prisma.bankAccount.delete({where: {id}});
+    await prisma.bankAccount.delete({where: {id, tenant_id: auth.tenant_id}});
 
     return success("delete", account);
   });

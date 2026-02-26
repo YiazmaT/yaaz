@@ -49,7 +49,7 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    await prisma.product.delete({where: {id}});
+    await prisma.product.delete({where: {id, tenant_id: auth.tenant_id}});
 
     return success("delete", product);
   });

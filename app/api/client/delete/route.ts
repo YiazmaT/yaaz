@@ -39,7 +39,7 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    await prisma.client.delete({where: {id}});
+    await prisma.client.delete({where: {id, tenant_id: auth.tenant_id}});
 
     return success("delete", client);
   });

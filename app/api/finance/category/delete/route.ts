@@ -26,7 +26,7 @@ export async function DELETE(req: NextRequest) {
       return error("finance.categories.errors.inUse", 400, {id, billCount, transactionCount, total}, {billCount, transactionCount, total});
     }
 
-    await prisma.financeCategory.delete({where: {id}});
+    await prisma.financeCategory.delete({where: {id, tenant_id: auth.tenant_id}});
 
     return success("delete", category);
   });

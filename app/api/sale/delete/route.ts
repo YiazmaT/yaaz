@@ -40,7 +40,7 @@ export async function DELETE(req: NextRequest) {
         }
       }
 
-      await tx.sale.delete({where: {id}});
+      await tx.sale.delete({where: {id, tenant_id: auth.tenant_id}});
     });
 
     return success("delete", sale);
