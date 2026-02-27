@@ -968,6 +968,7 @@
       "clearTooltip": "Limpar Filtros",
       "showInactives": "Mostrar usuários inativos"
     },
+    "user": "Usuário",
     "admin": "Admin",
     "owner": "Proprietário",
     "active": "Ativo",
@@ -981,6 +982,7 @@
     "fields": {
       "name": "Nome",
       "login": "Login",
+      "image": "Foto",
       "password": "Senha",
       "newPassword": "Nova Senha (opcional)",
       "admin": "Administrador",

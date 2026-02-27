@@ -37,7 +37,7 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
         render: (row) => {
           if (row.owner) return <Chip label={translate("users.owner")} size="small" color="warning" />;
           if (row.admin) return <Chip label={translate("users.admin")} size="small" color="primary" />;
-          return "-";
+          return <Chip label={translate("users.user")} size="small" />;
         },
       },
       {

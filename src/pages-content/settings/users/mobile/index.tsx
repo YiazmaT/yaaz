@@ -34,6 +34,7 @@ export function MobileView(props: MobileViewProps) {
             <Box sx={{display: "flex", gap: 0.5, marginTop: 0.5, flexWrap: "wrap"}}>
               {item.owner && <Chip label={translate("users.owner")} size="small" color="warning" />}
               {!item.owner && item.admin && <Chip label={translate("users.admin")} size="small" color="primary" />}
+              {!item.owner && !item.admin && <Chip label={translate("users.user")} size="small" />}
               {!item.active && <Chip label={translate("users.inactive")} size="small" color="error" />}
             </Box>
           </Box>

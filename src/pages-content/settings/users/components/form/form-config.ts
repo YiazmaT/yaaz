@@ -1,3 +1,4 @@
+import {ImageInputValue} from "@/src/components/form-fields/image-input/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {validEmailRegex} from "@/src/utils/regex";
 import * as yup from "yup";
@@ -7,6 +8,7 @@ export interface UserFormValues {
   login: string;
   password: string;
   admin: boolean;
+  image: ImageInputValue;
 }
 
 export function useUserFormConfig(isEdit: boolean) {
@@ -27,6 +29,7 @@ export function useUserFormConfig(isEdit: boolean) {
     login: "",
     password: "",
     admin: false,
+    image: null,
   };
 
   return {schema, defaultValues};

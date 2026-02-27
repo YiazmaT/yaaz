@@ -1,6 +1,7 @@
 "use client";
 import {Button, Grid} from "@mui/material";
 import {FormCheckBox} from "@/src/components/form-fields/check-box";
+import {FormImageInput} from "@/src/components/form-fields/image-input";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
@@ -26,6 +27,7 @@ export function Form(props: FormProps) {
       >
         <form onSubmit={users.handleSubmit(users.submit)}>
           <Grid container spacing={2}>
+            <FormImageInput fieldName="image" label="users.fields.image" imageSize={120} />
             <FormTextInput fieldName="name" label="users.fields.name" />
             <FormTextInput fieldName="login" label="users.fields.login" />
             {users.formType !== "details" && (

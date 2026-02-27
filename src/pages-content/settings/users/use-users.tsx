@@ -5,6 +5,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
+import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {User, UsersFilters, UsersListResponse} from "./types";
 import {UserFormValues, useUserFormConfig} from "./components/form/form-config";
 import {useUsersTableConfig} from "./desktop/table-config";
@@ -14,9 +15,9 @@ export const API_ROUTE = "/api/settings/user/paginated-list";
 export function useUsers() {
   const [formType, setFormType] = useState("create");
   const [showDrawer, setShowDrawer] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [filters, setFilters] = useState<UsersFilters>({});
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const {upload, deleteOrphan} = useR2Upload();
   const {show: showConfirmModal} = useConfirmModal();
   const api = useApi();
   const toast = useToaster();
@@ -55,15 +56,23 @@ export function useUsers() {
   }
 
   async function submit(data: UserFormValues) {
+    let imageUrl: string | null = typeof data.image === "string" ? data.image : null;
+
+    if (data.image instanceof File) {
+      const r2Result = await upload(data.image, "users");
+      if (!r2Result) return;
+      imageUrl = r2Result.url;
+    }
+
     if (formType === "edit" && selectedId) {
-      await api.fetch("PUT", "/api/settings/user/update", {
+      const result = await api.fetch("PUT", "/api/settings/user/update", {
         body: {
           id: selectedId,
           name: data.name,
           login: data.login,
           password: data.password || undefined,
           admin: data.admin,
-          imageUrl: selectedImage,
+          imageUrl,
         },
         onSuccess: () => {
           toast.successToast("users.updateSuccess");
@@ -72,13 +81,18 @@ export function useUsers() {
           refreshTable();
         },
       });
+
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     } else {
-      await api.fetch("POST", "/api/settings/user/create", {
+      const result = await api.fetch("POST", "/api/settings/user/create", {
         body: {
           name: data.name,
           login: data.login,
           password: data.password,
           admin: data.admin,
+          imageUrl,
         },
         onSuccess: () => {
           toast.successToast("users.createSuccess");
@@ -87,6 +101,10 @@ export function useUsers() {
           refreshTable();
         },
       });
+
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     }
   }
 
@@ -98,7 +116,6 @@ export function useUsers() {
   function closeDrawer() {
     setShowDrawer(false);
     setSelectedId(null);
-    setSelectedImage(null);
     reset(defaultValues);
   }
 
@@ -108,13 +125,12 @@ export function useUsers() {
       login: row.login,
       password: "",
       admin: row.admin,
+      image: row.image,
     });
-    setSelectedImage(row.image);
   }
 
   function handleCreate() {
     setSelectedId(null);
-    setSelectedImage(null);
     reset(defaultValues);
     openDrawer("create");
   }
@@ -170,6 +186,5 @@ export function useUsers() {
     refreshTable,
     maxUserAmount,
     totalUsers,
-    selectedImage,
   };
 }

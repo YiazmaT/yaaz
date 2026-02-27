@@ -9,7 +9,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {useR2Upload} from "@/src/hooks/use-r2-upload";
 import {CompositionItem, PackageCompositionItem, Product, ProductsFilters, UnityOfMeasure} from "./types";
-import {ProductFormValues, useProductFormConfig} from "./form-config";
+import {ProductFormValues, useProductFormConfig} from "./components/form/form-config";
 import {useProductsTableConfig} from "./desktop/table-config";
 
 const API_ROUTE = "/api/stock/product/paginated-list";

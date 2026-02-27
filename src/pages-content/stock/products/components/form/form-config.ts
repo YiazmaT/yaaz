@@ -1,6 +1,6 @@
 import {ImageInputValue} from "@/src/components/form-fields/image-input/types";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {CompositionItem, PackageCompositionItem, UnityOfMeasure} from "./types";
+import {CompositionItem, PackageCompositionItem, UnityOfMeasure} from "../../types";
 import * as yup from "yup";
 
 export interface ProductFormValues {

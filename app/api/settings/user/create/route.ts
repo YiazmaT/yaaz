@@ -8,7 +8,7 @@ const ROUTE = "/api/settings/user/create";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.USER, ROUTE, async ({auth, success, error}) => {
-    const {name, login, password, admin} = await req.json();
+    const {name, login, password, admin, imageUrl} = await req.json();
 
     if (!name || !login || !password) return error("api.errors.missingRequiredFields", 400);
 
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
         login: normalizedLogin,
         password: hashedPassword,
         admin: admin ?? false,
+        image: imageUrl || null,
         creator_id: auth.user.id,
       },
       select: {
