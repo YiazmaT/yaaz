@@ -64,15 +64,13 @@ export async function GET(req: NextRequest) {
       salesByPaymentMethod[pm] = (salesByPaymentMethod[pm] ?? new Decimal(0)).plus(new Decimal(sale.total.toString()));
     });
 
-    const bills = Object.entries(billsByCategory).map(([category, total]) => ({
-      category,
-      total: total.toFixed(2),
-    }));
+    const bills = Object.entries(billsByCategory)
+      .map(([category, total]) => ({category, total: total.toFixed(2)}))
+      .sort((a, b) => a.category.localeCompare(b.category, "pt-BR"));
 
-    const sales = Object.entries(salesByPaymentMethod).map(([paymentMethod, total]) => ({
-      paymentMethod,
-      total: total.toFixed(2),
-    }));
+    const sales = Object.entries(salesByPaymentMethod)
+      .map(([paymentMethod, total]) => ({paymentMethod, total: total.toFixed(2)}))
+      .sort((a, b) => a.paymentMethod.localeCompare(b.paymentMethod, "pt-BR"));
 
     const totalBills = bills.reduce((acc, row) => acc.plus(new Decimal(row.total)), new Decimal(0));
     const totalSales = sales.reduce((acc, row) => acc.plus(new Decimal(row.total)), new Decimal(0));
@@ -121,7 +119,8 @@ export async function GET(req: NextRequest) {
       <p class="filter-info">${serverTranslate("reports.period")}: ${period}</p>
 
       <h3>${serverTranslate("reports.movement.salesTable")}</h3>
-      <table>
+      <table style="table-layout: fixed; width: 100%">
+        <colgroup><col style="width: 70%"><col style="width: 30%"></colgroup>
         <thead>
           <tr>
             <th>${serverTranslate("reports.movement.paymentMethod")}</th>
@@ -140,7 +139,8 @@ export async function GET(req: NextRequest) {
       </table>
 
       <h3>${serverTranslate("reports.movement.billsTable")}</h3>
-      <table>
+      <table style="table-layout: fixed; width: 100%">
+        <colgroup><col style="width: 70%"><col style="width: 30%"></colgroup>
         <thead>
           <tr>
             <th>${serverTranslate("reports.columns.category")}</th>
@@ -159,7 +159,8 @@ export async function GET(req: NextRequest) {
       </table>
 
       <h3>${serverTranslate("reports.movement.balanceTable")}</h3>
-      <table>
+      <table style="table-layout: fixed; width: 100%">
+        <colgroup><col style="width: 70%"><col style="width: 30%"></colgroup>
         <tbody>
           <tr>
             <td>${serverTranslate("reports.movement.totalRevenue")}</td>
