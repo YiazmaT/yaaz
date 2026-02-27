@@ -10,6 +10,10 @@ export interface User {
   last_edit_date: string | null;
 }
 
+export interface UsersFilters {
+  showInactives?: boolean;
+}
+
 export interface UsersListResponse {
   data: User[];
   total: number;

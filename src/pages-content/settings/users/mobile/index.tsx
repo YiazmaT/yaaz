@@ -11,6 +11,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {User} from "../types";
 import {Form} from "../components/form";
+import {UsersFiltersComponent} from "../components/filters";
 import {MobileViewProps} from "./types";
 import {API_ROUTE} from "../use-users";
 
@@ -92,6 +93,8 @@ export function MobileView(props: MobileViewProps) {
         apiRoute={API_ROUTE}
         renderRow={renderRow}
         onView={users.handleView}
+        filters={users.filters.showInactives ? {showInactives: "true"} : undefined}
+        headerContent={<UsersFiltersComponent onFilterChange={users.handleFilterChange} />}
       />
 
       <Fab

@@ -5,8 +5,8 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
-import {User, UsersListResponse} from "./types";
-import {UserFormValues, useUserFormConfig} from "./form-config";
+import {User, UsersFilters, UsersListResponse} from "./types";
+import {UserFormValues, useUserFormConfig} from "./components/form/form-config";
 import {useUsersTableConfig} from "./desktop/table-config";
 
 export const API_ROUTE = "/api/settings/user/paginated-list";
@@ -16,6 +16,7 @@ export function useUsers() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [filters, setFilters] = useState<UsersFilters>({});
   const {show: showConfirmModal} = useConfirmModal();
   const api = useApi();
   const toast = useToaster();
@@ -129,6 +130,10 @@ export function useUsers() {
     openDrawer("edit");
   }
 
+  function handleFilterChange(newFilters: UsersFilters) {
+    setFilters(newFilters);
+  }
+
   function handleToggleActive(row: User) {
     const messageKey = row.active ? "users.deactivateConfirm" : "users.activateConfirm";
     const successKey = row.active ? "users.deactivateSuccess" : "users.activateSuccess";
@@ -160,6 +165,8 @@ export function useUsers() {
     handleView,
     handleEdit,
     handleToggleActive,
+    handleFilterChange,
+    filters,
     refreshTable,
     maxUserAmount,
     totalUsers,

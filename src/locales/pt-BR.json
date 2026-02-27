@@ -960,6 +960,14 @@
     "deleteSuccess": "Usuário excluído com sucesso!",
     "deleteConfirm": "Tem certeza que deseja excluir este usuário?",
     "userCount": "Usuários",
+    "filters": {
+      "open": "Abrir Filtros",
+      "close": "Fechar Filtros",
+      "clear": "Limpar",
+      "apply": "Aplicar",
+      "clearTooltip": "Limpar Filtros",
+      "showInactives": "Mostrar usuários inativos"
+    },
     "admin": "Admin",
     "owner": "Proprietário",
     "active": "Ativo",

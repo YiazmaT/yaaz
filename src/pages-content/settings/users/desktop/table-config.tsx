@@ -1,4 +1,4 @@
-import {Chip} from "@mui/material";
+import {Box, Chip} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -22,7 +22,12 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
         field: "login",
         headerKey: "users.fields.login",
         width: "30%",
-        render: (row) => row.login,
+        render: (row) => (
+          <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+            {!row.active && <Chip label={translate("users.inactive")} size="small" color="error" />}
+            {row.login}
+          </Box>
+        ),
       },
       {
         field: "admin",
@@ -34,18 +39,6 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
           if (row.admin) return <Chip label={translate("users.admin")} size="small" color="primary" />;
           return "-";
         },
-      },
-      {
-        field: "active",
-        headerKey: "users.fields.status",
-        width: "12%",
-        align: "center",
-        render: (row) =>
-          row.active ? (
-            <Chip label={translate("users.active")} size="small" color="success" />
-          ) : (
-            <Chip label={translate("users.inactive")} size="small" color="error" />
-          ),
       },
       {
         field: "actions",

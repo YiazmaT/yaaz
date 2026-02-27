@@ -1,4 +1,5 @@
 import {useTranslate} from "@/src/contexts/translation-context";
+import {validEmailRegex} from "@/src/utils/regex";
 import * as yup from "yup";
 
 export interface UserFormValues {
@@ -13,10 +14,12 @@ export function useUserFormConfig(isEdit: boolean) {
 
   const schema = yup.object().shape({
     name: yup.string().required().label(translate("users.fields.name")),
-    login: yup.string().required().label(translate("users.fields.login")),
-    password: isEdit
-      ? yup.string().optional()
-      : yup.string().required().label(translate("users.fields.password")),
+    login: yup
+      .string()
+      .required()
+      .matches(validEmailRegex, {message: translate("global.errors.invalidEmail")})
+      .label(translate("global.email")),
+    password: isEdit ? yup.string().optional() : yup.string().required().label(translate("users.fields.password")),
   });
 
   const defaultValues: UserFormValues = {

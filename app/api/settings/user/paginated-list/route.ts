@@ -11,9 +11,14 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const search = searchParams.get("search") || "";
+    const showInactives = searchParams.get("showInactives") === "true";
     const skip = (page - 1) * limit;
 
     const where: any = {tenant_id: auth.tenant_id};
+
+    if (!showInactives) {
+      where.active = true;
+    }
 
     if (search) {
       where.OR = [{name: {contains: search, mode: "insensitive" as const}}, {login: {contains: search, mode: "insensitive" as const}}];
