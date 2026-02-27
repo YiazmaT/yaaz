@@ -51,12 +51,12 @@ export function SalesSummaryResult(props: SalesSummaryResultProps) {
 
   function handleDownloadPdf() {
     const params = new URLSearchParams();
-    params.append("data", JSON.stringify(props.data));
+    params.append("pdf", "true");
     params.append("generatedAt", new Date().toISOString());
     params.append("dateFrom", props.filters.dateFrom);
     params.append("dateTo", props.filters.dateTo);
 
-    window.open(`/api/reports/sales/sales-summary/pdf?${params.toString()}`, "_blank");
+    window.open(`/api/reports/sales/sales-summary?${params.toString()}`, "_blank");
   }
 
   return (
