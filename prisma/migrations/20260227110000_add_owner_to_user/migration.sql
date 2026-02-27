@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "data"."user" ADD COLUMN IF NOT EXISTS "owner" BOOLEAN NOT NULL DEFAULT false;

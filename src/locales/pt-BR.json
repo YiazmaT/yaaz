@@ -41,6 +41,7 @@
     "finance": "Financeiro",
     "packages": "Embalagens",
     "unityOfMeasure": "Unidades de Medida",
+    "settings": "Configurações",
     "yes": "Sim",
     "no": "Não",
     "total": "Total",
@@ -74,7 +75,8 @@
       "uploadFailed": "Erro ao enviar o arquivo. Tente novamente.",
       "deleteFailed": "Erro ao excluir o arquivo. Tente novamente.",
       "notFound": "Registro não encontrado.",
-      "dataNotFound": "Nenhum dado encontrado."
+      "dataNotFound": "Nenhum dado encontrado.",
+      "userAlreadyExists": "Já existe um usuário com este login!"
     }
   },
   "ingredients": {
@@ -941,6 +943,48 @@
     "errors": {
       "alreadyExists": "Já existe uma unidade de medida com este nome.",
       "inUse": "Esta unidade de medida está em uso e não pode ser excluída."
+    }
+  },
+  "settings": {
+    "tabs": {
+      "users": "Usuários"
+    }
+  },
+  "users": {
+    "title": "Usuários",
+    "createTitle": "Novo Usuário",
+    "editTitle": "Editar Usuário",
+    "detailsTitle": "Detalhes do Usuário",
+    "createSuccess": "Usuário criado com sucesso!",
+    "updateSuccess": "Usuário atualizado com sucesso!",
+    "deleteSuccess": "Usuário excluído com sucesso!",
+    "deleteConfirm": "Tem certeza que deseja excluir este usuário?",
+    "userCount": "Usuários",
+    "admin": "Admin",
+    "owner": "Proprietário",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "tooltipActivate": "Ativar usuário",
+    "tooltipDeactivate": "Desativar usuário",
+    "activateConfirm": "Tem certeza que deseja ativar este usuário?",
+    "deactivateConfirm": "Tem certeza que deseja desativar este usuário?",
+    "activateSuccess": "Usuário ativado com sucesso!",
+    "deactivateSuccess": "Usuário desativado com sucesso!",
+    "fields": {
+      "name": "Nome",
+      "login": "Login",
+      "password": "Senha",
+      "newPassword": "Nova Senha (opcional)",
+      "admin": "Administrador",
+      "role": "Perfil",
+      "status": "Status"
+    },
+    "errors": {
+      "userLimitReached": "Limite de usuários ativos atingido para este plano!",
+      "loginAlreadyExists": "Este login já está em uso!",
+      "cannotDeleteSelf": "Você não pode excluir sua própria conta!",
+      "cannotDeleteOwner": "Não é possível excluir o proprietário da conta!",
+      "cannotDeactivateOwner": "Não é possível desativar o proprietário da conta!"
     }
   }
 }

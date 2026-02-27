@@ -8,6 +8,7 @@ model Tenant {
   time_zone            String   @default("America/Sao_Paulo")
   currency_type        String   @default("R$")
   max_file_size_in_mbs Int      @default(10)
+  max_user_amount      Int      @default(3)
 
   instagram_posts          InstagramPost[]
   users                    User[]

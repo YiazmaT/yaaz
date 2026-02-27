@@ -4,13 +4,23 @@ model User {
   name           String
   login          String    @unique
   password       String
+  image          String?
   admin          Boolean   @default(false)
+  owner          Boolean   @default(false)
+  active         Boolean   @default(true)
   current_token  String?
   token_expires  DateTime?
   create_date    DateTime  @default(now())
   last_edit_date DateTime?
   tenant         Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   logs           Log[]
+
+  creator_id     String? @db.Uuid
+  creator        User?   @relation("UserCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_editor_id String? @db.Uuid
+  last_editor    User?   @relation("UserEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+  created_users  User[]  @relation("UserCreator")
+  edited_users   User[]  @relation("UserEditor")
 
   created_ingredients              Ingredient[]            @relation("IngredientCreator")
   edited_ingredients               Ingredient[]            @relation("IngredientEditor")

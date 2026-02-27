@@ -18,6 +18,7 @@ export interface ActionsColumnProps<T> {
   onEdit?: (row: T) => void;
   hideEdit?: (row: T) => boolean;
   onDelete?: (row: T) => void;
+  hideDelete?: (row: T) => boolean;
   customActions?: CustomAction<T>[];
 }
 

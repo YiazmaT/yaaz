@@ -7,6 +7,7 @@ export function ActionsColumn<T>(props: ActionsColumnProps<T>) {
   const {translate} = useTranslate();
 
   const showEdit = props.onEdit && !props.hideEdit?.(props.row);
+  const showDelete = props.onDelete && !props.hideDelete?.(props.row);
 
   return (
     <Box sx={{display: "flex", gap: 0.5, justifyContent: "center"}}>
@@ -36,7 +37,7 @@ export function ActionsColumn<T>(props: ActionsColumnProps<T>) {
           </IconButton>
         </Tooltip>
       )}
-      {props.onDelete && (
+      {showDelete && (
         <Tooltip title={translate("global.actions.delete")}>
           <IconButton size="small" onClick={() => props.onDelete?.(props.row)}>
             <Delete fontSize="small" />

@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       include: {tenant: {select: {name: true, logo: true, primary_color: true, secondary_color: true, time_zone: true, currency_type: true, max_file_size_in_mbs: true}}},
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !user.active || !(await bcrypt.compare(password, user.password))) {
       log("error", {message: "api.errors.loginOrPasswordIncorrect", content: {email}});
       return NextResponse.json({error: "api.errors.loginOrPasswordIncorrect"}, {status: 400});
     }

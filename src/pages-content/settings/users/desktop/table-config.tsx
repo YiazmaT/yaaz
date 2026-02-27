@@ -1,0 +1,81 @@
+import {Chip} from "@mui/material";
+import {DataTableColumn} from "@/src/components/data-table/types";
+import {ActionsColumn} from "@/src/components/data-columns";
+import {useTranslate} from "@/src/contexts/translation-context";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import {User} from "../types";
+import {UsersTableConfigProps} from "./types";
+
+export function useUsersTableConfig(props: UsersTableConfigProps) {
+  const {translate} = useTranslate();
+
+  function generateConfig(): DataTableColumn<User>[] {
+    return [
+      {
+        field: "name",
+        headerKey: "users.fields.name",
+        width: "30%",
+        render: (row) => row.name,
+      },
+      {
+        field: "login",
+        headerKey: "users.fields.login",
+        width: "30%",
+        render: (row) => row.login,
+      },
+      {
+        field: "admin",
+        headerKey: "users.fields.role",
+        width: "15%",
+        align: "center",
+        render: (row) => {
+          if (row.owner) return <Chip label={translate("users.owner")} size="small" color="warning" />;
+          if (row.admin) return <Chip label={translate("users.admin")} size="small" color="primary" />;
+          return "-";
+        },
+      },
+      {
+        field: "active",
+        headerKey: "users.fields.status",
+        width: "12%",
+        align: "center",
+        render: (row) =>
+          row.active ? (
+            <Chip label={translate("users.active")} size="small" color="success" />
+          ) : (
+            <Chip label={translate("users.inactive")} size="small" color="error" />
+          ),
+      },
+      {
+        field: "actions",
+        headerKey: "global.actions.label",
+        width: "150px",
+        align: "center",
+        render: (row) => (
+          <ActionsColumn
+            row={row}
+            onView={props.onView}
+            onEdit={props.onEdit}
+            hideEdit={(r) => !r.active || r.owner}
+            customActions={[
+              {
+                icon: (r) =>
+                  r.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                  ),
+                tooltip: (r) => translate(r.active ? "users.tooltipDeactivate" : "users.tooltipActivate"),
+                onClick: props.onToggleActive,
+                hidden: (r) => r.owner,
+              },
+            ]}
+          />
+        ),
+      },
+    ];
+  }
+
+  return {generateConfig};
+}

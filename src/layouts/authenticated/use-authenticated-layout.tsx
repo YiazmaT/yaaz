@@ -21,6 +21,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 
 const menuItems: MenuItem[] = [
   {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
@@ -47,6 +49,13 @@ const menuItems: MenuItem[] = [
   },
   {name: "global.clients", route: "/clients", icon: <PersonOutlineIcon />},
   {name: "global.reports", route: "/reports", icon: <ReceiptOutlinedIcon />},
+  {
+    name: "global.settings",
+    icon: <SettingsOutlinedIcon />,
+    children: [
+      {name: "settings.tabs.users", route: "/settings/users", icon: <PeopleOutlinedIcon />},
+    ],
+  },
 ];
 
 const DEFAULT_LOGO = "/assets/icon.png";
