@@ -12,6 +12,14 @@ export function useReportsConstants() {
     },
   ];
 
+  const financeReportOptions: ReportOption[] = [
+    {
+      value: ReportType.MOVEMENT,
+      label: translate("reports.types.movement"),
+      description: translate("reports.descriptions.movement"),
+    },
+  ];
+
   const stockTypeOptions = [
     {value: "all", label: translate("reports.stockTypes.all")},
     {value: "ingredients", label: translate("reports.stockTypes.ingredients")},
@@ -19,5 +27,5 @@ export function useReportsConstants() {
     {value: "packages", label: translate("reports.stockTypes.packages")},
   ];
 
-  return {salesReportOptions, stockTypeOptions};
+  return {salesReportOptions, financeReportOptions, stockTypeOptions};
 }

@@ -559,7 +559,8 @@
     "selectReport": "Selecione um relatório",
     "tabs": {
       "sales": "Vendas",
-      "stock": "Estoque"
+      "stock": "Estoque",
+      "finance": "Financeiro"
     },
     "generate": "Gerar Relatório",
     "downloadPdf": "Baixar PDF",
@@ -568,12 +569,14 @@
     "types": {
       "salesSummary": "Resumo de Vendas",
       "stockLevels": "Níveis de Estoque",
-      "profitMargin": "Margem de Lucro por Produto"
+      "profitMargin": "Margem de Lucro por Produto",
+      "movement": "Movimento"
     },
     "descriptions": {
       "salesSummary": "Visualize o total de vendas por dia, quantidade de transações, ticket médio e vendas por método de pagamento.",
       "stockLevels": "Consulte os níveis atuais de estoque de insumos, produtos e embalagens.",
-      "profitMargin": "Analise a margem de lucro de cada produto com base nas vendas realizadas."
+      "profitMargin": "Analise a margem de lucro de cada produto com base nas vendas realizadas.",
+      "movement": "Visualize o movimento financeiro do período: receitas de vendas por método de pagamento e despesas por categoria."
     },
     "filters": {
       "title": "Filtros",
@@ -606,7 +609,18 @@
       "cost": "Custo",
       "profit": "Lucro",
       "estimatedProfit": "Lucro Estimado",
-      "margin": "Margem"
+      "margin": "Margem",
+      "category": "Categoria"
+    },
+    "movement": {
+      "salesTable": "Receitas",
+      "billsTable": "Despesas",
+      "balanceTable": "Resumo do Período",
+      "paymentMethod": "Método de Pagamento",
+      "totalRevenue": "Total de Receitas",
+      "totalExpenses": "Total de Despesas",
+      "balance": "Saldo",
+      "others": "Outros"
     },
     "status": {
       "ok": "OK",

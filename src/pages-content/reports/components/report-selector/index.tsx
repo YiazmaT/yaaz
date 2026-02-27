@@ -9,10 +9,15 @@ import {ReportSelectorProps} from "./types";
 export function ReportSelector(props: ReportSelectorProps) {
   const {reports} = props;
   const {translate} = useTranslate();
-  const {salesReportOptions} = useReportsConstants();
+  const {salesReportOptions, financeReportOptions} = useReportsConstants();
 
   function getCurrentOptions(): ReportOption[] {
-    return salesReportOptions;
+    switch (reports.selectedTab) {
+      case ReportTab.FINANCE:
+        return financeReportOptions;
+      default:
+        return salesReportOptions;
+    }
   }
 
   function handleTabChange(_: React.SyntheticEvent, newValue: ReportTab) {
@@ -47,6 +52,7 @@ export function ReportSelector(props: ReportSelectorProps) {
 
         <Tabs value={reports.selectedTab} onChange={handleTabChange} sx={{mb: 3}}>
           <Tab label={translate("reports.tabs.sales")} value={ReportTab.SALES} />
+          <Tab label={translate("reports.tabs.finance")} value={ReportTab.FINANCE} />
         </Tabs>
 
         <Box sx={{maxWidth: 400}}>

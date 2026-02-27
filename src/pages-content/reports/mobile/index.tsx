@@ -3,6 +3,7 @@ import {Box} from "@mui/material";
 import {ReportSelector} from "../components/report-selector";
 import {ReportType} from "../types";
 import {SalesSummaryReport} from "../report-types/sales-summary/sales-summary-report";
+import {MovementReport} from "../report-types/movement/movement-report";
 import {MobileViewProps} from "./types";
 
 export function MobileView(props: MobileViewProps) {
@@ -12,6 +13,8 @@ export function MobileView(props: MobileViewProps) {
     switch (reports.selectedReport) {
       case ReportType.SALES_SUMMARY:
         return <SalesSummaryReport />;
+      case ReportType.MOVEMENT:
+        return <MovementReport />;
       default:
         return null;
     }
