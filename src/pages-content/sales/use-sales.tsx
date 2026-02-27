@@ -134,6 +134,7 @@ export function useSales() {
   const items = watch("items");
   const packages = watch("packages");
   const total = watch("total");
+  const discountComputed = watch("discount_computed");
 
   function setItems(value: ItemSale[]) {
     setValue("items", value);
@@ -144,12 +145,37 @@ export function useSales() {
     setValue("packages", value);
   }
 
-  function recalculateTotal(currentItems: ItemSale[]) {
-    const itemsTotal = currentItems.reduce((acc, item) => {
+  function recalculateTotal(currentItems: ItemSale[], overrideDiscountValue?: string, overrideDiscountPercent?: string) {
+    const subtotal = currentItems.reduce((acc, item) => {
       const price = item.unit_price || item.product.price.toString();
       return acc.plus(new Decimal(price).times(item.quantity));
     }, new Decimal(0));
-    setValue("total", itemsTotal.toString());
+
+    const dPercent = new Decimal(overrideDiscountPercent ?? watch("discount_percent") ?? "0");
+    const dValue = new Decimal(overrideDiscountValue ?? watch("discount_value") ?? "0");
+
+    let computed = new Decimal(0);
+    if (dPercent.greaterThan(0)) {
+      computed = subtotal.times(dPercent).dividedBy(100);
+    } else if (dValue.greaterThan(0)) {
+      computed = dValue;
+    }
+
+    const finalTotal = Decimal.max(0, subtotal.minus(computed));
+    setValue("total", finalTotal.toString());
+    setValue("discount_computed", computed.toString());
+  }
+
+  function handleDiscountValueChange(value: string) {
+    setValue("discount_value", value);
+    setValue("discount_percent", "0");
+    recalculateTotal(items, value, "0");
+  }
+
+  function handleDiscountPercentChange(value: string) {
+    setValue("discount_percent", value);
+    setValue("discount_value", "0");
+    recalculateTotal(items, "0", value);
   }
 
   const {generateConfig} = useSalesTableConfig({
@@ -205,6 +231,9 @@ export function useSales() {
       force: false,
       is_quote: data.is_quote || false,
       client_id: data.client?.id || null,
+      discount_percent: data.discount_percent || null,
+      discount_value: data.discount_value || null,
+      discount_computed: data.discount_computed || null,
     };
 
     if (formType === "edit" && selectedId) {
@@ -350,6 +379,9 @@ export function useSales() {
       packages: row.packages || [],
       total: row.total,
       client: row.client || null,
+      discount_value: row.discount_value || "0",
+      discount_percent: row.discount_percent || "0",
+      discount_computed: row.discount_computed || "0",
     });
   }
 
@@ -433,10 +465,13 @@ export function useSales() {
     items,
     packages,
     total,
+    discountComputed,
     filters,
     paymentMethods,
     setItems,
     setPackages,
+    handleDiscountValueChange,
+    handleDiscountPercentChange,
     generateConfig,
     handleSubmit,
     submit,

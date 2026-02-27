@@ -4,6 +4,9 @@ model Sale {
   payment_method_id String               @db.Uuid
   total             Decimal              @db.Decimal
   approximate_cost  Decimal              @default(0) @db.Decimal
+  discount_percent  Decimal?             @db.Decimal
+  discount_value    Decimal?             @db.Decimal
+  discount_computed Decimal?             @db.Decimal
   tenant            Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   payment_method    FinancePaymentMethod @relation(fields: [payment_method_id], references: [id], onDelete: Restrict)
   items             SaleItem[]

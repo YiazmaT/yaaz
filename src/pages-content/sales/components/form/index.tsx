@@ -2,6 +2,8 @@
 import {Button, Chip, Divider, Grid, Typography, Box} from "@mui/material";
 import {FormAsyncDropdown} from "@/src/components/form-fields/async-dropdown";
 import {FormRadioGroup} from "@/src/components/form-fields/radio-group";
+import {FormCurrencyInput} from "@/src/components/form-fields/currency-input";
+import {FormDecimalInput} from "@/src/components/form-fields/decimal-input";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -57,23 +59,7 @@ export function Form(props: FormProps) {
             <PackagesSelector value={sales.packages} onChange={sales.setPackages} disabled={isDetails} typeFilter={PackageType.sale} />
 
             <Grid size={12}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: 2,
-                  backgroundColor: "grey.100",
-                  borderRadius: 1,
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {translate("sales.fields.total")}
-                </Typography>
-                <Typography variant="h6" fontWeight={700} color="primary">
-                  {formatCurrency(sales.total)}
-                </Typography>
-              </Box>
+              <Divider />
             </Grid>
 
             <FormAsyncDropdown<Client>
@@ -99,7 +85,57 @@ export function Form(props: FormProps) {
               }
             />
 
+            <Grid size={12}>
+              <Divider />
+            </Grid>
+
+            <FormCurrencyInput
+              fieldName="discount_value"
+              label="sales.fields.discountValue"
+              size={6}
+              additionalOnChange={(v) => sales.handleDiscountValueChange(v)}
+            />
+
+            <FormDecimalInput
+              fieldName="discount_percent"
+              label="sales.fields.discountPercent"
+              size={6}
+              additionalOnChange={(v) => sales.handleDiscountPercentChange(v)}
+            />
+
             {sales.formType === "create" && <FormCheckBox fieldName="is_quote" label="sales.isQuote" />}
+
+            <Grid size={12}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: 2,
+                  backgroundColor: "grey.100",
+                  borderRadius: 1,
+                  gap: 0.5,
+                }}
+              >
+                {sales.discountComputed && Number(sales.discountComputed) > 0 && (
+                  <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                    <Typography variant="body2" color="error.main">
+                      {translate("sales.fields.discount")}
+                    </Typography>
+                    <Typography variant="body2" fontWeight={600} color="error.main">
+                      -{formatCurrency(sales.discountComputed)}
+                    </Typography>
+                  </Box>
+                )}
+                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    {translate("sales.fields.total")}
+                  </Typography>
+                  <Typography variant="h6" fontWeight={700} color="primary">
+                    {formatCurrency(sales.total)}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
 
             {!isDetails && (
               <Grid size={12}>

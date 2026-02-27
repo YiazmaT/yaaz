@@ -399,7 +399,11 @@
       "client": "Cliente",
       "items": "Itens",
       "total": "Total",
-      "approximateCost": "Custo Aproximado"
+      "approximateCost": "Custo Aproximado",
+      "discountValue": "Desconto (R$)",
+      "discountPercent": "Desconto (%)",
+      "discount": "Desconto",
+      "discountApplied": "Desconto Aplicado"
     },
     "discord": {
       "newSaleTitle": "Nova Venda Realizada! 🤑🤑🤑",

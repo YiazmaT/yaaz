@@ -11,6 +11,9 @@ export interface SaleFormValues {
   total: string;
   is_quote: boolean;
   client: Client | null;
+  discount_value: string;
+  discount_percent: string;
+  discount_computed: string;
 }
 
 export function useSaleFormConfig() {
@@ -29,6 +32,9 @@ export function useSaleFormConfig() {
     total: "0",
     is_quote: false,
     client: null,
+    discount_value: "0",
+    discount_percent: "0",
+    discount_computed: "0",
   };
 
   return {

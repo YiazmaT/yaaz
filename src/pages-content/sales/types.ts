@@ -11,6 +11,9 @@ export interface Sale {
   payment_method: PaymentMethod;
   total: string;
   approximate_cost?: string;
+  discount_percent?: string | null;
+  discount_value?: string | null;
+  discount_computed?: string | null;
   items: ItemSale[];
   packages?: PackageCompositionItem[];
   creation_date?: string;

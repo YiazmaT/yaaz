@@ -13,7 +13,7 @@ const ROUTE = "/api/sale/create";
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
     const body: CreateSaleDto = await req.json();
-    const {payment_method_id, total, items, packages, force, is_quote, client_id} = body;
+    const {payment_method_id, total, items, packages, force, is_quote, client_id, discount_percent, discount_value, discount_computed} = body;
 
     const hasItems = items && items.length > 0;
     const hasPackages = packages && packages.length > 0;
@@ -87,6 +87,9 @@ export async function POST(req: NextRequest) {
           is_quote: is_quote || false,
           client_id: client_id || null,
           creator_id: auth.user.id,
+          discount_percent: discount_percent ? new Decimal(discount_percent) : null,
+          discount_value: discount_value ? new Decimal(discount_value) : null,
+          discount_computed: discount_computed ? new Decimal(discount_computed) : null,
           items: hasItems
             ? {
                 create: items.map((item) => ({

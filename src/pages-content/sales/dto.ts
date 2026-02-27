@@ -17,6 +17,9 @@ export interface CreateSaleDto {
   force?: boolean;
   is_quote?: boolean;
   client_id?: string | null;
+  discount_percent?: string | null;
+  discount_value?: string | null;
+  discount_computed?: string | null;
 }
 
 export interface UpdateSaleDto extends CreateSaleDto {

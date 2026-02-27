@@ -68,9 +68,20 @@ export function useSalesTableConfig(props: SalesTableConfigProps) {
         render: (row) => <span style={{whiteSpace: "nowrap"}}>{formatCurrency(Number(row.approximate_cost || 0))}</span>,
       },
       {
+        field: "discount_computed",
+        headerKey: "sales.fields.discountApplied",
+        width: "10%",
+        render: (row) =>
+          row.discount_computed && Number(row.discount_computed) > 0 ? (
+            <span style={{whiteSpace: "nowrap", color: "red"}}>-{formatCurrency(Number(row.discount_computed))}</span>
+          ) : (
+            "-"
+          ),
+      },
+      {
         field: "total",
         headerKey: "sales.fields.total",
-        width: "15%",
+        width: "10%",
         render: (row) => <span style={{whiteSpace: "nowrap"}}>{formatCurrency(Number(row.total))}</span>,
       },
       {

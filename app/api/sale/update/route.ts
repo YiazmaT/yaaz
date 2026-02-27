@@ -5,14 +5,14 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {serverTranslate} from "@/src/lib/server-translate";
 import {UpdateSaleDto, ProductStockWarning, PackageStockWarning, PriceChangeWarning} from "@/src/pages-content/sales/dto";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 
 const ROUTE = "/api/sale/update";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
     const body: UpdateSaleDto = await req.json();
-    const {id, payment_method_id, total, items, packages, force, updatePrices, client_id} = body;
+    const {id, payment_method_id, total, items, packages, force, updatePrices, client_id, discount_percent, discount_value, discount_computed} = body;
 
     const hasItems = items && items.length > 0;
     const hasPackages = packages && packages.length > 0;
@@ -179,13 +179,24 @@ export async function PUT(req: NextRequest) {
     const approximateCost = await calculateApproximateCost(items || [], packages || [], auth.tenant_id);
 
     let finalTotal = total;
+    let finalDiscountComputed = discount_computed ? new Decimal(discount_computed) : new Decimal(0);
+
     if (updatePrices && hasItems) {
-      finalTotal = items
-        .reduce((acc, item) => {
-          const price = productsMap.get(item.product_id)?.price || item.unit_price;
-          return acc.plus(new Decimal(price).times(item.quantity));
-        }, new Decimal(0))
-        .toString();
+      const newSubtotal = items.reduce((acc, item) => {
+        const price = productsMap.get(item.product_id)?.price || item.unit_price;
+        return acc.plus(new Decimal(price).times(item.quantity));
+      }, new Decimal(0));
+
+      const dPercent = discount_percent ? new Decimal(discount_percent) : new Decimal(0);
+      const dValue = discount_value ? new Decimal(discount_value) : new Decimal(0);
+
+      if (dPercent.greaterThan(0)) {
+        finalDiscountComputed = newSubtotal.times(dPercent).dividedBy(100);
+      } else if (dValue.greaterThan(0)) {
+        finalDiscountComputed = dValue;
+      }
+
+      finalTotal = Decimal.max(0, newSubtotal.minus(finalDiscountComputed)).toString();
     }
 
     const sale = await prisma.$transaction(async (tx) => {
@@ -201,6 +212,9 @@ export async function PUT(req: NextRequest) {
           client_id: client_id || null,
           last_edit_date: new Date(),
           last_editor_id: auth.user.id,
+          discount_percent: discount_percent ? new Decimal(discount_percent) : null,
+          discount_value: discount_value ? new Decimal(discount_value) : null,
+          discount_computed: finalDiscountComputed.isZero() ? null : finalDiscountComputed,
           items: hasItems
             ? {
                 create: items.map((item) => ({
