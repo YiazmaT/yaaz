@@ -128,7 +128,7 @@ export function useProducts() {
     };
 
     if (formType === "edit" && selectedId) {
-      await api.fetch("PUT", "/api/stock/product/update", {
+      const result = await api.fetch("PUT", "/api/stock/product/update", {
         body: {...body, id: selectedId},
         onSuccess: () => {
           toast.successToast("products.updateSuccess");
@@ -137,6 +137,9 @@ export function useProducts() {
           refreshTable();
         },
       });
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     } else {
       const result = await api.fetch("POST", "/api/stock/product/create", {
         body,

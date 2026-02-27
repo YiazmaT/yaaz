@@ -90,7 +90,7 @@ export function useClients() {
     };
 
     if (formType === "edit" && selectedId) {
-      await api.fetch("PUT", "/api/client/update", {
+      const result = await api.fetch("PUT", "/api/client/update", {
         body: {...body, id: selectedId},
         onSuccess: () => {
           toast.successToast("clients.updateSuccess");
@@ -99,6 +99,9 @@ export function useClients() {
           refreshTable();
         },
       });
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     } else {
       const result = await api.fetch("POST", "/api/client/create", {
         body,

@@ -27,7 +27,7 @@ export function Form(props: FormProps) {
       >
         <form onSubmit={users.handleSubmit(users.submit)}>
           <Grid container spacing={2}>
-            <FormImageInput fieldName="image" label="users.fields.image" imageSize={120} />
+            <FormImageInput fieldName="image" label="users.fields.image" imageSize={300} />
             <FormTextInput fieldName="name" label="users.fields.name" />
             <FormTextInput fieldName="login" label="users.fields.login" />
             {users.formType !== "details" && (

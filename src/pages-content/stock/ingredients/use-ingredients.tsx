@@ -99,7 +99,7 @@ export function useIngredients() {
     };
 
     if (formType === "edit" && selectedId) {
-      await api.fetch("PUT", "/api/stock/ingredient/update", {
+      const result = await api.fetch("PUT", "/api/stock/ingredient/update", {
         body: {...body, id: selectedId},
         onSuccess: () => {
           toast.successToast("ingredients.updateSuccess");
@@ -108,6 +108,9 @@ export function useIngredients() {
           refreshTable();
         },
       });
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     } else {
       const result = await api.fetch("POST", "/api/stock/ingredient/create", {
         body,

@@ -120,7 +120,7 @@ export function usePackages() {
     };
 
     if (formType === "edit" && selectedId) {
-      await api.fetch("PUT", "/api/stock/package/update", {
+      const result = await api.fetch("PUT", "/api/stock/package/update", {
         body: {...body, id: selectedId},
         onSuccess: () => {
           toast.successToast("packages.updateSuccess");
@@ -129,6 +129,9 @@ export function usePackages() {
           refreshTable();
         },
       });
+      if (!result && imageUrl && data.image instanceof File) {
+        await deleteOrphan(imageUrl);
+      }
     } else {
       const result = await api.fetch("POST", "/api/stock/package/create", {
         body,
