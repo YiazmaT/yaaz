@@ -73,6 +73,8 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    return success("get", {paymentMethods, rows});
+    const filteredRows = rows.filter((row) => row.transactionCount > 0);
+
+    return success("get", {paymentMethods, rows: filteredRows});
   });
 }
