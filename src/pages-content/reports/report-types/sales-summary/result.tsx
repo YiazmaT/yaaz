@@ -36,12 +36,14 @@ export function SalesSummaryResult(props: SalesSummaryResultProps) {
         return {
           totalSales: acc.totalSales + parseFloat(row.totalSales),
           transactionCount: acc.transactionCount + row.transactionCount,
+          estimatedProfit: acc.estimatedProfit + parseFloat(row.estimatedProfit),
           byPaymentMethod: byPm,
         };
       },
       {
         totalSales: 0,
         transactionCount: 0,
+        estimatedProfit: 0,
         byPaymentMethod: Object.fromEntries(paymentMethods.map((pm) => [pm, 0])),
       },
     );
@@ -96,6 +98,9 @@ export function SalesSummaryResult(props: SalesSummaryResultProps) {
                 <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">
                   {translate("reports.columns.averageTicket")}
                 </TableCell>
+                <TableCell sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">
+                  {translate("reports.columns.estimatedProfit")}
+                </TableCell>
                 {paymentMethods.map((pm) => (
                   <TableCell key={pm} sx={{fontWeight: 600, backgroundColor: "#fafbfc"}} align="right">
                     {pm}
@@ -110,6 +115,7 @@ export function SalesSummaryResult(props: SalesSummaryResultProps) {
                   <TableCell align="right">{formatCurrency(row.totalSales)}</TableCell>
                   <TableCell align="right">{row.transactionCount}</TableCell>
                   <TableCell align="right">{formatCurrency(row.averageTicket)}</TableCell>
+                  <TableCell align="right">{formatCurrency(row.estimatedProfit)}</TableCell>
                   {paymentMethods.map((pm) => (
                     <TableCell key={pm} align="right">
                       {formatCurrency(row.byPaymentMethod[pm] || "0")}
@@ -119,7 +125,7 @@ export function SalesSummaryResult(props: SalesSummaryResultProps) {
               ))}
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4 + paymentMethods.length} align="center">
+                  <TableCell colSpan={5 + paymentMethods.length} align="center">
                     <Typography color="text.secondary">{translate("global.noDataFound")}</Typography>
                   </TableCell>
                 </TableRow>
@@ -137,6 +143,9 @@ export function SalesSummaryResult(props: SalesSummaryResultProps) {
                   </TableCell>
                   <TableCell sx={{fontWeight: 600}} align="right">
                     {formatCurrency(averageTicket)}
+                  </TableCell>
+                  <TableCell sx={{fontWeight: 600}} align="right">
+                    {formatCurrency(totals.estimatedProfit)}
                   </TableCell>
                   {paymentMethods.map((pm) => (
                     <TableCell key={pm} sx={{fontWeight: 600}} align="right">

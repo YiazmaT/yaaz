@@ -8,6 +8,7 @@ export interface SalesSummaryRow {
   totalSales: string;
   transactionCount: number;
   averageTicket: string;
+  estimatedProfit: string;
   byPaymentMethod: Record<string, string>;
 }
 

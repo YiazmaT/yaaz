@@ -2,6 +2,7 @@ import {LogModule} from "@/src/lib/logger";
 import {generatePdfHtml} from "@/src/lib/pdf-template";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
+import {serverTranslate} from "@/src/lib/server-translate";
 import {formatCurrency} from "@/src/utils/format-currency";
 import {startOfDay, endOfDay, parseISO, eachDayOfInterval} from "date-fns";
 import {fromZonedTime} from "date-fns-tz";
@@ -36,6 +37,7 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         total: true,
+        approximate_cost: true,
         payment_method: {select: {name: true}},
         creation_date: true,
       },
@@ -56,8 +58,10 @@ export async function GET(req: NextRequest) {
         });
 
         const totalSales = daySales.reduce((acc, sale) => acc.plus(new Decimal(sale.total.toString())), new Decimal(0));
+        const totalCost = daySales.reduce((acc, sale) => acc.plus(new Decimal(sale.approximate_cost.toString())), new Decimal(0));
         const transactionCount = daySales.length;
         const averageTicket = transactionCount > 0 ? totalSales.div(transactionCount) : new Decimal(0);
+        const estimatedProfit = totalSales.minus(totalCost);
 
         const byPaymentMethod: Record<string, Decimal> = Object.fromEntries(paymentMethods.map((pm) => [pm, new Decimal(0)]));
         daySales.forEach((sale) => {
@@ -69,6 +73,7 @@ export async function GET(req: NextRequest) {
           totalSales: totalSales.toFixed(2),
           transactionCount,
           averageTicket: averageTicket.toFixed(2),
+          estimatedProfit: estimatedProfit.toFixed(2),
           byPaymentMethod: Object.fromEntries(Object.entries(byPaymentMethod).map(([key, val]) => [key, val.toFixed(2)])),
         };
       })
@@ -91,6 +96,7 @@ export async function GET(req: NextRequest) {
         <td class="right">${formatCurrency(row.totalSales, 2, currency)}</td>
         <td class="right">${row.transactionCount}</td>
         <td class="right">${formatCurrency(row.averageTicket, 2, currency)}</td>
+        <td class="right">${formatCurrency(row.estimatedProfit, 2, currency)}</td>
         ${pmCells}
       </tr>
     `;
@@ -106,12 +112,14 @@ export async function GET(req: NextRequest) {
         return {
           totalSales: acc.totalSales + parseFloat(row.totalSales),
           transactionCount: acc.transactionCount + row.transactionCount,
+          estimatedProfit: acc.estimatedProfit + parseFloat(row.estimatedProfit),
           byPaymentMethod: byPm,
         };
       },
       {
         totalSales: 0,
         transactionCount: 0,
+        estimatedProfit: 0,
         byPaymentMethod: Object.fromEntries(paymentMethods.map((pm) => [pm, 0])),
       },
     );
@@ -121,16 +129,18 @@ export async function GET(req: NextRequest) {
       .join("");
     const averageTicket = totals.transactionCount > 0 ? totals.totalSales / totals.transactionCount : 0;
 
+    const title = serverTranslate("reports.types.salesSummary");
     const content = `
-      <h2>Resumo de Vendas</h2>
-      <p class="filter-info">Período: ${moment(dateFrom).format("DD/MM/YYYY")} a ${moment(dateTo).format("DD/MM/YYYY")}</p>
+      <h2>${title}</h2>
+      <p class="filter-info">${serverTranslate("reports.period")}: ${moment(dateFrom).format("DD/MM/YYYY")} - ${moment(dateTo).format("DD/MM/YYYY")}</p>
       <table>
         <thead>
           <tr>
-            <th>Data</th>
-            <th class="right">Total</th>
-            <th class="right">Transações</th>
-            <th class="right">Ticket Médio</th>
+            <th>${serverTranslate("reports.columns.date")}</th>
+            <th class="right">${serverTranslate("reports.columns.totalSales")}</th>
+            <th class="right">${serverTranslate("reports.columns.transactions")}</th>
+            <th class="right">${serverTranslate("reports.columns.averageTicket")}</th>
+            <th class="right">${serverTranslate("reports.columns.estimatedProfit")}</th>
             ${pmHeaders}
           </tr>
         </thead>
@@ -139,17 +149,18 @@ export async function GET(req: NextRequest) {
         </tbody>
         <tfoot>
           <tr class="total-row">
-            <td><strong>Total</strong></td>
+            <td><strong>${serverTranslate("global.total")}</strong></td>
             <td class="right"><strong>${formatCurrency(totals.totalSales, 2, currency)}</strong></td>
             <td class="right"><strong>${totals.transactionCount}</strong></td>
             <td class="right"><strong>${formatCurrency(averageTicket, 2, currency)}</strong></td>
+            <td class="right"><strong>${formatCurrency(totals.estimatedProfit, 2, currency)}</strong></td>
             ${pmTotalCells}
           </tr>
         </tfoot>
       </table>
     `;
 
-    const html = generatePdfHtml({title: "Resumo de Vendas", content, generatedAt, tenant: auth.tenant});
+    const html = generatePdfHtml({title, content, generatedAt, tenant: auth.tenant});
 
     log("get", {content: {dateFrom, dateTo}});
 

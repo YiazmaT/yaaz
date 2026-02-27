@@ -605,6 +605,7 @@
       "revenue": "Receita",
       "cost": "Custo",
       "profit": "Lucro",
+      "estimatedProfit": "Lucro Estimado",
       "margin": "Margem"
     },
     "status": {
