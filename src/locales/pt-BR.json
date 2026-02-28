@@ -978,6 +978,8 @@
     "deactivateConfirm": "Tem certeza que deseja desativar este usuário?",
     "activateSuccess": "Usuário ativado com sucesso!",
     "deactivateSuccess": "Usuário desativado com sucesso!",
+    "resendEmailSuccess": "E-mail reenviado com sucesso!",
+    "tooltipResendEmail": "Reenviar e-mail de definição de senha",
     "fields": {
       "name": "Nome",
       "login": "Login",
@@ -993,6 +995,8 @@
     "errors": {
       "userLimitReached": "Limite de usuários ativos atingido para este plano!",
       "loginAlreadyExists": "Este login já está em uso!",
+      "alreadyVerified": "Este usuário já definiu sua senha.",
+      "resendRateLimit": "Aguarde {{secondsLeft}} segundos antes de reenviar o e-mail.",
       "cannotDeleteSelf": "Você não pode excluir sua própria conta!",
       "cannotDeleteOwner": "Não é possível excluir o proprietário da conta!",
       "cannotDeactivateOwner": "Não é possível desativar o proprietário da conta!"

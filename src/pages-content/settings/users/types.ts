@@ -7,6 +7,7 @@ export interface User {
   active: boolean;
   image: string | null;
   pending_password: boolean;
+  setup_email_sent_at: string | null;
   create_date: string;
   last_edit_date: string | null;
 }

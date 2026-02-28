@@ -119,13 +119,14 @@ export function SetupPasswordScreen() {
         }}
       >
         <Grid container spacing={2} sx={{...flexGenerator("c.center.center")}}>
-          <Grid size={12} sx={{...flexGenerator("c.center.center")}}>
-            <Image alt={process.env.NEXT_PUBLIC_COMPANY_NAME!} src="/assets/icon.png" width={100} height={100} />
-          </Grid>
-
-          {tenantInfo?.tenantLogo && (
-            <Grid size={12} sx={{...flexGenerator("c.center.center")}}>
-              <Image alt={tenantInfo.tenantName} src={tenantInfo.tenantLogo} width={120} height={60} style={{objectFit: "contain"}} />
+          {tenantInfo && (
+            <Grid size={12} sx={{...flexGenerator("c.center.center"), flexDirection: "column", gap: 1}}>
+              {tenantInfo.tenantLogo && (
+                <Image alt={tenantInfo.tenantName} src={tenantInfo.tenantLogo} width={120} height={60} style={{objectFit: "contain"}} />
+              )}
+              <Typography variant="h6" fontWeight={700} textAlign="center">
+                {tenantInfo.tenantName}
+              </Typography>
             </Grid>
           )}
 
@@ -189,6 +190,10 @@ export function SetupPasswordScreen() {
                 <Button variant="contained" fullWidth disabled={!canSubmit || loading} onClick={handleSubmit(onSubmit)}>
                   {loading ? <CircularProgress size={24} /> : translate("setupPassword.submit")}
                 </Button>
+              </Grid>
+
+              <Grid size={12} sx={{...flexGenerator("c.center.center")}}>
+                <Image alt={process.env.NEXT_PUBLIC_COMPANY_NAME!} src="/assets/icon.png" width={100} height={100} />
               </Grid>
             </>
           ) : (

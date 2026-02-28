@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
         creator_id: auth.user.id,
         pending_password: true,
         pending_password_expires: pendingExpires,
+        setup_email_sent_at: new Date(),
       },
       select: {
         id: true,

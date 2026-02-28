@@ -51,6 +51,7 @@ export function useUsers() {
     onView: (row) => handleView(row),
     onEdit: (row) => handleEdit(row),
     onToggleActive: (row) => handleToggleActive(row),
+    onResendEmail: (row) => handleResendEmail(row),
     currentUserId: currentUser?.id ?? null,
   });
 
@@ -150,6 +151,16 @@ export function useUsers() {
     setFilters(newFilters);
   }
 
+  async function handleResendEmail(row: User) {
+    await api.fetch("POST", "/api/settings/user/resend-setup-email", {
+      body: {id: row.id},
+      onSuccess: () => {
+        toast.successToast("users.resendEmailSuccess");
+        refreshTable();
+      },
+    });
+  }
+
   function handleToggleActive(row: User) {
     const messageKey = row.active ? "users.deactivateConfirm" : "users.activateConfirm";
     const successKey = row.active ? "users.deactivateSuccess" : "users.activateSuccess";
@@ -180,6 +191,7 @@ export function useUsers() {
     handleCreate,
     handleView,
     handleEdit,
+    handleResendEmail,
     handleToggleActive,
     handleFilterChange,
     filters,

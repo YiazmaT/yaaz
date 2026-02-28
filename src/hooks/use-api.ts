@@ -83,8 +83,11 @@ function useApiErrorHandler() {
 
       if (onError?.(e.errorKey, e.data)) return;
 
+      const messageVars = e.data ? Object.fromEntries(Object.entries(e.data).map(([k, v]) => [k, String(v)])) : undefined;
+
       confirmModal.show({
         message: e.errorKey,
+        messageVars,
         hideCancel: true,
       });
     } else {

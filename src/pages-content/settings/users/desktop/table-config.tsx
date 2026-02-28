@@ -1,9 +1,10 @@
-import {Box, Chip, Tooltip} from "@mui/material";
+import {Box, Chip, IconButton, Tooltip} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn, ImagePreviewColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import {User} from "../types";
@@ -55,9 +56,16 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
         align: "center",
         render: (row) =>
           row.pending_password ? (
-            <Tooltip title={translate("users.fields.pendingPassword")}>
-              <CancelIcon sx={{color: "error.main"}} fontSize="small" />
-            </Tooltip>
+            <Box sx={{display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5}}>
+              <Tooltip title={translate("users.tooltipResendEmail")}>
+                <IconButton size="small" onClick={(e) => { e.stopPropagation(); props.onResendEmail(row); }}>
+                  <ForwardToInboxIcon fontSize="small" color="action" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={translate("users.fields.pendingPassword")}>
+                <CancelIcon sx={{color: "error.main"}} fontSize="small" />
+              </Tooltip>
+            </Box>
           ) : (
             <Tooltip title={translate("users.fields.verified")}>
               <CheckCircleIcon sx={{color: "success.main"}} fontSize="small" />

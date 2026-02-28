@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
           active: true,
           image: true,
           pending_password: true,
+          setup_email_sent_at: true,
           create_date: true,
           last_edit_date: true,
         },

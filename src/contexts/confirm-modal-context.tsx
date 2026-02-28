@@ -8,6 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 interface IOpenConfirmModalProps {
   message?: string;
+  messageVars?: Record<string, string>;
   content?: React.ReactNode;
   title?: string;
   hideCloseButton?: boolean;
@@ -84,7 +85,7 @@ export function ConfirmModalContextProvider(props: PropsWithChildren) {
           </Box>
 
           <CardContent sx={{maxHeight: "80vh", overflow: "auto", paddingTop: 0, ...flexGenerator("c.center.center")}}>
-            {modalValues.message !== "" && <Typography>{translate(modalValues.message)}</Typography>}
+            {modalValues.message !== "" && <Typography>{translate(modalValues.message, modalValues.messageVars)}</Typography>}
             {modalValues.content}
           </CardContent>
           <Box

@@ -12,6 +12,7 @@ model User {
   token_expires            DateTime?
   pending_password         Boolean   @default(false)
   pending_password_expires DateTime?
+  setup_email_sent_at      DateTime?
   create_date              DateTime  @default(now())
   last_edit_date           DateTime?
   tenant                   Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
