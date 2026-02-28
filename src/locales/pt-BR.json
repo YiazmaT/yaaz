@@ -5,6 +5,8 @@
       "dragOrClick": "Arraste um arquivo ou clique para selecionar",
       "sending": "Enviando arquivo"
     },
+    "name": "Nome",
+    "save": "Salvar",
     "confirm": "Confirmar",
     "cancel": "Cancelar",
     "close": "Fechar",
@@ -1004,6 +1006,9 @@
     }
   },
   "profile": {
+    "editProfile": "Editar Perfil",
+    "profileUpdated": "Perfil atualizado com sucesso!",
+    "removePhoto": "Remover foto",
     "changePassword": "Alterar Senha",
     "currentPassword": "Senha atual",
     "passwordChanged": "Senha alterada com sucesso!",

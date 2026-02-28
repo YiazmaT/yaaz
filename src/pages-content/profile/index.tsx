@@ -1,13 +1,16 @@
 "use client";
-import {Avatar, Box, Button, Chip, Typography, useTheme} from "@mui/material";
+import {Avatar, Box, Button, Chip, IconButton, Typography, useTheme} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {useState} from "react";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant} from "@/src/contexts/tenant-context";
 import {PasswordRulesDrawer} from "@/src/pages-content/profile/components/password-rules-drawer";
+import {EditProfileDrawer} from "@/src/pages-content/profile/components/edit-profile-drawer";
 
 export function ProfileScreen() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const {user} = useTenant();
   const {translate} = useTranslate();
   const theme = useTheme();
@@ -18,6 +21,7 @@ export function ProfileScreen() {
     <Box sx={{display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100%", p: 3}}>
       <Box
         sx={{
+          position: "relative",
           width: "100%",
           maxWidth: 420,
           backgroundColor: "white",
@@ -34,6 +38,24 @@ export function ProfileScreen() {
           gap: 2,
         }}
       >
+        <IconButton
+          size="small"
+          onClick={() => setEditOpen(true)}
+          sx={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            border: "1px solid transparent",
+            backgroundImage: `linear-gradient(white, white), linear-gradient(135deg, ${theme.palette.divider}, ${theme.palette.divider})`,
+            backgroundOrigin: "border-box",
+            backgroundClip: "padding-box, border-box",
+            "&:hover": {
+              backgroundImage: `linear-gradient(white, white), linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+            },
+          }}
+        >
+          <EditOutlinedIcon sx={{fontSize: 18}} />
+        </IconButton>
         <Avatar
           src={user?.image ?? undefined}
           alt={user?.name}
@@ -89,6 +111,7 @@ export function ProfileScreen() {
       </Box>
 
       <PasswordRulesDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <EditProfileDrawer open={editOpen} onClose={() => setEditOpen(false)} />
     </Box>
   );
 }
