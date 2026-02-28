@@ -7,6 +7,7 @@ const USER_COOKIE_KEY = "user";
 const COOKIE_MAX_AGE = 31536000; // 1 year
 
 export interface User {
+  id: string;
   name: string;
 }
 

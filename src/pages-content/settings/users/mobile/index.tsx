@@ -23,7 +23,10 @@ export function MobileView(props: MobileViewProps) {
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
         <Box sx={{display: "flex", gap: 2}}>
-          <ImagePreview url={item.image} alt={item.name} width={52} height={52} borderRadius={50} />
+          <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5}}>
+            <ImagePreview url={item.image} alt={item.name} width={52} height={52} borderRadius={50} />
+            {!item.active && <Chip label={translate("users.inactive")} size="small" color="error" />}
+          </Box>
           <Box sx={{...flexGenerator("c"), minWidth: 0, overflow: "hidden", flex: 1}}>
             <Typography variant="subtitle1" fontWeight={600}>
               {item.name}
@@ -35,7 +38,6 @@ export function MobileView(props: MobileViewProps) {
               {item.owner && <Chip label={translate("users.owner")} size="small" color="warning" />}
               {!item.owner && item.admin && <Chip label={translate("users.admin")} size="small" color="primary" />}
               {!item.owner && !item.admin && <Chip label={translate("users.user")} size="small" />}
-              {!item.active && <Chip label={translate("users.inactive")} size="small" color="error" />}
             </Box>
           </Box>
         </Box>
@@ -51,7 +53,7 @@ export function MobileView(props: MobileViewProps) {
             borderColor: "divider",
           }}
         >
-          {!item.owner && item.active && (
+          {item.active && (!item.owner || item.id === users.currentUserId) && (
             <Tooltip title={translate("global.actions.edit")}>
               <IconButton
                 size="small"

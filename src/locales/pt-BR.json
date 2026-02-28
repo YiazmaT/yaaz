@@ -75,8 +75,7 @@
       "uploadFailed": "Erro ao enviar o arquivo. Tente novamente.",
       "deleteFailed": "Erro ao excluir o arquivo. Tente novamente.",
       "notFound": "Registro não encontrado.",
-      "dataNotFound": "Nenhum dado encontrado.",
-      "userAlreadyExists": "Já existe um usuário com este login!"
+      "dataNotFound": "Nenhum dado encontrado."
     }
   },
   "ingredients": {
@@ -153,7 +152,7 @@
       "added": "Adicionado",
       "removed": "Removido",
       "stockAddition": "Adição de estoque",
-        "stockAdditionNfe": "Adição de estoque por NFE",
+      "stockAdditionNfe": "Adição de estoque por NFE",
       "by": "por"
     }
   },
@@ -235,7 +234,7 @@
       "added": "Adicionado",
       "removed": "Removido",
       "stockAddition": "Adição de estoque",
-        "stockAdditionNfe": "Adição de estoque por NFE",
+      "stockAdditionNfe": "Adição de estoque por NFE",
       "by": "por"
     }
   },
@@ -340,7 +339,7 @@
       "added": "Adicionado",
       "removed": "Removido",
       "stockAddition": "Adição de estoque",
-        "stockAdditionNfe": "Adição de estoque por NFE",
+      "stockAdditionNfe": "Adição de estoque por NFE",
       "by": "por"
     },
     "files": {

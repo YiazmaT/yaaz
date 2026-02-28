@@ -1,6 +1,6 @@
 import {Box, Chip} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
-import {ActionsColumn} from "@/src/components/data-columns";
+import {ActionsColumn, ImagePreviewColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
@@ -12,6 +12,12 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
 
   function generateConfig(): DataTableColumn<User>[] {
     return [
+      {
+        field: "image",
+        headerKey: "users.fields.image",
+        width: "60px",
+        render: (row) => <ImagePreviewColumn image={row.image} alt={row.name} />,
+      },
       {
         field: "name",
         headerKey: "users.fields.name",
@@ -50,7 +56,7 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
             row={row}
             onView={props.onView}
             onEdit={props.onEdit}
-            hideEdit={(r) => !r.active || r.owner}
+            hideEdit={(r) => !r.active || (r.owner && r.id !== props.currentUserId)}
             customActions={[
               {
                 icon: (r) =>

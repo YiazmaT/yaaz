@@ -14,7 +14,19 @@ export async function POST(req: NextRequest) {
     const {email, password} = await req.json();
     const user = await prismaUnscoped.user.findFirst({
       where: {login: email.trim().toLowerCase()},
-      include: {tenant: {select: {name: true, logo: true, primary_color: true, secondary_color: true, time_zone: true, currency_type: true, max_file_size_in_mbs: true}}},
+      include: {
+        tenant: {
+          select: {
+            name: true,
+            logo: true,
+            primary_color: true,
+            secondary_color: true,
+            time_zone: true,
+            currency_type: true,
+            max_file_size_in_mbs: true,
+          },
+        },
+      },
     });
 
     if (!user || !user.active || !(await bcrypt.compare(password, user.password))) {
@@ -43,7 +55,7 @@ export async function POST(req: NextRequest) {
       where: {id: user.id},
     });
 
-    const response = NextResponse.json({success: true, tenant: user.tenant, user: {name: user.name}}, {status: 200});
+    const response = NextResponse.json({success: true, tenant: user.tenant, user: {id: user.id, name: user.name}}, {status: 200});
     response.cookies.set("token", token, {
       httpOnly: true,
       secure: true,

@@ -6,6 +6,7 @@ import {useConfirmModal} from "@/src/contexts/confirm-modal-context";
 import {useToaster} from "@/src/contexts/toast-context";
 import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {useR2Upload} from "@/src/hooks/use-r2-upload";
+import {useTenant} from "@/src/contexts/tenant-context";
 import {User, UsersFilters, UsersListResponse} from "./types";
 import {UserFormValues, useUserFormConfig} from "./components/form/form-config";
 import {useUsersTableConfig} from "./desktop/table-config";
@@ -18,6 +19,7 @@ export function useUsers() {
   const [filters, setFilters] = useState<UsersFilters>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const {upload, deleteOrphan} = useR2Upload();
+  const {user: currentUser} = useTenant();
   const {show: showConfirmModal} = useConfirmModal();
   const api = useApi();
   const toast = useToaster();
@@ -49,6 +51,7 @@ export function useUsers() {
     onView: (row) => handleView(row),
     onEdit: (row) => handleEdit(row),
     onToggleActive: (row) => handleToggleActive(row),
+    currentUserId: currentUser?.id ?? null,
   });
 
   function refreshTable() {
@@ -186,5 +189,6 @@ export function useUsers() {
     refreshTable,
     maxUserAmount,
     totalUsers,
+    currentUserId: currentUser?.id ?? null,
   };
 }
