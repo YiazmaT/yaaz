@@ -22,7 +22,7 @@ function buildEmailHtml(params: {
     <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
       <div style="background: linear-gradient(135deg, ${primaryColor}, ${secondaryColor}); padding: 2px; border-radius: 10px;">
         <div style="background: #ffffff; border-radius: 8px; padding: 32px; text-align: center;">
-          ${tenantLogo ? `<div style="margin-bottom: 16px;"><img src="${tenantLogo}" alt="${tenantName}" height="60" style="object-fit: contain;" /></div>` : ""}
+          ${tenantLogo ? `<div style="margin-bottom: 16px;"><img src="${tenantLogo}" alt="${tenantName}" height="60" style="object-fit: contain; display: block; margin: 0 auto 8px auto;" /><p style="color: #444; font-weight: bold; margin: 0;">${tenantName}</p></div>` : ""}
           <h2 style="color: #1a1a1a; margin: 0 0 16px 0;">${title}</h2>
           <p style="color: #444; margin: 0 0 8px 0;">${greeting}</p>
           <p style="color: #444; margin: 0 0 24px 0;">${body}</p>
@@ -33,7 +33,8 @@ function buildEmailHtml(params: {
           </div>
           <p style="color: #888; font-size: 12px; margin: 0 0 24px 0;">${expiry}</p>
           <div>
-            <img src="${systemLogoUrl}" alt="${process.env.NEXT_PUBLIC_COMPANY_NAME}" width="80" height="80" style="display: inline-block;" />
+            <img src="${systemLogoUrl}" alt="${process.env.NEXT_PUBLIC_COMPANY_NAME}" width="80" height="80" style="display: block; margin: 0 auto 8px auto;" />
+            <p style="color: #888; font-size: 12px; margin: 0;">${process.env.NEXT_PUBLIC_COMPANY_NAME}</p>
           </div>
         </div>
       </div>
@@ -51,7 +52,7 @@ export async function sendPasswordSetupEmail(params: {
   const {to, userName, tenantName, tenantLogo, setupUrl} = params;
   const t = (key: string, vars?: Record<string, string>) => serverTranslate(`email.passwordSetup.${key}`, vars);
 
-  await resend.emails.send({
+  const {error} = await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to,
     subject: t("subject", {tenantName}),
@@ -66,6 +67,7 @@ export async function sendPasswordSetupEmail(params: {
       expiry: t("expiry"),
     }),
   });
+  if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
 }
 
 export async function sendPasswordResetEmail(params: {
@@ -78,7 +80,7 @@ export async function sendPasswordResetEmail(params: {
   const {to, userName, tenantName, tenantLogo, resetUrl} = params;
   const t = (key: string, vars?: Record<string, string>) => serverTranslate(`email.passwordReset.${key}`, vars);
 
-  await resend.emails.send({
+  const {error} = await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to,
     subject: t("subject", {tenantName}),
@@ -93,4 +95,5 @@ export async function sendPasswordResetEmail(params: {
       expiry: t("expiry"),
     }),
   });
+  if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
 }
