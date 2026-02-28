@@ -2,7 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 
 const INTRANET_PUBLIC_PATHS = ["/login", "/reset-password", "/setup-password"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const {pathname} = request.nextUrl;
 
   // Protect yaaz pages (except the login page itself)
