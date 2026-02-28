@@ -1003,6 +1003,19 @@
       "cannotDeactivateOwner": "Não é possível desativar o proprietário da conta!"
     }
   },
+  "profile": {
+    "changePassword": "Alterar Senha",
+    "currentPassword": "Senha atual",
+    "passwordChanged": "Senha alterada com sucesso!",
+    "roles": {
+      "owner": "Proprietário",
+      "admin": "Administrador",
+      "user": "Usuário"
+    },
+    "errors": {
+      "wrongCurrentPassword": "Senha atual incorreta"
+    }
+  },
   "topBar": {
     "myProfile": "Meu Perfil",
     "logout": "Sair"
@@ -1058,7 +1071,8 @@
     "success": "Senha definida com sucesso! Redirecionando...",
     "errors": {
       "invalidLink": "Link inválido ou expirado",
-      "passwordMismatch": "As senhas não coincidem"
+      "passwordMismatch": "As senhas não coincidem",
+      "weakPassword": "A senha não atende aos requisitos"
     },
     "rules": {
       "minLength": "Mínimo 8 caracteres",

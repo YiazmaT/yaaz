@@ -9,7 +9,10 @@ const COOKIE_MAX_AGE = 31536000; // 1 year
 export interface User {
   id: string;
   name: string;
+  login: string;
   image?: string | null;
+  admin: boolean;
+  owner: boolean;
 }
 
 interface TenantContextValue {

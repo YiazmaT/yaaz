@@ -11,15 +11,7 @@ import {FormContextProvider} from "@/src/contexts/form-context";
 import {useForm} from "react-hook-form";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {TenantInfo} from "./types";
-
-const PASSWORD_RULES = [
-  {key: "minLength", test: (p: string) => p.length >= 8},
-  {key: "maxLength", test: (p: string) => p.length <= 32},
-  {key: "lowercase", test: (p: string) => /[a-z]/.test(p)},
-  {key: "uppercase", test: (p: string) => /[A-Z]/.test(p)},
-  {key: "number", test: (p: string) => /\d/.test(p)},
-  {key: "symbol", test: (p: string) => /[!@#$%^&*()\-_=+\[\]{};':"\\|,.<>\/?]/.test(p)},
-] as const;
+import {PASSWORD_RULES} from "@/src/lib/password-rules";
 
 const MODE_CONFIG = {
   setup: {
