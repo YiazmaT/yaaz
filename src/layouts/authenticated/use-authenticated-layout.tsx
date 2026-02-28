@@ -7,6 +7,7 @@ import {useAuth} from "@/src/contexts/auth-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant} from "@/src/contexts/tenant-context";
 import {MenuItem} from "./types";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
@@ -25,6 +26,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 
 const menuItems: MenuItem[] = [
+  {name: "global.dashboard", route: "/dashboard", icon: <DashboardOutlinedIcon />},
   {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
   {
     name: "global.finance",
@@ -52,9 +54,7 @@ const menuItems: MenuItem[] = [
   {
     name: "global.settings",
     icon: <SettingsOutlinedIcon />,
-    children: [
-      {name: "settings.tabs.users", route: "/settings/users", icon: <PeopleOutlinedIcon />},
-    ],
+    children: [{name: "settings.tabs.users", route: "/settings/users", icon: <PeopleOutlinedIcon />}],
   },
 ];
 

@@ -5,6 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {MobileViewProps} from "./types";
 import {MenuItems} from "./components/menu-items/menu-items";
+import {TopBar} from "./components/nav-search/top-bar";
 
 export function MobileView(props: MobileViewProps) {
   const {layout, children} = props;
@@ -81,6 +82,9 @@ export function MobileView(props: MobileViewProps) {
           background: "linear-gradient(135deg, #f5f7fa 0%, #e8f0f2 50%, #f0f4f8 100%)",
         }}
       >
+        <Box sx={{px: 2, pt: 1.5, pb: 0.5}}>
+          <TopBar menuItems={layout.menuItems} />
+        </Box>
         {children}
       </Box>
     </Box>

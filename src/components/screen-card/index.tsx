@@ -6,7 +6,7 @@ export function ScreenCard(props: ScreenCardProps) {
   const {translate} = useTranslate();
 
   return (
-    <Box sx={{p: "30px", height: "100%"}}>
+    <Box sx={{px: "30px", pt: "8px", pb: "30px", height: "100%"}}>
       <Card
         sx={{
           height: "100%",

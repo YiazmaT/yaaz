@@ -4,6 +4,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {DesktopViewProps} from "./types";
 import {MenuItems} from "./components/menu-items/menu-items";
+import {TopBar} from "./components/nav-search/top-bar";
 
 export function DesktopView(props: DesktopViewProps) {
   const {layout, children} = props;
@@ -142,7 +143,12 @@ export function DesktopView(props: DesktopViewProps) {
           )}
         </List>
       </Box>
-      <Box sx={{flex: 1, height: "100vh", overflow: "auto"}}>{children}</Box>
+      <Box sx={{flex: 1, height: "100vh", display: "flex", flexDirection: "column"}}>
+        <Box sx={{px: "30px", pt: "10px", pb: "8px", flexShrink: 0}}>
+          <TopBar menuItems={layout.menuItems} />
+        </Box>
+        <Box sx={{flex: 1, overflow: "auto"}}>{children}</Box>
+      </Box>
     </Box>
   );
 }

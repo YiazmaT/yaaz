@@ -27,6 +27,7 @@
     "size": "Tamanho",
     "search": "Pesquisar...",
     "include": "Incluir",
+    "dashboard": "Dashboard",
     "sales": "Vendas",
     "cash": "Dinheiro",
     "credit": "Crédito",
@@ -1001,6 +1002,11 @@
       "cannotDeleteOwner": "Não é possível excluir o proprietário da conta!",
       "cannotDeactivateOwner": "Não é possível desativar o proprietário da conta!"
     }
+  },
+  "navSearch": {
+    "hint": "Aperte Ctrl + / para pesquisar ...",
+    "placeholder": "Pesquisar...",
+    "noResults": "Nenhum resultado encontrado"
   },
   "forgotPassword": {
     "link": "Esqueci minha senha",

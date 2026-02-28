@@ -11,7 +11,7 @@ export function DashboardScreen() {
   const {translate} = useTranslate();
 
   return (
-    <Box sx={{padding: {xs: 2, md: 3}}}>
+    <Box sx={{px: {xs: 2, md: "30px"}, pt: {xs: 2, md: "8px"}, pb: {xs: 2, md: "30px"}}}>
       <Typography variant="h4" fontWeight={600} sx={{marginBottom: 3}}>
         {translate("dashboard.title")}
       </Typography>
