@@ -19,24 +19,47 @@ const PASSWORD_RULES = [
   {key: "uppercase", test: (p: string) => /[A-Z]/.test(p)},
   {key: "number", test: (p: string) => /\d/.test(p)},
   {key: "symbol", test: (p: string) => /[!@#$%^&*()\-_=+\[\]{};':"\\|,.<>\/?]/.test(p)},
-];
+] as const;
 
-export function SetupPasswordScreen() {
-  const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+const MODE_CONFIG = {
+  setup: {
+    apiPath: "setup-password",
+    title: "setupPassword.title",
+    subtitle: "setupPassword.subtitle",
+    submit: "setupPassword.submit",
+    success: "setupPassword.success",
+    invalidLink: "setupPassword.errors.invalidLink",
+  },
+  reset: {
+    apiPath: "reset-password",
+    title: "resetPassword.title",
+    subtitle: "resetPassword.subtitle",
+    submit: "resetPassword.submit",
+    success: "resetPassword.success",
+    invalidLink: "resetPassword.errors.invalidLink",
+  },
+};
+
+export function SetPasswordScreen({mode}: {mode: keyof typeof MODE_CONFIG}) {
+  const [password, setPassword] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
   const {translate} = useTranslate();
   const theme = useTheme();
   const router = useRouter();
+  const config = MODE_CONFIG[mode];
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId");
   const tenantId = searchParams.get("tenantId");
   const primaryColor = theme.palette.primary.main;
   const secondaryColor = theme.palette.secondary.main;
+  const allRulesPassed = PASSWORD_RULES.every((r) => r.test(password));
+  const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
+  const canSubmit = allRulesPassed && passwordsMatch;
 
   const {
     control,
@@ -48,39 +71,32 @@ export function SetupPasswordScreen() {
     defaultValues: {password: "", confirmPassword: ""},
   });
 
-  const watchedPassword = watch("password");
-  const watchedConfirm = watch("confirmPassword");
-
   useEffect(() => {
-    setPassword(watchedPassword);
-    setConfirmPassword(watchedConfirm);
-  }, [watchedPassword, watchedConfirm]);
+    setPassword(watch("password"));
+    setConfirmPassword(watch("confirmPassword"));
+  }, [watch("password"), watch("confirmPassword")]);
 
   useEffect(() => {
     if (!userId || !tenantId) {
-      setLoadError(translate("setupPassword.errors.invalidLink"));
+      setLoadError(translate(config.invalidLink));
       return;
     }
 
-    fetch(`/api/public/setup-password?userId=${userId}&tenantId=${tenantId}`)
+    fetch(`/api/public/password-link-info?userId=${userId}&tenantId=${tenantId}&mode=${mode}`)
       .then((r) => r.json())
       .then((json) => {
         if (json.error) setLoadError(translate(json.error));
         else setTenantInfo(json.data);
       })
-      .catch(() => setLoadError(translate("setupPassword.errors.invalidLink")));
+      .catch(() => setLoadError(translate(config.invalidLink)));
   }, [userId, tenantId]);
-
-  const allRulesPassed = PASSWORD_RULES.every((r) => r.test(password));
-  const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
-  const canSubmit = allRulesPassed && passwordsMatch;
 
   async function onSubmit() {
     if (!canSubmit) return;
     setLoading(true);
     setSubmitError(null);
     try {
-      const res = await fetch("/api/public/setup-password", {
+      const res = await fetch(`/api/public/${config.apiPath}`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({userId, tenantId, password, confirmPassword}),
@@ -139,17 +155,17 @@ export function SetupPasswordScreen() {
           ) : success ? (
             <Grid size={12}>
               <Typography color="success.main" textAlign="center">
-                {translate("setupPassword.success")}
+                {translate(config.success)}
               </Typography>
             </Grid>
           ) : tenantInfo ? (
             <>
               <Grid size={12}>
                 <Typography variant="h6" textAlign="center">
-                  {translate("setupPassword.title")}
+                  {translate(config.title)}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" textAlign="center">
-                  {translate("setupPassword.subtitle")}
+                  {translate(config.subtitle)}
                 </Typography>
               </Grid>
 
@@ -188,7 +204,7 @@ export function SetupPasswordScreen() {
 
               <Grid size={12}>
                 <Button variant="contained" fullWidth disabled={!canSubmit || loading} onClick={handleSubmit(onSubmit)}>
-                  {loading ? <CircularProgress size={24} /> : translate("setupPassword.submit")}
+                  {loading ? <CircularProgress size={24} /> : translate(config.submit)}
                 </Button>
               </Grid>
 

@@ -1,5 +1,5 @@
-import {SetupPasswordScreen} from "@/src/pages-content/setup-password";
+import {SetPasswordScreen} from "@/src/pages-content/set-password";
 
 export default function SetupPassword() {
-  return <SetupPasswordScreen />;
+  return <SetPasswordScreen mode="setup" />;
 }

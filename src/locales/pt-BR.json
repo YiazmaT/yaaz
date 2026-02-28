@@ -1002,6 +1002,25 @@
       "cannotDeactivateOwner": "Não é possível desativar o proprietário da conta!"
     }
   },
+  "forgotPassword": {
+    "link": "Esqueci minha senha",
+    "title": "Redefinir senha",
+    "subtitle": "Informe seu e-mail de login e enviaremos um link para redefinir sua senha.",
+    "submit": "Enviar link",
+    "successMessage": "Caso exista uma conta com esse login, você receberá um e-mail para redefinir sua senha.",
+    "errors": {
+      "rateLimit": "Aguarde {{secondsLeft}} segundos antes de tentar novamente."
+    }
+  },
+  "resetPassword": {
+    "title": "Nova senha",
+    "subtitle": "Crie uma nova senha para acessar o sistema",
+    "submit": "Redefinir senha",
+    "success": "Senha redefinida com sucesso! Redirecionando...",
+    "errors": {
+      "invalidLink": "Link inválido ou expirado"
+    }
+  },
   "email": {
     "passwordSetup": {
       "subject": "{{tenantName}} — Defina sua senha",
@@ -1010,6 +1029,14 @@
       "body": "Sua conta foi criada. Clique no botão abaixo para definir sua senha e acessar o sistema.",
       "button": "Definir minha senha",
       "expiry": "Este link expira em 72 horas. Se você não solicitou este acesso, ignore este e-mail."
+    },
+    "passwordReset": {
+      "subject": "{{tenantName}} — Redefinição de senha",
+      "title": "Redefinição de senha",
+      "greeting": "Olá, {{userName}}.",
+      "body": "Recebemos uma solicitação para redefinir a senha da sua conta. Clique no botão abaixo para criar uma nova senha.",
+      "button": "Redefinir minha senha",
+      "expiry": "Este link expira em 72 horas. Se você não solicitou a redefinição, ignore este e-mail."
     }
   },
   "setupPassword": {

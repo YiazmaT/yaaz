@@ -4,6 +4,7 @@ import {useLoginFormConfig} from "./form-config";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import {useEffect, useState} from "react";
+import {ForgotPasswordModal} from "./components/forgot-password-modal/forgot-password-modal";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useAuth} from "@/src/contexts/auth-context";
 import {useForm} from "react-hook-form";
@@ -16,6 +17,7 @@ import {flexGenerator} from "@/src/utils/flex-generator";
 export function LoginScreen() {
   const [saveMe, setSaveMe] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
   const {login} = useAuth();
   const {translate} = useTranslate();
   const {defaultValues, schema} = useLoginFormConfig();
@@ -131,10 +133,16 @@ export function LoginScreen() {
               <Button variant="contained" type="submit" fullWidth>
                 {translate("global.login")}
               </Button>
+              <Grid size={12} sx={{textAlign: "center", mt: 1}}>
+                <Button variant="text" fullWidth onClick={() => setForgotOpen(true)}>
+                  {translate("forgotPassword.link")}
+                </Button>
+              </Grid>
             </Grid>
           </form>
         </FormContextProvider>
       </Box>
+      <ForgotPasswordModal open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </Box>
   );
 }
