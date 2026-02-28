@@ -1,12 +1,12 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {withAuth} from "@/src/lib/route-handler";
+import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/tenant/paginated-list";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.TENANT, ROUTE, async ({success}) => {
+  return withYaazAuth(LogModule.TENANT, ROUTE, async ({success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");

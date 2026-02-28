@@ -4,6 +4,7 @@ import {Tenant} from "../pages-content/tenants/types";
 
 const TENANT_COOKIE_KEY = "tenant";
 const USER_COOKIE_KEY = "user";
+const YAAZ_USER_COOKIE_KEY = "yaaz_user";
 const COOKIE_MAX_AGE = 31536000; // 1 year
 
 export interface User {
@@ -15,20 +16,33 @@ export interface User {
   owner: boolean;
 }
 
+export interface YaazUser {
+  id: string;
+  name: string;
+  login: string;
+  admin: boolean;
+}
+
 interface TenantContextValue {
   tenant: Tenant | null;
   user: User | null;
+  yaazUser: YaazUser | null;
   setTenant: (tenant: Tenant | null) => void;
   setUser: (user: User | null) => void;
   clearTenant: () => void;
+  setYaazUser: (user: YaazUser | null) => void;
+  clearYaazUser: () => void;
 }
 
 const TenantContext = createContext<TenantContextValue>({
   tenant: null,
   user: null,
+  yaazUser: null,
   setTenant: () => {},
   setUser: () => {},
   clearTenant: () => {},
+  setYaazUser: () => {},
+  clearYaazUser: () => {},
 });
 
 function getCookie(name: string): string | null {
@@ -65,18 +79,26 @@ function getStoredUser(): User | null {
   }
 }
 
+function getStoredYaazUser(): YaazUser | null {
+  const stored = getCookie(YAAZ_USER_COOKIE_KEY);
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored) as YaazUser;
+  } catch {
+    return null;
+  }
+}
+
 interface TenantContextProviderProps extends PropsWithChildren {
   initialTenant?: Tenant | null;
   initialUser?: User | null;
+  initialYaazUser?: YaazUser | null;
 }
 
 export function TenantContextProvider(props: TenantContextProviderProps) {
-  const [tenant, setTenantState] = useState<Tenant | null>(
-    () => props.initialTenant ?? getStoredTenant()
-  );
-  const [user, setUserState] = useState<User | null>(
-    () => props.initialUser ?? getStoredUser()
-  );
+  const [tenant, setTenantState] = useState<Tenant | null>(() => props.initialTenant ?? getStoredTenant());
+  const [user, setUserState] = useState<User | null>(() => props.initialUser ?? getStoredUser());
+  const [yaazUser, setYaazUserState] = useState<YaazUser | null>(() => props.initialYaazUser ?? getStoredYaazUser());
 
   function setTenant(newTenant: Tenant | null) {
     setTenantState(newTenant);
@@ -103,10 +125,33 @@ export function TenantContextProvider(props: TenantContextProviderProps) {
     deleteCookie(USER_COOKIE_KEY);
   }
 
-  return <TenantContext.Provider value={{tenant, user, setTenant, setUser, clearTenant}}>{props.children}</TenantContext.Provider>;
+  function setYaazUser(newUser: YaazUser | null) {
+    setYaazUserState(newUser);
+    if (newUser) {
+      setCookie(YAAZ_USER_COOKIE_KEY, JSON.stringify(newUser));
+    } else {
+      deleteCookie(YAAZ_USER_COOKIE_KEY);
+    }
+  }
+
+  function clearYaazUser() {
+    setYaazUserState(null);
+    deleteCookie(YAAZ_USER_COOKIE_KEY);
+  }
+
+  return (
+    <TenantContext.Provider value={{tenant, user, yaazUser, setTenant, setUser, clearTenant, setYaazUser, clearYaazUser}}>
+      {props.children}
+    </TenantContext.Provider>
+  );
 }
 
 export function useTenant() {
   const {tenant, user, setTenant, setUser, clearTenant} = useContext(TenantContext);
   return {tenant, user, setTenant, setUser, clearTenant};
+}
+
+export function useYaazUser() {
+  const {yaazUser, setYaazUser, clearYaazUser} = useContext(TenantContext);
+  return {yaazUser, setYaazUser, clearYaazUser};
 }

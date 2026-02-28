@@ -1,0 +1,15 @@
+model YaazUser {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  login          String    @unique
+  password       String
+  active         Boolean   @default(true)
+  admin          Boolean   @default(false)
+  current_token  String?
+  token_expires  DateTime?
+  create_date    DateTime  @default(now())
+  last_edit_date DateTime?
+
+  @@map("yaaz_user")
+  @@schema("data")
+}

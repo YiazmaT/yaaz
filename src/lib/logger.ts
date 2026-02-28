@@ -47,6 +47,8 @@ export enum LogModule {
   NFE = "nfe",
   PAYMENT_METHOD = "payment_method",
   UPLOAD = "upload",
+  YAAZ_LOGIN = "yaaz_login",
+  YAAZ_USER = "yaaz_user",
 }
 
 interface LogParams {

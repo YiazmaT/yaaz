@@ -1087,5 +1087,8 @@
       "number": "1 número",
       "symbol": "1 símbolo"
     }
+  },
+  "yaaz": {
+    "tenants": "Clientes"
   }
 }

@@ -85,6 +85,21 @@ export async function deleteFromR2(key: string, tenantId: string): Promise<boole
   }
 }
 
+export async function noTenantDeleteFromR2(key: string): Promise<boolean> {
+  try {
+    await s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: key,
+      }),
+    );
+    return true;
+  } catch (error) {
+    console.error("R2 delete error:", error);
+    return false;
+  }
+}
+
 export async function generatePresignedUploadUrl(key: string, fileType: string, expiresIn = 300): Promise<string> {
   const command = new PutObjectCommand({
     Bucket: process.env.R2_BUCKET_NAME!,

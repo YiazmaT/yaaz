@@ -1,13 +1,13 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl, noTenantUploadToR2} from "@/src/lib/r2";
-import {withAuth} from "@/src/lib/route-handler";
+import {extractR2KeyFromUrl, noTenantDeleteFromR2, noTenantUploadToR2} from "@/src/lib/r2";
+import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/tenant/update";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.TENANT, ROUTE, async ({auth, success, error}) => {
+  return withYaazAuth(LogModule.TENANT, ROUTE, async ({success, error}) => {
     const formData = await req.formData();
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
@@ -33,7 +33,7 @@ export async function PUT(req: NextRequest) {
       if (existingTenant.logo) {
         const oldKey = extractR2KeyFromUrl(existingTenant.logo);
         if (oldKey) {
-          const deleted = await deleteFromR2(oldKey, auth.tenant_id);
+          const deleted = await noTenantDeleteFromR2(oldKey);
           if (!deleted) {
             return error("api.errors.deleteFailed", 400);
           }

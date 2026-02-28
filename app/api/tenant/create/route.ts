@@ -1,13 +1,13 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {noTenantUploadToR2} from "@/src/lib/r2";
-import {withAuth} from "@/src/lib/route-handler";
+import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/tenant/create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.TENANT, ROUTE, async ({success, error}) => {
+  return withYaazAuth(LogModule.TENANT, ROUTE, async ({success, error}) => {
     const formData = await req.formData();
     const name = formData.get("name") as string;
     const primary_color = formData.get("primary_color") as string | null;
