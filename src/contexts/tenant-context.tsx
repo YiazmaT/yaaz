@@ -21,6 +21,7 @@ export interface YaazUser {
   name: string;
   login: string;
   admin: boolean;
+  image?: string | null;
 }
 
 interface TenantContextValue {

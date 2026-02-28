@@ -5,7 +5,7 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import {useEffect, useState} from "react";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useTenant} from "@/src/contexts/tenant-context";
+import {useTenant, useYaazUser} from "@/src/contexts/tenant-context";
 import {useAuth} from "@/src/contexts/auth-context";
 import {useNavigate} from "@/src/hooks/use-navigate";
 import {SearchModal} from "./search-modal";
@@ -16,9 +16,11 @@ export function TopBar({menuItems}: TopBarProps) {
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const {user} = useTenant();
   const {logout} = useAuth();
+  const {yaazUser} = useYaazUser();
   const {navigate} = useNavigate();
   const {translate} = useTranslate();
   const theme = useTheme();
+  const displayUser = user ?? yaazUser;
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -72,21 +74,21 @@ export function TopBar({menuItems}: TopBarProps) {
         </Box>
 
         <Avatar
-          src={user?.image ?? undefined}
-          alt={user?.name}
+          src={displayUser?.image ?? undefined}
+          alt={displayUser?.name}
           onClick={(e) => setMenuAnchor(e.currentTarget)}
           sx={{
             width: 32,
             height: 32,
             fontSize: 14,
-            bgcolor: theme.palette.primary.main,
+            bgcolor: displayUser?.image || displayUser?.name ? theme.palette.primary.main : "lightgrey",
             flexShrink: 0,
             cursor: "pointer",
             transition: "opacity 0.2s",
             "&:hover": {opacity: 0.8},
           }}
         >
-          {user?.name?.[0]?.toUpperCase()}
+          {displayUser?.name?.[0]?.toUpperCase() ?? <AccountCircleOutlinedIcon sx={{fontSize: 20, color: "grey.600"}} />}
         </Avatar>
       </Box>
 
@@ -113,14 +115,20 @@ export function TopBar({menuItems}: TopBarProps) {
       >
         <Box sx={{px: 2, py: 1, display: "flex", alignItems: "center", gap: 1.5}}>
           <Avatar
-            src={user?.image ?? undefined}
-            alt={user?.name}
-            sx={{width: 36, height: 36, fontSize: 15, bgcolor: theme.palette.primary.main, flexShrink: 0}}
+            src={displayUser?.image ?? undefined}
+            alt={displayUser?.name}
+            sx={{
+              width: 36,
+              height: 36,
+              fontSize: 15,
+              bgcolor: displayUser?.image || displayUser?.name ? theme.palette.primary.main : "lightgrey",
+              flexShrink: 0,
+            }}
           >
-            {user?.name?.[0]?.toUpperCase()}
+            {displayUser?.name?.[0]?.toUpperCase() ?? <AccountCircleOutlinedIcon sx={{fontSize: 22, color: "grey.600"}} />}
           </Avatar>
           <Typography variant="body2" fontWeight={600} noWrap sx={{maxWidth: 160}}>
-            {user?.name}
+            {displayUser?.name}
           </Typography>
         </Box>
 

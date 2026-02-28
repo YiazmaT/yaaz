@@ -1,5 +1,5 @@
-import {YaazAuthenticatedLayout} from "@/src/layouts/yaaz-authenticated";
+import {AuthenticatedLayout} from "@/src/layouts/authenticated";
 
 export default function Layout({children}: {children: React.ReactNode}) {
-  return <YaazAuthenticatedLayout>{children}</YaazAuthenticatedLayout>;
+  return <AuthenticatedLayout>{children}</AuthenticatedLayout>;
 }

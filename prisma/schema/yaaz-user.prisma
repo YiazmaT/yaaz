@@ -5,6 +5,7 @@ model YaazUser {
   password       String
   active         Boolean   @default(true)
   admin          Boolean   @default(false)
+  image          String?
   current_token  String?
   token_expires  DateTime?
   create_date    DateTime  @default(now())

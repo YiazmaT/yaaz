@@ -20,7 +20,7 @@ export function MobileView(props: MobileViewProps) {
               alt={layout.tenantName}
               src={layout.tenantLogo}
               sx={{width: 32, height: 32, cursor: "pointer", objectFit: "contain"}}
-              onClick={() => layout.handleNavigate("/dashboard")}
+              onClick={() => layout.handleNavigate(layout.homeRoute)}
             />
             <Typography sx={{color: layout.theme.palette.primary.main, fontWeight: 600}}>{layout.tenantName}</Typography>
           </Box>
@@ -40,7 +40,7 @@ export function MobileView(props: MobileViewProps) {
                 src={layout.tenantLogo}
                 sx={{width: 32, height: 32, cursor: "pointer", objectFit: "contain"}}
                 onClick={() => {
-                  layout.handleNavigate("/dashboard");
+                  layout.handleNavigate(layout.homeRoute);
                   layout.handleMobileMenuToggle();
                 }}
               />
