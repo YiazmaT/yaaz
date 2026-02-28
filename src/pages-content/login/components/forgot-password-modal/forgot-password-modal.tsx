@@ -10,10 +10,10 @@ import {useState} from "react";
 import {ForgotPasswordModalProps} from "./types";
 
 export function ForgotPasswordModal({open, onClose}: ForgotPasswordModalProps) {
-  const {translate} = useTranslate();
-  const {successToast} = useToaster();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const {translate} = useTranslate();
+  const {successToast} = useToaster();
 
   const {
     control,
