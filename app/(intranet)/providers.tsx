@@ -10,7 +10,7 @@ import {TopLoader} from "@/src/components/top-loader";
 import {ConfirmModalContextProvider} from "@/src/contexts/confirm-modal-context";
 import {TenantThemeProvider} from "@/src/components/tenant-theme-provider";
 import {queryClient} from "@/src/lib/query-client";
-import {Tenant} from "@/src/pages-content/tenants/types";
+import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
 import {User, YaazUser} from "@/src/contexts/tenant-context";
 
 interface ProvidersProps {

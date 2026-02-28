@@ -4,7 +4,7 @@ import {noTenantUploadToR2} from "@/src/lib/r2";
 import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/tenant/create";
+const ROUTE = "/api/yaaz/tenant/create";
 
 export async function POST(req: NextRequest) {
   return withYaazAuth(LogModule.TENANT, ROUTE, async ({success, error}) => {

@@ -3,7 +3,7 @@ import {PropsWithChildren, createContext, useContext} from "react";
 import {resetSessionExpiredFlag, useApi} from "../hooks/use-api";
 import {useNavigate} from "../hooks/use-navigate";
 import {User, YaazUser, useTenant, useYaazUser} from "./tenant-context";
-import {Tenant} from "../pages-content/tenants/types";
+import {Tenant} from "../pages-content/yaaz/tenants/types";
 
 const AuthContext = createContext({
   login: async (_login: string, _password: string) => {},

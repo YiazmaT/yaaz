@@ -1,6 +1,6 @@
 import moment from "moment";
 import {serverTranslate} from "./server-translate";
-import {Tenant} from "../pages-content/tenants/types";
+import {Tenant} from "../pages-content/yaaz/tenants/types";
 
 const DEFAULT_PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR ?? "#A20103";
 const DEFAULT_COMPANY_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME ?? "YaaZ";

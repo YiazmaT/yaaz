@@ -8,7 +8,7 @@ import {Tenant} from "./types";
 import {TenantFormValues, useTenantFormConfig} from "./form-config";
 import {useTenantsTableConfig} from "./desktop/table-config";
 
-const API_ROUTE = "/api/tenant/paginated-list";
+const API_ROUTE = "/api/yaaz/tenant/paginated-list";
 
 export function useTenants() {
   const [formType, setFormType] = useState("create");
@@ -53,7 +53,7 @@ export function useTenants() {
 
     if (formType === "edit" && selectedId) {
       formData.append("id", selectedId);
-      await api.fetch("PUT", "/api/tenant/update", {
+      await api.fetch("PUT", "/api/yaaz/tenant/update", {
         formData,
         onSuccess: () => {
           toast.successToast("tenants.updateSuccess");
@@ -63,7 +63,7 @@ export function useTenants() {
         },
       });
     } else {
-      await api.fetch("POST", "/api/tenant/create", {
+      await api.fetch("POST", "/api/yaaz/tenant/create", {
         formData,
         onSuccess: () => {
           toast.successToast("tenants.createSuccess");

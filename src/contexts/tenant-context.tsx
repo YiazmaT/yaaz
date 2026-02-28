@@ -1,6 +1,6 @@
 "use client";
 import {PropsWithChildren, createContext, useContext, useState} from "react";
-import {Tenant} from "../pages-content/tenants/types";
+import {Tenant} from "../pages-content/yaaz/tenants/types";
 
 const TENANT_COOKIE_KEY = "tenant";
 const USER_COOKIE_KEY = "user";

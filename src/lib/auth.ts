@@ -3,7 +3,7 @@ import {cookies} from "next/headers";
 import {NextResponse} from "next/server";
 import {prismaUnscoped} from "./prisma";
 import {logCritical, logError, LogModule, LogSource} from "./logger";
-import {Tenant} from "@/src/pages-content/tenants/types";
+import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 

@@ -4,7 +4,7 @@ import {extractR2KeyFromUrl, noTenantDeleteFromR2, noTenantUploadToR2} from "@/s
 import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/tenant/update";
+const ROUTE = "/api/yaaz/tenant/update";
 
 export async function PUT(req: NextRequest) {
   return withYaazAuth(LogModule.TENANT, ROUTE, async ({success, error}) => {

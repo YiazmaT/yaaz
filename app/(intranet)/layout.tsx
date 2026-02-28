@@ -1,6 +1,6 @@
 import {cookies} from "next/headers";
 import {Providers} from "./providers";
-import {Tenant} from "@/src/pages-content/tenants/types";
+import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
 import {User, YaazUser} from "@/src/contexts/tenant-context";
 
 function parseCookie<T>(value: string | undefined): T | null {

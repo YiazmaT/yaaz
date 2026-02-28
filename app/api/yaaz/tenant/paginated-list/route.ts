@@ -3,7 +3,7 @@ import {prisma} from "@/src/lib/prisma";
 import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
 import {NextRequest} from "next/server";
 
-const ROUTE = "/api/tenant/paginated-list";
+const ROUTE = "/api/yaaz/tenant/paginated-list";
 
 export async function GET(req: NextRequest) {
   return withYaazAuth(LogModule.TENANT, ROUTE, async ({success}) => {

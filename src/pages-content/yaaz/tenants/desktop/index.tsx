@@ -11,7 +11,7 @@ export function DesktopView(props: DesktopViewProps) {
   return (
     <>
       <ScreenCard title="tenants.title" includeButtonFunction={tenants.handleCreate}>
-        <DataTable<Tenant> apiRoute="/api/tenant/paginated-list" columns={tenants.generateConfig()} />
+        <DataTable<Tenant> apiRoute="/api/yaaz/tenant/paginated-list" columns={tenants.generateConfig()} />
       </ScreenCard>
 
       <Form tenants={tenants} imageSize={200} />

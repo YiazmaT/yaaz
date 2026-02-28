@@ -1,6 +1,6 @@
 import {authenticateRequest} from "@/src/lib/auth";
 import {LogModule, LogSource, logCreate, logUpdate, logDelete, logGet, logImportant, logError, logCritical} from "@/src/lib/logger";
-import {Tenant} from "@/src/pages-content/tenants/types";
+import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
 import {NextResponse} from "next/server";
 
 type LogAction = "create" | "update" | "delete" | "get" | "important" | "error" | "critical";
