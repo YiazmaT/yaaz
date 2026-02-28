@@ -30,12 +30,8 @@ export function Form(props: FormProps) {
             <FormImageInput fieldName="image" label="users.fields.image" imageSize={300} />
             <FormTextInput fieldName="name" label="users.fields.name" />
             <FormTextInput fieldName="login" label="users.fields.login" />
-            {users.formType !== "details" && (
-              <FormTextInput
-                fieldName="password"
-                label={users.formType === "edit" ? "users.fields.newPassword" : "users.fields.password"}
-                isPassword
-              />
+            {users.formType === "edit" && (
+              <FormTextInput fieldName="password" label="users.fields.newPassword" isPassword />
             )}
             <FormCheckBox fieldName="admin" label="users.fields.admin" />
             {users.formType !== "details" && (

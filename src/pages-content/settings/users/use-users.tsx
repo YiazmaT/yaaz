@@ -73,7 +73,6 @@ export function useUsers() {
           id: selectedId,
           name: data.name,
           login: data.login,
-          password: data.password || undefined,
           admin: data.admin,
           imageUrl,
         },
@@ -93,7 +92,6 @@ export function useUsers() {
         body: {
           name: data.name,
           login: data.login,
-          password: data.password,
           admin: data.admin,
           imageUrl,
         },
@@ -126,7 +124,6 @@ export function useUsers() {
     reset({
       name: row.name,
       login: row.login,
-      password: "",
       admin: row.admin,
       image: row.image,
     });

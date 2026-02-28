@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (!user || !user.active || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !user.active || user.pending_password || !(await bcrypt.compare(password, user.password))) {
       log("error", {message: "api.errors.loginOrPasswordIncorrect", content: {email}});
       return NextResponse.json({error: "api.errors.loginOrPasswordIncorrect"}, {status: 400});
     }

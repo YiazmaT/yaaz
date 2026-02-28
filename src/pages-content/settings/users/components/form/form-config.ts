@@ -6,12 +6,11 @@ import * as yup from "yup";
 export interface UserFormValues {
   name: string;
   login: string;
-  password: string;
   admin: boolean;
   image: ImageInputValue;
 }
 
-export function useUserFormConfig(isEdit: boolean) {
+export function useUserFormConfig(_isEdit: boolean) {
   const {translate} = useTranslate();
 
   const schema = yup.object().shape({
@@ -21,13 +20,11 @@ export function useUserFormConfig(isEdit: boolean) {
       .required()
       .matches(validEmailRegex, {message: translate("global.errors.invalidEmail")})
       .label(translate("global.email")),
-    password: isEdit ? yup.string().optional() : yup.string().required().label(translate("users.fields.password")),
   });
 
   const defaultValues: UserFormValues = {
     name: "",
     login: "",
-    password: "",
     admin: false,
     image: null,
   };

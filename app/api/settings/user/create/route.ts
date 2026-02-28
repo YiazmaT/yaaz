@@ -1,16 +1,18 @@
+import {sendPasswordSetupEmail} from "@/src/lib/email";
 import {LogModule} from "@/src/lib/logger";
 import {prisma, prismaUnscoped} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import * as bcrypt from "bcrypt";
+import {randomBytes} from "crypto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/settings/user/create";
 
 export async function POST(req: NextRequest) {
   return withAuth(LogModule.USER, ROUTE, async ({auth, success, error}) => {
-    const {name, login, password, admin, imageUrl} = await req.json();
+    const {name, login, admin, imageUrl} = await req.json();
 
-    if (!name || !login || !password) return error("api.errors.missingRequiredFields", 400);
+    if (!name || !login) return error("api.errors.missingRequiredFields", 400);
 
     const normalizedLogin = login.trim().toLowerCase();
 
@@ -23,7 +25,11 @@ export async function POST(req: NextRequest) {
     const existingUser = await prismaUnscoped.user.findFirst({where: {login: normalizedLogin}});
     if (existingUser) return error("users.errors.loginAlreadyExists", 400);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const placeholderPassword = randomBytes(32).toString("hex");
+    const hashedPassword = await bcrypt.hash(placeholderPassword, 10);
+
+    const pendingExpires = new Date();
+    pendingExpires.setHours(pendingExpires.getHours() + 72);
 
     const user = await prisma.user.create({
       data: {
@@ -34,6 +40,8 @@ export async function POST(req: NextRequest) {
         admin: admin ?? false,
         image: imageUrl || null,
         creator_id: auth.user.id,
+        pending_password: true,
+        pending_password_expires: pendingExpires,
       },
       select: {
         id: true,
@@ -46,6 +54,18 @@ export async function POST(req: NextRequest) {
         create_date: true,
       },
     });
+
+    const setupUrl = `${process.env.NEXT_PUBLIC_APP_URL}/setup-password?userId=${user.id}&tenantId=${user.tenant_id}`;
+
+    try {
+      await sendPasswordSetupEmail({
+        to: normalizedLogin,
+        userName: name,
+        tenantName: tenant.name,
+        tenantLogo: tenant.logo,
+        setupUrl,
+      });
+    } catch (_) {}
 
     return success("create", user);
   });

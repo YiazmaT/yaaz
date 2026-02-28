@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
           owner: true,
           active: true,
           image: true,
+          pending_password: true,
           create_date: true,
           last_edit_date: true,
         },

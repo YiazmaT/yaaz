@@ -1,19 +1,21 @@
 model User {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenant_id      String    @db.Uuid
-  name           String
-  login          String    @unique
-  password       String
-  image          String?
-  admin          Boolean   @default(false)
-  owner          Boolean   @default(false)
-  active         Boolean   @default(true)
-  current_token  String?
-  token_expires  DateTime?
-  create_date    DateTime  @default(now())
-  last_edit_date DateTime?
-  tenant         Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  logs           Log[]
+  id                       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id                String    @db.Uuid
+  name                     String
+  login                    String    @unique
+  password                 String
+  image                    String?
+  admin                    Boolean   @default(false)
+  owner                    Boolean   @default(false)
+  active                   Boolean   @default(true)
+  current_token            String?
+  token_expires            DateTime?
+  pending_password         Boolean   @default(false)
+  pending_password_expires DateTime?
+  create_date              DateTime  @default(now())
+  last_edit_date           DateTime?
+  tenant                   Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  logs                     Log[]
 
   creator_id     String? @db.Uuid
   creator        User?   @relation("UserCreator", fields: [creator_id], references: [id], onDelete: SetNull)

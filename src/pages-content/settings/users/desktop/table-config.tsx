@@ -1,7 +1,9 @@
-import {Box, Chip} from "@mui/material";
+import {Box, Chip, Tooltip} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn, ImagePreviewColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import {User} from "../types";
@@ -45,6 +47,22 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
           if (row.admin) return <Chip label={translate("users.admin")} size="small" color="primary" />;
           return <Chip label={translate("users.user")} size="small" />;
         },
+      },
+      {
+        field: "pending_password",
+        headerKey: "users.fields.verified",
+        width: "100px",
+        align: "center",
+        render: (row) =>
+          row.pending_password ? (
+            <Tooltip title={translate("users.fields.pendingPassword")}>
+              <CancelIcon sx={{color: "error.main"}} fontSize="small" />
+            </Tooltip>
+          ) : (
+            <Tooltip title={translate("users.fields.verified")}>
+              <CheckCircleIcon sx={{color: "success.main"}} fontSize="small" />
+            </Tooltip>
+          ),
       },
       {
         field: "actions",

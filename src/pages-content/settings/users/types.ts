@@ -6,6 +6,7 @@ export interface User {
   owner: boolean;
   active: boolean;
   image: string | null;
+  pending_password: boolean;
   create_date: string;
   last_edit_date: string | null;
 }

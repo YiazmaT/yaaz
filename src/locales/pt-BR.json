@@ -986,7 +986,9 @@
       "newPassword": "Nova Senha (opcional)",
       "admin": "Administrador",
       "role": "Perfil",
-      "status": "Status"
+      "status": "Status",
+      "verified": "Verificado",
+      "pendingPassword": "Senha não definida"
     },
     "errors": {
       "userLimitReached": "Limite de usuários ativos atingido para este plano!",
@@ -994,6 +996,36 @@
       "cannotDeleteSelf": "Você não pode excluir sua própria conta!",
       "cannotDeleteOwner": "Não é possível excluir o proprietário da conta!",
       "cannotDeactivateOwner": "Não é possível desativar o proprietário da conta!"
+    }
+  },
+  "email": {
+    "passwordSetup": {
+      "subject": "{{tenantName}} — Defina sua senha",
+      "title": "Bem-vindo(a) ao {{tenantName}}!",
+      "greeting": "Olá, {{userName}}.",
+      "body": "Sua conta foi criada. Clique no botão abaixo para definir sua senha e acessar o sistema.",
+      "button": "Definir minha senha",
+      "expiry": "Este link expira em 72 horas. Se você não solicitou este acesso, ignore este e-mail."
+    }
+  },
+  "setupPassword": {
+    "title": "Definir senha",
+    "subtitle": "Crie uma senha para acessar o sistema",
+    "password": "Senha",
+    "confirmPassword": "Confirmar senha",
+    "submit": "Definir senha",
+    "success": "Senha definida com sucesso! Redirecionando...",
+    "errors": {
+      "invalidLink": "Link inválido ou expirado",
+      "passwordMismatch": "As senhas não coincidem"
+    },
+    "rules": {
+      "minLength": "Mínimo 8 caracteres",
+      "maxLength": "Máximo 32 caracteres",
+      "lowercase": "1 letra minúscula",
+      "uppercase": "1 letra maiúscula",
+      "number": "1 número",
+      "symbol": "1 símbolo"
     }
   }
 }
