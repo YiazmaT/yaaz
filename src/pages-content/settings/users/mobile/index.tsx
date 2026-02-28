@@ -5,6 +5,8 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import {MobileList} from "@/src/components/mobile-list";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -44,7 +46,7 @@ export function MobileView(props: MobileViewProps) {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: "space-between",
             alignItems: "center",
             gap: 1,
             marginTop: 1,
@@ -53,6 +55,16 @@ export function MobileView(props: MobileViewProps) {
             borderColor: "divider",
           }}
         >
+          <Tooltip title={translate(item.pending_password ? "users.fields.pendingPassword" : "users.fields.verified")}>
+            <Box sx={{display: "flex", alignItems: "center"}}>
+              {item.pending_password ? (
+                <CancelIcon sx={{color: "error.main"}} fontSize="small" />
+              ) : (
+                <CheckCircleIcon sx={{color: "success.main"}} fontSize="small" />
+              )}
+            </Box>
+          </Tooltip>
+          <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
           {item.active && (!item.owner || item.id === users.currentUserId) && (
             <Tooltip title={translate("global.actions.edit")}>
               <IconButton
@@ -84,6 +96,7 @@ export function MobileView(props: MobileViewProps) {
             </Tooltip>
           )}
           {actions}
+          </Box>
         </Box>
       </CardContent>
     );
