@@ -1,7 +1,7 @@
 "use client";
-import {Box, Button, CircularProgress, Drawer, IconButton, Typography} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import {Box, Button, CircularProgress} from "@mui/material";
 import {useEffect, useState} from "react";
+import {GenericDrawer} from "@/src/components/generic-drawer";
 import {useForm} from "react-hook-form";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant} from "@/src/contexts/tenant-context";
@@ -79,16 +79,7 @@ export function EditProfileDrawer({open, onClose}: EditProfileDrawerProps) {
   }
 
   return (
-    <Drawer anchor="right" open={open} onClose={handleClose} PaperProps={{sx: {width: {xs: "100%", sm: 400}, p: 3}}}>
-      <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3}}>
-        <Typography variant="h6" fontWeight={600}>
-          {translate("profile.editProfile")}
-        </Typography>
-        <IconButton size="small" onClick={handleClose}>
-          <CloseIcon fontSize="small" />
-        </IconButton>
-      </Box>
-
+    <GenericDrawer title="profile.editProfile" show={open} onClose={handleClose}>
       <Box sx={{display: "flex", justifyContent: "center", mb: 2}}>
         <ImageInput value={imageValue} onChange={setImageValue} imageSize={150} />
       </Box>
@@ -100,6 +91,6 @@ export function EditProfileDrawer({open, onClose}: EditProfileDrawerProps) {
       <Button variant="contained" fullWidth disabled={loading} onClick={handleSubmit(onSubmit)} sx={{mt: 3}}>
         {loading ? <CircularProgress size={22} /> : translate("global.save")}
       </Button>
-    </Drawer>
+    </GenericDrawer>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
-import {Box, Button, CircularProgress, Drawer, IconButton, Typography} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import {Box, Button, CircularProgress, Typography} from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {GenericDrawer} from "@/src/components/generic-drawer";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
@@ -57,16 +57,7 @@ export function PasswordRulesDrawer({open, onClose}: PasswordRulesDrawerProps) {
   }
 
   return (
-    <Drawer anchor="right" open={open} onClose={handleClose} PaperProps={{sx: {width: {xs: "100%", sm: 400}, p: 3}}}>
-      <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3}}>
-        <Typography variant="h6" fontWeight={600}>
-          {translate("profile.changePassword")}
-        </Typography>
-        <IconButton size="small" onClick={handleClose}>
-          <CloseIcon fontSize="small" />
-        </IconButton>
-      </Box>
-
+    <GenericDrawer title="profile.changePassword" show={open} onClose={handleClose}>
       <FormContextProvider control={control} errors={errors}>
         <Box sx={{display: "flex", flexDirection: "column", gap: 2}}>
           <FormTextInput fieldName="currentPassword" label="profile.currentPassword" isPassword />
@@ -106,6 +97,6 @@ export function PasswordRulesDrawer({open, onClose}: PasswordRulesDrawerProps) {
       <Button variant="contained" fullWidth disabled={!canSubmit || loading} onClick={handleSubmit(onSubmit)} sx={{mt: 3}}>
         {loading ? <CircularProgress size={22} /> : translate("profile.changePassword")}
       </Button>
-    </Drawer>
+    </GenericDrawer>
   );
 }
