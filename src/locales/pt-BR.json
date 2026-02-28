@@ -1003,6 +1003,10 @@
       "cannotDeactivateOwner": "Não é possível desativar o proprietário da conta!"
     }
   },
+  "topBar": {
+    "myProfile": "Meu Perfil",
+    "logout": "Sair"
+  },
   "navSearch": {
     "hint": "Aperte Ctrl + / para pesquisar ...",
     "placeholder": "Pesquisar...",
