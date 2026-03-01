@@ -14,7 +14,7 @@ export interface FormInputProps {
   fieldName: string;
   grid?: boolean;
   size?: number;
-  additionalOnChange?: (v: string) => void;
+  additionalOnChange?: (v: any) => void;
 }
 
 export interface JwtContent {

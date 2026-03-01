@@ -41,6 +41,13 @@ export function MobileView(props: MobileViewProps) {
               {item.owner && <Chip label={translate("users.owner")} size="small" color="warning" />}
               {!item.owner && item.admin && <Chip label={translate("users.admin")} size="small" color="primary" />}
               {!item.owner && !item.admin && <Chip label={translate("users.user")} size="small" />}
+              {!item.owner && !item.admin && (
+                item.user_group_name ? (
+                  <Chip label={item.user_group_name} size="small" variant="outlined" />
+                ) : (
+                  <Chip label={translate("users.noGroup")} size="small" variant="outlined" color="warning" />
+                )
+              )}
             </Box>
           </Box>
         </Box>

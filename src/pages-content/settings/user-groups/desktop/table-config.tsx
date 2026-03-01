@@ -22,7 +22,7 @@ export function useUserGroupsTableConfig(props: UserGroupsTableConfigProps) {
         field: "description",
         headerKey: "userGroups.fields.description",
         width: "35%",
-        render: (row) => row.description || "—",
+        render: (row) => row.description || "-",
       },
       {
         field: "user_count",

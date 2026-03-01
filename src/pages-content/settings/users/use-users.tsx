@@ -34,6 +34,7 @@ export function useUsers() {
     handleSubmit,
     formState: {errors},
     reset,
+    setValue,
   } = useForm<UserFormValues>({
     mode: "onChange",
     resolver: yupResolver(schema) as any,
@@ -125,11 +126,16 @@ export function useUsers() {
     reset(defaultValues);
   }
 
+  function handleAdminChange(checked: boolean) {
+    if (checked) setValue("user_group", null);
+  }
+
   function populateForm(row: User) {
     reset({
       name: row.name,
       login: row.login,
       admin: row.admin,
+      is_owner: row.owner,
       image: row.image,
       user_group: row.user_group_id ? {id: row.user_group_id, name: row.user_group_name ?? ""} : null,
     });
@@ -208,5 +214,7 @@ export function useUsers() {
     totalUsers,
     currentUserId: currentUser?.id ?? null,
     selectedUser,
+    handleAdminChange,
+    isSelectedOwner: selectedUser?.owner ?? false,
   };
 }

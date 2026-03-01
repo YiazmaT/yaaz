@@ -1,5 +1,6 @@
 "use client";
 import {Button, Grid} from "@mui/material";
+import {useWatch} from "react-hook-form";
 import {FormCheckBox} from "@/src/components/form-fields/check-box";
 import {FormImageInput} from "@/src/components/form-fields/image-input";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
@@ -14,7 +15,8 @@ export function Form(props: FormProps) {
   const {users} = props;
   const {translate} = useTranslate();
 
-  const isAdminOrOwner = users.formType !== "create" && (users.selectedUser?.admin || users.selectedUser?.owner);
+  const adminValue = useWatch({control: users.control, name: "admin"});
+  const showGroup = !adminValue && !users.isSelectedOwner;
 
   return (
     <FormContextProvider control={users.control} errors={users.errors} formType={users.formType}>
@@ -28,8 +30,8 @@ export function Form(props: FormProps) {
             <FormImageInput fieldName="image" label="users.fields.image" imageSize={300} />
             <FormTextInput fieldName="name" label="users.fields.name" />
             <FormTextInput fieldName="login" label="users.fields.login" />
-            <FormCheckBox fieldName="admin" label="users.fields.admin" />
-            {!isAdminOrOwner && (
+            <FormCheckBox fieldName="admin" label="users.fields.admin" additionalOnChange={users.handleAdminChange} />
+            {showGroup && (
               <FormAsyncDropdown<UserGroupOption>
                 fieldName="user_group"
                 label="users.fields.group"
