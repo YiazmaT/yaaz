@@ -1,78 +1,52 @@
+import {MenuItem} from "@/src/layouts/authenticated/types";
+import {intranetMenuItems} from "@/src/layouts/authenticated/menus";
+
 export interface ModuleDefinition {
   key: string;
   labelKey: string;
+  groupLabelKey: string;
   actions: string[];
 }
 
 export type PermissionsMap = Record<string, Record<string, boolean>>;
 
-export const MODULE_DEFINITIONS: ModuleDefinition[] = [
-  {
-    key: "dashboard",
-    labelKey: "userGroups.modules.dashboard",
-    actions: ["read"],
-  },
-  {
-    key: "sales",
-    labelKey: "userGroups.modules.sales",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "clients",
-    labelKey: "userGroups.modules.clients",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "stock.products",
-    labelKey: "userGroups.modules.stock.products",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "stock.ingredients",
-    labelKey: "userGroups.modules.stock.ingredients",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "stock.packages",
-    labelKey: "userGroups.modules.stock.packages",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "stock.unity_of_measure",
-    labelKey: "userGroups.modules.stock.unity_of_measure",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "finance.bills",
-    labelKey: "userGroups.modules.finance.bills",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "finance.banks",
-    labelKey: "userGroups.modules.finance.banks",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "finance.categories",
-    labelKey: "userGroups.modules.finance.categories",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "finance.payment_method",
-    labelKey: "userGroups.modules.finance.payment_method",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "finance.nfe",
-    labelKey: "userGroups.modules.finance.nfe",
-    actions: ["read", "create", "edit", "delete"],
-  },
-  {
-    key: "reports",
-    labelKey: "userGroups.modules.reports",
-    actions: ["read"],
-  },
-];
+export type FormSection =
+  | {type: "header"; group: string; labelKey: string}
+  | {type: "module"; mod: ModuleDefinition};
+
+function extractModuleDefinitions(items: MenuItem[], groupLabelKey?: string): ModuleDefinition[] {
+  const result: ModuleDefinition[] = [];
+  for (const item of items) {
+    if (item.permission) {
+      result.push({
+        key: item.permission.key,
+        labelKey: item.name,
+        groupLabelKey: groupLabelKey ?? item.name,
+        actions: item.permission.actions,
+      });
+    }
+    if (item.children) {
+      result.push(...extractModuleDefinitions(item.children, item.name));
+    }
+  }
+  return result;
+}
+
+export const MODULE_DEFINITIONS: ModuleDefinition[] = extractModuleDefinitions(intranetMenuItems);
+
+export function buildFormSections(): FormSection[] {
+  const seenGroups = new Set<string>();
+  return MODULE_DEFINITIONS.flatMap((mod) => {
+    const groupKey = mod.key.split(".")[0];
+    const items: FormSection[] = [];
+    if (!seenGroups.has(groupKey)) {
+      seenGroups.add(groupKey);
+      items.push({type: "header", group: groupKey, labelKey: mod.groupLabelKey});
+    }
+    items.push({type: "module", mod});
+    return items;
+  });
+}
 
 export function buildDefaultPermissions(): PermissionsMap {
   const result: PermissionsMap = {};

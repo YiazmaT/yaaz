@@ -1033,29 +1033,6 @@
       "delete": "Excluir",
       "all": "Todos"
     },
-    "modules": {
-      "groups": {
-        "stock": "Estoque",
-        "finance": "Financeiro"
-      },
-      "dashboard": "Dashboard",
-      "sales": "Vendas",
-      "clients": "Clientes",
-      "reports": "Relatórios",
-      "stock": {
-        "products": "Produtos",
-        "ingredients": "Insumos",
-        "packages": "Embalagens",
-        "unity_of_measure": "Unidades de Medida"
-      },
-      "finance": {
-        "bills": "Contas a Pagar",
-        "banks": "Bancos",
-        "categories": "Categorias",
-        "payment_method": "Formas de Pagamento",
-        "nfe": "NFe"
-      }
-    },
     "errors": {
       "hasUsers": "Este grupo possui usuários vinculados e não pode ser excluído."
     }

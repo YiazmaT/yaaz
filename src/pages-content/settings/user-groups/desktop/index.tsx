@@ -4,7 +4,7 @@ import {DataTable} from "@/src/components/data-table";
 import {ScreenCard} from "@/src/components/screen-card";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {UserGroup} from "../types";
-import {Form} from "../components/form";
+import {DesktopFormView} from "../components/form/desktop";
 import {DesktopViewProps} from "./types";
 import {API_ROUTE} from "../use-user-groups";
 
@@ -26,7 +26,7 @@ export function DesktopView(props: DesktopViewProps) {
         />
       </ScreenCard>
 
-      <Form userGroups={userGroups} />
+      <DesktopFormView userGroups={userGroups} />
     </>
   );
 }

@@ -6,6 +6,7 @@ export interface MenuItem {
   route?: string;
   icon: ReactNode;
   children?: MenuItem[];
+  permission?: {key: string; actions: string[]};
 }
 
 export interface MobileViewProps extends PropsWithChildren {

@@ -26,7 +26,7 @@ export function PermissionCard(props: PermissionCardProps) {
   }
 
   return (
-    <Card variant="outlined" sx={{mb: 1.5}}>
+    <Card variant="outlined" sx={{height: "100%"}}>
       <CardContent sx={{pb: "12px !important", pt: 1.5, px: 2}}>
         <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1}}>
           <Typography variant="subtitle2" fontWeight={600}>

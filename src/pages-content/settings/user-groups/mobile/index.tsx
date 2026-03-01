@@ -8,7 +8,7 @@ import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {UserGroup} from "../types";
-import {Form} from "../components/form";
+import {MobileFormView} from "../components/form/mobile";
 import {MobileViewProps} from "./types";
 import {API_ROUTE} from "../use-user-groups";
 
@@ -68,7 +68,7 @@ export function MobileView(props: MobileViewProps) {
         <AddIcon sx={{color: "white"}} />
       </Fab>
 
-      <Form userGroups={userGroups} />
+      <MobileFormView userGroups={userGroups} />
     </Box>
   );
 }

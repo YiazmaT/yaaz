@@ -7,63 +7,7 @@ import {useAuth, useYaazAuth} from "@/src/contexts/auth-context";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant, useYaazUser} from "@/src/contexts/tenant-context";
 import {MenuItem} from "./types";
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import TakeoutDiningOutlinedIcon from "@mui/icons-material/TakeoutDiningOutlined";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
-import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
-import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
-import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
-import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
-
-const intranetMenuItems: MenuItem[] = [
-  {name: "global.dashboard", route: "/dashboard", icon: <DashboardOutlinedIcon />},
-  {name: "global.sales", route: "/sales", icon: <AttachMoneyIcon />},
-  {
-    name: "global.finance",
-    icon: <AccountBalanceWalletOutlinedIcon />,
-    children: [
-      {name: "finance.tabs.bills", route: "/finance/bills-to-pay", icon: <ReceiptLongOutlinedIcon />},
-      {name: "finance.tabs.bank", route: "/finance/banks", icon: <AccountBalanceOutlinedIcon />},
-      {name: "finance.tabs.categories", route: "/finance/categories", icon: <LabelOutlinedIcon />},
-      {name: "finance.tabs.paymentMethod", route: "/finance/payment-method", icon: <CreditCardOutlinedIcon />},
-      {name: "finance.tabs.nfe", route: "/finance/nfe", icon: <DescriptionOutlinedIcon />},
-    ],
-  },
-  {
-    name: "global.stock",
-    icon: <WidgetsOutlinedIcon />,
-    children: [
-      {name: "global.products", route: "/stock/products", icon: <Inventory2OutlinedIcon />},
-      {name: "global.ingredients", route: "/stock/ingredients", icon: <CategoryOutlinedIcon />},
-      {name: "global.packages", route: "/stock/packages", icon: <TakeoutDiningOutlinedIcon />},
-      {name: "global.unityOfMeasure", route: "/stock/unity-of-measure", icon: <StraightenOutlinedIcon />},
-    ],
-  },
-  {name: "global.clients", route: "/clients", icon: <PersonOutlineIcon />},
-  {name: "global.reports", route: "/reports", icon: <ReceiptOutlinedIcon />},
-  {
-    name: "global.settings",
-    icon: <SettingsOutlinedIcon />,
-    children: [
-      {name: "settings.tabs.users", route: "/settings/users", icon: <PeopleOutlinedIcon />},
-      {name: "settings.tabs.userGroups", route: "/settings/user-groups", icon: <GroupsOutlinedIcon />},
-    ],
-  },
-];
-
-const yaazMenuItems: MenuItem[] = [{name: "yaaz.tenants", route: "/yaaz/tenants", icon: <StorefrontOutlinedIcon />}];
+import {intranetMenuItems, yaazMenuItems} from "./menus";
 
 const DEFAULT_LOGO = "/assets/icon.png";
 const DEFAULT_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME || "";
