@@ -4,6 +4,7 @@ import {Box, CardContent, Chip, Fab, IconButton, Tooltip, Typography} from "@mui
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {Visibility} from "@mui/icons-material";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {flexGenerator} from "@/src/utils/flex-generator";
@@ -19,42 +20,44 @@ export function MobileView(props: MobileViewProps) {
   function renderRow(item: UserGroup, _actions: ReactNode) {
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
-        <Box sx={{...flexGenerator("sb"), gap: 1}}>
-          <Box sx={{...flexGenerator("c"), minWidth: 0, flex: 1}}>
-            <Typography variant="subtitle1" fontWeight={600} noWrap>
-              {item.name}
+        <Box sx={{...flexGenerator("c"), minWidth: 0}}>
+          <Typography variant="subtitle1" fontWeight={600} noWrap>
+            {item.name}
+          </Typography>
+          {item.description && (
+            <Typography variant="body2" color="text.secondary" noWrap>
+              {item.description}
             </Typography>
-            {item.description && (
-              <Typography variant="body2" color="text.secondary" noWrap>
-                {item.description}
-              </Typography>
-            )}
-            <Chip label={`${item.user_count} ${translate("userGroups.fields.users")}`} size="small" sx={{mt: 0.5, alignSelf: "flex-start"}} />
-          </Box>
-          <Box sx={{display: "flex", alignItems: "center", gap: 0.5}}>
-            <Tooltip title={translate("global.actions.edit")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  userGroups.handleEdit(item);
-                }}
-              >
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={translate("global.actions.delete")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  userGroups.handleDelete(item);
-                }}
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
+          )}
+          <Chip label={`${item.user_count} ${translate("userGroups.fields.users")}`} size="small" sx={{mt: 0.5, alignSelf: "flex-start"}} />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: 0.5,
+            marginTop: 1,
+            paddingTop: 1,
+            borderTop: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          <Tooltip title={translate("global.actions.view")}>
+            <IconButton size="small" onClick={(e) => { e.stopPropagation(); userGroups.handleView(item); }}>
+              <Visibility fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={translate("global.actions.edit")}>
+            <IconButton size="small" onClick={(e) => { e.stopPropagation(); userGroups.handleEdit(item); }}>
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={translate("global.actions.delete")}>
+            <IconButton size="small" onClick={(e) => { e.stopPropagation(); userGroups.handleDelete(item); }}>
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </Box>
       </CardContent>
     );
