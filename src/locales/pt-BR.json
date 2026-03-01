@@ -1,4 +1,7 @@
 {
+  "home": {
+    "welcome": "Bem-vindo"
+  },
   "global": {
     "menu": "Menu",
     "fileUploader": {

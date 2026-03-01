@@ -28,8 +28,10 @@ export function AuthContextProvider(props: PropsWithChildren) {
       resetSessionExpiredFlag();
       setTenant(response.tenant);
       setUser(response.user);
-      setPermissions(response.permissions ?? []);
-      navigate("/dashboard");
+      const permissions = response.permissions ?? [];
+      setPermissions(permissions);
+      const hasDashboard = response.user.admin || response.user.owner || permissions.some((p) => p.key === "dashboard");
+      navigate(hasDashboard ? "/dashboard" : "/home");
     }
   }
 

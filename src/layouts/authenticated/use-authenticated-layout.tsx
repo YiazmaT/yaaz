@@ -30,7 +30,7 @@ export function useAuthenticatedLayout() {
   const menuItems = isYaaz ? yaazMenuItems : intranetMenuItems;
   const tenantLogo = isYaaz ? DEFAULT_LOGO : tenant?.logo || DEFAULT_LOGO;
   const tenantName = isYaaz ? DEFAULT_NAME : tenant?.name || DEFAULT_NAME;
-  const homeRoute = isYaaz ? "/yaaz/tenants" : "/dashboard";
+  const homeRoute = isYaaz ? "/yaaz/tenants" : "/home";
 
   function logout() {
     if (isYaaz) yaazLogout();
