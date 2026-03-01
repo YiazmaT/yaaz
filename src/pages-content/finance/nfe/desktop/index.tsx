@@ -6,6 +6,7 @@ import {Nfe} from "../types";
 import {NfeModal} from "../components/nfe-modal";
 import {NfeFileModal} from "../components/file-modal";
 import {useNfe} from "../use-nfe";
+import {Can} from "@/src/contexts/ability-context";
 
 export function NfeDesktop() {
   const {translate} = useTranslate();
@@ -19,9 +20,11 @@ export function NfeDesktop() {
             apiRoute="/api/finance/nfe/paginated-list"
             columns={nfe.generateConfig()}
             renderOpositeSearch={
-              <Button variant="contained" onClick={nfe.handleCreate}>
-                {translate("global.include")}
-              </Button>
+              <Can I="create" a="finance.nfe">
+                <Button variant="contained" onClick={nfe.handleCreate}>
+                  {translate("global.include")}
+                </Button>
+              </Can>
             }
           />
         </Box>

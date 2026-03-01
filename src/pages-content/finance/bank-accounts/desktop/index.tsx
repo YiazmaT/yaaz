@@ -7,6 +7,7 @@ import {BankAccountsFiltersComponent} from "../components/filters";
 import {StatementDrawer} from "../components/statement-drawer";
 import {useBankAccounts} from "../use-bank-accounts";
 import {BankAccount} from "../types";
+import {Can} from "@/src/contexts/ability-context";
 
 export function BankAccountsDesktop() {
   const {translate} = useTranslate();
@@ -22,9 +23,11 @@ export function BankAccountsDesktop() {
             columns={bankAccounts.generateConfig()}
             filters={bankAccounts.filters.showInactives ? {showInactives: "true"} : undefined}
             renderOpositeSearch={
-              <Button variant="contained" onClick={bankAccounts.handleCreate}>
-                {translate("global.include")}
-              </Button>
+              <Can I="create" a="finance.banks">
+                <Button variant="contained" onClick={bankAccounts.handleCreate}>
+                  {translate("global.include")}
+                </Button>
+              </Can>
             }
           />
         </Box>

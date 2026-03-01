@@ -9,11 +9,16 @@ import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {LinkifyText} from "@/src/components/linkify-text";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
   const {translate} = useTranslate();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "stock.ingredients");
+  const canDelete = ability.can("delete", "stock.ingredients");
 
   function generateConfig(): DataTableColumn<Ingredient>[] {
     return [
@@ -103,15 +108,15 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
           <ActionsColumn
             row={row}
             onView={props.onView}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={(r) => !r.active}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
               {
                 icon: () => <SyncAltIcon fontSize="small" />,
                 tooltip: () => translate("ingredients.stockChange.title"),
                 onClick: props.onStockChange,
-                hidden: (r) => !r.active,
+                hidden: (r) => !r.active || !canEdit,
               },
               {
                 icon: (r) =>
@@ -122,6 +127,7 @@ export function useIngredientsTableConfig(props: IngredientsTableConfigProps) {
                   ),
                 tooltip: (r) => translate(r.active ? "ingredients.tooltipDeactivate" : "ingredients.tooltipActivate"),
                 onClick: props.onToggleActive,
+                hidden: () => !canEdit,
               },
             ]}
           />

@@ -17,6 +17,7 @@ import {ManufactureCostModal} from "../components/manufacture-cost-modal";
 import {ProductsFiltersComponent} from "../components/filters";
 import {useTenant} from "@/src/contexts/tenant-context";
 import {DesktopViewProps} from "./types";
+import {Can} from "@/src/contexts/ability-context";
 
 export function DesktopView(props: DesktopViewProps) {
   const {products} = props;
@@ -35,14 +36,18 @@ export function DesktopView(props: DesktopViewProps) {
               columns={products.generateConfig()}
               filters={products.filters.showInactives ? {showInactives: "true"} : undefined}
               footerLeftContent={
-                <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={() => stockDrawerRef.current?.open()}>
-                  {translate("products.addStock")}
-                </Button>
+                <Can I="edit" a="stock.products">
+                  <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={() => stockDrawerRef.current?.open()}>
+                    {translate("products.addStock")}
+                  </Button>
+                </Can>
               }
               renderOpositeSearch={
-                <Button variant="contained" onClick={products.handleCreate}>
-                  {translate("global.include")}
-                </Button>
+                <Can I="create" a="stock.products">
+                  <Button variant="contained" onClick={products.handleCreate}>
+                    {translate("global.include")}
+                  </Button>
+                </Can>
               }
             />
           </Box>

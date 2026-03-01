@@ -6,6 +6,7 @@ import {CategoryForm} from "../components/form";
 import {CategoriesFiltersComponent} from "../components/filters";
 import {useCategories} from "../use-categories";
 import {FinanceCategory} from "../types";
+import {Can} from "@/src/contexts/ability-context";
 
 export function CategoriesDesktop() {
   const {translate} = useTranslate();
@@ -21,9 +22,11 @@ export function CategoriesDesktop() {
             columns={categories.generateConfig()}
             filters={categories.filters.showInactives ? {showInactives: "true"} : undefined}
             renderOpositeSearch={
-              <Button variant="contained" onClick={categories.handleCreate}>
-                {translate("global.include")}
-              </Button>
+              <Can I="create" a="finance.categories">
+                <Button variant="contained" onClick={categories.handleCreate}>
+                  {translate("global.include")}
+                </Button>
+              </Can>
             }
           />
         </Box>

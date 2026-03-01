@@ -18,12 +18,18 @@ import {PackagesFiltersComponent} from "../components/filters";
 import {MobileViewProps} from "./types";
 import {buildName} from "../utils";
 import {flexGenerator} from "@/src/utils/flex-generator";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function MobileView(props: MobileViewProps) {
   const {packages} = props;
   const {translate} = useTranslate();
   const {typeOfPackage} = usePackagesConstants();
   const theme = useTheme();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "stock.packages");
+  const canDelete = ability.can("delete", "stock.packages");
 
   function renderRow(item: Package, actions: ReactNode) {
     return (
@@ -73,7 +79,7 @@ export function MobileView(props: MobileViewProps) {
             variant="outlined"
           />
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-            {item.active && (
+            {item.active && canEdit && (
               <Tooltip title={translate("packages.stockChange.title")}>
                 <IconButton
                   size="small"
@@ -86,21 +92,23 @@ export function MobileView(props: MobileViewProps) {
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title={translate(item.active ? "packages.tooltipDeactivate" : "packages.tooltipActivate")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  packages.handleToggleActive(item);
-                }}
-              >
-                {item.active ? (
-                  <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
-                ) : (
-                  <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+            {canEdit && (
+              <Tooltip title={translate(item.active ? "packages.tooltipDeactivate" : "packages.tooltipActivate")}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    packages.handleToggleActive(item);
+                  }}
+                >
+                  {item.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
             {actions}
           </Box>
         </Box>
@@ -115,40 +123,44 @@ export function MobileView(props: MobileViewProps) {
         apiRoute="/api/stock/package/paginated-list"
         renderRow={renderRow}
         onView={packages.handleView}
-        onEdit={packages.handleEdit}
+        onEdit={canEdit ? packages.handleEdit : undefined}
         hideEdit={(row) => !row.active}
-        onDelete={packages.handleDelete}
+        onDelete={canDelete ? packages.handleDelete : undefined}
         filters={packages.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<PackagesFiltersComponent onFilterChange={packages.handleFilterChange} />}
       />
 
-      <Fab
-        color="secondary"
-        size="small"
-        onClick={packages.openStockModal}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          left: 20,
-          zIndex: 20,
-        }}
-      >
-        <Inventory2OutlinedIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="edit" a="stock.packages">
+        <Fab
+          color="secondary"
+          size="small"
+          onClick={packages.openStockModal}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            left: 20,
+            zIndex: 20,
+          }}
+        >
+          <Inventory2OutlinedIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
-      <Fab
-        color="primary"
-        size="small"
-        onClick={packages.handleCreate}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 20,
-        }}
-      >
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="stock.packages">
+        <Fab
+          color="primary"
+          size="small"
+          onClick={packages.handleCreate}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 20,
+          }}
+        >
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
       <Form packages={packages} imageSize={150} />
       <AddStockModal packages={packages} />

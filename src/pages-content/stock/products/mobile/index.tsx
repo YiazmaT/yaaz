@@ -24,6 +24,9 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function MobileView(props: MobileViewProps) {
   const {products} = props;
@@ -32,6 +35,9 @@ export function MobileView(props: MobileViewProps) {
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
   const stockDrawerRef = useRef<AddStockDrawerRef>(null);
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "stock.products");
+  const canDelete = ability.can("delete", "stock.products");
 
   function renderRow(item: Product, actions: ReactNode) {
     return (
@@ -95,7 +101,7 @@ export function MobileView(props: MobileViewProps) {
               </Badge>
             </IconButton>
           </Tooltip>
-          {item.active && (
+          {item.active && canEdit && (
             <Tooltip title={translate("products.stockChange.title")}>
               <IconButton
                 size="small"
@@ -108,7 +114,7 @@ export function MobileView(props: MobileViewProps) {
               </IconButton>
             </Tooltip>
           )}
-          {item.active && (
+          {item.active && canEdit && (
             <Tooltip title={translate(item.displayLandingPage ? "products.landingPage.tooltipRemove" : "products.landingPage.tooltipAdd")}>
               <IconButton
                 size="small"
@@ -125,21 +131,23 @@ export function MobileView(props: MobileViewProps) {
               </IconButton>
             </Tooltip>
           )}
-          <Tooltip title={translate(item.active ? "products.tooltipDeactivate" : "products.tooltipActivate")}>
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                products.handleToggleActive(item);
-              }}
-            >
-              {item.active ? (
-                <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
-              ) : (
-                <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
-              )}
-            </IconButton>
-          </Tooltip>
+          {canEdit && (
+            <Tooltip title={translate(item.active ? "products.tooltipDeactivate" : "products.tooltipActivate")}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  products.handleToggleActive(item);
+                }}
+              >
+                {item.active ? (
+                  <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                ) : (
+                  <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                )}
+              </IconButton>
+            </Tooltip>
+          )}
           {actions}
         </Box>
       </CardContent>
@@ -153,40 +161,44 @@ export function MobileView(props: MobileViewProps) {
         apiRoute="/api/stock/product/paginated-list"
         renderRow={renderRow}
         onView={products.handleView}
-        onEdit={products.handleEdit}
+        onEdit={canEdit ? products.handleEdit : undefined}
         hideEdit={(row) => !row.active}
-        onDelete={products.handleDelete}
+        onDelete={canDelete ? products.handleDelete : undefined}
         filters={products.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<ProductsFiltersComponent onFilterChange={products.handleFilterChange} />}
       />
 
-      <Fab
-        color="secondary"
-        size="small"
-        onClick={() => stockDrawerRef.current?.open()}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          left: 20,
-          zIndex: 20,
-        }}
-      >
-        <Inventory2OutlinedIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="edit" a="stock.products">
+        <Fab
+          color="secondary"
+          size="small"
+          onClick={() => stockDrawerRef.current?.open()}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            left: 20,
+            zIndex: 20,
+          }}
+        >
+          <Inventory2OutlinedIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
-      <Fab
-        color="primary"
-        size="small"
-        onClick={products.handleCreate}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 20,
-        }}
-      >
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="stock.products">
+        <Fab
+          color="primary"
+          size="small"
+          onClick={products.handleCreate}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 20,
+          }}
+        >
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
       <Form products={products} imageSize={150} />
       <AddStockDrawer ref={stockDrawerRef} onSuccess={products.refreshTable} />

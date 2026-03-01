@@ -18,11 +18,17 @@ import {MobileViewProps} from "./types";
 import {buildName} from "../utils";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {LinkifyText} from "@/src/components/linkify-text";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function MobileView(props: MobileViewProps) {
   const {ingredients} = props;
   const {translate} = useTranslate();
   const theme = useTheme();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "stock.ingredients");
+  const canDelete = ability.can("delete", "stock.ingredients");
 
   function renderRow(item: Ingredient, actions: ReactNode) {
     const unit_of_measure = item.unity_of_measure?.unity ?? "";
@@ -73,7 +79,7 @@ export function MobileView(props: MobileViewProps) {
             borderTop: `1px solid ${theme.palette.divider}`,
           }}
         >
-          {item.active && (
+          {item.active && canEdit && (
             <Tooltip title={translate("ingredients.stockChange.title")}>
               <IconButton
                 size="small"
@@ -86,21 +92,23 @@ export function MobileView(props: MobileViewProps) {
               </IconButton>
             </Tooltip>
           )}
-          <Tooltip title={translate(item.active ? "ingredients.tooltipDeactivate" : "ingredients.tooltipActivate")}>
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                ingredients.handleToggleActive(item);
-              }}
-            >
-              {item.active ? (
-                <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
-              ) : (
-                <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
-              )}
-            </IconButton>
-          </Tooltip>
+          {canEdit && (
+            <Tooltip title={translate(item.active ? "ingredients.tooltipDeactivate" : "ingredients.tooltipActivate")}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  ingredients.handleToggleActive(item);
+                }}
+              >
+                {item.active ? (
+                  <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                ) : (
+                  <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                )}
+              </IconButton>
+            </Tooltip>
+          )}
           {actions}
         </Box>
       </CardContent>
@@ -114,40 +122,44 @@ export function MobileView(props: MobileViewProps) {
         apiRoute="/api/stock/ingredient/paginated-list"
         renderRow={renderRow}
         onView={ingredients.handleView}
-        onEdit={ingredients.handleEdit}
+        onEdit={canEdit ? ingredients.handleEdit : undefined}
         hideEdit={(row) => !row.active}
-        onDelete={ingredients.handleDelete}
+        onDelete={canDelete ? ingredients.handleDelete : undefined}
         filters={ingredients.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<IngredientsFiltersComponent onFilterChange={ingredients.handleFilterChange} />}
       />
 
-      <Fab
-        color="secondary"
-        size="small"
-        onClick={ingredients.openStockModal}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          left: 20,
-          zIndex: 20,
-        }}
-      >
-        <Inventory2OutlinedIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="edit" a="stock.ingredients">
+        <Fab
+          color="secondary"
+          size="small"
+          onClick={ingredients.openStockModal}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            left: 20,
+            zIndex: 20,
+          }}
+        >
+          <Inventory2OutlinedIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
-      <Fab
-        color="primary"
-        size="small"
-        onClick={ingredients.handleCreate}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 20,
-        }}
-      >
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="stock.ingredients">
+        <Fab
+          color="primary"
+          size="small"
+          onClick={ingredients.handleCreate}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 20,
+          }}
+        >
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
       <Form ingredients={ingredients} imageSize={150} />
       <AddStockModal ingredients={ingredients} />

@@ -11,11 +11,16 @@ import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {ProductTableConfigProps} from "./types";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function useProductsTableConfig(props: ProductTableConfigProps) {
   const {translate} = useTranslate();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "stock.products");
+  const canDelete = ability.can("delete", "stock.products");
 
   function generateConfig(): DataTableColumn<Product>[] {
     return [
@@ -147,9 +152,9 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
           <ActionsColumn
             row={row}
             onView={props.onView}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={(r) => !r.active}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
               {
                 icon: (r) => (
@@ -164,7 +169,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
                 icon: () => <SyncAltIcon fontSize="small" />,
                 tooltip: () => translate("products.stockChange.title"),
                 onClick: props.onStockChange,
-                hidden: (r) => !r.active,
+                hidden: (r) => !r.active || !canEdit,
               },
               {
                 icon: (r) =>
@@ -175,7 +180,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
                   ),
                 tooltip: (r) => translate(r.displayLandingPage ? "products.landingPage.tooltipRemove" : "products.landingPage.tooltipAdd"),
                 onClick: props.onToggleLandingPage,
-                hidden: (r) => !r.active,
+                hidden: (r) => !r.active || !canEdit,
               },
               {
                 icon: (r) =>
@@ -186,6 +191,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
                   ),
                 tooltip: (r) => translate(r.active ? "products.tooltipDeactivate" : "products.tooltipActivate"),
                 onClick: props.onToggleActive,
+                hidden: () => !canEdit,
               },
             ]}
           />

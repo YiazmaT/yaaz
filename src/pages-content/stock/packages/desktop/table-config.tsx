@@ -9,12 +9,17 @@ import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function usePackagesTableConfig(props: PackagesTableConfigProps) {
   const {translate} = useTranslate();
   const {typeOfPackage} = usePackagesConstants();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "stock.packages");
+  const canDelete = ability.can("delete", "stock.packages");
 
   function generateConfig(): DataTableColumn<Package>[] {
     return [
@@ -115,15 +120,15 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
           <ActionsColumn
             row={row}
             onView={props.onView}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={(r) => !r.active}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
               {
                 icon: () => <SyncAltIcon fontSize="small" />,
                 tooltip: () => translate("packages.stockChange.title"),
                 onClick: props.onStockChange,
-                hidden: (r) => !r.active,
+                hidden: (r) => !r.active || !canEdit,
               },
               {
                 icon: (r) =>
@@ -134,6 +139,7 @@ export function usePackagesTableConfig(props: PackagesTableConfigProps) {
                   ),
                 tooltip: (r) => translate(r.active ? "packages.tooltipDeactivate" : "packages.tooltipActivate"),
                 onClick: props.onToggleActive,
+                hidden: () => !canEdit,
               },
             ]}
           />

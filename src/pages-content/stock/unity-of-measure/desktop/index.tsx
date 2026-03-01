@@ -7,6 +7,7 @@ import {Form} from "../components/form";
 import {UnityOfMeasureFiltersComponent} from "../components/filters";
 import {UnityOfMeasure} from "../types";
 import {DesktopViewProps} from "./types";
+import {Can} from "@/src/contexts/ability-context";
 
 export function DesktopView(props: DesktopViewProps) {
   const {unityOfMeasure} = props;
@@ -23,9 +24,11 @@ export function DesktopView(props: DesktopViewProps) {
               columns={unityOfMeasure.generateConfig()}
               filters={unityOfMeasure.filters.showInactives ? {showInactives: "true"} : undefined}
               renderOpositeSearch={
-                <Button variant="contained" onClick={unityOfMeasure.handleCreate}>
-                  {translate("global.include")}
-                </Button>
+                <Can I="create" a="stock.unity_of_measure">
+                  <Button variant="contained" onClick={unityOfMeasure.handleCreate}>
+                    {translate("global.include")}
+                  </Button>
+                </Can>
               }
             />
           </Box>

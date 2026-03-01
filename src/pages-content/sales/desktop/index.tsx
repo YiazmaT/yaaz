@@ -7,6 +7,7 @@ import {Form} from "../components/form";
 import {SalesFilters} from "../components/filters";
 import {DesktopViewProps} from "./types";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {Can} from "@/src/contexts/ability-context";
 
 export function DesktopView(props: DesktopViewProps) {
   const {translate} = useTranslate();
@@ -23,9 +24,11 @@ export function DesktopView(props: DesktopViewProps) {
               columns={sales.generateConfig()}
               filters={sales.filters}
               renderOpositeSearch={
-                <Button variant="contained" onClick={sales.handleCreate}>
-                  {translate("global.include")}
-                </Button>
+                <Can I="create" a="sales">
+                  <Button variant="contained" onClick={sales.handleCreate}>
+                    {translate("global.include")}
+                  </Button>
+                </Can>
               }
             />
           </Box>

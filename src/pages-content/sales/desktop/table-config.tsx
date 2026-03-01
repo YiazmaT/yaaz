@@ -8,6 +8,8 @@ import {TableConfigProps} from "@/src/@types/global-types";
 import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Sale} from "../types";
 import {useTranslate} from "@/src/contexts/translation-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 interface SalesTableConfigProps extends TableConfigProps<Sale> {
   onConvertQuote: (row: Sale) => void;
@@ -17,6 +19,9 @@ interface SalesTableConfigProps extends TableConfigProps<Sale> {
 export function useSalesTableConfig(props: SalesTableConfigProps) {
   const {translate} = useTranslate();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "sales");
+  const canDelete = ability.can("delete", "sales");
 
   function generateConfig(): DataTableColumn<Sale>[] {
     return [
@@ -100,10 +105,10 @@ export function useSalesTableConfig(props: SalesTableConfigProps) {
               icon: <ShoppingCartCheckout fontSize="small" />,
               tooltip: translate("sales.convertQuote"),
               onClick: (r) => props.onConvertQuote(r),
-              hidden: (r) => !r.is_quote,
+              hidden: (r) => !r.is_quote || !canEdit,
             },
           ];
-          return <ActionsColumn row={row} onView={props.onView} onEdit={props.onEdit} onDelete={props.onDelete} customActions={customActions} />;
+          return <ActionsColumn row={row} onView={props.onView} onEdit={canEdit ? props.onEdit : undefined} onDelete={canDelete ? props.onDelete : undefined} customActions={customActions} />;
         },
       },
     ];

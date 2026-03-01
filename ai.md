@@ -104,7 +104,15 @@ Yaaz is a fully isolated internal admin subsystem for the product owner to manag
   - `null` — any authenticated user, no role check (logout, upload, change-password);
 - Unauthorized access is logged and returns 403 `"Você não tem permissão para acessar essa rota!"`;
 - **Module keys** are defined directly in `src/layouts/authenticated/menus.tsx` — add `permission: {key, actions}` to a menu item and it is automatically included in `MODULE_DEFINITIONS` (`src/lib/permissions.ts`) and the user-group form. No other file needs changing;
-- **Client-side:** use `can(key, action)` from `usePermissions()` (`src/contexts/tenant-context.tsx`) to conditionally render UI. Permissions are cached in a plain cookie (`user_permissions`) for UX only — never treat this as a security boundary;
+- **Client-side (CASL):** the frontend uses `@casl/ability` + `@casl/react` for permission-aware UI. Setup:
+  - `AbilityContext` + `Can` component live in `src/contexts/ability-context.tsx`;
+  - `AbilityProvider` wraps the entire intranet app in `app/(intranet)/providers.tsx` — reads `user` and `permissions` from `TenantContext`, builds a `MongoAbility` (admin/owner → `manage all`, others → one rule per permission row);
+  - The default context value is `manage all`, so Yaaz routes (no `AbilityProvider`) are unaffected;
+  - **In table-config hooks:** call `useAbility(AbilityContext)` to get `canEdit` / `canDelete`, then pass `onEdit={canEdit ? props.onEdit : undefined}` and gate mutating `customActions` with `hidden: () => !canEdit`;
+  - **In desktop index files:** wrap "Incluir" buttons with `<Can I="create" a="MODULE_KEY">` and AddStock buttons with `<Can I="edit" a="MODULE_KEY">`;
+  - **In mobile index files:** wrap create FABs with `<Can I="create" a="MODULE_KEY">`, AddStock FABs with `<Can I="edit" a="MODULE_KEY">`, pass `MobileList onEdit` / `onDelete` conditionally, and gate inline edit-action icon buttons (ToggleActive, StockChange, etc.) with `{canEdit && ...}`;
+  - **Never gate** read-only actions: PDF downloads, history modals, file views, statement drawers, receipt views;
+  - Permissions are also cached in a plain cookie (`user_permissions`) and refreshed on mount by `AuthSyncProvider` via `/api/auth/me`;
 
 # Component structure
 

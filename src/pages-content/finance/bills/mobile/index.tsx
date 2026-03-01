@@ -17,6 +17,9 @@ import {PayModal} from "../components/pay-modal";
 import {ReceiptModal} from "../components/receipt-modal";
 import {useBills} from "../use-bills";
 import {Bill} from "../types";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function BillsMobile() {
   const {translate} = useTranslate();
@@ -24,6 +27,9 @@ export function BillsMobile() {
   const formatCurrency = useFormatCurrency();
   const bills = useBills();
   const theme = useTheme();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.bills");
+  const canDelete = ability.can("delete", "finance.bills");
 
   function renderRow(item: Bill, actions: ReactNode) {
     const overdue = isOverdue(item);
@@ -62,7 +68,7 @@ export function BillsMobile() {
           </Box>
         </Box>
         <Box sx={{display: "flex", justifyContent: "flex-end", gap: 0.5, mt: 1, pt: 1, borderTop: `1px solid ${theme.palette.divider}`}}>
-          {item.status !== "paid" && (
+          {item.status !== "paid" && canEdit && (
             <Tooltip title={translate("finance.bills.pay")}>
               <IconButton
                 size="small"
@@ -90,17 +96,19 @@ export function BillsMobile() {
                   </Badge>
                 </IconButton>
               </Tooltip>
-              <Tooltip title={translate("finance.bills.cancelPayment")}>
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    bills.handleCancelPayment(item);
-                  }}
-                >
-                  <UndoIcon fontSize="small" color="warning" />
-                </IconButton>
-              </Tooltip>
+              {canEdit && (
+                <Tooltip title={translate("finance.bills.cancelPayment")}>
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      bills.handleCancelPayment(item);
+                    }}
+                  >
+                    <UndoIcon fontSize="small" color="warning" />
+                  </IconButton>
+                </Tooltip>
+              )}
             </>
           )}
           {actions}
@@ -115,15 +123,17 @@ export function BillsMobile() {
         title="finance.bills.title"
         apiRoute="/api/finance/bill/paginated-list"
         renderRow={renderRow}
-        onEdit={bills.handleEdit}
+        onEdit={canEdit ? bills.handleEdit : undefined}
         hideEdit={(row) => row.status === "paid"}
-        onDelete={bills.handleDelete}
+        onDelete={canDelete ? bills.handleDelete : undefined}
         filters={bills.filters}
         headerContent={<BillsFilters onFilterChange={bills.handleFilterChange} />}
       />
-      <Fab color="primary" size="small" onClick={bills.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="finance.bills">
+        <Fab color="primary" size="small" onClick={bills.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
       <BillForm bills={bills} />
       <PayModal bill={bills.payBill} onClose={bills.closePayModal} onSuccess={bills.refreshTable} />
       <ReceiptModal bill={bills.receiptBill} onClose={bills.closeReceiptModal} onReceiptChange={bills.handleReceiptChange} />

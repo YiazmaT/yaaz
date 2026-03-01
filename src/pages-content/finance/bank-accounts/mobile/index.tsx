@@ -13,12 +13,18 @@ import {BankAccountsFiltersComponent} from "../components/filters";
 import {StatementDrawer} from "../components/statement-drawer";
 import {useBankAccounts} from "../use-bank-accounts";
 import {BankAccount} from "../types";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function BankAccountsMobile() {
   const {translate} = useTranslate();
   const theme = useTheme();
   const bankAccounts = useBankAccounts();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.banks");
+  const canDelete = ability.can("delete", "finance.banks");
 
   function renderRow(item: BankAccount, actions: ReactNode) {
     return (
@@ -46,21 +52,23 @@ export function BankAccountsMobile() {
               <ReceiptLongIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Tooltip title={translate(item.active ? "finance.bank.tooltipDeactivate" : "finance.bank.tooltipActivate")}>
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                bankAccounts.handleToggleActive(item);
-              }}
-            >
-              {item.active ? (
-                <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
-              ) : (
-                <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
-              )}
-            </IconButton>
-          </Tooltip>
+          {canEdit && (
+            <Tooltip title={translate(item.active ? "finance.bank.tooltipDeactivate" : "finance.bank.tooltipActivate")}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  bankAccounts.handleToggleActive(item);
+                }}
+              >
+                {item.active ? (
+                  <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                ) : (
+                  <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                )}
+              </IconButton>
+            </Tooltip>
+          )}
           {actions}
         </Box>
       </CardContent>
@@ -73,15 +81,17 @@ export function BankAccountsMobile() {
         title="finance.bank.title"
         apiRoute="/api/finance/bank-account/paginated-list"
         renderRow={renderRow}
-        onEdit={bankAccounts.handleEdit}
+        onEdit={canEdit ? bankAccounts.handleEdit : undefined}
         hideEdit={(row) => !row.active}
-        onDelete={bankAccounts.handleDelete}
+        onDelete={canDelete ? bankAccounts.handleDelete : undefined}
         filters={bankAccounts.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<BankAccountsFiltersComponent onFilterChange={bankAccounts.handleFilterChange} />}
       />
-      <Fab color="primary" size="small" onClick={bankAccounts.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="finance.banks">
+        <Fab color="primary" size="small" onClick={bankAccounts.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
       <BankAccountForm bankAccounts={bankAccounts} />
       <StatementDrawer account={bankAccounts.statementAccount} onClose={bankAccounts.closeStatement} onTableRefresh={bankAccounts.refreshTable} />
     </Box>

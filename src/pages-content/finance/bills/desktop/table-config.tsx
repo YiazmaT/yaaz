@@ -11,11 +11,16 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import UndoIcon from "@mui/icons-material/Undo";
 import {BillsTableConfigProps} from "./types";
 import {Bill} from "../types";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function useBillsTableConfig(props: BillsTableConfigProps) {
   const {translate} = useTranslate();
   const {billStatuses} = useFinanceConstants();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.bills");
+  const canDelete = ability.can("delete", "finance.bills");
 
   function generateConfig(): DataTableColumn<Bill>[] {
     return [
@@ -93,11 +98,11 @@ export function useBillsTableConfig(props: BillsTableConfigProps) {
         render: (row) => (
           <ActionsColumn
             row={row}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={() => row.status === "paid"}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
-              ...(row.status !== "paid"
+              ...(row.status !== "paid" && canEdit
                 ? [
                     {
                       icon: () => <PaymentIcon fontSize="small" color="primary" />,
@@ -117,11 +122,15 @@ export function useBillsTableConfig(props: BillsTableConfigProps) {
                       tooltip: () => translate("finance.bills.receipt"),
                       onClick: props.onViewReceipt,
                     },
-                    {
-                      icon: () => <UndoIcon fontSize="small" color="warning" />,
-                      tooltip: () => translate("finance.bills.cancelPayment"),
-                      onClick: props.onCancelPayment,
-                    },
+                    ...(canEdit
+                      ? [
+                          {
+                            icon: () => <UndoIcon fontSize="small" color="warning" />,
+                            tooltip: () => translate("finance.bills.cancelPayment"),
+                            onClick: props.onCancelPayment,
+                          },
+                        ]
+                      : []),
                   ]
                 : []),
             ]}

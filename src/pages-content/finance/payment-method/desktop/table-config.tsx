@@ -6,9 +6,14 @@ import {ActionsColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {PaymentMethod} from "../types";
 import {PaymentMethodsTableConfigProps} from "./types";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function usePaymentMethodsTableConfig(props: PaymentMethodsTableConfigProps) {
   const {translate} = useTranslate();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.payment_method");
+  const canDelete = ability.can("delete", "finance.payment_method");
 
   function generateConfig(): DataTableColumn<PaymentMethod>[] {
     return [
@@ -37,9 +42,9 @@ export function usePaymentMethodsTableConfig(props: PaymentMethodsTableConfigPro
         render: (row) => (
           <ActionsColumn
             row={row}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={(r) => !r.active}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
               {
                 icon: (r) =>
@@ -50,6 +55,7 @@ export function usePaymentMethodsTableConfig(props: PaymentMethodsTableConfigPro
                   ),
                 tooltip: (r) => translate(r.active ? "finance.paymentMethod.tooltipDeactivate" : "finance.paymentMethod.tooltipActivate"),
                 onClick: props.onToggleActive,
+                hidden: () => !canEdit,
               },
             ]}
           />

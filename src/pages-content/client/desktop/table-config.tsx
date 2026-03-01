@@ -7,9 +7,14 @@ import {ClientsTableConfigProps} from "./types";
 import {formatCPF, formatCNPJ} from "@/src/utils/cpf-cnpj";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function useClientsTableConfig(props: ClientsTableConfigProps) {
   const {translate} = useTranslate();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "clients");
+  const canDelete = ability.can("delete", "clients");
 
   function generateConfig(): DataTableColumn<Client>[] {
     return [
@@ -88,9 +93,9 @@ export function useClientsTableConfig(props: ClientsTableConfigProps) {
           <ActionsColumn
             row={row}
             onView={props.onView}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={(r) => !r.active}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
               {
                 icon: (r) =>
@@ -101,6 +106,7 @@ export function useClientsTableConfig(props: ClientsTableConfigProps) {
                   ),
                 tooltip: (r) => translate(r.active ? "clients.tooltipDeactivate" : "clients.tooltipActivate"),
                 onClick: props.onToggleActive,
+                hidden: () => !canEdit,
               },
             ]}
           />

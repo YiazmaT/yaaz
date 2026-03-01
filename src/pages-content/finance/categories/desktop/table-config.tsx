@@ -6,9 +6,14 @@ import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import {CategoriesTableConfigProps} from "./types";
 import { FinanceCategory } from "../types";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function useCategoriesTableConfig(props: CategoriesTableConfigProps) {
   const {translate} = useTranslate();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.categories");
+  const canDelete = ability.can("delete", "finance.categories");
 
   function generateConfig(): DataTableColumn<FinanceCategory>[] {
     return [
@@ -31,9 +36,9 @@ export function useCategoriesTableConfig(props: CategoriesTableConfigProps) {
         render: (row) => (
           <ActionsColumn
             row={row}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={(r) => !r.active}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
               {
                 icon: (r) =>
@@ -44,6 +49,7 @@ export function useCategoriesTableConfig(props: CategoriesTableConfigProps) {
                   ),
                 tooltip: (r) => translate(r.active ? "finance.categories.tooltipDeactivate" : "finance.categories.tooltipActivate"),
                 onClick: props.onToggleActive,
+                hidden: () => !canEdit,
               },
             ]}
           />

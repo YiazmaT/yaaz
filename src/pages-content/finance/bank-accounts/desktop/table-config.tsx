@@ -8,10 +8,15 @@ import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import {BankAccountsTableConfigProps} from "./types";
 import {BankAccount} from "../types";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function useBankAccountsTableConfig(props: BankAccountsTableConfigProps) {
   const {translate} = useTranslate();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.banks");
+  const canDelete = ability.can("delete", "finance.banks");
 
   function generateConfig(): DataTableColumn<BankAccount>[] {
     return [
@@ -43,9 +48,9 @@ export function useBankAccountsTableConfig(props: BankAccountsTableConfigProps) 
         render: (row) => (
           <ActionsColumn
             row={row}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={(r) => !r.active}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
               {
                 icon: () => <ReceiptLongIcon fontSize="small" />,
@@ -61,6 +66,7 @@ export function useBankAccountsTableConfig(props: BankAccountsTableConfigProps) 
                   ),
                 tooltip: (r) => translate(r.active ? "finance.bank.tooltipDeactivate" : "finance.bank.tooltipActivate"),
                 onClick: props.onToggleActive,
+                hidden: () => !canEdit,
               },
             ]}
           />

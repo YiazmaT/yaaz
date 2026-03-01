@@ -12,6 +12,7 @@ import {StockChangeModal} from "../components/stock-change-modal";
 import {StockHistoryModal} from "../components/stock-history-modal";
 import {PackagesFiltersComponent} from "../components/filters";
 import {DesktopViewProps} from "./types";
+import {Can} from "@/src/contexts/ability-context";
 
 export function DesktopView(props: DesktopViewProps) {
   const {packages} = props;
@@ -28,14 +29,18 @@ export function DesktopView(props: DesktopViewProps) {
               columns={packages.generateConfig()}
               filters={packages.filters.showInactives ? {showInactives: "true"} : undefined}
               footerLeftContent={
-                <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={packages.openStockModal}>
-                  {translate("packages.addStock")}
-                </Button>
+                <Can I="edit" a="stock.packages">
+                  <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={packages.openStockModal}>
+                    {translate("packages.addStock")}
+                  </Button>
+                </Can>
               }
               renderOpositeSearch={
-                <Button variant="contained" onClick={packages.handleCreate}>
-                  {translate("global.include")}
-                </Button>
+                <Can I="create" a="stock.packages">
+                  <Button variant="contained" onClick={packages.handleCreate}>
+                    {translate("global.include")}
+                  </Button>
+                </Can>
               }
             />
           </Box>

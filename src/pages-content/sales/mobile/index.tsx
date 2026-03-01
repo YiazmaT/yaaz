@@ -10,12 +10,18 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {Sale} from "../types";
 import {Form} from "../components/form";
 import {MobileViewProps} from "./types";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function MobileView(props: MobileViewProps) {
   const {sales} = props;
   const {translate} = useTranslate();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "sales");
+  const canDelete = ability.can("delete", "sales");
 
   function renderRow(item: Sale, actions: ReactNode) {
     return (
@@ -71,7 +77,7 @@ export function MobileView(props: MobileViewProps) {
               <PictureAsPdfIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          {item.is_quote && (
+          {item.is_quote && canEdit && (
             <Tooltip title={translate("sales.convertQuote")}>
               <IconButton size="small" onClick={() => sales.handleConvertQuote(item)}>
                 <ShoppingCartCheckout fontSize="small" />
@@ -91,23 +97,25 @@ export function MobileView(props: MobileViewProps) {
         apiRoute="/api/sale/paginated-list"
         renderRow={renderRow}
         onView={sales.handleView}
-        onEdit={sales.handleEdit}
-        onDelete={sales.handleDelete}
+        onEdit={canEdit ? sales.handleEdit : undefined}
+        onDelete={canDelete ? sales.handleDelete : undefined}
       />
 
-      <Fab
-        color="primary"
-        size="small"
-        onClick={sales.handleCreate}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 20,
-        }}
-      >
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="sales">
+        <Fab
+          color="primary"
+          size="small"
+          onClick={sales.handleCreate}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 20,
+          }}
+        >
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
       <Form sales={sales} />
     </Box>

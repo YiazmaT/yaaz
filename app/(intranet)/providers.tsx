@@ -12,6 +12,7 @@ import {TenantThemeProvider} from "@/src/components/tenant-theme-provider";
 import {DynamicTitle} from "@/src/components/dynamic-title";
 import {queryClient} from "@/src/lib/query-client";
 import {AuthSyncProvider} from "@/src/contexts/auth-sync-provider";
+import {AbilityProvider} from "@/src/contexts/ability-context";
 import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
 import {User, YaazUser} from "@/src/contexts/tenant-context";
 import {UserPermission} from "@/src/@types/global-types";
@@ -35,21 +36,23 @@ export function Providers({children, initialTenant, initialUser, initialYaazUser
           initialPermissions={initialPermissions}
         >
           <AuthSyncProvider>
-            <DynamicTitle />
-            <TenantThemeProvider>
-              <TranslationContextProvider>
-                <ConfirmModalContextProvider>
-                  <ToasterContextProvider>
-                    <LoaderContextProvider>
-                      <AuthContextProvider>
-                        <TopLoader />
-                        {children}
-                      </AuthContextProvider>
-                    </LoaderContextProvider>
-                  </ToasterContextProvider>
-                </ConfirmModalContextProvider>
-              </TranslationContextProvider>
-            </TenantThemeProvider>
+            <AbilityProvider>
+              <DynamicTitle />
+              <TenantThemeProvider>
+                <TranslationContextProvider>
+                  <ConfirmModalContextProvider>
+                    <ToasterContextProvider>
+                      <LoaderContextProvider>
+                        <AuthContextProvider>
+                          <TopLoader />
+                          {children}
+                        </AuthContextProvider>
+                      </LoaderContextProvider>
+                    </ToasterContextProvider>
+                  </ConfirmModalContextProvider>
+                </TranslationContextProvider>
+              </TenantThemeProvider>
+            </AbilityProvider>
           </AuthSyncProvider>
         </TenantContextProvider>
       </AppRouterCacheProvider>

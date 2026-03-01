@@ -10,10 +10,16 @@ import {CategoryForm} from "../components/form";
 import {CategoriesFiltersComponent} from "../components/filters";
 import {useCategories} from "../use-categories";
 import {FinanceCategory} from "../types";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function CategoriesMobile() {
   const {translate} = useTranslate();
   const categories = useCategories();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.categories");
+  const canDelete = ability.can("delete", "finance.categories");
 
   function renderRow(item: FinanceCategory, actions: ReactNode) {
     return (
@@ -26,21 +32,23 @@ export function CategoriesMobile() {
             </Typography>
           </Box>
           <Box sx={{display: "flex", alignItems: "center", gap: 0.5}}>
-            <Tooltip title={translate(item.active ? "finance.categories.tooltipDeactivate" : "finance.categories.tooltipActivate")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  categories.handleToggleActive(item);
-                }}
-              >
-                {item.active ? (
-                  <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
-                ) : (
-                  <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+            {canEdit && (
+              <Tooltip title={translate(item.active ? "finance.categories.tooltipDeactivate" : "finance.categories.tooltipActivate")}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    categories.handleToggleActive(item);
+                  }}
+                >
+                  {item.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
             {actions}
           </Box>
         </Box>
@@ -54,15 +62,17 @@ export function CategoriesMobile() {
         title="finance.categories.title"
         apiRoute="/api/finance/category/paginated-list"
         renderRow={renderRow}
-        onEdit={categories.handleEdit}
+        onEdit={canEdit ? categories.handleEdit : undefined}
         hideEdit={(row) => !row.active}
-        onDelete={categories.handleDelete}
+        onDelete={canDelete ? categories.handleDelete : undefined}
         filters={categories.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<CategoriesFiltersComponent onFilterChange={categories.handleFilterChange} />}
       />
-      <Fab color="primary" size="small" onClick={categories.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="finance.categories">
+        <Fab color="primary" size="small" onClick={categories.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
       <CategoryForm categories={categories} />
     </Box>
   );

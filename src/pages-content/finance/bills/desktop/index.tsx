@@ -8,6 +8,7 @@ import {PayModal} from "../components/pay-modal";
 import {ReceiptModal} from "../components/receipt-modal";
 import {useBills} from "../use-bills";
 import { Bill } from "../types";
+import {Can} from "@/src/contexts/ability-context";
 
 export function BillsDesktop() {
   const {translate} = useTranslate();
@@ -23,9 +24,11 @@ export function BillsDesktop() {
             columns={bills.generateConfig()}
             filters={bills.filters}
             renderOpositeSearch={
-              <Button variant="contained" onClick={bills.handleCreate}>
-                {translate("global.include")}
-              </Button>
+              <Can I="create" a="finance.bills">
+                <Button variant="contained" onClick={bills.handleCreate}>
+                  {translate("global.include")}
+                </Button>
+              </Can>
             }
           />
         </Box>

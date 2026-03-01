@@ -11,11 +11,17 @@ import {Form} from "../components/form";
 import {UnityOfMeasureFiltersComponent} from "../components/filters";
 import {MobileViewProps} from "./types";
 import {flexGenerator} from "@/src/utils/flex-generator";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function MobileView(props: MobileViewProps) {
   const {unityOfMeasure} = props;
   const {translate} = useTranslate();
   const theme = useTheme();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "stock.unity_of_measure");
+  const canDelete = ability.can("delete", "stock.unity_of_measure");
 
   function renderRow(item: UnityOfMeasure, actions: ReactNode) {
     return (
@@ -28,21 +34,23 @@ export function MobileView(props: MobileViewProps) {
             {!item.active && <Chip label={translate("unityOfMeasure.inactive")} size="small" color="error" sx={{alignSelf: "flex-start"}} />}
           </Box>
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-            <Tooltip title={translate(item.active ? "unityOfMeasure.tooltipDeactivate" : "unityOfMeasure.tooltipActivate")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  unityOfMeasure.handleToggleActive(item);
-                }}
-              >
-                {item.active ? (
-                  <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
-                ) : (
-                  <ToggleOffIcon sx={{color: theme.palette.grey[400]}} fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+            {canEdit && (
+              <Tooltip title={translate(item.active ? "unityOfMeasure.tooltipDeactivate" : "unityOfMeasure.tooltipActivate")}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    unityOfMeasure.handleToggleActive(item);
+                  }}
+                >
+                  {item.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: theme.palette.grey[400]}} fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
             {actions}
           </Box>
         </Box>
@@ -56,26 +64,28 @@ export function MobileView(props: MobileViewProps) {
         title="unityOfMeasure.title"
         apiRoute="/api/stock/unity-of-measure/paginated-list"
         renderRow={renderRow}
-        onEdit={unityOfMeasure.handleEdit}
+        onEdit={canEdit ? unityOfMeasure.handleEdit : undefined}
         hideEdit={(row) => !row.active}
-        onDelete={unityOfMeasure.handleDelete}
+        onDelete={canDelete ? unityOfMeasure.handleDelete : undefined}
         filters={unityOfMeasure.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<UnityOfMeasureFiltersComponent onFilterChange={unityOfMeasure.handleFilterChange} />}
       />
 
-      <Fab
-        color="primary"
-        size="small"
-        onClick={unityOfMeasure.handleCreate}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 20,
-        }}
-      >
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="stock.unity_of_measure">
+        <Fab
+          color="primary"
+          size="small"
+          onClick={unityOfMeasure.handleCreate}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 20,
+          }}
+        >
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
       <Form unityOfMeasure={unityOfMeasure} />
     </Box>

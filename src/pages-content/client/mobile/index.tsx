@@ -14,11 +14,17 @@ import {MobileViewProps} from "./types";
 import {buildName} from "../utils";
 import {formatCPF, formatCNPJ} from "@/src/utils/cpf-cnpj";
 import {flexGenerator} from "@/src/utils/flex-generator";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function MobileView(props: MobileViewProps) {
   const {clients} = props;
   const {translate} = useTranslate();
   const theme = useTheme();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "clients");
+  const canDelete = ability.can("delete", "clients");
 
   function renderRow(item: Client, actions: ReactNode) {
     return (
@@ -76,21 +82,23 @@ export function MobileView(props: MobileViewProps) {
             sx={{mt: 0.5, width: "fit-content"}}
           />
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-            <Tooltip title={translate(item.active ? "clients.tooltipDeactivate" : "clients.tooltipActivate")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  clients.handleToggleActive(item);
-                }}
-              >
-                {item.active ? (
-                  <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
-                ) : (
-                  <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+            {canEdit && (
+              <Tooltip title={translate(item.active ? "clients.tooltipDeactivate" : "clients.tooltipActivate")}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clients.handleToggleActive(item);
+                  }}
+                >
+                  {item.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
             {actions}
           </Box>
         </Box>
@@ -105,26 +113,28 @@ export function MobileView(props: MobileViewProps) {
         apiRoute="/api/client/paginated-list"
         renderRow={renderRow}
         onView={clients.handleView}
-        onEdit={clients.handleEdit}
+        onEdit={canEdit ? clients.handleEdit : undefined}
         hideEdit={(row) => !row.active}
-        onDelete={clients.handleDelete}
+        onDelete={canDelete ? clients.handleDelete : undefined}
         filters={clients.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<ClientsFiltersComponent onFilterChange={clients.handleFilterChange} />}
       />
 
-      <Fab
-        color="primary"
-        size="small"
-        onClick={clients.handleCreate}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 20,
-        }}
-      >
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="clients">
+        <Fab
+          color="primary"
+          size="small"
+          onClick={clients.handleCreate}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 20,
+          }}
+        >
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
 
       <Form clients={clients} imageSize={150} />
     </Box>

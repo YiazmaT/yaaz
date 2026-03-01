@@ -8,10 +8,15 @@ import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {formatDate} from "@/src/utils/format-date";
 import {Nfe} from "../types";
 import {NfeTableConfigProps} from "./types";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function useNfeTableConfig(props: NfeTableConfigProps) {
   const {translate} = useTranslate();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.nfe");
+  const canDelete = ability.can("delete", "finance.nfe");
 
   function generateConfig(): DataTableColumn<Nfe>[] {
     return [
@@ -69,8 +74,8 @@ export function useNfeTableConfig(props: NfeTableConfigProps) {
         render: (row) => (
           <ActionsColumn
             row={row}
-            onEdit={props.onEdit}
-            onDelete={props.onDelete}
+            onEdit={canEdit ? props.onEdit : undefined}
+            onDelete={canDelete ? props.onDelete : undefined}
             onView={props.onViewDetails}
             hideEdit={(r) => r.stock_added}
             customActions={[
@@ -87,7 +92,7 @@ export function useNfeTableConfig(props: NfeTableConfigProps) {
                 icon: () => <Inventory2Icon fontSize="small" color="success" />,
                 tooltip: () => translate("finance.nfe.launch"),
                 onClick: props.onLaunch,
-                hidden: (r: Nfe) => r.stock_added,
+                hidden: (r: Nfe) => r.stock_added || !canEdit,
               },
             ]}
           />

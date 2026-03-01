@@ -10,10 +10,16 @@ import {PaymentMethodForm} from "../components/form";
 import {PaymentMethodFiltersComponent} from "../components/filters";
 import {usePaymentMethods} from "../use-payment-methods";
 import {PaymentMethod} from "../types";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function PaymentMethodsMobile() {
   const {translate} = useTranslate();
   const paymentMethods = usePaymentMethods();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.payment_method");
+  const canDelete = ability.can("delete", "finance.payment_method");
 
   function renderRow(item: PaymentMethod, actions: ReactNode) {
     return (
@@ -33,21 +39,23 @@ export function PaymentMethodsMobile() {
             )}
           </Box>
           <Box sx={{display: "flex", alignItems: "center", gap: 0.5}}>
-            <Tooltip title={translate(item.active ? "finance.paymentMethod.tooltipDeactivate" : "finance.paymentMethod.tooltipActivate")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  paymentMethods.handleToggleActive(item);
-                }}
-              >
-                {item.active ? (
-                  <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
-                ) : (
-                  <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+            {canEdit && (
+              <Tooltip title={translate(item.active ? "finance.paymentMethod.tooltipDeactivate" : "finance.paymentMethod.tooltipActivate")}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    paymentMethods.handleToggleActive(item);
+                  }}
+                >
+                  {item.active ? (
+                    <ToggleOnIcon sx={{color: "success.main"}} fontSize="small" />
+                  ) : (
+                    <ToggleOffIcon sx={{color: "grey.400"}} fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
             {actions}
           </Box>
         </Box>
@@ -61,15 +69,17 @@ export function PaymentMethodsMobile() {
         title="finance.paymentMethod.title"
         apiRoute="/api/finance/payment-method/paginated-list"
         renderRow={renderRow}
-        onEdit={paymentMethods.handleEdit}
+        onEdit={canEdit ? paymentMethods.handleEdit : undefined}
         hideEdit={(row) => !row.active}
-        onDelete={paymentMethods.handleDelete}
+        onDelete={canDelete ? paymentMethods.handleDelete : undefined}
         filters={paymentMethods.filters.showInactives ? {showInactives: "true"} : undefined}
         headerContent={<PaymentMethodFiltersComponent onFilterChange={paymentMethods.handleFilterChange} />}
       />
-      <Fab color="primary" size="small" onClick={paymentMethods.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="finance.payment_method">
+        <Fab color="primary" size="small" onClick={paymentMethods.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
       <PaymentMethodForm paymentMethods={paymentMethods} />
     </Box>
   );

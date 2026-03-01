@@ -14,12 +14,18 @@ import {NfeDrawer} from "../components/nfe-drawer";
 import {NfeLaunchDrawer} from "../components/launch-drawer";
 import {NfeFileModal} from "../components/file-modal";
 import {useNfe} from "../use-nfe";
+import {Can} from "@/src/contexts/ability-context";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function NfeMobile() {
   const {translate} = useTranslate();
   const nfe = useNfe();
   const theme = useTheme();
   const formatCurrency = useFormatCurrency();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "finance.nfe");
+  const canDelete = ability.can("delete", "finance.nfe");
 
   function renderRow(item: Nfe, actions: ReactNode) {
     return (
@@ -58,7 +64,7 @@ export function NfeMobile() {
               </Badge>
             </IconButton>
           </Tooltip>
-          {!item.stock_added && (
+          {!item.stock_added && canEdit && (
             <Tooltip title={translate("finance.nfe.launch")}>
               <IconButton
                 size="small"
@@ -94,13 +100,15 @@ export function NfeMobile() {
         title="finance.nfeTitle"
         apiRoute="/api/finance/nfe/paginated-list"
         renderRow={renderRow}
-        onEdit={nfe.handleEdit}
-        onDelete={nfe.handleDelete}
+        onEdit={canEdit ? nfe.handleEdit : undefined}
+        onDelete={canDelete ? nfe.handleDelete : undefined}
         hideEdit={(row) => row.stock_added}
       />
-      <Fab color="primary" size="small" onClick={nfe.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
-        <AddIcon sx={{color: "white"}} />
-      </Fab>
+      <Can I="create" a="finance.nfe">
+        <Fab color="primary" size="small" onClick={nfe.handleCreate} sx={{position: "fixed", bottom: 20, right: 20, zIndex: 20}}>
+          <AddIcon sx={{color: "white"}} />
+        </Fab>
+      </Can>
       <NfeDrawer nfe={nfe} />
       <NfeFileModal nfe={nfe.fileNfe} onClose={nfe.closeFileModal} onFileChange={nfe.handleFileChange} />
       {nfe.launchDrawer && (

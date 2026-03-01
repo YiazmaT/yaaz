@@ -7,9 +7,14 @@ import {ActionsColumn} from "@/src/components/data-columns";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {UnityOfMeasure} from "../types";
 import {UnityOfMeasureTableConfigProps} from "./types";
+import {useAbility} from "@casl/react";
+import {AbilityContext} from "@/src/contexts/ability-context";
 
 export function useUnityOfMeasureTableConfig(props: UnityOfMeasureTableConfigProps) {
   const {translate} = useTranslate();
+  const ability = useAbility(AbilityContext);
+  const canEdit = ability.can("edit", "stock.unity_of_measure");
+  const canDelete = ability.can("delete", "stock.unity_of_measure");
 
   function generateConfig(): DataTableColumn<UnityOfMeasure>[] {
     return [
@@ -31,9 +36,9 @@ export function useUnityOfMeasureTableConfig(props: UnityOfMeasureTableConfigPro
         render: (row) => (
           <ActionsColumn
             row={row}
-            onEdit={props.onEdit}
+            onEdit={canEdit ? props.onEdit : undefined}
             hideEdit={(r) => !r.active}
-            onDelete={props.onDelete}
+            onDelete={canDelete ? props.onDelete : undefined}
             customActions={[
               {
                 icon: (r) =>
@@ -44,6 +49,7 @@ export function useUnityOfMeasureTableConfig(props: UnityOfMeasureTableConfigPro
                   ),
                 tooltip: (r) => translate(r.active ? "unityOfMeasure.tooltipDeactivate" : "unityOfMeasure.tooltipActivate"),
                 onClick: props.onToggleActive,
+                hidden: () => !canEdit,
               },
             ]}
           />
