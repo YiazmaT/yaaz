@@ -9,7 +9,7 @@ export function TenantThemeProvider(props: PropsWithChildren) {
   const {tenant} = useTenant();
   const defaults = getDefaultColors();
   const pathname = usePathname();
-  const isLogin = pathname === "/login";
+  const isLogin = pathname === "/login" || pathname === "/yaaz/login";
 
   const primary = isLogin ? defaults.primary : tenant?.primary_color || defaults.primary;
   const secondary = isLogin ? defaults.secondary : tenant?.secondary_color || defaults.secondary;
