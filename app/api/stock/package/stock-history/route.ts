@@ -4,11 +4,9 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/package/stock-history";
-const KEY = "stock.packages";
-const ACTION = "read";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.PACKAGE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
+  return withAuth(LogModule.PACKAGE, ROUTE, null, async ({auth, success, error}) => {
     const {searchParams} = new URL(req.url);
     const packageId = searchParams.get("packageId");
 

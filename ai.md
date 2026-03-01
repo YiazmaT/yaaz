@@ -89,11 +89,12 @@ Yaaz is a fully isolated internal admin subsystem for the product owner to manag
 - **Admins** and **owners** bypass all permission checks;
 - Users with no group are blocked from all protected routes;
 - Permissions are read from the DB on every request inside `authenticateRequest` and injected into `auth.permissions`;
-- Every protected route declares `KEY` and `ACTION` constants alongside `ROUTE`, and passes them as the 3rd argument to `withAuth`. The 3rd argument has three forms:
+- **Read routes (`paginated-list`, `list`, `get`, `stock-history`, `cost-history`, dashboard, reports, pdf, etc.) always use `null` — never blocked server-side.** Reason: reference data is needed across modules (e.g. payment methods in the sales form, categories in the bills form). The frontend blocks screen access via `can(key, action)`;
+- Write routes (`create`, `edit`, `delete`, `toggle-active`, `pay`, `add-stock`, etc.) declare `KEY` and `ACTION` constants and pass them as the 3rd argument to `withAuth`. The 3rd argument has three forms:
   - `{key: KEY, action: ACTION}` — module permission check; admins/owners bypass automatically:
     ```ts
     const KEY = "sales";
-    const ACTION = "create"; // "read" | "create" | "edit" | "delete"
+    const ACTION = "create"; // "create" | "edit" | "delete"
     return withAuth(LogModule.SALE, ROUTE, {key: KEY, action: ACTION}, async ({auth, ...}) => {
     ```
   - `"admin"` — admin/owner exclusive (all settings routes: user, user-group):

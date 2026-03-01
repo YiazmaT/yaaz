@@ -6,11 +6,9 @@ import {fromZonedTime} from "date-fns-tz";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/finance/bill/paginated-list";
-const KEY = "finance.bills";
-const ACTION = "read";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.BILL, ROUTE, {key: KEY, action: ACTION}, async ({auth, success}) => {
+  return withAuth(LogModule.BILL, ROUTE, null, async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");

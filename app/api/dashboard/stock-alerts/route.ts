@@ -4,11 +4,9 @@ import {withAuth} from "@/src/lib/route-handler";
 import {StockAlertRow} from "@/src/pages-content/dashboard/dto";
 
 const ROUTE = "/api/dashboard/stock-alerts";
-const KEY = "dashboard";
-const ACTION = "read";
 
 export async function GET() {
-  return withAuth(LogModule.DASHBOARD, ROUTE, {key: KEY, action: ACTION}, async ({auth, success}) => {
+  return withAuth(LogModule.DASHBOARD, ROUTE, null, async ({auth, success}) => {
     const [products, ingredients, packages] = await Promise.all([
       prisma.$queryRaw<StockAlertRow[]>`
         SELECT id, code, name, stock, min_stock

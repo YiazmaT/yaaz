@@ -5,11 +5,9 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/product/[id]/manufacture-cost";
-const KEY = "stock.products";
-const ACTION = "read";
 
 export async function GET(_: NextRequest, {params}: {params: Promise<{id: string}>}) {
-  return withAuth(LogModule.PRODUCT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, null, async ({auth, success, error}) => {
     const {id} = await params;
 
     const product = await prisma.product.findUnique({

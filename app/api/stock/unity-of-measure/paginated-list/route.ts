@@ -4,11 +4,8 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/unity-of-measure/paginated-list";
-const KEY = "stock.unity_of_measure";
-const ACTION = "read";
-
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.UNITY_OF_MEASURE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success}) => {
+  return withAuth(LogModule.UNITY_OF_MEASURE, ROUTE, null, async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");

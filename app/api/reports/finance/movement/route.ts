@@ -11,11 +11,9 @@ import {NextRequest, NextResponse} from "next/server";
 import moment from "moment";
 
 const ROUTE = "/api/reports/finance/movement";
-const KEY = "reports";
-const ACTION = "read";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.REPORTS, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error, log}) => {
+  return withAuth(LogModule.REPORTS, ROUTE, null, async ({auth, success, error, log}) => {
     const {searchParams} = new URL(req.url);
     const dateFrom = searchParams.get("dateFrom") || "";
     const dateTo = searchParams.get("dateTo") || "";

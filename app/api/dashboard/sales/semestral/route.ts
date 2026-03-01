@@ -6,11 +6,9 @@ import {subMonths, startOfMonth, endOfMonth, getMonth, getYear, format} from "da
 import {toZonedTime, fromZonedTime} from "date-fns-tz";
 
 const ROUTE = "/api/dashboard/sales/semestral";
-const KEY = "dashboard";
-const ACTION = "read";
 
 export async function GET() {
-  return withAuth(LogModule.DASHBOARD, ROUTE, {key: KEY, action: ACTION}, async ({auth, success}) => {
+  return withAuth(LogModule.DASHBOARD, ROUTE, null, async ({auth, success}) => {
     const timezone = auth.tenant.time_zone;
 
     const now = new Date();

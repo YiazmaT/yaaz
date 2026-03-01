@@ -3,11 +3,9 @@ import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 
 const ROUTE = "/api/finance/category/list";
-const KEY = "finance.categories";
-const ACTION = "read";
 
 export async function GET() {
-  return withAuth(LogModule.BILL, ROUTE, {key: KEY, action: ACTION}, async ({auth, success}) => {
+  return withAuth(LogModule.BILL, ROUTE, null, async ({auth, success}) => {
     const data = await prisma.financeCategory.findMany({
       where: {tenant_id: auth.tenant_id, active: true},
       orderBy: {name: "asc"},

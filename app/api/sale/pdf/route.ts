@@ -8,11 +8,9 @@ import {NextRequest, NextResponse} from "next/server";
 import moment from "moment";
 
 const ROUTE = "/api/sale/pdf";
-const KEY = "sales";
-const ACTION = "read";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, {key: KEY, action: ACTION}, async ({auth, log, error}) => {
+  return withAuth(LogModule.SALE, ROUTE, null, async ({auth, log, error}) => {
     const {searchParams} = new URL(req.url);
     const saleId = searchParams.get("id") || "";
 
