@@ -1,7 +1,7 @@
 "use client";
 import {Box, Button, CircularProgress, Grid, useTheme} from "@mui/material";
 import Image from "next/image";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useForm} from "react-hook-form";
 import {FormContextProvider} from "@/src/contexts/form-context";
@@ -22,12 +22,19 @@ export function LoginForm(props: LoginFormProps) {
   const {
     control,
     handleSubmit,
+    reset,
     formState: {errors},
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {...defaultValues, login: props.defaultLoginValue ?? defaultValues.login},
   });
+
+  useEffect(() => {
+    if (props.defaultLoginValue) {
+      reset({...defaultValues, login: props.defaultLoginValue});
+    }
+  }, [props.defaultLoginValue]);
 
   async function submit(data: typeof defaultValues) {
     setLoading(true);

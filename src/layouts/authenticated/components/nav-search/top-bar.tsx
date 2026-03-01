@@ -6,7 +6,7 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import {useEffect, useState} from "react";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {useTenant, useYaazUser} from "@/src/contexts/tenant-context";
-import {useAuth} from "@/src/contexts/auth-context";
+import {useAuth, useYaazAuth} from "@/src/contexts/auth-context";
 import {useNavigate} from "@/src/hooks/use-navigate";
 import {SearchModal} from "./search-modal";
 import {TopBarProps} from "./types";
@@ -15,12 +15,14 @@ export function TopBar({menuItems}: TopBarProps) {
   const [open, setOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const {user} = useTenant();
-  const {logout} = useAuth();
   const {yaazUser} = useYaazUser();
+  const {logout: intranetLogout} = useAuth();
+  const {logout: yaazLogout} = useYaazAuth();
   const {navigate} = useNavigate();
   const {translate} = useTranslate();
   const theme = useTheme();
   const displayUser = user ?? yaazUser;
+  const logout = yaazUser ? yaazLogout : intranetLogout;
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
