@@ -24,6 +24,11 @@ export interface JwtContent {
   tenant_id: string;
 }
 
+export interface UserPermission {
+  module: string;
+  action: string;
+}
+
 export interface TableConfigProps<T> {
   onView: (row: T) => void;
   onEdit: (row: T) => void;

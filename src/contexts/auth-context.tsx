@@ -3,6 +3,7 @@ import {PropsWithChildren, createContext, useContext} from "react";
 import {resetSessionExpiredFlag, useApi} from "../hooks/use-api";
 import {useNavigate} from "../hooks/use-navigate";
 import {User, YaazUser, useTenant, useYaazUser} from "./tenant-context";
+import {UserPermission} from "../@types/global-types";
 import {Tenant} from "../pages-content/yaaz/tenants/types";
 
 const AuthContext = createContext({
@@ -13,13 +14,13 @@ const AuthContext = createContext({
 });
 
 export function AuthContextProvider(props: PropsWithChildren) {
-  const {setTenant, setUser, clearTenant} = useTenant();
+  const {setTenant, setUser, setPermissions, clearTenant} = useTenant();
   const {setYaazUser, clearYaazUser} = useYaazUser();
   const {navigate} = useNavigate();
   const api = useApi();
 
   async function login(login: string, password: string) {
-    const response = await api.fetch<{success: boolean; tenant: Tenant; user: User}>("POST", "/api/login", {
+    const response = await api.fetch<{success: boolean; tenant: Tenant; user: User; permissions: UserPermission[]}>("POST", "/api/login", {
       body: {email: login, password: password},
       hideLoader: true,
     });
@@ -27,6 +28,7 @@ export function AuthContextProvider(props: PropsWithChildren) {
       resetSessionExpiredFlag();
       setTenant(response.tenant);
       setUser(response.user);
+      setPermissions(response.permissions ?? []);
       navigate("/dashboard");
     }
   }

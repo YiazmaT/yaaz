@@ -1,6 +1,7 @@
 import {authenticateRequest} from "@/src/lib/auth";
 import {LogModule, LogSource, logCreate, logUpdate, logDelete, logGet, logImportant, logError, logCritical} from "@/src/lib/logger";
 import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
+import {UserPermission} from "@/src/@types/global-types";
 import {NextResponse} from "next/server";
 
 type LogAction = "create" | "update" | "delete" | "get" | "important" | "error" | "critical";
@@ -18,9 +19,10 @@ export type ErrorFn = (message: string, status: number, content?: Record<string,
 export type SuccessFn = (action: LogAction, data?: any, logContent?: any) => NextResponse;
 
 export interface AuthContext {
-  user: {id: string; name: string; tenant_id: string; [key: string]: any};
+  user: {id: string; name: string; tenant_id: string; admin: boolean; owner: boolean; [key: string]: any};
   tenant_id: string;
   tenant: Tenant;
+  permissions: UserPermission[];
 }
 
 const logFnMap: Record<LogAction, (params: any) => Promise<void>> = {

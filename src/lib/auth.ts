@@ -28,13 +28,20 @@ export async function authenticateRequest(module: LogModule, route?: string) {
 
     const user = await prismaUnscoped.user.findUnique({
       where: {id: payload.id},
+      include: {
+        user_group: {
+          select: {permissions: {select: {module: true, action: true}}},
+        },
+      },
     });
 
     if (!user || user.current_token !== token) {
       return {error: response, token};
     }
 
-    return {user, tenant_id: user.tenant_id, tenant: payload.tenant};
+    const permissions = user.user_group?.permissions ?? [];
+
+    return {user, tenant_id: user.tenant_id, tenant: payload.tenant, permissions};
   } catch (error) {
     logCritical({module, source: LogSource.API, route, error});
     return {error: response, token};

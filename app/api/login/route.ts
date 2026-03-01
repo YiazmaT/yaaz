@@ -26,6 +26,9 @@ export async function POST(req: NextRequest) {
             max_file_size_in_mbs: true,
           },
         },
+        user_group: {
+          select: {permissions: {select: {module: true, action: true}}},
+        },
       },
     });
 
@@ -55,11 +58,14 @@ export async function POST(req: NextRequest) {
       where: {id: user.id},
     });
 
+    const permissions = user.user_group?.permissions ?? [];
+
     const response = NextResponse.json(
       {
         success: true,
         tenant: user.tenant,
         user: {id: user.id, name: user.name, login: user.login, image: user.image, admin: user.admin, owner: user.owner},
+        permissions,
       },
       {status: 200},
     );
