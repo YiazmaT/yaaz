@@ -9,10 +9,10 @@ export function TenantThemeProvider(props: PropsWithChildren) {
   const {tenant} = useTenant();
   const defaults = getDefaultColors();
   const pathname = usePathname();
-  const isLogin = pathname === "/login" || pathname === "/yaaz/login";
+  const useDefaults = pathname === "/login" || pathname.startsWith("/yaaz");
 
-  const primary = isLogin ? defaults.primary : tenant?.primary_color || defaults.primary;
-  const secondary = isLogin ? defaults.secondary : tenant?.secondary_color || defaults.secondary;
+  const primary = useDefaults ? defaults.primary : tenant?.primary_color || defaults.primary;
+  const secondary = useDefaults ? defaults.secondary : tenant?.secondary_color || defaults.secondary;
 
   const theme = useMemo(() => createTenantTheme(primary, secondary), [primary, secondary]);
   const styles = useMemo(() => createGlobalStyles(primary), [primary]);
