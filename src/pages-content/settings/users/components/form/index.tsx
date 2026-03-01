@@ -15,13 +15,7 @@ export function Form(props: FormProps) {
   return (
     <FormContextProvider control={users.control} errors={users.errors} formType={users.formType}>
       <GenericDrawer
-        title={
-          users.formType === "create"
-            ? "users.createTitle"
-            : users.formType === "edit"
-              ? "users.editTitle"
-              : "users.detailsTitle"
-        }
+        title={users.formType === "create" ? "users.createTitle" : users.formType === "edit" ? "users.editTitle" : "users.detailsTitle"}
         show={users.showDrawer}
         onClose={users.closeDrawer}
       >
@@ -30,9 +24,6 @@ export function Form(props: FormProps) {
             <FormImageInput fieldName="image" label="users.fields.image" imageSize={300} />
             <FormTextInput fieldName="name" label="users.fields.name" />
             <FormTextInput fieldName="login" label="users.fields.login" />
-            {users.formType === "edit" && (
-              <FormTextInput fieldName="password" label="users.fields.newPassword" isPassword />
-            )}
             <FormCheckBox fieldName="admin" label="users.fields.admin" />
             {users.formType !== "details" && (
               <Grid size={12}>
