@@ -5,6 +5,7 @@ import {useTranslate} from "@/src/contexts/translation-context";
 import {formatDate} from "@/src/utils/format-date";
 import {getActionTypeColor, getActionTypeLabelKey, getModuleLabelKey} from "../../constants";
 import {DetailModalProps} from "./types";
+import {UserInfo} from "@/src/components/user-info";
 
 export function AuditDetailModal(props: DetailModalProps) {
   const {translate} = useTranslate();
@@ -57,9 +58,7 @@ export function AuditDetailModal(props: DetailModalProps) {
               <Typography variant="caption" color="text.secondary">
                 {translate("audit.fields.user")}
               </Typography>
-              <Typography variant="body2" fontWeight={500}>
-                {log.user_name ?? "-"}
-              </Typography>
+              <UserInfo user={log.user} />
             </Box>
             <Box>
               <Typography variant="caption" color="text.secondary">
