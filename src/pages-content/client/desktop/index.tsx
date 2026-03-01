@@ -14,7 +14,7 @@ export function DesktopView(props: DesktopViewProps) {
 
   return (
     <>
-      <ScreenCard title="clients.title" includeButtonFunction={clients.handleCreate}>
+      <ScreenCard title="clients.title">
         <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
           <ClientsFiltersComponent onFilterChange={clients.handleFilterChange} />
           <Box sx={{flex: 1, minHeight: 0}}>
