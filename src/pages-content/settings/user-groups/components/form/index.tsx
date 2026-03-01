@@ -1,5 +1,5 @@
 "use client";
-import {Button, Grid, Typography} from "@mui/material";
+import {Box, Button, Divider, Grid, Typography} from "@mui/material";
 import {FormProvider} from "react-hook-form";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {GenericDrawer} from "@/src/components/generic-drawer";
@@ -14,6 +14,21 @@ export function Form(props: FormProps) {
   const {translate} = useTranslate();
 
   const isDetails = userGroups.formType === "details";
+
+  const seenGroups = new Set<string>();
+  const sections = MODULE_DEFINITIONS.flatMap((mod) => {
+    const groupKey = mod.key.split(".")[0];
+    const groupLabelKey = mod.key.includes(".")
+      ? `userGroups.modules.groups.${groupKey}`
+      : mod.labelKey;
+    const items = [];
+    if (!seenGroups.has(groupKey)) {
+      seenGroups.add(groupKey);
+      items.push({type: "header" as const, group: groupKey, labelKey: groupLabelKey});
+    }
+    items.push({type: "module" as const, mod});
+    return items;
+  });
 
   return (
     <FormProvider {...userGroups.formMethods}>
@@ -37,9 +52,19 @@ export function Form(props: FormProps) {
                 <Typography variant="subtitle1" fontWeight={600} mb={1}>
                   {translate("userGroups.permissions.title")}
                 </Typography>
-                {MODULE_DEFINITIONS.map((mod) => (
-                  <PermissionCard key={mod.key} module={mod} disabled={isDetails} />
-                ))}
+                {sections.map((section) =>
+                  section.type === "header" ? (
+                    <Box key={`group-${section.group}`} sx={{display: "flex", alignItems: "center", gap: 1, mt: 1, mb: 1.5}}>
+                      <Divider sx={{flex: 1}} />
+                      <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{textTransform: "uppercase", letterSpacing: 0.8}}>
+                        {translate(section.labelKey as any)}
+                      </Typography>
+                      <Divider sx={{flex: 1}} />
+                    </Box>
+                  ) : (
+                    <PermissionCard key={section.mod.key} module={section.mod} disabled={isDetails} />
+                  )
+                )}
               </Grid>
               {!isDetails && (
                 <Grid size={12}>
