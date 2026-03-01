@@ -6,6 +6,7 @@ import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {formatDate} from "@/src/utils/format-date";
 import {flexGenerator} from "@/src/utils/flex-generator";
+import {UserInfo} from "@/src/components/user-info";
 import {getActionTypeColor, getActionTypeLabelKey, getModuleLabelKey} from "../constants";
 import {AuditLog} from "../types";
 import {AuditFiltersComponent} from "../components/filters";
@@ -28,14 +29,7 @@ export function MobileView(props: MobileViewProps) {
         </Box>
 
         <Box sx={{...flexGenerator("c"), gap: 0.5}}>
-          <Box sx={{...flexGenerator("r.center"), gap: 1}}>
-            <Typography variant="caption" color="text.secondary">
-              {translate("audit.fields.user")}:
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {item.user_name ?? "-"}
-            </Typography>
-          </Box>
+          <UserInfo user={item.user} imageSize={36} />
           <Box sx={{...flexGenerator("r.center"), gap: 1}}>
             <Typography variant="caption" color="text.secondary">
               {translate("audit.fields.module")}:

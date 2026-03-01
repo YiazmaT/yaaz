@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
           content: true,
           error: true,
           user_id: true,
-          user: {select: {name: true}},
+          user: {select: {name: true, login: true, image: true}},
         },
       }),
       prisma.log.count({where}),
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
       content: item.content as Record<string, any> | null,
       error: item.error as Record<string, any> | null,
       user_id: item.user_id,
-      user_name: item.user?.name ?? null,
+      user: item.user ?? null,
       action_type: deriveActionType(item.route),
     }));
 

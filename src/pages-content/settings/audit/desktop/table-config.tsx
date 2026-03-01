@@ -3,6 +3,7 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {formatDate} from "@/src/utils/format-date";
+import {UserInfo} from "@/src/components/user-info";
 import {getActionTypeColor, getActionTypeLabelKey, getModuleLabelKey} from "../constants";
 import {AuditLog} from "../types";
 import {AuditTableConfigProps} from "./types";
@@ -26,7 +27,7 @@ export function useAuditTableConfig(props: AuditTableConfigProps) {
         field: "user_name",
         headerKey: "audit.fields.user",
         width: "18%",
-        render: (row) => row.user_name ?? "-",
+        render: (row) => <UserInfo user={row.user} />,
       },
       {
         field: "module",

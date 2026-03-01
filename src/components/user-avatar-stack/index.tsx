@@ -38,7 +38,7 @@ export function UserAvatarStack({users, total, size = 36}: UserAvatarStackProps)
               "&:hover": {transform: "translateY(-6px)", zIndex: MAX_VISIBLE + 1},
             }}
           >
-            {user.name.charAt(0).toUpperCase()}
+            {user?.name?.charAt(0).toUpperCase()}
           </Avatar>
         </Tooltip>
       ))}

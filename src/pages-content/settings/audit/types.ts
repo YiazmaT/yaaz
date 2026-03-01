@@ -1,3 +1,5 @@
+import {User} from "../users/types";
+
 export interface AuditLog {
   id: string;
   type: string;
@@ -9,7 +11,7 @@ export interface AuditLog {
   content: Record<string, any> | null;
   error: Record<string, any> | null;
   user_id: string | null;
-  user_name: string | null;
+  user: Partial<User>;
   action_type: "create" | "update" | "delete" | "other";
 }
 

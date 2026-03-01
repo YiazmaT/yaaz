@@ -1,12 +1,7 @@
-export interface User {
-  id: string;
-  name: string;
-  login: string;
-  image: string | null;
-}
+import {User} from "@/src/pages-content/settings/users/types";
 
 export interface UserAvatarStackProps {
-  users: User[];
+  users: Partial<User>[];
   total: number;
   size?: number;
 }
