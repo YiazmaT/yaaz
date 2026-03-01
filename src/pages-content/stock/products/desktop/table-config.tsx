@@ -164,6 +164,7 @@ export function useProductsTableConfig(props: ProductTableConfigProps) {
                 ),
                 tooltip: () => translate("products.files.tooltip"),
                 onClick: props.onOpenFiles,
+                hidden: () => !canEdit,
               },
               {
                 icon: () => <SyncAltIcon fontSize="small" />,

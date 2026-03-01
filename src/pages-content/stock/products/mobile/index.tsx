@@ -88,19 +88,21 @@ export function MobileView(props: MobileViewProps) {
             borderTop: `1px solid ${theme.palette.divider}`,
           }}
         >
-          <Tooltip title={translate("products.files.tooltip")}>
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                products.handleOpenFiles(item);
-              }}
-            >
-              <Badge badgeContent={item.files?.length ?? 0} color="primary" max={99}>
-                <AttachFileIcon fontSize="small" />
-              </Badge>
-            </IconButton>
-          </Tooltip>
+          {canEdit && (
+            <Tooltip title={translate("products.files.tooltip")}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  products.handleOpenFiles(item);
+                }}
+              >
+                <Badge badgeContent={item.files?.length ?? 0} color="primary" max={99}>
+                  <AttachFileIcon fontSize="small" />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+          )}
           {item.active && canEdit && (
             <Tooltip title={translate("products.stockChange.title")}>
               <IconButton
