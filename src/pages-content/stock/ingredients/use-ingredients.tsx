@@ -11,8 +11,10 @@ import {useApi, useApiQuery} from "@/src/hooks/use-api";
 import {Ingredient, IngredientsFilters} from "./types";
 import {IngredientFormValues, useIngredientFormConfig} from "./form-config";
 import {useIngredientsTableConfig} from "./desktop/table-config";
+import {UnityOfMeasure} from "../unity-of-measure/types";
 
 const API_ROUTE = "/api/stock/ingredient/paginated-list";
+const UNITS_ROUTE = "/api/stock/unity-of-measure/paginated-list";
 
 export function useIngredients() {
   const [formType, setFormType] = useState("create");
@@ -31,12 +33,12 @@ export function useIngredients() {
   const toast = useToaster();
   const queryClient = useQueryClient();
 
-  const {data: unitsData} = useApiQuery<{data: {id: string; unity: string}[]}>({
-    queryKey: ["/api/stock/unity-of-measure/paginated-list", {limit: 100}],
-    route: "/api/stock/unity-of-measure/paginated-list?limit=100",
+  const {data: unitsData} = useApiQuery<{data: UnityOfMeasure[]}>({
+    queryKey: [UNITS_ROUTE, {limit: 100}],
+    route: `${UNITS_ROUTE}?limit=100`,
   });
 
-  const unitOptions = (unitsData?.data || []).map((u) => ({value: u.id, label: u.unity}));
+  const unitOptions: UnityOfMeasure[] = unitsData?.data ?? [];
 
   const {
     control,
