@@ -9,6 +9,7 @@ import {ToasterContextProvider} from "@/src/contexts/toast-context";
 import {TopLoader} from "@/src/components/top-loader";
 import {ConfirmModalContextProvider} from "@/src/contexts/confirm-modal-context";
 import {TenantThemeProvider} from "@/src/components/tenant-theme-provider";
+import {DynamicTitle} from "@/src/components/dynamic-title";
 import {queryClient} from "@/src/lib/query-client";
 import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
 import {User, YaazUser} from "@/src/contexts/tenant-context";
@@ -25,6 +26,7 @@ export function Providers({children, initialTenant, initialUser, initialYaazUser
     <QueryClientProvider client={queryClient}>
       <AppRouterCacheProvider>
         <TenantContextProvider initialTenant={initialTenant} initialUser={initialUser} initialYaazUser={initialYaazUser}>
+          <DynamicTitle />
           <TenantThemeProvider>
             <TranslationContextProvider>
               <ConfirmModalContextProvider>
