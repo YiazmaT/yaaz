@@ -110,13 +110,14 @@ interface TenantContextProviderProps extends PropsWithChildren {
   initialTenant?: Tenant | null;
   initialUser?: User | null;
   initialYaazUser?: YaazUser | null;
+  initialPermissions?: UserPermission[];
 }
 
 export function TenantContextProvider(props: TenantContextProviderProps) {
   const [tenant, setTenantState] = useState<Tenant | null>(() => props.initialTenant ?? getStoredTenant());
   const [user, setUserState] = useState<User | null>(() => props.initialUser ?? getStoredUser());
   const [yaazUser, setYaazUserState] = useState<YaazUser | null>(() => props.initialYaazUser ?? getStoredYaazUser());
-  const [permissions, setPermissionsState] = useState<UserPermission[]>(() => getStoredPermissions());
+  const [permissions, setPermissionsState] = useState<UserPermission[]>(() => props.initialPermissions ?? getStoredPermissions());
 
   function setTenant(newTenant: Tenant | null) {
     setTenantState(newTenant);

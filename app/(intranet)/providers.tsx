@@ -11,36 +11,46 @@ import {ConfirmModalContextProvider} from "@/src/contexts/confirm-modal-context"
 import {TenantThemeProvider} from "@/src/components/tenant-theme-provider";
 import {DynamicTitle} from "@/src/components/dynamic-title";
 import {queryClient} from "@/src/lib/query-client";
+import {AuthSyncProvider} from "@/src/contexts/auth-sync-provider";
 import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
 import {User, YaazUser} from "@/src/contexts/tenant-context";
+import {UserPermission} from "@/src/@types/global-types";
 
 interface ProvidersProps {
   children: React.ReactNode;
   initialTenant: Tenant | null;
   initialUser: User | null;
   initialYaazUser: YaazUser | null;
+  initialPermissions: UserPermission[];
 }
 
-export function Providers({children, initialTenant, initialUser, initialYaazUser}: ProvidersProps) {
+export function Providers({children, initialTenant, initialUser, initialYaazUser, initialPermissions}: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <AppRouterCacheProvider>
-        <TenantContextProvider initialTenant={initialTenant} initialUser={initialUser} initialYaazUser={initialYaazUser}>
-          <DynamicTitle />
-          <TenantThemeProvider>
-            <TranslationContextProvider>
-              <ConfirmModalContextProvider>
-                <ToasterContextProvider>
-                  <LoaderContextProvider>
-                    <AuthContextProvider>
-                      <TopLoader />
-                      {children}
-                    </AuthContextProvider>
-                  </LoaderContextProvider>
-                </ToasterContextProvider>
-              </ConfirmModalContextProvider>
-            </TranslationContextProvider>
-          </TenantThemeProvider>
+        <TenantContextProvider
+          initialTenant={initialTenant}
+          initialUser={initialUser}
+          initialYaazUser={initialYaazUser}
+          initialPermissions={initialPermissions}
+        >
+          <AuthSyncProvider>
+            <DynamicTitle />
+            <TenantThemeProvider>
+              <TranslationContextProvider>
+                <ConfirmModalContextProvider>
+                  <ToasterContextProvider>
+                    <LoaderContextProvider>
+                      <AuthContextProvider>
+                        <TopLoader />
+                        {children}
+                      </AuthContextProvider>
+                    </LoaderContextProvider>
+                  </ToasterContextProvider>
+                </ConfirmModalContextProvider>
+              </TranslationContextProvider>
+            </TenantThemeProvider>
+          </AuthSyncProvider>
         </TenantContextProvider>
       </AppRouterCacheProvider>
     </QueryClientProvider>
