@@ -1020,6 +1020,7 @@
     "updateSuccess": "Grupo atualizado com sucesso!",
     "deleteSuccess": "Grupo excluído com sucesso!",
     "deleteConfirm": "Tem certeza que deseja excluir este grupo? Esta ação não pode ser desfeita.",
+    "deleteWithUsersConfirm": "Este grupo possui {{count}} usuário(s) vinculado(s). Ao excluir, eles perderão acesso a todos os módulos do sistema. Deseja continuar?",
     "fields": {
       "name": "Nome do Grupo",
       "description": "Descrição",
@@ -1032,9 +1033,6 @@
       "edit": "Editar",
       "delete": "Excluir",
       "all": "Todos"
-    },
-    "errors": {
-      "hasUsers": "Este grupo possui usuários vinculados e não pode ser excluído."
     }
   },
   "profile": {

@@ -113,8 +113,10 @@ export function useUserGroups() {
   }
 
   function handleDelete(row: UserGroup) {
+    const hasUsers = row.user_count > 0;
     showConfirmModal({
-      message: "userGroups.deleteConfirm",
+      message: hasUsers ? "userGroups.deleteWithUsersConfirm" : "userGroups.deleteConfirm",
+      messageVars: hasUsers ? {count: String(row.user_count)} : undefined,
       onConfirm: async () => {
         await api.fetch("DELETE", "/api/settings/user-group/delete", {
           body: {id: row.id},

@@ -1,9 +1,12 @@
+import {User} from "../users/types";
+
 export interface UserGroup {
   id: string;
   name: string;
   description: string | null;
   active: boolean;
   user_count: number;
+  users: User[];
   creation_date: string;
   last_edit_date: string | null;
 }

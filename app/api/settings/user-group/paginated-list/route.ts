@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
           creation_date: true,
           last_edit_date: true,
           _count: {select: {users: true}},
+          users: {select: {id: true, name: true, image: true, login: true}, take: 10, orderBy: {name: "asc"}},
         },
       }),
       prisma.userGroup.count({where}),
@@ -46,6 +47,7 @@ export async function GET(req: NextRequest) {
       creation_date: g.creation_date,
       last_edit_date: g.last_edit_date,
       user_count: g._count.users,
+      users: g.users,
     }));
 
     return success("get", {data, total, page, limit});

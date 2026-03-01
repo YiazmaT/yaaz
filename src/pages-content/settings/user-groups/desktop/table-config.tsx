@@ -1,6 +1,6 @@
-import {Chip} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
 import {ActionsColumn} from "@/src/components/data-columns";
+import {UserAvatarStack} from "@/src/components/user-avatar-stack";
 import {UserGroup} from "../types";
 
 interface UserGroupsTableConfigProps {
@@ -27,9 +27,8 @@ export function useUserGroupsTableConfig(props: UserGroupsTableConfigProps) {
       {
         field: "user_count",
         headerKey: "userGroups.fields.users",
-        width: "100px",
-        align: "center",
-        render: (row) => <Chip label={row.user_count} size="small" />,
+        width: "220px",
+        render: (row) => <UserAvatarStack users={row.users} total={row.user_count} />,
       },
       {
         field: "actions",

@@ -17,7 +17,6 @@ export async function DELETE(req: NextRequest) {
     });
 
     if (!existing) return error("api.errors.notFound", 404);
-    if (existing._count.users > 0) return error("userGroups.errors.hasUsers", 400);
 
     const group = await prisma.userGroup.delete({
       where: {id, tenant_id: auth.tenant_id},
