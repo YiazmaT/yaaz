@@ -24,13 +24,13 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
       {
         field: "name",
         headerKey: "users.fields.name",
-        width: "30%",
+        width: "25%",
         render: (row) => row.name,
       },
       {
         field: "login",
         headerKey: "users.fields.login",
-        width: "30%",
+        width: "25%",
         render: (row) => (
           <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             {!row.active && <Chip label={translate("users.inactive")} size="small" color="error" />}
