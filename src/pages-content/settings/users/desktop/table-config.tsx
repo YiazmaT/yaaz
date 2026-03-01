@@ -41,12 +41,25 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
       {
         field: "admin",
         headerKey: "users.fields.role",
-        width: "15%",
+        width: "12%",
         align: "center",
         render: (row) => {
           if (row.owner) return <Chip label={translate("users.owner")} size="small" color="warning" />;
           if (row.admin) return <Chip label={translate("users.admin")} size="small" color="primary" />;
           return <Chip label={translate("users.user")} size="small" />;
+        },
+      },
+      {
+        field: "user_group_name",
+        headerKey: "users.fields.group",
+        width: "15%",
+        render: (row) => {
+          if (row.owner || row.admin) return "—";
+          return row.user_group_name ? (
+            <Chip label={row.user_group_name} size="small" variant="outlined" />
+          ) : (
+            <Chip label={translate("users.noGroup")} size="small" variant="outlined" color="warning" />
+          );
         },
       },
       {

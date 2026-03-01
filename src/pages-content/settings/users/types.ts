@@ -10,6 +10,8 @@ export interface User {
   setup_email_sent_at: string | null;
   create_date: string;
   last_edit_date: string | null;
+  user_group_id: string | null;
+  user_group_name: string | null;
 }
 
 export interface UsersFilters {

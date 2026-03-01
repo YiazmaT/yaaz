@@ -42,12 +42,20 @@ export async function GET(req: NextRequest) {
           setup_email_sent_at: true,
           create_date: true,
           last_edit_date: true,
+          user_group_id: true,
+          user_group: {select: {name: true}},
         },
       }),
       prisma.user.count({where}),
       prisma.tenant.findUnique({where: {id: auth.tenant_id}, select: {max_user_amount: true}}),
     ]);
 
-    return success("get", {data: users, total, page, limit, max_user_amount: tenant?.max_user_amount ?? 3});
+    const data = users.map((u) => ({
+      ...u,
+      user_group_name: u.user_group?.name ?? null,
+      user_group: undefined,
+    }));
+
+    return success("get", {data, total, page, limit, max_user_amount: tenant?.max_user_amount ?? 3});
   });
 }

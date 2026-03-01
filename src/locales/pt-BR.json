@@ -952,7 +952,8 @@
   },
   "settings": {
     "tabs": {
-      "users": "Usuários"
+      "users": "Usuários",
+      "userGroups": "Grupos de Permissão"
     }
   },
   "users": {
@@ -994,10 +995,12 @@
       "newPassword": "Nova Senha (opcional)",
       "admin": "Administrador",
       "role": "Perfil",
+      "group": "Grupo de Permissão",
       "status": "Status",
       "verified": "Verificado",
       "pendingPassword": "Senha não definida"
     },
+    "noGroup": "Sem grupo",
     "errors": {
       "userLimitReached": "Limite de usuários ativos atingido para este plano!",
       "loginAlreadyExists": "Este login já está em uso!",
@@ -1006,6 +1009,51 @@
       "cannotDeleteSelf": "Você não pode excluir sua própria conta!",
       "cannotDeleteOwner": "Não é possível excluir o proprietário da conta!",
       "cannotDeactivateOwner": "Não é possível desativar o proprietário da conta!"
+    }
+  },
+  "userGroups": {
+    "title": "Grupos de Permissão",
+    "createTitle": "Novo Grupo",
+    "editTitle": "Editar Grupo",
+    "detailsTitle": "Detalhes do Grupo",
+    "createSuccess": "Grupo criado com sucesso!",
+    "updateSuccess": "Grupo atualizado com sucesso!",
+    "deleteSuccess": "Grupo excluído com sucesso!",
+    "deleteConfirm": "Tem certeza que deseja excluir este grupo? Esta ação não pode ser desfeita.",
+    "fields": {
+      "name": "Nome do Grupo",
+      "description": "Descrição",
+      "users": "Usuários"
+    },
+    "permissions": {
+      "title": "Permissões",
+      "read": "Visualizar",
+      "create": "Criar",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "all": "Todos"
+    },
+    "modules": {
+      "dashboard": "Dashboard",
+      "sales": "Vendas",
+      "clients": "Clientes",
+      "reports": "Relatórios",
+      "stock": {
+        "products": "Estoque → Produtos",
+        "ingredients": "Estoque → Insumos",
+        "packages": "Estoque → Embalagens",
+        "unity_of_measure": "Estoque → Unidades de Medida"
+      },
+      "finance": {
+        "bills": "Financeiro → Contas a Pagar",
+        "banks": "Financeiro → Bancos",
+        "categories": "Financeiro → Categorias",
+        "payment_method": "Financeiro → Formas de Pagamento",
+        "nfe": "Financeiro → NFe"
+      }
+    },
+    "errors": {
+      "hasUsers": "Este grupo possui usuários vinculados e não pode ser excluído."
     }
   },
   "profile": {

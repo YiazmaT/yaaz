@@ -8,7 +8,7 @@ const ROUTE = "/api/settings/user/update";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.USER, ROUTE, async ({auth, success, error}) => {
-    const {id, name, login, password, admin, imageUrl} = await req.json();
+    const {id, name, login, password, admin, imageUrl, user_group_id} = await req.json();
 
     if (!id || !name || !login) return error("api.errors.missingRequiredFields", 400);
 
@@ -20,10 +20,13 @@ export async function PUT(req: NextRequest) {
     const loginTaken = await prismaUnscoped.user.findFirst({where: {login: normalizedLogin}});
     if (loginTaken && loginTaken.id !== id) return error("users.errors.loginAlreadyExists", 400);
 
+    const resolvedAdmin = existingUser.owner ? existingUser.admin : (admin ?? false);
+
     const updateData: any = {
       name,
       login: normalizedLogin,
-      admin: existingUser.owner ? existingUser.admin : (admin ?? false),
+      admin: resolvedAdmin,
+      user_group_id: resolvedAdmin ? null : (user_group_id ?? null),
       last_edit_date: new Date(),
       last_editor_id: auth.user.id,
     };

@@ -24,7 +24,7 @@ export function TodaySalesCard() {
       <CardContent>
         <Box sx={{display: "flex", alignItems: "center", gap: 1, marginBottom: 2}}>
           <TodayIcon color="primary" />
-          <Typography variant="h6">
+          <Typography variant="h6" suppressHydrationWarning>
             {translate("dashboard.todaySales")} ({todayFormatted})
           </Typography>
         </Box>

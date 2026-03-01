@@ -24,6 +24,7 @@ import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 
 const intranetMenuItems: MenuItem[] = [
@@ -55,13 +56,14 @@ const intranetMenuItems: MenuItem[] = [
   {
     name: "global.settings",
     icon: <SettingsOutlinedIcon />,
-    children: [{name: "settings.tabs.users", route: "/settings/users", icon: <PeopleOutlinedIcon />}],
+    children: [
+      {name: "settings.tabs.users", route: "/settings/users", icon: <PeopleOutlinedIcon />},
+      {name: "settings.tabs.userGroups", route: "/settings/user-groups", icon: <GroupsOutlinedIcon />},
+    ],
   },
 ];
 
-const yaazMenuItems: MenuItem[] = [
-  {name: "yaaz.tenants", route: "/yaaz/tenants", icon: <StorefrontOutlinedIcon />},
-];
+const yaazMenuItems: MenuItem[] = [{name: "yaaz.tenants", route: "/yaaz/tenants", icon: <StorefrontOutlinedIcon />}];
 
 const DEFAULT_LOGO = "/assets/icon.png";
 const DEFAULT_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME || "";

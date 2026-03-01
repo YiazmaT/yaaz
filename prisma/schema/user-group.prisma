@@ -1,0 +1,36 @@
+model UserGroup {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id      String    @db.Uuid
+  name           String
+  description    String?
+  active         Boolean   @default(true)
+  creator_id     String?   @db.Uuid
+  creation_date  DateTime  @default(now())
+  last_edit_date DateTime?
+  last_editor_id String?   @db.Uuid
+
+  tenant      Tenant                @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  permissions UserGroupPermission[]
+  users       User[]
+  creator     User?                 @relation("UserGroupCreator", fields: [creator_id], references: [id], onDelete: SetNull)
+  last_editor User?                 @relation("UserGroupEditor", fields: [last_editor_id], references: [id], onDelete: SetNull)
+
+  @@map("user_group")
+  @@schema("data")
+}
+
+model UserGroupPermission {
+  id            String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id     String  @db.Uuid
+  user_group_id String  @db.Uuid
+  module        String
+  action        String
+  allowed       Boolean @default(false)
+
+  tenant     Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user_group UserGroup @relation(fields: [user_group_id], references: [id], onDelete: Cascade)
+
+  @@unique([tenant_id, user_group_id, module, action])
+  @@map("user_group_permission")
+  @@schema("data")
+}

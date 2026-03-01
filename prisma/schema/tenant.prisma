@@ -38,6 +38,8 @@ model Tenant {
   nfe_items                NfeItem[]
   unity_of_measures        UnityOfMeasure[]
   payment_methods          FinancePaymentMethod[]
+  user_groups              UserGroup[]
+  user_group_permissions   UserGroupPermission[]
 
   @@map("tenant")
   @@schema("data")

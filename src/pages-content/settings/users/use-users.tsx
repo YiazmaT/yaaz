@@ -18,6 +18,7 @@ export function useUsers() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [filters, setFilters] = useState<UsersFilters>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const {upload, deleteOrphan} = useR2Upload();
   const {user: currentUser} = useTenant();
   const {show: showConfirmModal} = useConfirmModal();
@@ -76,6 +77,7 @@ export function useUsers() {
           login: data.login,
           admin: data.admin,
           imageUrl,
+          user_group_id: data.admin ? null : (data.user_group?.id ?? null),
         },
         onSuccess: () => {
           toast.successToast("users.updateSuccess");
@@ -95,6 +97,7 @@ export function useUsers() {
           login: data.login,
           admin: data.admin,
           imageUrl,
+          user_group_id: data.admin ? null : (data.user_group?.id ?? null),
         },
         onSuccess: () => {
           toast.successToast("users.createSuccess");
@@ -118,6 +121,7 @@ export function useUsers() {
   function closeDrawer() {
     setShowDrawer(false);
     setSelectedId(null);
+    setSelectedUser(null);
     reset(defaultValues);
   }
 
@@ -127,22 +131,26 @@ export function useUsers() {
       login: row.login,
       admin: row.admin,
       image: row.image,
+      user_group: row.user_group_id ? {id: row.user_group_id, name: row.user_group_name ?? ""} : null,
     });
   }
 
   function handleCreate() {
     setSelectedId(null);
+    setSelectedUser(null);
     reset(defaultValues);
     openDrawer("create");
   }
 
   function handleView(row: User) {
+    setSelectedUser(row);
     populateForm(row);
     openDrawer("details");
   }
 
   function handleEdit(row: User) {
     setSelectedId(row.id);
+    setSelectedUser(row);
     populateForm(row);
     openDrawer("edit");
   }
@@ -199,5 +207,6 @@ export function useUsers() {
     maxUserAmount,
     totalUsers,
     currentUserId: currentUser?.id ?? null,
+    selectedUser,
   };
 }
