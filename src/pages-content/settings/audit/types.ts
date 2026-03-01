@@ -1,0 +1,38 @@
+export interface AuditLog {
+  id: string;
+  type: string;
+  create_date: string;
+  message: string | null;
+  route: string | null;
+  source: string;
+  module: string;
+  content: Record<string, any> | null;
+  error: Record<string, any> | null;
+  user_id: string | null;
+  user_name: string | null;
+  action_type: "create" | "update" | "delete" | "other";
+}
+
+export interface AuditFilters {
+  module?: string;
+  action_type?: string;
+  date_from?: string;
+  date_to?: string;
+}
+
+export interface AuditListResponse {
+  data: AuditLog[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface AuditModule {
+  value: string;
+  labelKey: string;
+}
+
+export interface AuditActionType {
+  value: string;
+  labelKey: string;
+}

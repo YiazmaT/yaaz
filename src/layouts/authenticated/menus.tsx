@@ -18,6 +18,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
+import ManageSearchOutlinedIcon from "@mui/icons-material/ManageSearchOutlined";
 
 export const yaazMenuItems: MenuItem[] = [{name: "yaaz.tenants", route: "/yaaz/tenants", icon: <StorefrontOutlinedIcon />}];
 
@@ -103,6 +104,7 @@ export const intranetMenuItems: MenuItem[] = [
     children: [
       {name: "settings.tabs.users", route: "/settings/users", icon: <PeopleOutlinedIcon />},
       {name: "settings.tabs.userGroups", route: "/settings/user-groups", icon: <GroupsOutlinedIcon />},
+      {name: "settings.tabs.audit", route: "/settings/audit", icon: <ManageSearchOutlinedIcon />},
     ],
   },
 ];

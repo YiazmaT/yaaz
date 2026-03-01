@@ -957,7 +957,45 @@
   "settings": {
     "tabs": {
       "users": "Usuários",
-      "userGroups": "Grupos de Permissão"
+      "userGroups": "Grupos de Permissão",
+      "audit": "Auditoria"
+    }
+  },
+  "audit": {
+    "title": "Auditoria",
+    "filterTitle": "Filtros de Auditoria",
+    "disclaimer": "O sistema armazena o histórico de ações por até 1 ano. Registros antigos de auditoria são excluídos permanentemente!",
+    "actions": {
+      "apply": "Consultar",
+      "clear": "Limpar"
+    },
+    "actionTypes": {
+      "create": "Criação",
+      "update": "Edição",
+      "delete": "Exclusão",
+      "other": "Outro"
+    },
+    "fields": {
+      "date": "Data/Hora",
+      "user": "Usuário",
+      "module": "Módulo",
+      "action": "Ação",
+      "route": "Rota",
+      "content": "Conteúdo",
+      "before": "Antes",
+      "after": "Depois",
+      "dateFrom": "De",
+      "dateTo": "Até"
+    },
+    "details": {
+      "title": "Detalhes do Log"
+    },
+    "filters": {
+      "open": "Abrir Filtros",
+      "close": "Fechar Filtros",
+      "clear": "Limpar",
+      "apply": "Aplicar",
+      "clearTooltip": "Limpar Filtros"
     }
   },
   "users": {

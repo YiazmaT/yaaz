@@ -50,6 +50,7 @@ export enum LogModule {
   YAAZ_LOGIN = "yaaz_login",
   YAAZ_USER = "yaaz_user",
   USER_GROUP = "user_group",
+  AUDIT = "audit",
 }
 
 interface LogParams {
