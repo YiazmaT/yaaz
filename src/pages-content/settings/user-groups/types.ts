@@ -11,7 +11,6 @@ export interface UserGroup {
 export interface UserGroupPermission {
   module: string;
   action: string;
-  allowed: boolean;
 }
 
 export interface UserGroupDetail {

@@ -92,8 +92,8 @@ export function buildDefaultPermissions(): PermissionsMap {
   return result;
 }
 
-export function permissionsToFlat(permissions: PermissionsMap): {module: string; action: string; allowed: boolean}[] {
-  const result: {module: string; action: string; allowed: boolean}[] = [];
+export function permissionsToFlat(permissions: PermissionsMap): {module: string; action: string}[] {
+  const result: {module: string; action: string}[] = [];
   for (const mod of MODULE_DEFINITIONS) {
     const parts = mod.key.split(".");
     let obj: any = permissions;
@@ -101,13 +101,13 @@ export function permissionsToFlat(permissions: PermissionsMap): {module: string;
       obj = obj?.[part];
     }
     for (const action of mod.actions) {
-      result.push({module: mod.key, action, allowed: obj?.[action] ?? false});
+      if (obj?.[action]) result.push({module: mod.key, action});
     }
   }
   return result;
 }
 
-export function flatToPermissions(flat: {module: string; action: string; allowed: boolean}[]): PermissionsMap {
+export function flatToPermissions(flat: {module: string; action: string}[]): PermissionsMap {
   const result: any = buildDefaultPermissions();
   for (const perm of flat) {
     const parts = perm.module.split(".");
@@ -118,7 +118,7 @@ export function flatToPermissions(flat: {module: string; action: string; allowed
     }
     const last = parts[parts.length - 1];
     if (!obj[last]) obj[last] = {};
-    obj[last][perm.action] = perm.allowed;
+    obj[last][perm.action] = true;
   }
   return result;
 }

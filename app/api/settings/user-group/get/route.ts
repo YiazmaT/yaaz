@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
         description: true,
         active: true,
         permissions: {
-          select: {module: true, action: true, allowed: true},
+          select: {module: true, action: true},
         },
       },
     });

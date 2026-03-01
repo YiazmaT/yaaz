@@ -18,11 +18,10 @@ export async function POST(req: NextRequest) {
         description: description || null,
         creator_id: auth.user.id,
         permissions: {
-          create: (permissions ?? []).map((p: {module: string; action: string; allowed: boolean}) => ({
+          create: (permissions ?? []).map((p: {module: string; action: string}) => ({
             tenant_id: auth.tenant_id,
             module: p.module,
             action: p.action,
-            allowed: p.allowed,
           })),
         },
       },
@@ -32,7 +31,7 @@ export async function POST(req: NextRequest) {
         description: true,
         active: true,
         creation_date: true,
-        permissions: {select: {module: true, action: true, allowed: true}},
+        permissions: {select: {module: true, action: true}},
       },
     });
 

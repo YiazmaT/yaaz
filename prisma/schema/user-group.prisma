@@ -25,7 +25,6 @@ model UserGroupPermission {
   user_group_id String  @db.Uuid
   module        String
   action        String
-  allowed       Boolean @default(false)
 
   tenant     Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   user_group UserGroup @relation(fields: [user_group_id], references: [id], onDelete: Cascade)
