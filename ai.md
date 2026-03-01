@@ -2,6 +2,18 @@ This is a generic ERP for small businesses, currently under construction.
 
 FOLLOW THESE RULES STRICTLY! ADD THEM TO YOUR CONTEXT AND NEVER COMPACT.
 
+# Yaaz — Internal Admin Subsystem
+
+Yaaz is a fully isolated internal admin subsystem for the product owner to manage tenants. It lives entirely under `/yaaz/*` routes and shares the same Next.js app and providers as the intranet, but is strictly separated at every level:
+
+- **Routes:** all pages live at `app/(intranet)/yaaz/`. Public pages under `(public)/`, authenticated pages under `(authenticated)/`;
+- **Auth:** separate JWT secret (`YAAZ_JWT_SECRET`), separate httpOnly cookie (`yaaz_token`), separate DB table (`yaaz_user` — no `tenant_id`);
+- **User context:** `yaazUser` lives inside `TenantContext` (use `useYaazUser()`). Auth actions (`yaazLogin`, `yaazLogout`) live inside `AuthContext` (use `useYaazAuth()`);
+- **Layout:** reuses `AuthenticatedLayout` — the layout detects yaaz mode via `!!yaazUser && pathname.startsWith("/yaaz")` and automatically switches menu items, logout function, and home route;
+- **Theme:** always uses default env colors (`NEXT_PUBLIC_PRIMARY_COLOR`, `NEXT_PUBLIC_SECONDARY_COLOR`) — `TenantThemeProvider` forces defaults for all `/yaaz/*` paths;
+- **API routes:** live at `app/api/yaaz/`. All endpoints use `withYaazAuth` from `src/lib/yaaz-route-handler.ts` instead of `withAuth`. No `tenant_id` in context — logging is pino-only;
+- **Database rule exception:** `yaaz_user` is the only table without `tenant_id` — it is a global admin table. All other tables still require `tenant_id`;
+
 # General rules to follow:
 
 - NO AI COMMENTS IN THE MIDDLE OF THE CODE;
@@ -77,9 +89,62 @@ FOLLOW THESE RULES STRICTLY! ADD THEM TO YOUR CONTEXT AND NEVER COMPACT.
 
 # Useful components
 
-- When displaying an image, use the ImagePreview component;
-- When you need a modal or dialog, use GenericModal from /src/components/generic-modal. Never use MUI Dialog or Modal directly;
-- When you need a side drawer (forms, etc.), use GenericDrawer from /src/components/generic-drawer. Never use MUI Drawer directly;
+Always check `/src/components` before reaching for a raw MUI component or building from scratch. Use custom components whenever something close exists. Only fall back to raw MUI primitives when nothing in `/src/components` fits.
+
+## Layout & Screen
+
+- **ScreenCard** (`/src/components/screen-card`) — standard page wrapper card with title and optional "Include" action button. Use this as the outer shell for every authenticated desktop screen that lists data;
+
+## Data Display
+
+- **DataTable** (`/src/components/data-table`) — paginated desktop table with built-in search, filters, and `useApiQuery` integration. Props: `apiRoute`, `columns`, `filters` (object of extra query params), `defaultRowsPerPage`. Invalidate its cache with `queryClient.invalidateQueries({queryKey: [apiRoute]})`;
+- **MobileList** (`/src/components/mobile-list`) — mobile equivalent of DataTable. Same API shape: `apiRoute`, `columns`, `filters`. Use alongside DataTable so every list screen is mobile-friendly;
+- **CoreTable** (`/src/components/core-table`) — the base table that DataTable uses internally. Only use this directly when you need full manual control over data fetching;
+- **ImagePreview** (`/src/components/image-preview`) — displays an image with a tooltip enlargement on hover; shows a grey placeholder icon if `url` is null. Props: `url`, `width`, `height`, `alt`, `borderRadius`. Always use this instead of a raw `<img>` or MUI `Box` component when displaying entity images;
+- **DataColumns** (`/src/components/data-columns`) — exports `ImagePreviewColumn`, `ActionsColumn`, and `TableButton` helpers for building table column definitions. Use these to keep column configs consistent;
+- **LinkifyText** (`/src/components/linkify-text`) — Typography that auto-converts URLs in a string to clickable links. Use whenever displaying user-entered text that may contain URLs;
+
+## Modals & Drawers
+
+- **GenericModal** (`/src/components/generic-modal`) — standard modal/dialog with title and close button. **Never use MUI Dialog or Modal directly**;
+- **GenericDrawer** (`/src/components/generic-drawer`) — slide-in side drawer with title and close button, used for create/edit/details forms. **Never use MUI Drawer directly**;
+
+## Search & Filters
+
+- **SearchInput** (`/src/components/search-input`) — debounced search field with gradient styling. Used internally by DataTable/MobileList but can also be used standalone;
+- **FilterDrawer** (`/src/components/filter-drawer`) — collapsible drawer for filter fields with active-filter indicators and apply/clear actions. Use this whenever a screen needs filters beyond the basic search;
+
+## Loaders
+
+- **TopLoader** (`/src/components/top-loader`) — thin progress bar shown during route transitions. Already mounted globally — do not add it again;
+- **Loader** (`/src/components/loader`) — full-screen circular progress with tenant logo overlay. Use for full-page loading states;
+- **SmallLoader** (`/src/components/small-loader`) — compact inline circular progress. Use for local/inline loading states;
+
+## Selectors (complex multi-select domain components)
+
+- **IngredientsSelector** (`/src/components/selectors/ingredients-selector`) — multi-select for adding ingredients with quantity and unit cost inputs. Use in any form that composes ingredients;
+- **PackagesSelector** (`/src/components/selectors/packages-selector`) — same pattern for packages, with type filtering;
+- **ProductsSelector** (`/src/components/selectors/products-selector`) — same pattern for products, with price-change alerts and duplicate increment support;
+
+## Form Fields
+
+All form field components have two exports: a plain version (accepts `value`/`onChange`, usable anywhere) and a `Form*` version (integrates with `FormContextProvider` + react-hook-form `Controller`, adds a MUI Grid wrapper). Always use the `Form*` version inside forms.
+
+All `Form*` components share these props: `fieldName`, `control`, `errors`, `disabled`, `grid` (bool, default true), `size` (Grid columns, default 12), `additionalOnChange`.
+
+- **FormTextInput** — standard text field; supports `isPassword` (toggle visibility) and `multiline`;
+- **FormIntegerInput** — integer number field with Brazilian locale formatting and spinner buttons;
+- **FormDecimalInput** — decimal number field with configurable `step`; supports `errorAsIcon` for compact error display;
+- **FormCurrencyInput** — currency field pre-formatted in BRL (R$); supports `errorAsIcon`;
+- **FormMaskedTextInput** — text field with a custom mask (use `9` as digit placeholder);
+- **FormDropdown** — autocomplete/select with static options; supports custom `renderOption`;
+- **FormAsyncDropdown** — autocomplete with server-side search, debouncing, and infinite scroll pagination; props: `apiRoute`, `uniqueKey`, `buildLabel`, `renderOption`;
+- **FormDatePicker** — HTML5 date input with optional `min`/`max` constraints;
+- **FormDateTimePicker** — HTML5 datetime-local input with optional `min`/`max` constraints;
+- **FormImageInput** — image upload with preview and size validation (default 5 MB);
+- **FormColorPicker** — hex color picker with a visual swatch that opens a popover palette and a manual text input; stores value as `#RRGGBB`;
+- **FormRadioGroup** — radio button group from a static options array;
+- **CheckBox** — checkbox (no `Form*` variant; use `value`/`onChange` directly);
 
 # Forms
 
