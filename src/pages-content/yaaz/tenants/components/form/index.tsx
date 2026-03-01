@@ -2,6 +2,7 @@
 import {Button, Grid} from "@mui/material";
 import {FormImageInput} from "@/src/components/form-fields/image-input";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
+import {FormColorPicker} from "@/src/components/form-fields/color-picker";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -22,8 +23,8 @@ export function Form(props: FormProps) {
           <Grid container spacing={2}>
             <FormImageInput fieldName="logo" label="tenants.fields.logo" imageSize={imageSize} />
             <FormTextInput fieldName="name" label="tenants.fields.name" />
-            <FormTextInput fieldName="primary_color" label="tenants.fields.primaryColor" />
-            <FormTextInput fieldName="secondary_color" label="tenants.fields.secondaryColor" />
+            <FormColorPicker fieldName="primary_color" label="tenants.fields.primaryColor" />
+            <FormColorPicker fieldName="secondary_color" label="tenants.fields.secondaryColor" />
             <FormTextInput fieldName="time_zone" label="tenants.fields.timeZone" />
             <FormTextInput fieldName="currency_type" label="tenants.fields.currencyType" />
             {tenants.formType !== "details" && (
