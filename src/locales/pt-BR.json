@@ -501,7 +501,10 @@
       "secondaryColor": "Cor Secundária",
       "timeZone": "Fuso Horário",
       "currencyType": "Moeda",
-      "creationDate": "Data de Criação"
+      "creationDate": "Data de Criação",
+      "ownerName": "Nome do Responsável",
+      "ownerEmail": "E-mail do Responsável",
+      "owner": "Responsável"
     }
   },
   "clients": {

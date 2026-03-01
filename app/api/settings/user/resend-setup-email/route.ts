@@ -50,13 +50,15 @@ export async function POST(req: NextRequest) {
 
     const setupUrl = `${process.env.NEXT_PUBLIC_APP_URL}/setup-password?userId=${user.id}&tenantId=${user.tenant_id}`;
 
-    await sendPasswordSetupEmail({
-      to: user.login,
-      userName: user.name,
-      tenantName: user.tenant.name,
-      tenantLogo: user.tenant.logo,
-      setupUrl,
-    });
+    try {
+      await sendPasswordSetupEmail({
+        to: user.login,
+        userName: user.name,
+        tenantName: user.tenant.name,
+        tenantLogo: user.tenant.logo,
+        setupUrl,
+      });
+    } catch (_) {}
 
     return success("update", {id});
   });

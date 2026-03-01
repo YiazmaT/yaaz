@@ -8,4 +8,5 @@ export interface DesktopViewProps {
 export interface TenantsTableConfigProps {
   onView: (row: Tenant) => void;
   onEdit: (row: Tenant) => void;
+  onResendEmail: (row: Tenant) => void;
 }

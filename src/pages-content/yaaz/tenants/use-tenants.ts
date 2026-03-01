@@ -33,6 +33,7 @@ export function useTenants() {
   const {generateConfig} = useTenantsTableConfig({
     onView: (row) => handleView(row),
     onEdit: (row) => handleEdit(row),
+    onResendEmail: (row) => handleResendEmail(row),
   });
 
   function refreshTable() {
@@ -63,6 +64,8 @@ export function useTenants() {
         },
       });
     } else {
+      formData.append("owner_name", data.owner_name);
+      formData.append("owner_email", data.owner_email);
       await api.fetch("POST", "/api/yaaz/tenant/create", {
         formData,
         onSuccess: () => {
@@ -73,6 +76,16 @@ export function useTenants() {
         },
       });
     }
+  }
+
+  async function handleResendEmail(row: Tenant) {
+    await api.fetch("POST", "/api/yaaz/tenant/resend-owner-email", {
+      body: {tenantId: row.id},
+      onSuccess: () => {
+        toast.successToast("users.resendEmailSuccess");
+        refreshTable();
+      },
+    });
   }
 
   function openDrawer(type: string) {

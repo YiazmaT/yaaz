@@ -9,6 +9,7 @@ model Tenant {
   currency_type        String   @default("R$")
   max_file_size_in_mbs Int      @default(10)
   max_user_amount      Int      @default(3)
+  owner_user_id        String?  @db.Uuid
 
   instagram_posts          InstagramPost[]
   users                    User[]
