@@ -54,7 +54,7 @@ export function useUsersTableConfig(props: UsersTableConfigProps) {
         headerKey: "users.fields.group",
         width: "15%",
         render: (row) => {
-          if (row.owner || row.admin) return "—";
+          if (row.owner || row.admin) return "-";
           return row.user_group_name ? (
             <Chip label={row.user_group_name} size="small" variant="outlined" />
           ) : (
