@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       where: {id: user.id},
     });
 
-    const permissions = user.user_group?.permissions ?? [];
+    const permissions = (user.user_group?.permissions ?? []).map((p) => ({key: p.module, action: p.action}));
 
     const response = NextResponse.json(
       {

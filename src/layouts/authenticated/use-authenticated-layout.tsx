@@ -5,7 +5,7 @@ import {usePathname} from "next/navigation";
 import {useNavigate} from "@/src/hooks/use-navigate";
 import {useAuth, useYaazAuth} from "@/src/contexts/auth-context";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {useTenant, useYaazUser} from "@/src/contexts/tenant-context";
+import {useTenant, usePermissions, useYaazUser} from "@/src/contexts/tenant-context";
 import {MenuItem} from "./types";
 import {intranetMenuItems, yaazMenuItems} from "./menus";
 
@@ -18,7 +18,8 @@ export function useAuthenticatedLayout() {
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const {logout: intranetLogout} = useAuth();
   const {logout: yaazLogout} = useYaazAuth();
-  const {tenant} = useTenant();
+  const {tenant, user} = useTenant();
+  const {permissions} = usePermissions();
   const {yaazUser} = useYaazUser();
   const {navigate} = useNavigate();
   const {translate} = useTranslate();
@@ -26,8 +27,26 @@ export function useAuthenticatedLayout() {
   const pathname = usePathname();
 
   const isYaaz = !!yaazUser && pathname.startsWith("/yaaz");
+  const isAdmin = user?.admin || user?.owner;
 
-  const menuItems = isYaaz ? yaazMenuItems : intranetMenuItems;
+  function filterMenuItems(items: MenuItem[]): MenuItem[] {
+    if (isAdmin) return items;
+    return items.reduce<MenuItem[]>((acc, item) => {
+      if (item.children) {
+        const visibleChildren = item.children.filter((child) => {
+          if (!child.permission) return false;
+          return permissions.some((p) => p.key === child.permission!.key && p.action === "read");
+        });
+        if (visibleChildren.length > 0) acc.push({...item, children: visibleChildren});
+      } else {
+        if (!item.permission) return acc;
+        if (permissions.some((p) => p.key === item.permission!.key && p.action === "read")) acc.push(item);
+      }
+      return acc;
+    }, []);
+  }
+
+  const menuItems = isYaaz ? yaazMenuItems : filterMenuItems(intranetMenuItems);
   const tenantLogo = isYaaz ? DEFAULT_LOGO : tenant?.logo || DEFAULT_LOGO;
   const tenantName = isYaaz ? DEFAULT_NAME : tenant?.name || DEFAULT_NAME;
   const homeRoute = isYaaz ? "/yaaz/tenants" : "/home";
