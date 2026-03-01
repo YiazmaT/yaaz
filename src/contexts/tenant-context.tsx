@@ -165,7 +165,9 @@ export function TenantContextProvider(props: TenantContextProviderProps) {
   }
 
   return (
-    <TenantContext.Provider value={{tenant, user, yaazUser, permissions, setTenant, setUser, setPermissions, clearTenant, setYaazUser, clearYaazUser}}>
+    <TenantContext.Provider
+      value={{tenant, user, yaazUser, permissions, setTenant, setUser, setPermissions, clearTenant, setYaazUser, clearYaazUser}}
+    >
       {props.children}
     </TenantContext.Provider>
   );
@@ -179,10 +181,10 @@ export function useTenant() {
 export function usePermissions() {
   const {permissions, user} = useContext(TenantContext);
 
-  function can(module: string, action: string): boolean {
+  function can(key: string, action: string): boolean {
     if (!user) return false;
     if (user.admin || user.owner) return true;
-    return permissions.some((p) => p.module === module && p.action === action);
+    return permissions.some((p) => p.key === key && p.action === action);
   }
 
   return {permissions, can};

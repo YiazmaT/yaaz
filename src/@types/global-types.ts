@@ -1,6 +1,6 @@
-import {Control, FieldErrors} from 'react-hook-form';
+import {Control, FieldErrors} from "react-hook-form";
 
-export type IFormScreenTypes = 'create' | 'edit' | 'details';
+export type IFormScreenTypes = "create" | "edit" | "details";
 
 export interface FormScreenProps {
   type: IFormScreenTypes;
@@ -25,7 +25,7 @@ export interface JwtContent {
 }
 
 export interface UserPermission {
-  module: string;
+  key: string;
   action: string;
 }
 
