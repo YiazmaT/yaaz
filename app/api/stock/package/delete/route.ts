@@ -7,9 +7,11 @@ import {DeletePackageDto} from "@/src/pages-content/stock/packages/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/package/delete";
+const KEY = "stock.packages";
+const ACTION = "delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.PACKAGE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id}: DeletePackageDto = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

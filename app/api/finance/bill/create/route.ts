@@ -7,9 +7,11 @@ import {NextRequest} from "next/server";
 import {parseDateUTC} from "@/src/utils/parse-date";
 
 const ROUTE = "/api/finance/bill/create";
+const KEY = "finance.bills";
+const ACTION = "create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.BILL, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BILL, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {description, categoryId, amount, installmentCount, dueDate} = await req.json();
 
     if (!description || !amount || !dueDate) {

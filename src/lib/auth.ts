@@ -27,7 +27,7 @@ export async function authenticateRequest(module: LogModule, route?: string) {
     const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
     const user = await prismaUnscoped.user.findUnique({
-      where: {id: payload.id},
+      where: {id: payload.id, tenant_id: payload.tenant_id},
       include: {
         user_group: {
           select: {permissions: {select: {module: true, action: true}}},
@@ -39,7 +39,7 @@ export async function authenticateRequest(module: LogModule, route?: string) {
       return {error: response, token};
     }
 
-    const permissions = user.user_group?.permissions ?? [];
+    const permissions = (user.user_group?.permissions ?? []).map((p) => ({key: p.module, action: p.action}));
 
     return {user, tenant_id: user.tenant_id, tenant: payload.tenant, permissions};
   } catch (error) {

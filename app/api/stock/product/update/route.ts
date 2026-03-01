@@ -6,9 +6,11 @@ import {CompositionItemDto, PackageCompositionItemDto} from "@/src/pages-content
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/product/update";
+const KEY = "stock.products";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id, name, price, description, min_stock, imageUrl, composition: compositionRaw, packages: packagesRaw, unitOfMeasureId, displayLandingPage} = await req.json();
 
     if (!id || !name || isNaN(price) || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);

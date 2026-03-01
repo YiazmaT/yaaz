@@ -5,9 +5,11 @@ import {DeleteBankAccountDto} from "@/src/pages-content/finance/bank-accounts/dt
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/finance/bank-account/delete";
+const KEY = "finance.banks";
+const ACTION = "delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.BANK_ACCOUNT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BANK_ACCOUNT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id}: DeleteBankAccountDto = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

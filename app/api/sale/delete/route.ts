@@ -5,9 +5,11 @@ import {DeleteSaleDto} from "@/src/pages-content/sales/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/sale/delete";
+const KEY = "sales";
+const ACTION = "delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.SALE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id}: DeleteSaleDto = await req.json();
 
     if (!id) {

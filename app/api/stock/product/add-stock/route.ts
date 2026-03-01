@@ -6,9 +6,11 @@ import {AddProductStockDto, IngredientStockWarning, PackageStockWarning} from "@
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/product/add-stock";
+const KEY = "stock.products";
+const ACTION = "edit";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {items, deductIngredients, deductPackages, force}: AddProductStockDto = await req.json();
 
     if (!items || !Array.isArray(items) || items.length === 0) {

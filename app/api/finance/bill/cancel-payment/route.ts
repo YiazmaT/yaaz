@@ -7,9 +7,11 @@ import {NextRequest} from "next/server";
 import {BillStatus} from "@prisma/client";
 
 const ROUTE = "/api/finance/bill/cancel-payment";
+const KEY = "finance.bills";
+const ACTION = "edit";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.BILL, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BILL, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {billId} = await req.json();
 
     if (!billId) return error("api.errors.missingRequiredFields", 400);

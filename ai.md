@@ -68,7 +68,7 @@ Yaaz is a fully isolated internal admin subsystem for the product owner to manag
 - Inside src/pages-content/..., all endpoint DTOs must be created inside the dto.ts file. If it does not exist, create it;
 - Numeric fields must be cast before returning to the frontend — do this at prisma.extensions.ts;
 - All authenticated endpoints must use `withAuth` from `src/lib/route-handler.ts`;
-- `withAuth(module, route, handler)` handles auth, try/catch, and logCritical automatically;
+- `withAuth(module, route, permission, handler)` handles auth, permission check, try/catch, and logCritical automatically;
 - The handler receives a destructured context object `{auth, success, error, log}` — only destructure what you need:
   - `auth` has `user`, `tenant_id`, `tenant` (already validated);
   - `success(action, data?, logContent?)` — logs and returns `{data}` with status 200. If `logContent` is provided, it is logged instead of `data` (useful for update routes that log `{before, after}`);
@@ -82,6 +82,28 @@ Yaaz is a fully isolated internal admin subsystem for the product owner to manag
   - PDF routes: keep `log()` + `return new NextResponse(html, {headers: {"Content-Type": "text/html; charset=utf-8"}})`;
 - Create a `const ROUTE = "/api/ingredient/paginated-list";` constant with the route of the endpoint;
 - Whenever possible, bring all data at once and formatted through the Postgres query — avoid manipulating data in JavaScript. If the ORM cannot return the data directly, use raw query strings;
+
+# Permissions
+
+- Users belong to a **UserGroup** that holds a set of per-module permissions (`user_group_permission` table — row presence = allowed, row absence = denied);
+- **Admins** and **owners** bypass all permission checks;
+- Users with no group are blocked from all protected routes;
+- Permissions are read from the DB on every request inside `authenticateRequest` and injected into `auth.permissions`;
+- Every protected route declares `KEY` and `ACTION` constants alongside `ROUTE`, and passes them as the 3rd argument to `withAuth`. The 3rd argument has three forms:
+  - `{key: KEY, action: ACTION}` — module permission check; admins/owners bypass automatically:
+    ```ts
+    const KEY = "sales";
+    const ACTION = "create"; // "read" | "create" | "edit" | "delete"
+    return withAuth(LogModule.SALE, ROUTE, {key: KEY, action: ACTION}, async ({auth, ...}) => {
+    ```
+  - `"admin"` — admin/owner exclusive (all settings routes: user, user-group):
+    ```ts
+    return withAuth(LogModule.USER, ROUTE, "admin", async ({auth, ...}) => {
+    ```
+  - `null` — any authenticated user, no role check (logout, upload, change-password);
+- Unauthorized access is logged and returns 403 `"Você não tem permissão para acessar essa rota!"`;
+- **Module keys** are defined directly in `src/layouts/authenticated/menus.tsx` — add `permission: {key, actions}` to a menu item and it is automatically included in `MODULE_DEFINITIONS` (`src/lib/permissions.ts`) and the user-group form. No other file needs changing;
+- **Client-side:** use `can(key, action)` from `usePermissions()` (`src/contexts/tenant-context.tsx`) to conditionally render UI. Permissions are cached in a plain cookie (`user_permissions`) for UX only — never treat this as a security boundary;
 
 # Component structure
 

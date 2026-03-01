@@ -1,5 +1,6 @@
 import {authenticateRequest} from "@/src/lib/auth";
 import {LogModule, LogSource, logCreate, logUpdate, logDelete, logGet, logImportant, logError, logCritical} from "@/src/lib/logger";
+import {serverTranslate} from "@/src/lib/server-translate";
 import {Tenant} from "@/src/pages-content/yaaz/tenants/types";
 import {UserPermission} from "@/src/@types/global-types";
 import {NextResponse} from "next/server";
@@ -64,12 +65,32 @@ export interface RouteContext {
   log: LogFn;
 }
 
-export async function withAuth(module: LogModule, route: string, handler: (ctx: RouteContext) => Promise<NextResponse>): Promise<NextResponse> {
+export async function withAuth(
+  module: LogModule,
+  route: string,
+  permission: {key: string; action: string} | "admin" | null,
+  handler: (ctx: RouteContext) => Promise<NextResponse>,
+): Promise<NextResponse> {
   const auth = await authenticateRequest(module, route);
   if (auth.error) return auth.error;
 
   const log = createRouteLogger(module, route, auth);
   const error = createErrorFn(module, route, auth);
+
+  const isAdmin = auth.user?.admin || auth.user?.owner;
+
+  if (permission === "admin") {
+    if (!isAdmin) {
+      logError({module, source: LogSource.API, route, userId: auth.user?.id, tenantId: auth.tenant_id, message: "Acesso negado: admin/owner obrigatório"});
+      return NextResponse.json({error: serverTranslate("api.errors.forbidden")}, {status: 403});
+    }
+  } else if (permission !== null && !isAdmin) {
+    const hasPermission = (auth.permissions ?? []).some((p) => p.key === permission.key && p.action === permission.action);
+    if (!hasPermission) {
+      logError({module, source: LogSource.API, route, userId: auth.user?.id, tenantId: auth.tenant_id, message: `Acesso negado: ${permission.key}:${permission.action}`});
+      return NextResponse.json({error: serverTranslate("api.errors.forbidden")}, {status: 403});
+    }
+  }
 
   const success: SuccessFn = (action, data, logContent) => {
     log(action, {content: logContent !== undefined ? logContent : data});

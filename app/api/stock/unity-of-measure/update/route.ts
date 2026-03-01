@@ -4,9 +4,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/unity-of-measure/update";
+const KEY = "stock.unity_of_measure";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.UNITY_OF_MEASURE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.UNITY_OF_MEASURE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id, unity} = await req.json();
 
     if (!id || !unity) return error("api.errors.missingRequiredFields", 400);

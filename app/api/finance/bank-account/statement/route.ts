@@ -4,9 +4,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/finance/bank-account/statement";
+const KEY = "finance.banks";
+const ACTION = "read";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.BANK_ACCOUNT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BANK_ACCOUNT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {searchParams} = new URL(req.url);
     const bankAccountId = searchParams.get("bankAccountId");
     const page = parseInt(searchParams.get("page") || "1");

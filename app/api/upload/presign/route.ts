@@ -7,7 +7,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/upload/presign";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.UPLOAD, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.UPLOAD, ROUTE, null, async ({auth, success, error}) => {
     const {folder, fileName, fileType, fileSize} = await req.json();
 
     if (!folder || !fileName || !fileSize) {

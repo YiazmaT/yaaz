@@ -5,9 +5,11 @@ import {DeleteCategoryDto} from "@/src/pages-content/finance/categories/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/finance/category/delete";
+const KEY = "finance.categories";
+const ACTION = "delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.CATEGORIES, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.CATEGORIES, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id}: DeleteCategoryDto = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

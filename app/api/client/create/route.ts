@@ -4,9 +4,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/client/create";
+const KEY = "clients";
+const ACTION = "create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.CLIENT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.CLIENT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {name, description, email, phone, cpf, cnpj, isCompany, imageUrl, address} = await req.json();
 
     if (!name) return error("api.errors.missingRequiredFields", 400);

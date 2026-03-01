@@ -6,9 +6,11 @@ import {IngredientStockChangeReason} from "@/src/pages-content/stock/ingredients
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/ingredient/stock-change";
+const KEY = "stock.ingredients";
+const ACTION = "edit";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.INGREDIENT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.INGREDIENT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {ingredientId, newStock, reason, comment}: StockChangeDto = await req.json();
 
     if (!ingredientId || newStock === undefined || newStock === null || !reason) {

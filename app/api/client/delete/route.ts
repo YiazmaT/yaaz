@@ -6,9 +6,11 @@ import {DeleteClientDto} from "@/src/pages-content/client/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/client/delete";
+const KEY = "clients";
+const ACTION = "delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.CLIENT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.CLIENT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id}: DeleteClientDto = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

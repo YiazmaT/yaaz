@@ -5,9 +5,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/finance/nfe/register-file";
+const KEY = "finance.nfe";
+const ACTION = "edit";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.NFE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.NFE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {nfeId, url} = await req.json();
 
     if (!nfeId || !url) {

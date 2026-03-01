@@ -6,9 +6,11 @@ import {DeleteProductFileDto} from "@/src/pages-content/stock/products/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/product/delete-file";
+const KEY = "stock.products";
+const ACTION = "delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const body: DeleteProductFileDto = await req.json();
 
     if (!body.productId || !body.fileUrl) return error("api.errors.missingRequiredFields", 400);

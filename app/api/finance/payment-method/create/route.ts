@@ -5,9 +5,11 @@ import {NextRequest} from "next/server";
 import {CreatePaymentMethodDto} from "@/src/pages-content/finance/payment-method/dto";
 
 const ROUTE = "/api/finance/payment-method/create";
+const KEY = "finance.payment_method";
+const ACTION = "create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PAYMENT_METHOD, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.PAYMENT_METHOD, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {name, bank_account_id}: CreatePaymentMethodDto = await req.json();
 
     if (!name) return error("api.errors.missingRequiredFields", 400);

@@ -8,7 +8,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/settings/user/change-password";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.USER, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.USER, ROUTE, null, async ({auth, success, error}) => {
     const {currentPassword, newPassword, confirmPassword} = await req.json();
 
     if (!currentPassword || !newPassword || !confirmPassword) {

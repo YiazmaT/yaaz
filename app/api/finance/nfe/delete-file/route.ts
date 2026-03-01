@@ -5,9 +5,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/finance/nfe/delete-file";
+const KEY = "finance.nfe";
+const ACTION = "delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.NFE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.NFE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {nfeId} = await req.json();
 
     if (!nfeId) return error("api.errors.missingRequiredFields", 400);

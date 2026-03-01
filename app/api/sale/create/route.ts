@@ -9,9 +9,11 @@ import {CreateSaleDto} from "@/src/pages-content/sales/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/sale/create";
+const KEY = "sales";
+const ACTION = "create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.SALE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const body: CreateSaleDto = await req.json();
     const {payment_method_id, total, items, packages, force, is_quote, client_id, discount_percent, discount_value, discount_computed} = body;
 

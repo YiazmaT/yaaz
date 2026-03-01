@@ -8,9 +8,11 @@ import {UpdateSaleDto, ProductStockWarning, PackageStockWarning, PriceChangeWarn
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/sale/update";
+const KEY = "sales";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.SALE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const body: UpdateSaleDto = await req.json();
     const {id, payment_method_id, total, items, packages, force, updatePrices, client_id, discount_percent, discount_value, discount_computed} = body;
 

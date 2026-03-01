@@ -4,9 +4,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/product/toggle-active";
+const KEY = "stock.products";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id} = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

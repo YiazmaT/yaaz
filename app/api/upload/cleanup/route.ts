@@ -6,7 +6,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/upload/cleanup";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.UPLOAD, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.UPLOAD, ROUTE, null, async ({auth, success, error}) => {
     const {url} = await req.json();
 
     const key = url ? extractR2KeyFromUrl(url) : null;

@@ -6,7 +6,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/settings/user/paginated-list";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.USER, ROUTE, async ({auth, success}) => {
+  return withAuth(LogModule.USER, ROUTE, "admin", async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");

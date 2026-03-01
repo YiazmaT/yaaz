@@ -7,9 +7,11 @@ import {NextRequest} from "next/server";
 import {NfeItemPayload} from "@/src/pages-content/finance/nfe/dto";
 
 const ROUTE = "/api/finance/nfe/create";
+const KEY = "finance.nfe";
+const ACTION = "create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.NFE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.NFE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {description, supplier, nfeNumber, date, items, createBill, addToStock, fileUrl} = await req.json();
 
     if (!description || !nfeNumber || !date || !items || !Array.isArray(items) || items.length === 0) {

@@ -6,9 +6,11 @@ import {NextRequest} from "next/server";
 import {NfeItemPayload, NfeUpdatePayload} from "@/src/pages-content/finance/nfe/dto";
 
 const ROUTE = "/api/finance/nfe/update";
+const KEY = "finance.nfe";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.NFE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.NFE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id, description, supplier, nfeNumber, date, items}: NfeUpdatePayload = await req.json();
 
     if (!id || !description || !nfeNumber || !date || !items || !Array.isArray(items) || items.length === 0) {

@@ -8,7 +8,7 @@ const ROUTE = "/api/settings/user/resend-setup-email";
 const RATE_LIMIT_MS = 2 * 60 * 1000; // 2 minutes
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.USER, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.USER, ROUTE, "admin", async ({auth, success, error}) => {
     const {id} = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

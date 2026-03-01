@@ -7,9 +7,11 @@ import {NextRequest} from "next/server";
 import {parseDateUTC} from "@/src/utils/parse-date";
 
 const ROUTE = "/api/finance/bill/update";
+const KEY = "finance.bills";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.BILL, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BILL, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id, description, categoryId, amount, dueDate} = await req.json();
 
     if (!id || !description) return error("api.errors.missingRequiredFields", 400);

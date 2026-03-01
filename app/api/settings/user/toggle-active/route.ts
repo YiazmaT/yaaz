@@ -6,7 +6,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/settings/user/toggle-active";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.USER, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.USER, ROUTE, "admin", async ({auth, success, error}) => {
     const {id} = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

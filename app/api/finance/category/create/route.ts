@@ -4,9 +4,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/finance/category/create";
+const KEY = "finance.categories";
+const ACTION = "create";
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.BILL, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.BILL, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {name} = await req.json();
 
     if (!name) return error("api.errors.missingRequiredFields", 400);

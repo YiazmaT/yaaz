@@ -7,9 +7,11 @@ import {ConvertQuoteDto} from "@/src/pages-content/sales/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/sale/convert-quote";
+const KEY = "sales";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.SALE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const body: ConvertQuoteDto = await req.json();
     const {id, force} = body;
 

@@ -6,9 +6,11 @@ import {ClientAddressDto} from "@/src/pages-content/client/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/client/update";
+const KEY = "clients";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.CLIENT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.CLIENT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id, name, description, email, phone, cpf, cnpj, isCompany, imageUrl, address} = await req.json();
 
     if (!id || !name) return error("api.errors.missingRequiredFields", 400);

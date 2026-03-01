@@ -5,9 +5,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/product/paginated-list";
+const KEY = "stock.products";
+const ACTION = "read";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success}) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");

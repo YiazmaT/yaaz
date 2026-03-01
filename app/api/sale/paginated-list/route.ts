@@ -6,9 +6,11 @@ import {startOfDay, endOfDay, parseISO} from "date-fns";
 import {fromZonedTime} from "date-fns-tz";
 
 const ROUTE = "/api/sale/paginated-list";
+const KEY = "sales";
+const ACTION = "read";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.SALE, ROUTE, async ({auth, success}) => {
+  return withAuth(LogModule.SALE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success}) => {
     const {searchParams} = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");

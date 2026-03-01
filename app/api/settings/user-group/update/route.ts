@@ -6,7 +6,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/settings/user-group/update";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.USER_GROUP, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.USER_GROUP, ROUTE, "admin", async ({auth, success, error}) => {
     const {id, name, description, permissions} = await req.json();
 
     if (!id || !name) return error("api.errors.missingRequiredFields", 400);

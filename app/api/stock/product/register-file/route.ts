@@ -4,10 +4,12 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/product/register-file";
+const KEY = "stock.products";
+const ACTION = "edit";
 const MAX_FILES = 5;
 
 export async function POST(req: NextRequest) {
-  return withAuth(LogModule.PRODUCT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.PRODUCT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {productId, key} = await req.json();
 
     if (!productId || !key) {

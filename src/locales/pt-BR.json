@@ -78,7 +78,8 @@
       "uploadFailed": "Erro ao enviar o arquivo. Tente novamente.",
       "deleteFailed": "Erro ao excluir o arquivo. Tente novamente.",
       "notFound": "Registro não encontrado.",
-      "dataNotFound": "Nenhum dado encontrado."
+      "dataNotFound": "Nenhum dado encontrado.",
+      "forbidden": "Você não tem permissão para acessar essa rota!"
     }
   },
   "ingredients": {

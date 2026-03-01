@@ -5,9 +5,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/package/[id]/cost-history";
+const KEY = "stock.packages";
+const ACTION = "read";
 
 export async function GET(_: NextRequest, {params}: {params: Promise<{id: string}>}) {
-  return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success}) => {
+  return withAuth(LogModule.PACKAGE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success}) => {
     const {id} = await params;
 
     const costs = await prisma.packageCost.findMany({

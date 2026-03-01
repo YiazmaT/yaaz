@@ -6,7 +6,7 @@ import {NextRequest} from "next/server";
 const ROUTE = "/api/settings/user-group/get";
 
 export async function GET(req: NextRequest) {
-  return withAuth(LogModule.USER_GROUP, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.USER_GROUP, ROUTE, "admin", async ({auth, success, error}) => {
     const {searchParams} = new URL(req.url);
     const id = searchParams.get("id");
 

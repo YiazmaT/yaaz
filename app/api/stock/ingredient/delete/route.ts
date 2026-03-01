@@ -7,9 +7,11 @@ import {DeleteIngredientDto} from "@/src/pages-content/stock/ingredients/dto";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/ingredient/delete";
+const KEY = "stock.ingredients";
+const ACTION = "delete";
 
 export async function DELETE(req: NextRequest) {
-  return withAuth(LogModule.INGREDIENT, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.INGREDIENT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id}: DeleteIngredientDto = await req.json();
 
     if (!id) return error("api.errors.missingRequiredFields", 400);

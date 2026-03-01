@@ -6,9 +6,11 @@ import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/stock/package/update";
+const KEY = "stock.packages";
+const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
-  return withAuth(LogModule.PACKAGE, ROUTE, async ({auth, success, error}) => {
+  return withAuth(LogModule.PACKAGE, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
     const {id, name, description, type, min_stock, imageUrl, unitOfMeasureId} = await req.json();
 
     if (!id || !name || !type || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
