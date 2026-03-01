@@ -1,6 +1,7 @@
 "use client";
 import {Box, CircularProgress, useTheme} from "@mui/material";
-import {useTenant, useYaazUser} from "@/src/contexts/tenant-context";
+import {useTenant} from "@/src/contexts/tenant-context";
+import {usePathname} from "next/navigation";
 import {LoaderProps} from "./types";
 
 const DEFAULT_LOGO = "/assets/icon.png";
@@ -8,12 +9,12 @@ const DEFAULT_LOGO = "/assets/icon.png";
 export function Loader(props: LoaderProps) {
   const theme = useTheme();
   const {tenant} = useTenant();
-  const {yaazUser} = useYaazUser();
+  const pathname = usePathname();
   const primaryColor = theme.palette.primary.main;
   const secondaryColor = theme.palette.secondary.main;
   const size = props.size ?? 80;
   const iconSize = Math.round(size * 0.6);
-  const logo = yaazUser ? DEFAULT_LOGO : tenant?.logo || DEFAULT_LOGO;
+  const logo = pathname.startsWith("/yaaz") ? DEFAULT_LOGO : tenant?.logo || DEFAULT_LOGO;
 
   return (
     <Box
