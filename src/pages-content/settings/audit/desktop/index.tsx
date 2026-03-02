@@ -5,7 +5,6 @@ import {ScreenCard} from "@/src/components/screen-card";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {AuditLog} from "../types";
 import {AuditFiltersComponent} from "../components/filters";
-import {AuditDetailModal} from "../components/detail-modal";
 import {DesktopViewProps} from "./types";
 import {API_ROUTE} from "../use-audit";
 import {getActionLabel, getModuleLabel} from "../utils";
@@ -41,8 +40,6 @@ export function DesktopView(props: DesktopViewProps) {
           </Box>
         )}
       </Box>
-
-      <AuditDetailModal log={audit.selectedLog} onClose={audit.handleCloseDetail} />
     </>
   );
 }

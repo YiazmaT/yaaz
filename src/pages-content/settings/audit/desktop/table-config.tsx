@@ -1,15 +1,10 @@
-import {Box, IconButton, Tooltip, Typography} from "@mui/material";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import {Typography} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
-import {useTranslate} from "@/src/contexts/translation-context";
 import {formatDate} from "@/src/utils/format-date";
 import {UserInfo} from "@/src/components/user-info";
 import {AuditLog} from "../types";
-import {AuditTableConfigProps} from "./types";
 
-export function useAuditTableConfig(props: AuditTableConfigProps) {
-  const {translate} = useTranslate();
-
+export function useAuditTableConfig() {
   function generateConfig(): DataTableColumn<AuditLog>[] {
     return [
       {
@@ -36,27 +31,6 @@ export function useAuditTableConfig(props: AuditTableConfigProps) {
           <Typography variant="body2" sx={{fontFamily: "monospace", fontSize: "0.75rem", color: "text.secondary"}}>
             {row.route ?? "-"}
           </Typography>
-        ),
-      },
-      {
-        field: "actions",
-        headerKey: "global.actions.label",
-        width: "80px",
-        align: "center",
-        render: (row) => (
-          <Box sx={{display: "flex", justifyContent: "center"}}>
-            <Tooltip title={translate("global.actions.view")}>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  props.onView(row);
-                }}
-              >
-                <VisibilityOutlinedIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
         ),
       },
     ];

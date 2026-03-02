@@ -1,14 +1,12 @@
 "use client";
 import {ReactNode} from "react";
-import {Box, CardContent, IconButton, Tooltip, Typography} from "@mui/material";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import {Box, CardContent, Typography} from "@mui/material";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {UserInfo} from "@/src/components/user-info";
 import {AuditLog} from "../types";
 import {AuditFiltersComponent} from "../components/filters";
-import {AuditDetailModal} from "../components/detail-modal";
 import {MobileViewProps} from "./types";
 import {API_ROUTE} from "../use-audit";
 import {getActionLabel, getModuleLabel} from "../utils";
@@ -18,9 +16,10 @@ export function MobileView(props: MobileViewProps) {
   const {translate} = useTranslate();
 
   const filters = audit.appliedFilters;
-  const title = filters?.module && filters?.action_type
-    ? `${translate("audit.title")} (${translate(getModuleLabel(filters.module))} | ${translate(getActionLabel(filters.module, filters.action_type))})`
-    : translate("audit.title");
+  const title =
+    filters?.module && filters?.action_type
+      ? `${translate("audit.title")} (${translate(getModuleLabel(filters.module))} | ${translate(getActionLabel(filters.module, filters.action_type))})`
+      : translate("audit.title");
 
   function renderRow(item: AuditLog, _actions: ReactNode) {
     return (
@@ -36,20 +35,6 @@ export function MobileView(props: MobileViewProps) {
           <Typography variant="caption" color="text.secondary" sx={{fontFamily: "monospace", fontSize: "0.7rem", wordBreak: "break-all"}}>
             {item.route ?? "-"}
           </Typography>
-        </Box>
-
-        <Box sx={{...flexGenerator("r.center.flex-end"), marginTop: 1, paddingTop: 1, borderTop: "1px solid", borderColor: "divider"}}>
-          <Tooltip title={translate("global.actions.view")}>
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                audit.handleViewDetail(item);
-              }}
-            >
-              <VisibilityOutlinedIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
         </Box>
       </CardContent>
     );
@@ -73,8 +58,6 @@ export function MobileView(props: MobileViewProps) {
           />
         </Box>
       )}
-
-      <AuditDetailModal log={audit.selectedLog} onClose={audit.handleCloseDetail} />
     </Box>
   );
 }
