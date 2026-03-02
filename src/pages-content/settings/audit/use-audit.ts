@@ -10,9 +10,7 @@ export function useAudit() {
 
   const showResults = !!(appliedFilters?.module && appliedFilters?.action_type);
 
-  const {generateConfig} = useAuditTableConfig({
-    onView: (row) => setSelectedLog(row),
-  });
+  const {generateConfig} = useAuditTableConfig();
 
   function handleApply(filters: AuditFilters) {
     setAppliedFilters(filters);
