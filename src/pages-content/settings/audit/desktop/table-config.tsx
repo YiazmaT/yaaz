@@ -5,8 +5,8 @@ import {UserInfo} from "@/src/components/user-info";
 import {AuditLog} from "../types";
 
 export function useAuditTableConfig() {
-  function generateConfig(): DataTableColumn<AuditLog>[] {
-    return [
+  function generateConfig(columnsFactory?: () => DataTableColumn<AuditLog>[]): DataTableColumn<AuditLog>[] {
+    const baseColumns: DataTableColumn<AuditLog>[] = [
       {
         field: "create_date",
         headerKey: "audit.fields.date",
@@ -34,6 +34,10 @@ export function useAuditTableConfig() {
         ),
       },
     ];
+
+    const extraColumns = columnsFactory?.() ?? [];
+
+    return [...baseColumns, ...extraColumns];
   }
 
   return {generateConfig};

@@ -21,6 +21,8 @@ export function MobileView(props: MobileViewProps) {
       ? `${translate("audit.title")} (${translate(getModuleLabel(filters.module))} | ${translate(getActionLabel(filters.module, filters.action_type))})`
       : translate("audit.title");
 
+  const MobileContent = audit.MobileContent;
+
   function renderRow(item: AuditLog, _actions: ReactNode) {
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
@@ -32,10 +34,12 @@ export function MobileView(props: MobileViewProps) {
             </Typography>
             <Typography variant="body2">{translate(getModuleLabel(item.module))}</Typography>
           </Box>
-          <Typography variant="caption" color="text.secondary" sx={{fontFamily: "monospace", fontSize: "0.7rem", wordBreak: "break-all"}}>
-            {item.route ?? "-"}
-          </Typography>
         </Box>
+        {MobileContent && (
+          <Box sx={{mt: 1.5, pt: 1.5, borderTop: "1px solid", borderColor: "divider"}}>
+            <MobileContent content={item.content} />
+          </Box>
+        )}
       </CardContent>
     );
   }

@@ -1,3 +1,5 @@
+import type {ComponentType} from "react";
+import type {DataTableColumn} from "@/src/components/data-table/types";
 import {User} from "../users/types";
 
 export interface AuditLog {
@@ -33,6 +35,8 @@ export interface AuditActionOption {
   action: string;
   label: string;
   routes: string[];
+  columnsFactory?: () => DataTableColumn<AuditLog>[];
+  MobileContent?: ComponentType<{content: any}>;
 }
 
 export interface AuditModuleOption {

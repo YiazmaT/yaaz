@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {AUDIT_MODULES} from "./constants";
 import {useAuditTableConfig} from "./desktop/table-config";
 import {AuditFilters, AuditLog} from "./types";
 
@@ -10,7 +11,16 @@ export function useAudit() {
 
   const showResults = !!(appliedFilters?.module && appliedFilters?.action_type);
 
-  const {generateConfig} = useAuditTableConfig();
+  const actionConfig =
+    appliedFilters?.module && appliedFilters?.action_type
+      ? (AUDIT_MODULES[appliedFilters.module]?.actions.find((a) => a.action === appliedFilters.action_type) ?? null)
+      : null;
+
+  const {generateConfig: baseGenerateConfig} = useAuditTableConfig();
+
+  function generateConfig() {
+    return baseGenerateConfig(actionConfig?.columnsFactory);
+  }
 
   function handleApply(filters: AuditFilters) {
     setAppliedFilters(filters);
@@ -40,6 +50,7 @@ export function useAudit() {
   return {
     showResults,
     appliedFilters,
+    MobileContent: actionConfig?.MobileContent ?? null,
     handleApply,
     handleClear,
     selectedLog,
