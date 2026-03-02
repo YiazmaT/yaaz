@@ -72,7 +72,7 @@ export function AuditFiltersComponent(props: AuditFiltersProps) {
 
         <FormContextProvider control={control} errors={errors} formType="create">
           <form onSubmit={handleSubmit(submit)}>
-            <Grid container spacing={1}>
+            <Grid container spacing={2}>
               <FormDropdown<AuditModuleOption>
                 fieldName="module"
                 options={MODULE_OPTIONS}
@@ -80,7 +80,7 @@ export function AuditFiltersComponent(props: AuditFiltersProps) {
                 label="audit.fields.module"
                 buildLabel={(option) => translate(option.label)}
                 additionalOnChange={handleModuleChange}
-                size={3}
+                size={{xs: 12, md: 3}}
               />
               <FormDropdown<AuditActionOption>
                 fieldName="action_type"
@@ -89,7 +89,7 @@ export function AuditFiltersComponent(props: AuditFiltersProps) {
                 label="audit.fields.action"
                 buildLabel={(option) => translate(option.label)}
                 disabled={!selectedModule}
-                size={3}
+                size={{xs: 12, md: 3}}
               />
               <FormDatePicker
                 fieldName="date_from"
@@ -97,25 +97,25 @@ export function AuditFiltersComponent(props: AuditFiltersProps) {
                 minDate={minDate}
                 maxDate={today}
                 additionalOnChange={handleDateFromChange}
-                size={3}
+                size={{xs: 12, md: 3}}
               />
               <FormDatePicker
                 fieldName="date_to"
                 label="audit.fields.dateTo"
                 minDate={dateFromValue}
                 maxDate={today}
-                size={3}
+                size={{xs: 12, md: 3}}
               />
             </Grid>
 
-            <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2}}>
-              <Box sx={{display: "flex", alignItems: "flex-start", gap: 0.75, maxWidth: "60%"}}>
+            <Box sx={{display: "flex", flexDirection: {xs: "column", md: "row"}, justifyContent: "space-between", alignItems: {xs: "stretch", md: "center"}, gap: 1.5, mt: 2}}>
+              <Box sx={{display: "flex", alignItems: "flex-start", gap: 0.75}}>
                 <WarningAmberOutlinedIcon sx={{fontSize: "1rem", color: "warning.main", flexShrink: 0, mt: "1px"}} />
                 <Typography variant="caption" color="text.secondary">
                   {translate("audit.disclaimer")}
                 </Typography>
               </Box>
-              <Box sx={{display: "flex", gap: 1, flexShrink: 0}}>
+              <Box sx={{display: "flex", gap: 1, justifyContent: {xs: "flex-end", md: "flex-end"}, flexShrink: 0}}>
                 <Button variant="outlined" onClick={handleClear}>
                   {translate("audit.actions.clear")}
                 </Button>

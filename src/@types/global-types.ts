@@ -13,7 +13,7 @@ export interface FormInputProps {
   errors?: FieldErrors<any>;
   fieldName: string;
   grid?: boolean;
-  size?: number;
+  size?: number | {xs?: number; sm?: number; md?: number; lg?: number; xl?: number};
   additionalOnChange?: (v: any) => void;
 }
 
