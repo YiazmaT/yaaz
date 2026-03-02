@@ -29,8 +29,8 @@ export async function GET(req: NextRequest) {
     }
 
     const actionConfig = AUDIT_MODULES[module]?.actions.find((a) => a.action === action_type);
-    if (actionConfig?.route) {
-      where.route = actionConfig.route;
+    if (actionConfig?.routes.length) {
+      where.route = {in: actionConfig.routes};
     }
 
     if (date_from || date_to) {

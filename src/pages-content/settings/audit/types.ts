@@ -32,7 +32,7 @@ export interface AuditListResponse {
 export interface AuditActionOption {
   action: string;
   label: string;
-  route: string;
+  routes: string[];
 }
 
 export interface AuditModuleOption {
