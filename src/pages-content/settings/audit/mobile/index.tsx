@@ -52,14 +52,7 @@ export function MobileView(props: MobileViewProps) {
 
       {audit.showResults && (
         <Box sx={{flex: 1, minHeight: 0}}>
-          <MobileList<AuditLog>
-            title={title}
-            apiRoute={API_ROUTE}
-            renderRow={renderRow}
-            filters={audit.buildFilters()}
-            defaultRowsPerPage={25}
-            hideSearch
-          />
+          <MobileList<AuditLog> title={title} apiRoute={API_ROUTE} renderRow={renderRow} filters={audit.buildFilters()} defaultRowsPerPage={25} />
         </Box>
       )}
     </Box>
