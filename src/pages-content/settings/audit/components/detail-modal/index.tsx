@@ -1,5 +1,5 @@
 "use client";
-import {Box, Chip, Divider, Typography} from "@mui/material";
+import {Box, Divider, Typography} from "@mui/material";
 import {GenericModal} from "@/src/components/generic-modal";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {formatDate} from "@/src/utils/format-date";

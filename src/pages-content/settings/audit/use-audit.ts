@@ -41,6 +41,7 @@ export function useAudit() {
 
   return {
     showResults,
+    appliedFilters,
     handleApply,
     handleClear,
     selectedLog,

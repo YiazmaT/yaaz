@@ -2,14 +2,23 @@
 import {Box} from "@mui/material";
 import {DataTable} from "@/src/components/data-table";
 import {ScreenCard} from "@/src/components/screen-card";
+import {useTranslate} from "@/src/contexts/translation-context";
 import {AuditLog} from "../types";
 import {AuditFiltersComponent} from "../components/filters";
 import {AuditDetailModal} from "../components/detail-modal";
 import {DesktopViewProps} from "./types";
 import {API_ROUTE} from "../use-audit";
+import {getActionLabel, getModuleLabel} from "../utils";
 
 export function DesktopView(props: DesktopViewProps) {
   const {audit} = props;
+  const {translate} = useTranslate();
+
+  const filters = audit.appliedFilters;
+  const title =
+    filters?.module && filters?.action_type
+      ? `${translate("audit.title")} (${translate(getModuleLabel(filters.module))} | ${translate(getActionLabel(filters.module, filters.action_type))})`
+      : translate("audit.title");
 
   return (
     <>
@@ -20,7 +29,7 @@ export function DesktopView(props: DesktopViewProps) {
 
         {audit.showResults && (
           <Box sx={{flex: 1, minHeight: 0}}>
-            <ScreenCard title="audit.title">
+            <ScreenCard title={title}>
               <DataTable<AuditLog>
                 apiRoute={API_ROUTE}
                 columns={audit.generateConfig()}

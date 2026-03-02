@@ -1,6 +1,6 @@
 "use client";
 import {ReactNode} from "react";
-import {Box, CardContent, Chip, IconButton, Tooltip, Typography} from "@mui/material";
+import {Box, CardContent, IconButton, Tooltip, Typography} from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -11,11 +11,16 @@ import {AuditFiltersComponent} from "../components/filters";
 import {AuditDetailModal} from "../components/detail-modal";
 import {MobileViewProps} from "./types";
 import {API_ROUTE} from "../use-audit";
-import {getModuleLabel} from "../utils";
+import {getActionLabel, getModuleLabel} from "../utils";
 
 export function MobileView(props: MobileViewProps) {
   const {audit} = props;
   const {translate} = useTranslate();
+
+  const filters = audit.appliedFilters;
+  const title = filters?.module && filters?.action_type
+    ? `${translate("audit.title")} (${translate(getModuleLabel(filters.module))} | ${translate(getActionLabel(filters.module, filters.action_type))})`
+    : translate("audit.title");
 
   function renderRow(item: AuditLog, _actions: ReactNode) {
     return (
@@ -59,7 +64,7 @@ export function MobileView(props: MobileViewProps) {
       {audit.showResults && (
         <Box sx={{flex: 1, minHeight: 0}}>
           <MobileList<AuditLog>
-            title="audit.title"
+            title={title}
             apiRoute={API_ROUTE}
             renderRow={renderRow}
             filters={audit.buildFilters()}
