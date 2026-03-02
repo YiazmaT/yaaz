@@ -57,8 +57,26 @@ export function MobileList<T = any>(props: MobileListProps<T>) {
     return <MobileListActions row={row} onView={props.onView} onEdit={props.onEdit} hideEdit={props.hideEdit?.(row)} onDelete={props.onDelete} />;
   }
 
+  const paginationSx = {
+    "& .MuiTablePagination-toolbar": {minHeight: 40, paddingLeft: 1, paddingRight: 1, justifyContent: "flex-end"},
+    "& .MuiTablePagination-spacer": {display: "none"},
+  };
+
+  const paginationProps = {
+    component: "div" as const,
+    count: total,
+    page,
+    onPageChange: handleChangePage,
+    rowsPerPage,
+    onRowsPerPageChange: handleChangeRowsPerPage,
+    rowsPerPageOptions: props.rowsPerPageOptions ?? [5, 10, 25, 50, 100],
+    labelRowsPerPage: translate("global.size"),
+    labelDisplayedRows: ({from, to, count}: {from: number; to: number; count: number}) => `${from}-${to} ${translate("global.of")} ${count}`,
+    sx: paginationSx,
+  };
+
   return (
-    <Box sx={{display: "flex", flexDirection: "column", height: "100%"}}>
+    <Box sx={{display: "flex", flexDirection: "column", ...(props.grow ? {} : {height: "100%"})}}>
       <Box
         sx={{
           padding: 2,
@@ -74,46 +92,19 @@ export function MobileList<T = any>(props: MobileListProps<T>) {
         {!props.hideSearch && <SearchInput onSearch={handleSearch} fullWidth />}
       </Box>
 
-      <Box
-        sx={{
-          backgroundColor: "white",
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          overflowX: "hidden",
-        }}
-      >
-        <TablePagination
-          component="div"
-          count={total}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={props.rowsPerPageOptions ?? [5, 10, 25, 50, 100]}
-          labelRowsPerPage={translate("global.size")}
-          labelDisplayedRows={({from, to, count}) => `${from}-${to} ${translate("global.of")} ${count}`}
-          sx={{
-            "& .MuiTablePagination-toolbar": {
-              minHeight: 40,
-              paddingLeft: 1,
-              paddingRight: 1,
-              justifyContent: "flex-end",
-            },
-            "& .MuiTablePagination-spacer": {
-              display: "none",
-            },
-          }}
-        />
+      <Box sx={{backgroundColor: "white", borderBottom: `1px solid ${theme.palette.divider}`, overflowX: "hidden"}}>
+        <TablePagination {...paginationProps} />
       </Box>
 
-      <Box sx={{flex: 1, overflow: "hidden", position: "relative"}}>
+      <Box sx={props.grow ? {position: "relative"} : {flex: 1, overflow: "hidden", position: "relative"}}>
         {isFetching ? (
-          <Box sx={{position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center"}}>
+          <Box sx={{display: "flex", alignItems: "center", justifyContent: "center", padding: 4}}>
             <Loader size={80} />
           </Box>
         ) : (
-          <Box sx={{height: "100%", overflow: "auto", padding: 2}}>
+          <Box sx={props.grow ? {padding: 2} : {height: "100%", overflow: "auto", padding: 2}}>
             {data.length === 0 ? (
-              <Box sx={{display: "flex", justifyContent: "center", alignItems: "center", height: "100%"}}>
+              <Box sx={{display: "flex", justifyContent: "center", alignItems: "center", minHeight: 120}}>
                 <Typography color="text.secondary">{translate("global.noDataFound")}</Typography>
               </Box>
             ) : (
@@ -141,6 +132,10 @@ export function MobileList<T = any>(props: MobileListProps<T>) {
             )}
           </Box>
         )}
+      </Box>
+
+      <Box sx={{backgroundColor: "white", borderTop: `1px solid ${theme.palette.divider}`, overflowX: "hidden"}}>
+        <TablePagination {...paginationProps} />
       </Box>
     </Box>
   );

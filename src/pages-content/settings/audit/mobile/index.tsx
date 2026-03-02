@@ -26,13 +26,13 @@ export function MobileView(props: MobileViewProps) {
   function renderRow(item: AuditLog, _actions: ReactNode) {
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
-        <Box sx={{...flexGenerator("c"), gap: 0.5}}>
+        <Box sx={{...flexGenerator("c.flex-start.flex-start"), gap: 0.5}}>
           <UserInfo user={item.user} imageSize={36} />
-          <Box sx={{...flexGenerator("r.center"), gap: 1}}>
+          <Box sx={{...flexGenerator("r.center.center"), gap: 1}}>
             <Typography variant="caption" color="text.secondary">
-              {translate("audit.fields.module")}:
+              {translate("audit.fields.route")}:
             </Typography>
-            <Typography variant="body2">{translate(getModuleLabel(item.module))}</Typography>
+            <Typography variant="body2">{item.route}</Typography>
           </Box>
         </Box>
         {MobileContent && (
@@ -45,15 +45,13 @@ export function MobileView(props: MobileViewProps) {
   }
 
   return (
-    <Box sx={{display: "flex", flexDirection: "column", height: "100%", position: "relative"}}>
+    <Box>
       <Box sx={{p: 2, pb: 1}}>
         <AuditFiltersComponent onApply={audit.handleApply} onClear={audit.handleClear} />
       </Box>
 
       {audit.showResults && (
-        <Box sx={{flex: 1, minHeight: 0}}>
-          <MobileList<AuditLog> title={title} apiRoute={API_ROUTE} renderRow={renderRow} filters={audit.buildFilters()} defaultRowsPerPage={25} />
-        </Box>
+        <MobileList<AuditLog> title={title} apiRoute={API_ROUTE} renderRow={renderRow} filters={audit.buildFilters()} defaultRowsPerPage={25} grow />
       )}
     </Box>
   );

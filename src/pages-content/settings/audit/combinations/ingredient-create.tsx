@@ -46,18 +46,20 @@ export function IngredientCreateContent({content}: {content: any}) {
   const {translate} = useTranslate();
 
   return (
-    <Box sx={{display: "flex", flexDirection: "column", gap: 1.5}}>
-      <ImagePreview url={content?.image} width={80} height={80} alt={content?.name ?? ""} borderRadius={8} />
-      {FIELDS.map((field) => (
-        <Box key={field.labelKey}>
-          <Typography variant="caption" color="text.secondary">
-            {translate(field.labelKey)}
-          </Typography>
-          <Typography variant="body2" fontWeight={500}>
-            {field.getValue(content) ?? "-"}
-          </Typography>
-        </Box>
-      ))}
+    <Box sx={{display: "flex", gap: 1.5, alignItems: "flex-start", py: 0.5}}>
+      <ImagePreview url={content?.image} width={52} height={52} alt={content?.name ?? ""} borderRadius={6} />
+      <Box sx={{display: "flex", flexDirection: "column", gap: 0.25}}>
+        {FIELDS.map((field) => (
+          <Box key={field.labelKey} sx={{display: "flex", gap: 0.5, alignItems: "baseline"}}>
+            <Typography variant="caption" color="text.secondary" sx={{flexShrink: 0}}>
+              {translate(field.labelKey)}:
+            </Typography>
+            <Typography variant="caption" fontWeight={500}>
+              {field.getValue(content) ?? "-"}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }

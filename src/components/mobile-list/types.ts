@@ -14,6 +14,7 @@ export interface MobileListProps<T = any> {
   hideSearch?: boolean;
   filters?: Record<string, string | undefined>;
   headerContent?: ReactNode;
+  grow?: boolean;
 }
 
 export interface MobileListActionsProps<T = any> {
