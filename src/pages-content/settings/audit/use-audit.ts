@@ -16,11 +16,7 @@ export function useAudit() {
       ? (AUDIT_MODULES[appliedFilters.module]?.actions.find((a) => a.action === appliedFilters.action_type) ?? null)
       : null;
 
-  const {generateConfig: baseGenerateConfig} = useAuditTableConfig();
-
-  function generateConfig() {
-    return baseGenerateConfig(actionConfig?.columnsFactory);
-  }
+  const {generateConfig} = useAuditTableConfig(appliedFilters?.module, appliedFilters?.action_type);
 
   function handleApply(filters: AuditFilters) {
     setAppliedFilters(filters);

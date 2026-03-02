@@ -31,11 +31,13 @@ export interface AuditListResponse {
   limit: number;
 }
 
+export type AuditTranslateFn = (key: string) => string;
+
 export interface AuditActionOption {
   action: string;
   label: string;
   routes: string[];
-  columnsFactory?: () => DataTableColumn<AuditLog>[];
+  columnsFactory?: (translate: AuditTranslateFn) => DataTableColumn<AuditLog>[];
   MobileContent?: ComponentType<{content: any}>;
 }
 
