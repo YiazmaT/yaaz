@@ -3,7 +3,7 @@ import {fromZonedTime} from "date-fns-tz";
 import {prisma} from "@/src/lib/prisma";
 import {LogModule, LogType} from "@/src/lib/logger";
 import {withAuth} from "@/src/lib/route-handler";
-import {ACTION_ROUTE_PATTERNS} from "@/src/pages-content/settings/audit/constants";
+import {AUDIT_MODULES} from "@/src/pages-content/settings/audit/constants";
 
 const ROUTE = "/api/audit/paginated-list";
 
@@ -28,10 +28,9 @@ export async function GET(req: NextRequest) {
       where.module = module;
     }
 
-    if (action_type && ACTION_ROUTE_PATTERNS[action_type]) {
-      where.OR = ACTION_ROUTE_PATTERNS[action_type].map((pattern) => ({
-        route: {endsWith: pattern},
-      }));
+    const actionConfig = AUDIT_MODULES[module]?.actions.find((a) => a.action === action_type);
+    if (actionConfig?.route) {
+      where.route = actionConfig.route;
     }
 
     if (date_from || date_to) {
@@ -88,17 +87,8 @@ export async function GET(req: NextRequest) {
       error: item.error as Record<string, any> | null,
       user_id: item.user_id,
       user: item.user ?? null,
-      action_type: deriveActionType(item.route),
     }));
 
     return success("get", {data, total, page, limit});
   });
-}
-
-function deriveActionType(route: string | null): "create" | "update" | "delete" | "other" {
-  if (!route) return "other";
-  for (const [type, patterns] of Object.entries(ACTION_ROUTE_PATTERNS)) {
-    if (patterns.some((p) => route.endsWith(p))) return type as "create" | "update" | "delete";
-  }
-  return "other";
 }

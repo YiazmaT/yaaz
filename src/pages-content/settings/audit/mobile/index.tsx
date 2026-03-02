@@ -4,15 +4,14 @@ import {Box, CardContent, Chip, IconButton, Tooltip, Typography} from "@mui/mate
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {MobileList} from "@/src/components/mobile-list";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {formatDate} from "@/src/utils/format-date";
 import {flexGenerator} from "@/src/utils/flex-generator";
 import {UserInfo} from "@/src/components/user-info";
-import {getActionTypeColor, getActionTypeLabelKey, getModuleLabelKey} from "../constants";
 import {AuditLog} from "../types";
 import {AuditFiltersComponent} from "../components/filters";
 import {AuditDetailModal} from "../components/detail-modal";
 import {MobileViewProps} from "./types";
 import {API_ROUTE} from "../use-audit";
+import {getModuleLabel} from "../utils";
 
 export function MobileView(props: MobileViewProps) {
   const {audit} = props;
@@ -21,20 +20,13 @@ export function MobileView(props: MobileViewProps) {
   function renderRow(item: AuditLog, _actions: ReactNode) {
     return (
       <CardContent sx={{padding: 2, "&:last-child": {paddingBottom: 2}}}>
-        <Box sx={{...flexGenerator("r.center.space-between"), marginBottom: 1}}>
-          <Typography variant="caption" color="text.secondary" sx={{fontFamily: "monospace"}}>
-            {formatDate(item.create_date, true)}
-          </Typography>
-          <Chip label={translate(getActionTypeLabelKey(item.action_type))} color={getActionTypeColor(item.action_type)} size="small" />
-        </Box>
-
         <Box sx={{...flexGenerator("c"), gap: 0.5}}>
           <UserInfo user={item.user} imageSize={36} />
           <Box sx={{...flexGenerator("r.center"), gap: 1}}>
             <Typography variant="caption" color="text.secondary">
               {translate("audit.fields.module")}:
             </Typography>
-            <Typography variant="body2">{translate(getModuleLabelKey(item.module))}</Typography>
+            <Typography variant="body2">{translate(getModuleLabel(item.module))}</Typography>
           </Box>
           <Typography variant="caption" color="text.secondary" sx={{fontFamily: "monospace", fontSize: "0.7rem", wordBreak: "break-all"}}>
             {item.route ?? "-"}

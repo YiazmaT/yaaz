@@ -7,10 +7,12 @@ import {FormContextProvider} from "@/src/contexts/form-context";
 import {FormDropdown} from "@/src/components/form-fields/dropdown";
 import {FormDatePicker} from "@/src/components/form-fields/date-picker";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {AUDIT_ACTION_TYPES, AUDIT_MODULES} from "../../constants";
-import {AuditActionType, AuditModule} from "../../types";
+import {AUDIT_MODULES} from "../../constants";
+import {AuditActionOption, AuditModuleOption} from "../../types";
 import {AuditFiltersProps} from "./types";
 import {AuditFilterFormValues, getOneYearAgo, getToday, useAuditFilterFormConfig} from "./form-config";
+
+const MODULE_OPTIONS: AuditModuleOption[] = Object.entries(AUDIT_MODULES).map(([key, val]) => ({key, ...val}));
 
 export function AuditFiltersComponent(props: AuditFiltersProps) {
   const {translate} = useTranslate();
@@ -29,15 +31,22 @@ export function AuditFiltersComponent(props: AuditFiltersProps) {
     defaultValues,
   });
 
+  const selectedModule = watch("module");
   const dateFromValue = watch("date_from");
   const today = getToday();
   const minDate = getOneYearAgo();
-  const canApply = !!(watch("module") && watch("action_type"));
+  const canApply = !!(selectedModule && watch("action_type"));
+
+  const availableActions: AuditActionOption[] = selectedModule ? AUDIT_MODULES[selectedModule.key]?.actions ?? [] : [];
+
+  function handleModuleChange() {
+    setValue("action_type", null as any);
+  }
 
   function submit(data: AuditFilterFormValues) {
     props.onApply({
-      module: data.module!.value,
-      action_type: data.action_type!.value,
+      module: data.module!.key,
+      action_type: data.action_type!.action,
       date_from: data.date_from || undefined,
       date_to: data.date_to || undefined,
     });
@@ -64,20 +73,22 @@ export function AuditFiltersComponent(props: AuditFiltersProps) {
         <FormContextProvider control={control} errors={errors} formType="create">
           <form onSubmit={handleSubmit(submit)}>
             <Grid container spacing={1}>
-              <FormDropdown<AuditModule>
+              <FormDropdown<AuditModuleOption>
                 fieldName="module"
-                options={AUDIT_MODULES}
-                uniqueKey="value"
+                options={MODULE_OPTIONS}
+                uniqueKey="key"
                 label="audit.fields.module"
-                buildLabel={(option) => translate(option.labelKey)}
+                buildLabel={(option) => translate(option.label)}
+                additionalOnChange={handleModuleChange}
                 size={3}
               />
-              <FormDropdown<AuditActionType>
+              <FormDropdown<AuditActionOption>
                 fieldName="action_type"
-                options={AUDIT_ACTION_TYPES}
-                uniqueKey="value"
+                options={availableActions}
+                uniqueKey="action"
                 label="audit.fields.action"
-                buildLabel={(option) => translate(option.labelKey)}
+                buildLabel={(option) => translate(option.label)}
+                disabled={!selectedModule}
                 size={3}
               />
               <FormDatePicker

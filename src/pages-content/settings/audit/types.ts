@@ -29,12 +29,14 @@ export interface AuditListResponse {
   limit: number;
 }
 
-export interface AuditModule {
-  value: string;
-  labelKey: string;
+export interface AuditActionOption {
+  action: string;
+  label: string;
+  route: string;
 }
 
-export interface AuditActionType {
-  value: string;
-  labelKey: string;
+export interface AuditModuleOption {
+  key: string;
+  label: string;
+  actions: AuditActionOption[];
 }

@@ -1,10 +1,10 @@
 import * as yup from "yup";
 import moment from "moment";
-import {AuditActionType, AuditModule} from "../../types";
+import {AuditActionOption, AuditModuleOption} from "../../types";
 
 export interface AuditFilterFormValues {
-  module: AuditModule | null;
-  action_type: AuditActionType | null;
+  module: AuditModuleOption | null;
+  action_type: AuditActionOption | null;
   date_from: string;
   date_to: string;
 }
@@ -23,8 +23,8 @@ export function getOneYearAgo(): string {
 
 export function useAuditFilterFormConfig() {
   const schema = yup.object({
-    module: yup.mixed<AuditModule>().required(),
-    action_type: yup.mixed<AuditActionType>().required(),
+    module: yup.mixed<AuditModuleOption>().required(),
+    action_type: yup.mixed<AuditActionOption>().required(),
     date_from: yup.string(),
     date_to: yup.string(),
   });

@@ -3,9 +3,9 @@ import {Box, Chip, Divider, Typography} from "@mui/material";
 import {GenericModal} from "@/src/components/generic-modal";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {formatDate} from "@/src/utils/format-date";
-import {getActionTypeColor, getActionTypeLabelKey, getModuleLabelKey} from "../../constants";
 import {DetailModalProps} from "./types";
 import {UserInfo} from "@/src/components/user-info";
+import {getModuleLabel} from "../../utils";
 
 export function AuditDetailModal(props: DetailModalProps) {
   const {translate} = useTranslate();
@@ -65,16 +65,8 @@ export function AuditDetailModal(props: DetailModalProps) {
                 {translate("audit.fields.module")}
               </Typography>
               <Typography variant="body2" fontWeight={500}>
-                {translate(getModuleLabelKey(log.module))}
+                {translate(getModuleLabel(log.module))}
               </Typography>
-            </Box>
-            <Box>
-              <Typography variant="caption" color="text.secondary">
-                {translate("audit.fields.action")}
-              </Typography>
-              <Box sx={{marginTop: 0.25}}>
-                <Chip label={translate(getActionTypeLabelKey(log.action_type))} color={getActionTypeColor(log.action_type)} size="small" />
-              </Box>
             </Box>
             <Box sx={{gridColumn: "1 / -1"}}>
               <Typography variant="caption" color="text.secondary">
