@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
@@ -18,11 +18,8 @@ export async function DELETE(req: NextRequest) {
     if (!bill) return error("api.errors.notFound", 404);
     if (!bill.receipt_url) return error("api.errors.notFound", 404);
 
-    const r2Key = extractR2KeyFromUrl(bill.receipt_url);
-    if (r2Key) {
-      const deleted = await deleteFromR2(r2Key, auth.tenant_id);
-      if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl: bill.receipt_url});
-    }
+    const queued = await deleteFromR2(bill.receipt_url, auth.tenant_id, auth.user.id);
+    if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: bill.receipt_url});
 
     await prisma.bill.update({
       where: {id: billId, tenant_id: auth.tenant_id},

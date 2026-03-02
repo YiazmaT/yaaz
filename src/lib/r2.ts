@@ -65,13 +65,34 @@ export function extractR2KeyFromUrl(url: string): string | null {
   return url.replace(`${publicUrl}/`, "");
 }
 
-export async function deleteFromR2(key: string, tenantId: string): Promise<boolean> {
+export async function deleteFromR2(url: string, tenantId: string, userId: string | null): Promise<boolean> {
   try {
-    if (!key.includes(`/${tenantId}/`)) {
-      console.error("R2 delete error: tenant_id mismatch");
+    const key = extractR2KeyFromUrl(url);
+    if (!key) {
+      console.error("R2 schedule delete error: invalid URL");
       return false;
     }
+    if (!key.includes(`/${tenantId}/`)) {
+      console.error("R2 schedule delete error: tenant_id mismatch");
+      return false;
+    }
+    const existing = await prisma.fileToDelete.findFirst({where: {url}});
+    if (existing) return true;
 
+    const deleteDate = new Date();
+    deleteDate.setFullYear(deleteDate.getFullYear() + 1);
+    await prisma.fileToDelete.create({
+      data: {url, key, user_id: userId, tenant_id: tenantId, delete_date: deleteDate},
+    });
+    return true;
+  } catch (error) {
+    console.error("R2 schedule delete error:", error);
+    return false;
+  }
+}
+
+export async function hardDeleteFromR2Key(key: string): Promise<boolean> {
+  try {
     await s3Client.send(
       new DeleteObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME!,

@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {DeleteClientDto} from "@/src/pages-content/client/dto";
 import {NextRequest} from "next/server";
@@ -34,11 +34,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     if (client.image) {
-      const key = extractR2KeyFromUrl(client.image);
-      if (key) {
-        const deleted = await deleteFromR2(key, auth.tenant_id);
-        if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl: client.image});
-      }
+      const queued = await deleteFromR2(client.image, auth.tenant_id, auth.user.id);
+      if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: client.image});
     }
 
     await prisma.client.delete({where: {id, tenant_id: auth.tenant_id}});

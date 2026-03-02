@@ -63,6 +63,7 @@ model User {
   edited_unity_of_measures   UnityOfMeasure[]       @relation("UnityOfMeasureEditor")
   created_payment_methods    FinancePaymentMethod[] @relation("FinancePaymentMethodCreator")
   edited_payment_methods     FinancePaymentMethod[] @relation("FinancePaymentMethodEditor")
+  files_to_delete            FileToDelete[]         @relation("FileToDeleteUser")
 
   @@map("user")
   @@schema("data")

@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {DeleteProductDto} from "@/src/pages-content/stock/products/dto";
 import {NextRequest} from "next/server";
@@ -36,19 +36,13 @@ export async function DELETE(req: NextRequest) {
     }
 
     if (product.image) {
-      const key = extractR2KeyFromUrl(product.image);
-      if (key) {
-        const deleted = await deleteFromR2(key, auth.tenant_id);
-        if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl: product.image});
-      }
+      const queued = await deleteFromR2(product.image, auth.tenant_id, auth.user.id);
+      if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: product.image});
     }
 
     for (const fileUrl of product.files) {
-      const key = extractR2KeyFromUrl(fileUrl);
-      if (key) {
-        const deleted = await deleteFromR2(key, auth.tenant_id);
-        if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl});
-      }
+      const queued = await deleteFromR2(fileUrl, auth.tenant_id, auth.user.id);
+      if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl});
     }
 
     await prisma.product.delete({where: {id, tenant_id: auth.tenant_id}});

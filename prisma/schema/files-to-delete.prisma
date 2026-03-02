@@ -1,0 +1,15 @@
+model FileToDelete {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  url           String
+  key           String
+  user_id       String?  @db.Uuid
+  tenant_id     String   @db.Uuid
+  creation_date DateTime @default(now())
+  delete_date   DateTime
+
+  user   User?  @relation("FileToDeleteUser", fields: [user_id], references: [id], onDelete: SetNull)
+  tenant Tenant @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  @@map("files_to_delete")
+  @@schema("data")
+}

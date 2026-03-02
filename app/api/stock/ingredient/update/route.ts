@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
@@ -32,8 +32,8 @@ export async function PUT(req: NextRequest) {
     });
 
     if (existingIngredient.image && existingIngredient.image !== imageUrl) {
-      const oldKey = extractR2KeyFromUrl(existingIngredient.image);
-      if (oldKey) await deleteFromR2(oldKey, auth.tenant_id);
+      const queued = await deleteFromR2(existingIngredient.image, auth.tenant_id, auth.user.id);
+      if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: existingIngredient.image});
     }
 
     return success("update", ingredient, {before: existingIngredient, after: ingredient});

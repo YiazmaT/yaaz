@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {CompositionItemDto, PackageCompositionItemDto} from "@/src/pages-content/stock/products/dto";
 import {NextRequest} from "next/server";
@@ -11,7 +11,18 @@ const ACTION = "edit";
 
 export async function PUT(req: NextRequest) {
   return withAuth(LogModule.PRODUCT, ROUTE, {key: KEY, action: ACTION}, async ({auth, success, error}) => {
-    const {id, name, price, description, min_stock, imageUrl, composition: compositionRaw, packages: packagesRaw, unitOfMeasureId, displayLandingPage} = await req.json();
+    const {
+      id,
+      name,
+      price,
+      description,
+      min_stock,
+      imageUrl,
+      composition: compositionRaw,
+      packages: packagesRaw,
+      unitOfMeasureId,
+      displayLandingPage,
+    } = await req.json();
 
     if (!id || !name || isNaN(price) || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
@@ -68,8 +79,8 @@ export async function PUT(req: NextRequest) {
     });
 
     if (existingProduct.image && existingProduct.image !== imageUrl) {
-      const oldKey = extractR2KeyFromUrl(existingProduct.image);
-      if (oldKey) await deleteFromR2(oldKey, auth.tenant_id);
+      const queued = await deleteFromR2(existingProduct.image, auth.tenant_id, auth.user.id);
+      if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: existingProduct.image});
     }
 
     return success("update", product, {before: existingProduct, after: product});

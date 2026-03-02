@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {DeleteProductFileDto} from "@/src/pages-content/stock/products/dto";
 import {NextRequest} from "next/server";
@@ -19,11 +19,8 @@ export async function DELETE(req: NextRequest) {
     if (!product) return error("api.errors.notFound", 404, {id: body.productId});
     if (!product.files.includes(body.fileUrl)) return error("api.errors.notFound", 404, {id: body.fileUrl});
 
-    const r2Key = extractR2KeyFromUrl(body.fileUrl);
-    if (r2Key) {
-      const deleted = await deleteFromR2(r2Key, auth.tenant_id);
-      if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl: body.fileUrl});
-    }
+    const queued = await deleteFromR2(body.fileUrl, auth.tenant_id, auth.user.id);
+    if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: body.fileUrl});
 
     const updatedFiles = product.files.filter((f) => f !== body.fileUrl);
 

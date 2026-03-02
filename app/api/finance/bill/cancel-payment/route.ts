@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 import {BillStatus} from "@prisma/client";
@@ -56,11 +56,8 @@ export async function POST(req: NextRequest) {
     await prisma.$transaction(operations);
 
     if (bill.receipt_url) {
-      const r2Key = extractR2KeyFromUrl(bill.receipt_url);
-      if (r2Key) {
-        const deleted = await deleteFromR2(r2Key, auth.tenant_id);
-        if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl: bill.receipt_url});
-      }
+      const queued = await deleteFromR2(bill.receipt_url, auth.tenant_id, auth.user.id);
+      if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: bill.receipt_url});
     }
 
     return success("update", {billId});

@@ -1,5 +1,5 @@
 import {LogModule} from "@/src/lib/logger";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
@@ -9,14 +9,11 @@ export async function DELETE(req: NextRequest) {
   return withAuth(LogModule.UPLOAD, ROUTE, null, async ({auth, success, error}) => {
     const {url} = await req.json();
 
-    const key = url ? extractR2KeyFromUrl(url) : null;
+    if (!url) return error("api.errors.missingRequiredFields", 400, {url});
 
-    if (!key || !key.includes(`/${auth.tenant_id}/`)) {
-      return error("api.errors.missingRequiredFields", 400, {url});
-    }
+    const queued = await deleteFromR2(url, auth.tenant_id, auth.user.id);
+    if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: url});
 
-    await deleteFromR2(key, auth.tenant_id);
-
-    return success("delete", {key});
+    return success("delete", {url});
   });
 }

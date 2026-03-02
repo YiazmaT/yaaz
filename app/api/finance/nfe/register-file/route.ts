@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
 
@@ -24,8 +24,8 @@ export async function POST(req: NextRequest) {
     if (!nfe) return error("api.errors.notFound", 404, {nfeId});
 
     if (nfe.file_url) {
-      const oldKey = extractR2KeyFromUrl(nfe.file_url);
-      if (oldKey) await deleteFromR2(oldKey, auth.tenant_id);
+      const queued = await deleteFromR2(nfe.file_url, auth.tenant_id, auth.user.id);
+      if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: nfe.file_url});
     }
 
     const updated = await prisma.nfe.update({

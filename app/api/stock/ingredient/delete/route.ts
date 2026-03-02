@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
-import {deleteFromR2, extractR2KeyFromUrl} from "@/src/lib/r2";
+import {deleteFromR2} from "@/src/lib/r2";
 import {withAuth} from "@/src/lib/route-handler";
 import {DeleteIngredientDto} from "@/src/pages-content/stock/ingredients/dto";
 import {NextRequest} from "next/server";
@@ -37,11 +37,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     if (ingredient.image) {
-      const key = extractR2KeyFromUrl(ingredient.image);
-      if (key) {
-        const deleted = await deleteFromR2(key, auth.tenant_id);
-        if (!deleted) return error("api.errors.deleteFailed", 400, {fileUrl: ingredient.image});
-      }
+      const queued = await deleteFromR2(ingredient.image, auth.tenant_id, auth.user.id);
+      if (!queued) return error("api.errors.deleteFailed", 400, {fileUrl: ingredient.image});
     }
 
     await prisma.ingredient.delete({where: {id, tenant_id: auth.tenant_id}});
