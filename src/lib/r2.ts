@@ -76,7 +76,7 @@ export async function deleteFromR2(url: string, tenantId: string, userId: string
       console.error("R2 schedule delete error: tenant_id mismatch");
       return false;
     }
-    const existing = await prisma.fileToDelete.findFirst({where: {url}});
+    const existing = await prisma.fileToDelete.findFirst({where: {url, tenant_id: tenantId}});
     if (existing) return true;
 
     const deleteDate = new Date();

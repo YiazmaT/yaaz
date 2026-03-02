@@ -14,7 +14,10 @@ export async function PUT(req: NextRequest) {
 
     if (!id || !name || !unitOfMeasureId) return error("api.errors.missingRequiredFields", 400);
 
-    const existingIngredient = await prisma.ingredient.findUnique({where: {id, tenant_id: auth.tenant_id}});
+    const existingIngredient = await prisma.ingredient.findUnique({
+      where: {id, tenant_id: auth.tenant_id},
+      include: {unity_of_measure: {select: {id: true, unity: true}}},
+    });
     if (!existingIngredient) return error("api.errors.notFound", 404, {id});
 
     const ingredient = await prisma.ingredient.update({

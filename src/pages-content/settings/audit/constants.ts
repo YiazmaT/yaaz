@@ -1,5 +1,6 @@
 import {AuditActionOption} from "./types";
 import {getIngredientCreateColumns, IngredientCreateContent} from "./combinations/ingredient-create";
+import {getIngredientEditColumns, IngredientEditContent} from "./combinations/ingredient-edit";
 
 export const AUDIT_MODULES: Record<string, {label: string; actions: AuditActionOption[]}> = {
   ingredient: {
@@ -12,7 +13,13 @@ export const AUDIT_MODULES: Record<string, {label: string; actions: AuditActionO
         columnsFactory: getIngredientCreateColumns,
         MobileContent: IngredientCreateContent,
       },
-      {action: "update", label: "audit.actionTypes.update", routes: ["/api/stock/ingredient/update"]},
+      {
+        action: "update",
+        label: "audit.actionTypes.update",
+        routes: ["/api/stock/ingredient/update"],
+        columnsFactory: getIngredientEditColumns,
+        MobileContent: IngredientEditContent,
+      },
       {action: "delete", label: "audit.actionTypes.delete", routes: ["/api/stock/ingredient/delete"]},
     ],
   },
