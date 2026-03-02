@@ -227,3 +227,92 @@ All `Form*` components share these props: `fieldName`, `control`, `errors`, `dis
 - To validate an email, use validEmailRegex from utils;
 - To get tenant or user information, use useTenant — this data is also available in cookies;
 - To display an entity name (product, ingredient, package, client), use the `buildName` function from the respective module's `utils.ts` (e.g., `import {buildName} from "@/src/pages-content/products/utils"`). This ensures a consistent format across dropdowns, selectors, mobile cards, dashboard, etc. Desktop table name columns are the exception — they keep the raw name since there is a dedicated code column;
+
+# Audit Module
+
+The Audit screen (`/settings/audit`) is a read-only log viewer. It lives at `src/pages-content/settings/audit/` and follows the standard desktop+mobile split.
+
+## How it works
+
+The user must first select a **module** (e.g. Ingredients) and then an **action type** (Create, Update, Delete) — both are required before results are shown. The table/list is only rendered when both are applied (`showResults = !!(module && action_type)`). The API filters by `type = SUCCESS` and the matching `routes[]` for the selected action.
+
+## File structure
+
+```
+src/pages-content/settings/audit/
+  constants.ts              — AUDIT_MODULES registry (single source of truth)
+  types.ts                  — AuditLog, AuditFilters, AuditActionOption, AuditModuleOption, AuditTranslateFn
+  utils.ts                  — getModuleLabel(module), getActionLabel(module, actionType)
+  use-audit.ts              — useAudit() hook — state, filters, table config
+  index.tsx                 — AuditScreen — desktop/mobile split
+  desktop/
+    index.tsx               — DesktopView — filter card + ScreenCard with DataTable
+    table-config.tsx        — useAuditTableConfig(module, action) — base columns + extraColumns
+    types.ts
+  mobile/
+    index.tsx               — MobileView — filter card + MobileList (grow mode)
+    types.ts
+  components/filters/
+    index.tsx               — AuditFiltersComponent — 4-field form card
+    form-config.ts          — useAuditFilterFormConfig() — schema + defaultValues (dates default to last month → today)
+    types.ts
+  combinations/
+    ingredient-create.tsx   — getIngredientCreateColumns() + IngredientCreateContent
+    ...                     — one file per module+action combination
+```
+
+## AUDIT_MODULES constant
+
+`constants.ts` is the **single source of truth**. It is a `Record<string, {label: string; actions: AuditActionOption[]}>`:
+
+```ts
+export const AUDIT_MODULES: Record<string, {label: string; actions: AuditActionOption[]}> = {
+  ingredient: {
+    label: "global.ingredients",
+    actions: [
+      {
+        action: "create",
+        label: "audit.actionTypes.create",
+        routes: ["/api/stock/ingredient/create"],
+        columnsFactory: getIngredientCreateColumns,
+        MobileContent: IngredientCreateContent,
+      },
+      {action: "update", label: "audit.actionTypes.update", routes: ["/api/stock/ingredient/update"]},
+      {action: "delete", label: "audit.actionTypes.delete", routes: ["/api/stock/ingredient/delete"]},
+    ],
+  },
+};
+```
+
+- `routes: string[]` — the API filters logs by these routes when the action is selected;
+- `columnsFactory?: (translate: AuditTranslateFn) => DataTableColumn<AuditLog>[]` — **plain function** (not a hook) returning extra desktop columns for this combination. Called inside `useAuditTableConfig` which provides `translate`;
+- `MobileContent?: ComponentType<{content: any}>` — React component rendered inside each mobile card below a divider. Receives `item.content` (the logged JSON payload);
+
+## Adding a new module+action combination
+
+1. Create `combinations/my-module-action.tsx` — export `getMyModuleActionColumns(translate)` and `MyModuleActionContent`;
+2. Register in `AUDIT_MODULES` with the correct `routes`, `columnsFactory`, and `MobileContent`;
+3. Add translation keys for the module label and action label;
+4. That's it — the filter dropdown, table columns, and mobile cards all update automatically.
+
+## Combinations pattern
+
+Each `combinations/` file exports:
+- A **plain function** `get<Name>Columns(translate: AuditTranslateFn): DataTableColumn<AuditLog>[]` — used by `useAuditTableConfig`. Must be a plain function, NOT a hook, because it is called conditionally inside `generateConfig()`;
+- A **React component** `<Name>Content({content: any})` — used by `MobileView`. May call hooks freely since it is a proper component;
+- A shared `FIELDS` constant (`{labelKey: string; getValue: (c: any) => any}[]`) reused by both exports for DRY field definitions;
+
+The desktop column renders: image left (52×52, borderRadius 6) + inline `label: value` caption rows on the right.
+The mobile content uses the exact same layout (copied from the column).
+
+## API endpoint
+
+`app/api/audit/paginated-list/route.ts` — `GET`, requires `"admin"` permission.
+
+Filters: `module`, `action_type` (resolved to `routes[]` via `AUDIT_MODULES`), `date_from`, `date_to` (timezone-aware via `fromZonedTime`), `search`.
+
+Search covers: `route`, `message`, `user.name`, and the JSONB `content` column — the last one via `$queryRaw` (`content::text ILIKE '%search%'`) because Prisma cannot do case-insensitive full-text search on JSONB natively.
+
+## MobileList grow mode
+
+`MobileList` accepts a `grow` prop. When `true`, the component expands to its natural height (no internal scroll) — the parent layout's `overflow: auto` becomes the scroll container. Use this whenever the page has a large top card (like the audit filter card) that would otherwise steal too much viewport from the list.
