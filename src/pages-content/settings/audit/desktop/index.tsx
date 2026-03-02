@@ -29,13 +29,7 @@ export function DesktopView(props: DesktopViewProps) {
         {audit.showResults && (
           <Box sx={{flex: 1, minHeight: 0}}>
             <ScreenCard title={title}>
-              <DataTable<AuditLog>
-                apiRoute={API_ROUTE}
-                columns={audit.generateConfig()}
-                filters={audit.buildFilters()}
-                defaultRowsPerPage={25}
-                hideSearch
-              />
+              <DataTable<AuditLog> apiRoute={API_ROUTE} columns={audit.generateConfig()} filters={audit.buildFilters()} defaultRowsPerPage={25} />
             </ScreenCard>
           </Box>
         )}

@@ -1,5 +1,6 @@
 import {type NextRequest} from "next/server";
 import {fromZonedTime} from "date-fns-tz";
+import {Prisma} from "@prisma/client";
 import {prisma} from "@/src/lib/prisma";
 import {LogModule, LogType} from "@/src/lib/logger";
 import {withAuth} from "@/src/lib/route-handler";
@@ -42,11 +43,17 @@ export async function GET(req: NextRequest) {
     }
 
     if (search) {
+      const contentMatches = await prisma.$queryRaw<{id: string}[]>(
+        Prisma.sql`SELECT id FROM data.log WHERE tenant_id = ${auth.tenant_id}::uuid AND content::text ILIKE ${`%${search}%`}`,
+      );
+      const contentMatchIds = contentMatches.map((r) => r.id);
+
       const searchFilter = {
         OR: [
           {route: {contains: search, mode: "insensitive" as const}},
           {message: {contains: search, mode: "insensitive" as const}},
           {user: {name: {contains: search, mode: "insensitive" as const}}},
+          ...(contentMatchIds.length > 0 ? [{id: {in: contentMatchIds}}] : []),
         ],
       };
       where.AND = [searchFilter];
