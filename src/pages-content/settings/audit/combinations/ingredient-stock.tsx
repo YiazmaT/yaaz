@@ -1,8 +1,10 @@
 import {ReactNode} from "react";
 import {Box, Divider, Typography} from "@mui/material";
 import {DataTableColumn} from "@/src/components/data-table/types";
+import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
-import {AuditLog, AuditTranslateFn} from "../types";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
+import {AuditLog, AuditFormatCurrencyFn, AuditTranslateFn} from "../types";
 
 const ROUTE_ADD_STOCK = "/api/stock/ingredient/add-stock";
 
@@ -19,6 +21,8 @@ const REASON_LABELS: Record<string, string> = {
 function StockMovementRow(props: {
   name?: string;
   code?: string | number;
+  image?: string | null;
+  unity?: string;
   previousStock: string | number;
   newStock: string | number;
   extra?: ReactNode;
@@ -28,42 +32,50 @@ function StockMovementRow(props: {
   const delta = newNum - prevNum;
   const deltaColor = delta > 0 ? "success.main" : delta < 0 ? "error.main" : "text.secondary";
   const sign = delta > 0 ? "+" : "";
-  const deltaStr = `(${sign}${delta.toFixed(2)})`;
+  const deltaStr = `(${sign}${Number(delta).toLocaleString("pt-BR")})`;
 
   return (
-    <Box sx={{display: "flex", flexDirection: "column", gap: 0.25}}>
-      {props.name && (
-        <Box sx={{display: "flex", gap: 0.5, alignItems: "baseline"}}>
-          <Typography variant="caption" fontWeight={600}>
-            {props.name}
+    <Box sx={{display: "flex", gap: 1.5, alignItems: "flex-start", py: 0.5}}>
+      <ImagePreview url={props.image ?? null} width={40} height={40} alt={props.name ?? ""} borderRadius={6} />
+      <Box sx={{display: "flex", flexDirection: "column", gap: 0.25}}>
+        {props.name && (
+          <Box sx={{display: "flex", gap: 0.5, alignItems: "baseline"}}>
+            <Typography variant="caption" fontWeight={600}>
+              {props.name}
+            </Typography>
+            {props.code !== undefined && (
+              <Typography variant="caption" color="text.secondary">
+                #{props.code}
+              </Typography>
+            )}
+          </Box>
+        )}
+        <Box sx={{display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap"}}>
+          <Typography variant="caption" sx={{fontFamily: "monospace"}}>
+            {Number(prevNum).toLocaleString("pt-BR")}
           </Typography>
-          {props.code !== undefined && (
+          <Typography variant="caption" color="text.secondary">
+            →
+          </Typography>
+          <Typography variant="caption" sx={{fontFamily: "monospace"}}>
+            {Number(newNum).toLocaleString("pt-BR")}
+          </Typography>
+          {props.unity && (
             <Typography variant="caption" color="text.secondary">
-              ({props.code})
+              {props.unity}
             </Typography>
           )}
+          <Typography variant="caption" fontWeight={700} color={deltaColor} sx={{fontFamily: "monospace"}}>
+            {deltaStr}
+          </Typography>
         </Box>
-      )}
-      <Box sx={{display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap"}}>
-        <Typography variant="caption" sx={{fontFamily: "monospace"}}>
-          {prevNum.toFixed(2)}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          →
-        </Typography>
-        <Typography variant="caption" sx={{fontFamily: "monospace"}}>
-          {newNum.toFixed(2)}
-        </Typography>
-        <Typography variant="caption" fontWeight={700} color={deltaColor} sx={{fontFamily: "monospace"}}>
-          {deltaStr}
-        </Typography>
+        {props.extra}
       </Box>
-      {props.extra}
     </Box>
   );
 }
 
-function renderAddStock(content: any, translate: AuditTranslateFn): ReactNode {
+function renderAddStock(content: any, translate: AuditTranslateFn, formatCurrency?: AuditFormatCurrencyFn): ReactNode {
   const items: any[] = content?.items ?? [];
   const updated: any[] = content?.updated ?? [];
 
@@ -75,9 +87,9 @@ function renderAddStock(content: any, translate: AuditTranslateFn): ReactNode {
         const quantity = Number(item.quantity ?? 0);
         const previousNum = newNum - quantity;
         const extra =
-          item.cost != null ? (
+          item.cost != null && formatCurrency ? (
             <Typography variant="caption" color="text.secondary">
-              {translate("ingredients.fields.cost")}: {item.cost}
+              {translate("ingredients.fields.cost")}: {formatCurrency(item.cost)}
             </Typography>
           ) : null;
 
@@ -87,6 +99,8 @@ function renderAddStock(content: any, translate: AuditTranslateFn): ReactNode {
             <StockMovementRow
               name={ingredient?.name}
               code={ingredient?.code}
+              image={ingredient?.image}
+              unity={ingredient?.unity_of_measure?.unity}
               previousStock={previousNum}
               newStock={newNum}
               extra={extra}
@@ -121,6 +135,8 @@ function renderStockChange(content: any, translate: AuditTranslateFn): ReactNode
       <StockMovementRow
         name={content?.ingredientName}
         code={content?.ingredientCode}
+        image={content?.ingredientImage}
+        unity={content?.ingredientUnity}
         previousStock={content?.previousStock ?? 0}
         newStock={content?.newStock ?? 0}
         extra={extra}
@@ -129,7 +145,10 @@ function renderStockChange(content: any, translate: AuditTranslateFn): ReactNode
   );
 }
 
-export function getIngredientStockColumns(translate: AuditTranslateFn): DataTableColumn<AuditLog>[] {
+export function getIngredientStockColumns(
+  translate: AuditTranslateFn,
+  formatCurrency?: AuditFormatCurrencyFn,
+): DataTableColumn<AuditLog>[] {
   return [
     {
       field: "stock",
@@ -137,7 +156,7 @@ export function getIngredientStockColumns(translate: AuditTranslateFn): DataTabl
       width: "auto",
       render: (row) =>
         row.route === ROUTE_ADD_STOCK
-          ? renderAddStock(row.content, translate)
+          ? renderAddStock(row.content, translate, formatCurrency)
           : renderStockChange(row.content, translate),
     },
   ];
@@ -145,7 +164,10 @@ export function getIngredientStockColumns(translate: AuditTranslateFn): DataTabl
 
 export function IngredientStockContent(props: {content: any}) {
   const {translate} = useTranslate();
+  const formatCurrency = useFormatCurrency();
   const isAddStock = Array.isArray(props.content?.items);
 
-  return isAddStock ? renderAddStock(props.content, translate) : renderStockChange(props.content, translate);
+  return isAddStock
+    ? renderAddStock(props.content, translate, formatCurrency)
+    : renderStockChange(props.content, translate);
 }

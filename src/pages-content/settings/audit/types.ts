@@ -32,12 +32,13 @@ export interface AuditListResponse {
 }
 
 export type AuditTranslateFn = (key: string) => string;
+export type AuditFormatCurrencyFn = (value: number | string | null | undefined, maxDecimals?: number) => string;
 
 export interface AuditActionOption {
   action: string;
   label: string;
   routes: string[];
-  columnsFactory?: (translate: AuditTranslateFn) => DataTableColumn<AuditLog>[];
+  columnsFactory?: (translate: AuditTranslateFn, formatCurrency?: AuditFormatCurrencyFn) => DataTableColumn<AuditLog>[];
   MobileContent?: ComponentType<{content: any}>;
 }
 

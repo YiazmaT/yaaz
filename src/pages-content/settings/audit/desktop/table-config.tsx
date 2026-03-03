@@ -3,13 +3,15 @@ import {DataTableColumn} from "@/src/components/data-table/types";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {formatDate} from "@/src/utils/format-date";
 import {UserInfo} from "@/src/components/user-info";
+import {useFormatCurrency} from "@/src/hooks/use-format-currency";
 import {AUDIT_MODULES} from "../constants";
 import {AuditLog} from "../types";
 
 export function useAuditTableConfig(module?: string, action?: string) {
   const {translate} = useTranslate();
+  const formatCurrency = useFormatCurrency();
   const actionConfig = module && action ? AUDIT_MODULES[module]?.actions.find((a) => a.action === action) : null;
-  const extraColumns = actionConfig?.columnsFactory?.(translate) ?? [];
+  const extraColumns = actionConfig?.columnsFactory?.(translate, formatCurrency) ?? [];
 
   function generateConfig(): DataTableColumn<AuditLog>[] {
     const baseColumns: DataTableColumn<AuditLog>[] = [

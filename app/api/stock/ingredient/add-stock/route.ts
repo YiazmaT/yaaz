@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
       prisma.ingredient.update({
         where: {id: item.ingredientId, tenant_id: auth.tenant_id},
         data: {stock: {increment: item.quantity}},
+        include: {unity_of_measure: {select: {unity: true}}},
       }),
     );
 
