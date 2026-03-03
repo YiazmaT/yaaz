@@ -3,6 +3,7 @@ import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {AuditLog, AuditTranslateFn} from "../types";
+import {formatAuditValue} from "../utils";
 
 const FIELDS: {labelKey: string; getValue: (c: any) => any}[] = [
   {labelKey: "ingredients.fields.code", getValue: (c) => c?.code},
@@ -10,6 +11,7 @@ const FIELDS: {labelKey: string; getValue: (c: any) => any}[] = [
   {labelKey: "ingredients.fields.description", getValue: (c) => c?.description},
   {labelKey: "ingredients.fields.unitOfMeasure", getValue: (c) => c?.unity_of_measure?.unity},
   {labelKey: "ingredients.fields.minStock", getValue: (c) => c?.min_stock},
+  {labelKey: "global.active", getValue: (c) => c?.active},
 ];
 
 export function getIngredientCreateColumns(translate: AuditTranslateFn): DataTableColumn<AuditLog>[] {
@@ -30,7 +32,7 @@ export function getIngredientCreateColumns(translate: AuditTranslateFn): DataTab
                     {translate(field.labelKey)}:
                   </Typography>
                   <Typography variant="caption" fontWeight={500}>
-                    {field.getValue(c) ?? "-"}
+                    {formatAuditValue(field.getValue(c), translate)}
                   </Typography>
                 </Box>
               ))}
@@ -55,7 +57,7 @@ export function IngredientCreateContent({content}: {content: any}) {
               {translate(field.labelKey)}:
             </Typography>
             <Typography variant="caption" fontWeight={500}>
-              {field.getValue(content) ?? "-"}
+              {formatAuditValue(field.getValue(content), translate)}
             </Typography>
           </Box>
         ))}

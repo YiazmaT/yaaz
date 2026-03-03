@@ -3,6 +3,7 @@ import {DataTableColumn} from "@/src/components/data-table/types";
 import {ImagePreview} from "@/src/components/image-preview";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {AuditLog, AuditTranslateFn} from "../types";
+import {formatAuditValue} from "../utils";
 
 const FIELDS: {
   labelKey: string;
@@ -39,6 +40,12 @@ const FIELDS: {
     getBeforeValue: (b) => b?.min_stock,
     getAfterValue: (a) => a?.min_stock,
     isChanged: (b, a) => String(b?.min_stock) !== String(a?.min_stock),
+  },
+  {
+    labelKey: "global.active",
+    getBeforeValue: (b) => b?.active,
+    getAfterValue: (a) => a?.active,
+    isChanged: (b, a) => b?.active !== a?.active,
   },
 ];
 
@@ -110,7 +117,7 @@ function FieldsPanel(props: {content: any; side: "before" | "after"; translate: 
                 {props.translate(field.labelKey)}:
               </Typography>
               <Typography variant="caption" fontWeight={changed ? 700 : 500} color={changed ? `${highlightColor}.main` : "text.primary"}>
-                {value ?? "-"}
+                {formatAuditValue(value, props.translate)}
               </Typography>
             </Box>
           );
