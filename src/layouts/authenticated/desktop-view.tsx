@@ -57,14 +57,14 @@ export function DesktopView(props: DesktopViewProps) {
           sx={{
             height: "100vh",
             borderRight: `1px solid ${layout.theme.palette.divider}`,
-            padding: 2,
+            padding: layout.isCollapsed ? 2 : 3,
             ...flexGenerator("c.center.space-between"),
-            width: layout.isCollapsed ? "80px" : "250px",
+            width: layout.isCollapsed ? "80px" : "300px",
             transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-            overflow: "hidden",
+            overflowX: "hidden",
           }}
         >
-          <Box sx={{width: "100%", flexShrink: 0}}>
+          <Box sx={{width: "100%", flex: 1, display: "flex", flexDirection: "column", minHeight: 0}}>
             <Box
               sx={{
                 ...flexGenerator("c.center.center"),
@@ -96,7 +96,9 @@ export function DesktopView(props: DesktopViewProps) {
               </Typography>
             </Box>
             <Divider sx={{marginTop: "16px", marginBottom: "16px", flexShrink: 0}} />
-            <MenuItems layout={layout} variant="desktop" />
+            <Box sx={{flex: 1, overflowY: "auto", minHeight: 0, pr: layout.isCollapsed ? 0 : 1}}>
+              <MenuItems layout={layout} variant="desktop" />
+            </Box>
           </Box>
 
           {layout.isCollapsed ? (

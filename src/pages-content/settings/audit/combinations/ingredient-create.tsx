@@ -6,7 +6,7 @@ import {AuditLog, AuditTranslateFn} from "../types";
 import {formatAuditValue} from "../utils";
 
 const FIELDS: {labelKey: string; getValue: (c: any) => any}[] = [
-  {labelKey: "ingredients.fields.code", getValue: (c) => c?.code},
+  {labelKey: "ingredients.fields.code", getValue: (c) => `#${c?.code}`},
   {labelKey: "ingredients.fields.name", getValue: (c) => c?.name},
   {labelKey: "ingredients.fields.description", getValue: (c) => c?.description},
   {labelKey: "ingredients.fields.unitOfMeasure", getValue: (c) => c?.unity_of_measure?.unity},
