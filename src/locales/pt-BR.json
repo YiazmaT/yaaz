@@ -876,9 +876,7 @@
         "removing": "Saída",
         "finalStock": "Estoque Final"
       },
-      "errors": {
-        "alreadyLaunched": "Esta nota fiscal já foi lançada."
-      },
+
       "fields": {
         "code": "Código",
         "description": "Descrição",
@@ -911,7 +909,8 @@
         "quantityPositive": "A quantidade deve ser maior que zero.",
         "pricePositive": "O preço deve ser maior que zero.",
         "bankAccountRequired": "Selecione uma conta bancária.",
-        "invalidFileType": "Tipo de arquivo inválido. Envie uma imagem ou PDF."
+        "invalidFileType": "Tipo de arquivo inválido. Envie uma imagem ou PDF.",
+        "alreadyLaunched": "Esta nota fiscal já foi lançada."
       },
       "fileTitle": "Arquivo da Nota Fiscal",
       "noFile": "Nenhum arquivo anexado.",
@@ -973,6 +972,7 @@
       "create": "Criação",
       "update": "Edição",
       "delete": "Exclusão",
+      "stock": "Modificações no Estoque",
       "other": "Outro"
     },
     "fields": {

@@ -37,6 +37,6 @@ export async function POST(req: NextRequest) {
 
     const updated = await prisma.$transaction([...stockUpdates, ...costCreates]);
 
-    return success("create", {items, updated, stockUpdates, costCreates});
+    return success("create", {items, updated});
   });
 }

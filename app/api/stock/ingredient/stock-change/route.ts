@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     const ingredient = await prisma.ingredient.findUnique({
       where: {id: ingredientId, tenant_id: auth.tenant_id},
-      select: {stock: true},
+      select: {stock: true, name: true, code: true},
     });
 
     if (!ingredient) return error("api.errors.notFound", 404);
@@ -48,6 +48,14 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
-    return success("create", {ingredientId, previousStock: previousStock.toString(), newStock, reason, comment});
+    return success("create", {
+      ingredientId,
+      ingredientName: ingredient.name,
+      ingredientCode: ingredient.code,
+      previousStock: previousStock.toString(),
+      newStock,
+      reason,
+      comment,
+    });
   });
 }
