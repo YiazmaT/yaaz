@@ -16,7 +16,7 @@ export const AUDIT_MODULES: Record<string, {label: string; actions: AuditActionO
       {
         action: "update",
         label: "audit.actionTypes.update",
-        routes: ["/api/stock/ingredient/update"],
+        routes: ["/api/stock/ingredient/update", "/api/stock/ingredient/toggle-active"],
         columnsFactory: getIngredientEditColumns,
         MobileContent: IngredientEditContent,
       },

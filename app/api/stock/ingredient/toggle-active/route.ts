@@ -14,7 +14,10 @@ export async function PUT(req: NextRequest) {
 
     if (!id) return error("api.errors.missingRequiredFields", 400);
 
-    const existingIngredient = await prisma.ingredient.findUnique({where: {id, tenant_id: auth.tenant_id}});
+    const existingIngredient = await prisma.ingredient.findUnique({
+      where: {id, tenant_id: auth.tenant_id},
+      include: {unity_of_measure: {select: {id: true, unity: true}}},
+    });
     if (!existingIngredient) return error("api.errors.dataNotFound", 404, {id});
 
     if (existingIngredient.active && new Decimal(existingIngredient.stock).greaterThan(0)) {
@@ -28,6 +31,7 @@ export async function PUT(req: NextRequest) {
         last_edit_date: new Date(),
         last_editor_id: auth.user.id,
       },
+      include: {unity_of_measure: {select: {id: true, unity: true}}},
     });
 
     return success("update", ingredient, {before: existingIngredient, after: ingredient});
