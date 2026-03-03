@@ -23,6 +23,7 @@ export async function DELETE(req: NextRequest) {
           take: 10,
           include: {product: {select: {name: true}}},
         },
+        unity_of_measure: {select: {id: true, unity: true}},
       },
     });
 

@@ -20,7 +20,13 @@ export const AUDIT_MODULES: Record<string, {label: string; actions: AuditActionO
         columnsFactory: getIngredientEditColumns,
         MobileContent: IngredientEditContent,
       },
-      {action: "delete", label: "audit.actionTypes.delete", routes: ["/api/stock/ingredient/delete"]},
+      {
+        action: "delete",
+        label: "audit.actionTypes.delete",
+        routes: ["/api/stock/ingredient/delete"],
+        columnsFactory: getIngredientCreateColumns,
+        MobileContent: IngredientCreateContent,
+      },
     ],
   },
 };
