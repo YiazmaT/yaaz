@@ -24,7 +24,7 @@ export const AUDIT_MODULES: Record<string, {label: string; actions: AuditActionO
       {
         action: "stock",
         label: "audit.actionTypes.stock",
-        routes: ["/api/stock/ingredient/add-stock", "/api/stock/ingredient/stock-change"],
+        routes: ["/api/stock/ingredient/add-stock", "/api/stock/ingredient/stock-change", "/api/finance/nfe/launch", "/api/finance/nfe/create"],
         columnsFactory: getIngredientStockColumns,
         MobileContent: IngredientStockContent,
       },

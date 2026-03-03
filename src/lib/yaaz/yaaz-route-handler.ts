@@ -1,4 +1,4 @@
-import {authenticateYaazRequest} from "@/src/lib/yaaz-auth";
+import {authenticateYaazRequest} from "@/src/lib/yaaz/yaaz-auth";
 import {LogModule, LogSource, logCreate, logUpdate, logDelete, logGet, logImportant, logError, logCritical} from "@/src/lib/logger";
 import {NextResponse} from "next/server";
 

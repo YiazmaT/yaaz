@@ -1,5 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
-import {buildNfeStockOps} from "@/src/lib/nfe-stock";
+import {buildNfeStockOps} from "@/src/lib/nfe/nfe-stock";
+import {buildIngredientLogItemsFromNfeItems, logNfeIngredientStock} from "@/src/lib/ingredients/nfe-ingredient-audit";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
@@ -20,6 +21,16 @@ export async function POST(req: NextRequest) {
         items: {
           include: {
             product: {select: {id: true, stock: true}},
+            ingredient: {
+              select: {
+                id: true,
+                name: true,
+                code: true,
+                image: true,
+                stock: true,
+                unity_of_measure: {select: {unity: true}},
+              },
+            },
           },
         },
       },
@@ -38,6 +49,14 @@ export async function POST(req: NextRequest) {
     );
 
     await prisma.$transaction(ops);
+
+    logNfeIngredientStock({
+      nfeCode: nfe.code,
+      items: buildIngredientLogItemsFromNfeItems(nfe.items),
+      route: ROUTE,
+      userId: auth.user.id,
+      tenantId: auth.tenant_id,
+    });
 
     return success("update", {id});
   });

@@ -1,6 +1,6 @@
 import {LogModule} from "@/src/lib/logger";
 import {prismaUnscoped} from "@/src/lib/prisma";
-import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
+import {withYaazAuth} from "@/src/lib/yaaz/yaaz-route-handler";
 
 const ROUTE = "/api/yaaz/logout";
 

@@ -1,9 +1,9 @@
 import Decimal from "decimal.js";
-import {calculateApproximateCost} from "@/src/lib/calculate-sale-cost";
+import {calculateApproximateCost} from "@/src/lib/sales/calculate-sale-cost";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {checkStockWarnings, decrementStock} from "@/src/lib/sale-stock";
+import {checkStockWarnings, decrementStock} from "@/src/lib/sales/sale-stock";
 import {serverTranslate} from "@/src/lib/server-translate";
 import {CreateSaleDto} from "@/src/pages-content/sales/dto";
 import {NextRequest} from "next/server";

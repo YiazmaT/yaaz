@@ -40,14 +40,14 @@ function StockMovementRow(props: {
       <Box sx={{display: "flex", flexDirection: "column", gap: 0.25}}>
         {props.name && (
           <Box sx={{display: "flex", gap: 0.5, alignItems: "baseline"}}>
+            {props.code !== undefined && (
+              <Typography variant="caption" color="text.secondary">
+                (#{props.code})
+              </Typography>
+            )}
             <Typography variant="caption" fontWeight={600}>
               {props.name}
             </Typography>
-            {props.code !== undefined && (
-              <Typography variant="caption" color="text.secondary">
-                #{props.code}
-              </Typography>
-            )}
           </Box>
         )}
         <Box sx={{display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap"}}>
@@ -145,6 +145,44 @@ function renderStockChange(content: any, translate: AuditTranslateFn): ReactNode
   );
 }
 
+function renderNfeLaunch(content: any, translate: AuditTranslateFn, formatCurrency?: AuditFormatCurrencyFn): ReactNode {
+  const nfeItems: any[] = content?.nfeItems ?? [];
+  const nfeCode = content?.nfeCode;
+
+  return (
+    <Box sx={{display: "flex", flexDirection: "column", py: 0.5}}>
+      {nfeCode && (
+        <Typography variant="caption" color="text.secondary" sx={{mb: 0.75}}>
+          {translate("finance.nfe.title")} #{nfeCode}
+        </Typography>
+      )}
+      {nfeItems.map((item, i) => {
+        const extra =
+          item.cost != null && formatCurrency ? (
+            <Typography variant="caption" color="text.secondary">
+              {translate("ingredients.fields.cost")}: {formatCurrency(item.cost)}
+            </Typography>
+          ) : null;
+
+        return (
+          <Box key={item.ingredientId ?? i}>
+            {i > 0 && <Divider sx={{my: 0.75}} />}
+            <StockMovementRow
+              name={item.name}
+              code={item.code}
+              image={item.image}
+              unity={item.unity}
+              previousStock={item.previousStock ?? 0}
+              newStock={item.newStock ?? 0}
+              extra={extra}
+            />
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
 export function getIngredientStockColumns(
   translate: AuditTranslateFn,
   formatCurrency?: AuditFormatCurrencyFn,
@@ -154,10 +192,11 @@ export function getIngredientStockColumns(
       field: "stock",
       headerKey: "ingredients.fields.stock",
       width: "auto",
-      render: (row) =>
-        row.route === ROUTE_ADD_STOCK
-          ? renderAddStock(row.content, translate, formatCurrency)
-          : renderStockChange(row.content, translate),
+      render: (row) => {
+        if (row.route === ROUTE_ADD_STOCK) return renderAddStock(row.content, translate, formatCurrency);
+        if (Array.isArray(row.content?.nfeItems)) return renderNfeLaunch(row.content, translate, formatCurrency);
+        return renderStockChange(row.content, translate);
+      },
     },
   ];
 }
@@ -165,9 +204,7 @@ export function getIngredientStockColumns(
 export function IngredientStockContent(props: {content: any}) {
   const {translate} = useTranslate();
   const formatCurrency = useFormatCurrency();
-  const isAddStock = Array.isArray(props.content?.items);
-
-  return isAddStock
-    ? renderAddStock(props.content, translate, formatCurrency)
-    : renderStockChange(props.content, translate);
+  if (Array.isArray(props.content?.items)) return renderAddStock(props.content, translate, formatCurrency);
+  if (Array.isArray(props.content?.nfeItems)) return renderNfeLaunch(props.content, translate, formatCurrency);
+  return renderStockChange(props.content, translate);
 }

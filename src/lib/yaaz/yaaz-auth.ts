@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import {cookies} from "next/headers";
 import {NextResponse} from "next/server";
-import {prismaUnscoped} from "./prisma";
-import {logCritical, logError, LogModule, LogSource} from "./logger";
+import {prismaUnscoped} from "../prisma";
+import {logCritical, logError, LogModule, LogSource} from "../logger";
 
 const YAAZ_JWT_SECRET = process.env.YAAZ_JWT_SECRET!;
 

@@ -2,7 +2,7 @@ import {sendPasswordSetupEmail} from "@/src/lib/email";
 import {LogModule} from "@/src/lib/logger";
 import {prismaUnscoped} from "@/src/lib/prisma";
 import {noTenantUploadToR2} from "@/src/lib/r2";
-import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
+import {withYaazAuth} from "@/src/lib/yaaz/yaaz-route-handler";
 import * as bcrypt from "bcrypt";
 import {randomBytes} from "crypto";
 import {NextRequest} from "next/server";

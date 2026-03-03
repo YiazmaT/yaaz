@@ -1,7 +1,7 @@
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {extractR2KeyFromUrl, noTenantDeleteFromR2, noTenantUploadToR2} from "@/src/lib/r2";
-import {withYaazAuth} from "@/src/lib/yaaz-route-handler";
+import {withYaazAuth} from "@/src/lib/yaaz/yaaz-route-handler";
 import {NextRequest} from "next/server";
 
 const ROUTE = "/api/yaaz/tenant/update";

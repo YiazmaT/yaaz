@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import {calculateApproximateCost} from "@/src/lib/calculate-sale-cost";
+import {calculateApproximateCost} from "@/src/lib/sales/calculate-sale-cost";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";

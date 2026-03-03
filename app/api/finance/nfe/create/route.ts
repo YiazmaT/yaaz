@@ -1,6 +1,7 @@
 import Decimal from "decimal.js";
 import {LogModule} from "@/src/lib/logger";
-import {buildNfeStockOps} from "@/src/lib/nfe-stock";
+import {buildIngredientLogItemsFromPayload, logNfeIngredientStock} from "@/src/lib/ingredients/nfe-ingredient-audit";
+import {buildNfeStockOps} from "@/src/lib/nfe/nfe-stock";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
 import {NextRequest} from "next/server";
@@ -23,17 +24,25 @@ export async function POST(req: NextRequest) {
     }, new Decimal(0));
 
     let productStockMap: Map<string, string> = new Map();
+    let ingredientMap: Map<string, any> = new Map();
     if (addToStock) {
-      const productIds = items.filter((i) => i.itemType === "product").map((i) => i.itemId);
-      if (productIds.length > 0) {
-        const products = await prisma.product.findMany({
-          where: {id: {in: productIds}, tenant_id: auth.tenant_id},
-          select: {id: true, stock: true},
-        });
-        for (const p of products) {
-          productStockMap.set(p.id, String(p.stock));
-        }
-      }
+      const productIds = items.filter((i: NfeItemPayload) => i.itemType === "product").map((i: NfeItemPayload) => i.itemId);
+      const ingredientIds = items.filter((i: NfeItemPayload) => i.itemType === "ingredient").map((i: NfeItemPayload) => i.itemId);
+
+      const [products, ingredients] = await Promise.all([
+        productIds.length > 0
+          ? prisma.product.findMany({where: {id: {in: productIds}, tenant_id: auth.tenant_id}, select: {id: true, stock: true}})
+          : Promise.resolve([]),
+        ingredientIds.length > 0
+          ? prisma.ingredient.findMany({
+              where: {id: {in: ingredientIds}, tenant_id: auth.tenant_id},
+              select: {id: true, name: true, code: true, image: true, stock: true, unity_of_measure: {select: {unity: true}}},
+            })
+          : Promise.resolve([]),
+      ]);
+
+      for (const p of products) productStockMap.set(p.id, String(p.stock));
+      for (const i of ingredients) ingredientMap.set(i.id, i);
     }
 
     const [maxNfeCode, maxBillCode] = await Promise.all([
@@ -106,6 +115,16 @@ export async function POST(req: NextRequest) {
     }
 
     const [nfe] = await prisma.$transaction(ops);
+
+    if (addToStock && ingredientMap.size > 0) {
+      logNfeIngredientStock({
+        nfeCode: nextCode,
+        items: buildIngredientLogItemsFromPayload(items, ingredientMap),
+        route: ROUTE,
+        userId: auth.user.id,
+        tenantId: auth.tenant_id,
+      });
+    }
 
     return success("create", nfe);
   });

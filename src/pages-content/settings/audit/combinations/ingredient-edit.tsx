@@ -13,8 +13,8 @@ const FIELDS: {
 }[] = [
   {
     labelKey: "ingredients.fields.code",
-    getBeforeValue: (b) => `$${b?.code}`,
-    getAfterValue: (a) => `$${a?.code}`,
+    getBeforeValue: (b) => `#${b?.code}`,
+    getAfterValue: (a) => `#${a?.code}`,
     isChanged: (b, a) => b?.code !== a?.code,
   },
   {

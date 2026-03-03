@@ -2,7 +2,7 @@ import Decimal from "decimal.js";
 import {LogModule} from "@/src/lib/logger";
 import {prisma} from "@/src/lib/prisma";
 import {withAuth} from "@/src/lib/route-handler";
-import {checkStockWarnings, decrementStock} from "@/src/lib/sale-stock";
+import {checkStockWarnings, decrementStock} from "@/src/lib/sales/sale-stock";
 import {ConvertQuoteDto} from "@/src/pages-content/sales/dto";
 import {NextRequest} from "next/server";
 
