@@ -5,6 +5,7 @@ export enum ReportTab {
 
 export enum ReportType {
   SALES_SUMMARY = "sales_summary",
+  SALES_PER_PRODUCT = "sales_per_product",
   MOVEMENT = "movement",
 }
 

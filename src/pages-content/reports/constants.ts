@@ -10,6 +10,11 @@ export function useReportsConstants() {
       label: translate("reports.types.salesSummary"),
       description: translate("reports.descriptions.salesSummary"),
     },
+    {
+      value: ReportType.SALES_PER_PRODUCT,
+      label: translate("reports.types.salesPerProduct"),
+      description: translate("reports.descriptions.salesPerProduct"),
+    },
   ];
 
   const financeReportOptions: ReportOption[] = [

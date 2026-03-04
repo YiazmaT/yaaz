@@ -3,6 +3,7 @@ import {Box} from "@mui/material";
 import {ReportSelector} from "../components/report-selector";
 import {ReportType} from "../types";
 import {SalesSummaryReport} from "../report-types/sales-summary/sales-summary-report";
+import {SalesPerProductReport} from "../report-types/sales-per-product/sales-per-product-report";
 import {MovementReport} from "../report-types/movement/movement-report";
 import {DesktopViewProps} from "./types";
 
@@ -13,6 +14,8 @@ export function DesktopView(props: DesktopViewProps) {
     switch (reports.selectedReport) {
       case ReportType.SALES_SUMMARY:
         return <SalesSummaryReport />;
+      case ReportType.SALES_PER_PRODUCT:
+        return <SalesPerProductReport />;
       case ReportType.MOVEMENT:
         return <MovementReport />;
       default:

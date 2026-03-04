@@ -584,12 +584,14 @@
     "period": "Período",
     "types": {
       "salesSummary": "Resumo de Vendas",
+      "salesPerProduct": "Vendas por Produto",
       "stockLevels": "Níveis de Estoque",
       "profitMargin": "Margem de Lucro por Produto",
       "movement": "Movimento"
     },
     "descriptions": {
       "salesSummary": "Visualize o total de vendas por dia, quantidade de transações, ticket médio e vendas por método de pagamento.",
+      "salesPerProduct": "Visualize as vendas agrupadas por produto: quantidade vendida, receita total e lucro estimado.",
       "stockLevels": "Consulte os níveis atuais de estoque de insumos, produtos e embalagens.",
       "profitMargin": "Analise a margem de lucro de cada produto com base nas vendas realizadas.",
       "movement": "Visualize o movimento financeiro do período: receitas de vendas por método de pagamento e despesas por categoria."
@@ -600,7 +602,9 @@
       "dateTo": "Data Final",
       "stockType": "Tipo de Estoque",
       "belowMinimumOnly": "Apenas abaixo do mínimo",
-      "product": "Produto (opcional)"
+      "product": "Produto (opcional)",
+      "allProducts": "Todos os produtos",
+      "selectAtLeastOne": "Selecione ao menos um produto."
     },
     "stockTypes": {
       "all": "Todos",
@@ -620,7 +624,8 @@
       "unit": "Unidade",
       "status": "Status",
       "product": "Produto",
-      "quantitySold": "Qtd Vendida",
+      "salesCount": "Número de Vendas",
+      "quantitySold": "Quantidade Vendida",
       "revenue": "Receita",
       "cost": "Custo",
       "profit": "Lucro",
