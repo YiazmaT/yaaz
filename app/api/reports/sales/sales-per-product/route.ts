@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
         (
           SUM(si.quantity * si.unit_price) -
           SUM(si.quantity) * COALESCE(
-            (SELECT pc.price FROM data.product_cost pc WHERE pc.product_id = p.id ORDER BY pc.creation_date DESC LIMIT 1),
+            (SELECT pc.price / NULLIF(pc.quantity, 0) FROM data.product_cost pc WHERE pc.product_id = p.id ORDER BY pc.creation_date DESC LIMIT 1),
             0
           )
         )::text AS profit
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
       .map(
         (row) => `
         <tr>
-          <td>${row.code} - ${row.name}</td>
+          <td>(#${row.code}) ${row.name}</td>
           <td class="right">${row.salesCount}</td>
           <td class="right">${parseFloat(row.quantitySold).toLocaleString("pt-BR")}</td>
           <td class="right">${formatCurrency(row.revenue, 2, currency)}</td>
