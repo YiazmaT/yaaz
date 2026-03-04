@@ -8,6 +8,7 @@ import {FormMaskedTextInput} from "@/src/components/form-fields/masked-text-inpu
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {GenericDrawer} from "@/src/components/generic-drawer";
 import {FormContextProvider} from "@/src/contexts/form-context";
+import {useApi} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
 import {FormProps} from "./types";
 
@@ -15,23 +16,23 @@ export function Form(props: FormProps) {
   const [tab, setTab] = useState(0);
   const {translate} = useTranslate();
   const {clients, imageSize = 150} = props;
+  const api = useApi();
   const isCompany = useWatch({control: clients.control, name: "isCompany"});
 
   async function handleCepChange(value: string) {
     const digits = value.replace(/\D/g, "");
     if (digits.length !== 8) return;
 
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
-      const data = await response.json();
-      if (data.erro) return;
+    const data = await api.fetch<{logradouro: string; bairro: string; localidade: string; uf: string; erro?: boolean}>(
+      "GET",
+      `/api/client/cep?cep=${digits}`,
+    );
 
+    if (data) {
       clients.setValue("address.address", data.logradouro || "");
       clients.setValue("address.neighborhood", data.bairro || "");
       clients.setValue("address.city", data.localidade || "");
       clients.setValue("address.state", data.uf || "");
-    } catch {
-      // ViaCEP unavailable, user can fill manually
     }
   }
 
