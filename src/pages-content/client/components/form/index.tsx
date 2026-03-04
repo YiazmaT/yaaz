@@ -7,6 +7,7 @@ import {FormImageInput} from "@/src/components/form-fields/image-input";
 import {FormMaskedTextInput} from "@/src/components/form-fields/masked-text-input";
 import {FormTextInput} from "@/src/components/form-fields/text-input";
 import {GenericDrawer} from "@/src/components/generic-drawer";
+import {SmallLoader} from "@/src/components/small-loader";
 import {FormContextProvider} from "@/src/contexts/form-context";
 import {useApi} from "@/src/hooks/use-api";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -14,6 +15,7 @@ import {FormProps} from "./types";
 
 export function Form(props: FormProps) {
   const [tab, setTab] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const {translate} = useTranslate();
   const {clients, imageSize = 150} = props;
   const api = useApi();
@@ -23,9 +25,11 @@ export function Form(props: FormProps) {
     const digits = value.replace(/\D/g, "");
     if (digits.length !== 8) return;
 
+    setIsLoading(true);
     const data = await api.fetch<{logradouro: string; bairro: string; localidade: string; uf: string; erro?: boolean}>(
       "GET",
       `/api/client/cep?cep=${digits}`,
+      {hideLoader: true},
     );
 
     if (data) {
@@ -34,6 +38,7 @@ export function Form(props: FormProps) {
       clients.setValue("address.city", data.localidade || "");
       clients.setValue("address.state", data.uf || "");
     }
+    setIsLoading(false);
   }
 
   return (
@@ -76,7 +81,14 @@ export function Form(props: FormProps) {
           </Grid>
 
           <Grid container spacing={2} sx={{display: tab === 1 ? undefined : "none"}}>
-            <FormMaskedTextInput fieldName="address.cep" label="clients.fields.cep" mask="99999-999" size={4} additionalOnChange={handleCepChange} />
+            <FormMaskedTextInput
+              fieldName="address.cep"
+              label="clients.fields.cep"
+              mask="99999-999"
+              size={4}
+              additionalOnChange={handleCepChange}
+              endAdornment={isLoading ? <SmallLoader size={18} /> : undefined}
+            />
             <FormTextInput fieldName="address.address" label="clients.fields.address" size={8} />
             <FormTextInput fieldName="address.number" label="clients.fields.number" size={4} />
             <FormTextInput fieldName="address.complement" label="clients.fields.complement" size={8} />

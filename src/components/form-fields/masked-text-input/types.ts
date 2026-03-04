@@ -1,3 +1,4 @@
+import React from "react";
 import {FormInputProps} from "@/src/@types/global-types";
 
 export interface MaskedTextInputProps {
@@ -8,6 +9,7 @@ export interface MaskedTextInputProps {
   error?: string;
   disabled?: boolean;
   mask: string;
+  endAdornment?: React.ReactNode;
 }
 
 export interface FormMaskedTextInputProps extends FormInputProps, MaskedTextInputProps {}

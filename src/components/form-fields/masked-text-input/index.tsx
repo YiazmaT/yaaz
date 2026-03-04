@@ -1,4 +1,4 @@
-import {Grid, TextField} from "@mui/material";
+import {Grid, InputAdornment, TextField} from "@mui/material";
 import {Controller} from "react-hook-form";
 import {FormMaskedTextInputProps, MaskedTextInputProps} from "./types";
 import {useTranslate} from "@/src/contexts/translation-context";
@@ -40,6 +40,7 @@ export function MaskedTextInput(props: MaskedTextInputProps) {
       helperText={props.error}
       fullWidth
       disabled={props.disabled}
+      slotProps={props.endAdornment ? {input: {endAdornment: <InputAdornment position="end">{props.endAdornment}</InputAdornment>}} : undefined}
     />
   );
 }
