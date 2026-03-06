@@ -11,7 +11,7 @@ Yaaz is a fully isolated internal admin subsystem for the product owner to manag
 - **User context:** `yaazUser` lives inside `TenantContext` (use `useYaazUser()`). Auth actions (`yaazLogin`, `yaazLogout`) live inside `AuthContext` (use `useYaazAuth()`);
 - **Layout:** reuses `AuthenticatedLayout` — the layout detects yaaz mode via `!!yaazUser && pathname.startsWith("/yaaz")` and automatically switches menu items, logout function, and home route;
 - **Theme:** always uses default env colors (`NEXT_PUBLIC_PRIMARY_COLOR`, `NEXT_PUBLIC_SECONDARY_COLOR`) — `TenantThemeProvider` forces defaults for all `/yaaz/*` paths;
-- **API routes:** live at `app/api/yaaz/`. All endpoints use `withYaazAuth` from `src/lib/yaaz-route-handler.ts` instead of `withAuth`. No `tenant_id` in context — logging is pino-only;
+- **API routes:** live at `app/api/yaaz/`. All endpoints use `withYaazAuth` from `src/lib/yaaz/yaaz-route-handler.ts` instead of `withAuth`. No `tenant_id` in context — logging is pino-only;
 - **Database rule exception:** `yaaz_user` is the only table without `tenant_id` — it is a global admin table. All other tables still require `tenant_id`;
 
 # General rules to follow:
@@ -40,7 +40,7 @@ Yaaz is a fully isolated internal admin subsystem for the product owner to manag
 - Passing a key to this function returns the translated string;
 - Keys and texts are defined at: /src/locales, where each language has its own JSON file. For now, only Brazilian Portuguese is supported;
 - Keys are ALWAYS in English and are built according to their position in the JSON object. Example: {"global":{"banana": "Banana"}} — calling translate('global.banana') returns "Banana";
-- Be careful not to create a key that overlaps another key that has children. Example: if {"global":{"fruits":{"banana": "Banana"}}} exists, never create a key named only global.fruits, as it would break the global.fruits.banana key;
+- Never create a key that is also a parent: if `global.fruits.banana` exists, `global.fruits` must not be a leaf value;
 - Keys starting with global should be used for generic and simple words or phrases. For module-specific content, create a new subkey. For example, if working in the stock module and naming a specific field, use stock.fields.fieldName; for a stock-specific error, use stock.errors.something;
 
 # Database
@@ -57,7 +57,6 @@ Yaaz is a fully isolated internal admin subsystem for the product owner to manag
 
 # Module structure
 
-- This project has different modules (login, stock, finance, etc.);
 - Every module has its own folder at: /src/pages-content;
 - When developing something inside a module that is used across multiple files within the same module, extract it to a new component at /src/pages-content/module-name/components/new-component-name/index.tsx;
 - If a component will be used across multiple modules, extract it to /src/components instead;
@@ -116,7 +115,14 @@ Yaaz is a fully isolated internal admin subsystem for the product owner to manag
 
 # Component structure
 
-- The beginning of a component must follow this order: square bracket imports (e.g., const [showModal, setShowModal] = useState(false);), then curly bracket imports (e.g., const {translate} = useTranslate();), then no-bracket imports (e.g., theme = useTheme();), then memos, then useEffects, then functions, and finally the return statement. This order can be flexible when one value depends on another;
+Component body order (flexible when one value depends on another):
+1. State: `const [show, setShow] = useState(false)`
+2. Destructured hooks: `const {translate} = useTranslate()`
+3. Bare hooks: `const theme = useTheme()`
+4. Memos
+5. Effects
+6. Functions
+7. `return` statement
 
 # Useful components
 
@@ -180,11 +186,7 @@ All `Form*` components share these props: `fieldName`, `control`, `errors`, `dis
 # Forms
 
 - Forms use yup + react-hook-form;
-- Inside /src/components/form-fields/ there are form field components. Each component has 2 versions: one for general use and one for use inside a form context;
-- The general-use version accepts value and onChange props and can be used anywhere;
-- The form-context version is designed to work with a FormContextProvider and typically has a name starting with "Form" (e.g., FormTextInput). This version also has a grid prop that implements Material UI's Grid;
-- If you need a new component, create it, but always provide both versions;
-- Use /src/components/form-fields/text-input as a base reference when creating a new one;
+- If you need a new form field component, create both a plain version and a `Form*` version; use `/src/components/form-fields/text-input` as reference;
 - Before adding custom behavior to a form component, check whether the required prop already exists;
 - Every new form should have a dedicated configuration file in the same scope called form-config.ts, following the hook style, with defaultValues and schema defined there;
 - The schema should only include fields that have validation rules (e.g., required). Default values should include every field;
@@ -203,22 +205,15 @@ All `Form*` components share these props: `fieldName`, `control`, `errors`, `dis
 # Logging
 
 - All logging is handled through `success()`, `error()`, and `log()` from `withAuth` — module, source, route, userId, and tenantId are pre-filled automatically;
-- logCritical (catch blocks) is handled by `withAuth` automatically;
+- `withAuth` handles logCritical (catch blocks) automatically;
 - Add new modules to the LogModule enum as you create them;
-- Content guidelines:
-  - create: full created entity via `success("create", entity)`;
-  - update: entity returned, before/after logged via `success("update", entity, {before: old, after: entity})`;
-  - delete: full deleted entity via `success("delete", entity)`;
-  - get: full response via `success("get", data)`;
-  - error: via `error("translationKey", status, debugData?)`;
-  - important: special cases via `success("important", undefined, logData)`;
-- Examples:
-  - `return success("create", ingredient);`
-  - `return success("update", ingredient, {before: existingIngredient, after: ingredient});`
-  - `return success("delete", ingredient);`
-  - `return success("get", {data, total, page, limit});`
-  - `return error("api.errors.missingRequiredFields", 400);`
-  - `return error("api.errors.uploadFailed", 400, uploadResult);`
+- Log call by action:
+  - create: `return success("create", entity);`
+  - update: `return success("update", entity, {before: old, after: entity});`
+  - delete: `return success("delete", entity);`
+  - get: `return success("get", {data, total, page, limit});`
+  - error: `return error("api.errors.key", status, debugData?);`
+  - important: `return success("important", undefined, logData);`
 
 # Existing Utils
 
@@ -293,17 +288,15 @@ export const AUDIT_MODULES: Record<string, {label: string; actions: AuditActionO
 1. Create `combinations/my-module-action.tsx` — export `getMyModuleActionColumns(translate)` and `MyModuleActionContent`;
 2. Register in `AUDIT_MODULES` with the correct `routes`, `columnsFactory`, and `MobileContent`;
 3. Add translation keys for the module label and action label;
-4. That's it — the filter dropdown, table columns, and mobile cards all update automatically.
 
 ## Combinations pattern
 
 Each `combinations/` file exports:
-- A **plain function** `get<Name>Columns(translate: AuditTranslateFn): DataTableColumn<AuditLog>[]` — used by `useAuditTableConfig`. Must be a plain function, NOT a hook, because it is called conditionally inside `generateConfig()`;
-- A **React component** `<Name>Content({content: any})` — used by `MobileView`. May call hooks freely since it is a proper component;
-- A shared `FIELDS` constant (`{labelKey: string; getValue: (c: any) => any}[]`) reused by both exports for DRY field definitions;
+- `get<Name>Columns(translate)` — **plain function** (not a hook), called conditionally inside `generateConfig()`;
+- `<Name>Content({content: any})` — React component used by `MobileView`; may call hooks freely;
+- `FIELDS` constant (`{labelKey: string; getValue: (c: any) => any}[]`) — shared between both for DRY field definitions;
 
-The desktop column renders: image left (52×52, borderRadius 6) + inline `label: value` caption rows on the right.
-The mobile content uses the exact same layout (copied from the column).
+Desktop column layout: image left (52×52, borderRadius 6) + inline `label: value` caption rows on the right. Mobile content mirrors this layout.
 
 ## API endpoint
 
